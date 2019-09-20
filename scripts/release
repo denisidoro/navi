@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$SCRIPT_DIR"
+
+tag="v$*"
+tar="https://github.com/denisidoro/navi/archive/v${tag}.tar.gz"
+formula="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/navi.rb"
+
+echo "Attempting to release version ${tag}..."
+
+echo "git tag"
+git tag -a "$tag" -m "$tag"
+
+echo "git push"
+git push --follow-tags
+
+echo "rm formula"
+rm "$formula" || true
+
+echo "brew create"
+brew create "$tar"
+
+echo "output"
+grep "url" "$formula" -A1
