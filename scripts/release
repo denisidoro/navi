@@ -9,7 +9,7 @@ git pull
 
 version="$(grep VERSION "${SCRIPT_DIR}/navi" | grep -Eo '[0-9\.]+')"
 tag="v${version}"
-tar="https://github.com/denisidoro/navi/archive/v${tag}.tar.gz"
+tar="https://github.com/denisidoro/navi/archive/${tag}.tar.gz"
 formula="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/navi.rb"
 
 echo "Attempting to release version ${tag}..."
