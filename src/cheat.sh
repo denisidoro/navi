@@ -12,9 +12,9 @@ cheat::read_many() {
         }
         
         /^%/ { tags=" ["substr($0, 3)"]"; next }
-        /^#/ { print color(4, $0) color(7, "\033[2m"tags); next }
+        /^#/ { print color(4, $0) color(60, tags); next }
         /^\$/ { next }
-        NF { print color(7, $0) color(7, "\033[2m"tags); next }' "$cheat"
+        NF { print color(7, $0) color(60, tags); next }' "$cheat"
     done
 }
 
