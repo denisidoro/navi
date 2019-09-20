@@ -1,28 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
-
-source "${DIR}/arg.sh"
-source "${DIR}/cheat.sh"
-source "${DIR}/docs.sh"
-source "${DIR}/misc.sh"
-source "${DIR}/selection.sh"
-source "${DIR}/str.sh"
-source "${DIR}/ui.sh"
-
-##? Command cheatsheet tool
-##?
-##? Usage:
-##?     cheats [options]
-##?
-##? Options:
-##?     --print                               Prevent script execution [default: false]
-##?     --no-interpolation                    Prevent argument interpolation [default: false]
-##?     -c --cheat-folder <cheat-folder>      Folder with cheatsheets
-
-docs::eval "$@"
-
 main() {
     local readonly cheats="$(cheat::find)"
     local readonly selection="$(ui::select "$cheats")"
@@ -57,5 +35,3 @@ main() {
         eval "$cmd"
     fi
 }
-
-main "$@"
