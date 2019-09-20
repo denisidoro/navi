@@ -1,0 +1,4 @@
+% awk, text processing, string
+
+# Print nth column
+awk '{print $<n>}

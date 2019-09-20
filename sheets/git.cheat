@@ -1,0 +1,13 @@
+% git
+
+# Clear everything
+git clean -dxf
+
+# Sign all commits in a branch based on master
+git rebase master -S -f
+
+# Checkout to branch
+# Change branch
+git checkout <branch>
+
+$ branch: git branch --format='%(refname:short)'

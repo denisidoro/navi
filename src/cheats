@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
+
+source "${DIR}/arg.sh"
+source "${DIR}/cheat.sh"
+source "${DIR}/docs.sh"
+source "${DIR}/misc.sh"
+source "${DIR}/selection.sh"
+source "${DIR}/str.sh"
+source "${DIR}/ui.sh"
+
+##? Command cheatsheet tool
+##?
+##? Usage:
+##?     cheats [options]
+##?
+##? Options:
+##?     --print                               Prevent script execution [default: false]
+##?     --no-interpolation                    Prevent argument interpolation [default: false]
+##?     -c --cheat-folder <cheat-folder>      Folder with cheatsheets
+
+docs::eval "$@"
+
+main() {
+    local readonly cheats="$(cheat::find)"
+    local readonly selection="$(ui::select "$cheats")"
+    local readonly cheat="$(cheat::from_selection "$cheats" "$selection")"
+    local cmd="$(selection::command "$selection" "$cheat")"
+    local arg value
+
+    if $no_interpolation; then
+        echo "$cmd"
+        exit 0
+    fi
+
+    while true; do
+        arg="$(echo "$cmd" | arg::next || echo "")"
+        if [ -z "$arg" ]; then 
+            break
+        fi
+
+        value="$(arg::pick "$arg" "$cheat" || echo "")"
+        if [ -z "$value" ]; then
+            echo "$cmd"
+            exit 0
+        fi
+
+        eval "local $arg"='$value'
+        cmd="$(echo "$cmd" | arg::interpolate "$arg" "$value")"
+    done
+
+    if $print; then
+        echo "$cmd"
+    else
+        eval "$cmd"
+    fi
+}
+
+main "$@"

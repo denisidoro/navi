@@ -1,0 +1,10 @@
+% mysql, database, db
+
+# Create database
+mysql -u <user> -p -e "create database $database character set UTF8mb4 collate utf8mb4_bin"
+
+# Export databse
+mysqldump -u <user> -p <database> > <path>
+
+# Import database
+mysql -u <user> -p <database> <path>
