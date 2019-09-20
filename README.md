@@ -1,4 +1,4 @@
-# navi
+# navi [![CircleCI](https://circleci.com/gh/denisidoro/navi.svg?style=svg)](https://circleci.com/gh/denisidoro/navi)
 
 An interactive cheatsheet tool for the command-line so that you'll never say the following again:
 
@@ -53,7 +53,12 @@ Or you can launch and browser and search for instructions on Google, but that ta
 
 In this case, you need to pass the directory which contains `.cheat` files as in:
 ```sh
-navi --dir /folder/with/cheats
+navi --dir "/folder/with/cheats"
+```
+
+Alternatively, you can set an environment variable in your `.bashrc`-like file:
+```sh
+export NAVI_DIR="/folder/with/cheats"
 ```
 
 ## .cheat syntax

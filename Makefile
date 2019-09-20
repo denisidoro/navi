@@ -1,8 +1,8 @@
-BIN ?= navi
-PREFIX ?= /usr/local
-
 install:
-	scripts/symlink
+	scripts/install
 
 uninstall:
-	rm -f $(PREFIX)/bin/$(BIN)
+	scripts/uninstall
+
+release:
+	scripts/release

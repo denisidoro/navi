@@ -14,7 +14,7 @@ docs::eval() {
 
    for arg in $@; do
     case $wait_for in
-      dir) cheat_dir="$arg"; wait_for="";;
+      dir) NAVI_DIR="$arg"; wait_for="";;
     esac
 
     case $arg in
@@ -25,6 +25,4 @@ docs::eval() {
       -d|--dir) wait_for="dir";;
     esac 
    done
-
-   echo "cheat_dir: ${cheat_dir:-}"
 }
