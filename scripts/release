@@ -4,7 +4,11 @@ set -euo pipefail
 export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$SCRIPT_DIR"
 
-tag="v$*"
+echo "git pull"
+git pull
+
+version="$(grep VERSION "${SCRIPT_DIR}/navi" | grep -Eo '[0-9\.]+')"
+tag="v${version}"
 tar="https://github.com/denisidoro/navi/archive/v${tag}.tar.gz"
 formula="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/navi.rb"
 
