@@ -4,10 +4,10 @@ source <(
 grep -v 'main ' "${SCRIPT_DIR}/navi" | sed -E "s|export.*|export SCRIPT_DIR=\"${SCRIPT_DIR}\"|")
 
 test::success() {
-  echo "Test passed!"
+   echo "Test passed!"
 }
 
 test::fail() {
-  echo "Test failed..."
-  exit 42
+   echo "Test failed..."
+   exit 42
 }

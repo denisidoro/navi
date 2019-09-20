@@ -2,5 +2,5 @@
 
 # no-op hack to set dependency order resolution
 dep() {
-    :
+   :
 }
