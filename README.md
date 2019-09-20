@@ -41,6 +41,7 @@ Head to [this playground](https://www.katacoda.com/denisidoro/scenarios/navi) fo
 The main objectives are:
 - to increase discoverability, by finding commands given keywords or descriptions;
 - to prevent you from running auxiliar commands, copying the result into the clipboard and then pasting into the original command;
+- to easily share one-liners with others so that they don't need to figure out how to write the commands;
 - to improve terminal usage as a whole.
 
 Sure, you can find autocompleters out there for all your favorite commands. However, they are very specific and each one may offer a different learning curve.
