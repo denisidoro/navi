@@ -11,10 +11,10 @@ cheat::read_many() {
            printf("\033[%dm%s\033[0m",30+c,s)
         }
         
-        /^%/ { tags=substr($0, 3); next }
-        /^#/ { print color(3, tags"^") color(4, $0); next }
+        /^%/ { tags=" ["substr($0, 3)"]"; next }
+        /^#/ { print color(4, $0) color(60, tags); next }
         /^\$/ { next }
-        NF { print color(3, tags"^") color(7, $0); next }' "$cheat"
+        NF { print color(7, $0) color(60, tags); next }' "$cheat"
     done
 }
 

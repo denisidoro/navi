@@ -6,7 +6,7 @@ An interactive cheatsheet tool for the command-line so that you'll never say the
 *- Oh, it's not in my bash history*
 *- Geez, it's almost what I wanted but I need to change some args*
 
-![Demo](https://user-images.githubusercontent.com/3226564/65281359-d158f480-db08-11e9-8e69-e380d76c343b.gif)
+![Demo](https://user-images.githubusercontent.com/3226564/65347073-8dbbc480-dbb4-11e9-886f-0f10d56def74.gif)
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or downloaded from maintainers) and execute commands, prompting for argument values.
 
