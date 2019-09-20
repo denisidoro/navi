@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ui::pick() {
-    fzf --inline-info "$@"
+    fzf --height '100%' --inline-info "$@"
 }
 
 ui::select() {
