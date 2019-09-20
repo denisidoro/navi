@@ -45,7 +45,7 @@ The main objectives are:
 
 Sure, you can find autocompleters out there for all your favorite commands. However, they are very specific and each one may offer a different learning curve.
 
-Or you can launch and browser and search for instructions on Google, but that takes some time.
+Or you can launch a browser and search for instructions on Google, but that takes some time.
 
 **navi**, on the other hand, intends to be a general purpose platform for bookmarking any command at a very low cost.
 
@@ -60,6 +60,10 @@ Alternatively, you can set an environment variable in your `.bashrc`-like file:
 ```sh
 export NAVI_DIR="/folder/with/cheats"
 ```
+
+## Submitting cheatsheets
+
+Feel free to fork this project and open a PR for me to include your contributions.
 
 ## .cheat syntax
 
