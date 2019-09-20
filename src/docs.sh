@@ -13,6 +13,10 @@ docs::eval() {
    interpolation=true
 
    for arg in $@; do
+    case $wait_for in
+      dir) cheat_dir="$arg"; wait_for="";;
+    esac
+
     case $arg in
       --print) print=true;;
       --no-interpolation) interpolation=false;;
@@ -20,9 +24,7 @@ docs::eval() {
       --help) docs::extract_help "$0" && exit 0;;
       -d|--dir) wait_for="dir";;
     esac 
-
-    case $wait_for in
-      dir) cheat_dir="$arg"; wait_for="";;
-    esac
    done
+
+   echo "cheat_dir: ${cheat_dir:-}"
 }

@@ -13,25 +13,28 @@ An interactive cheatsheet tool for the command-line so that you'll never say the
 ## Installation
 
 **Using [brew](https://brew.sh/):**
-```
+```sh
 brew install denisidoro/tools/navi
 ```
 
 **Without brew:**
-```
+```sh
 git clone http://github.com/denisidoro/navi /opt/navi
 cd /opt/navi
 sudo make install
+# install fzf: https://github.com/junegunn/fzf
 ```
 
 ## Usage
 
-Simply call `navi`
-
+Simply call: 
+```sh
+navi
+```
 
 ## Trying it out online
 
-Head to [this playground](https://www.katacoda.com/denisidoro/scenarios/navi) for previewing *navi*.
+Head to [this playground](https://www.katacoda.com/denisidoro/scenarios/navi) for previewing **navi**.
 
 ## Motivation
 
@@ -45,6 +48,13 @@ Sure, you can find autocompleters out there for all your favorite commands. Howe
 Or you can launch and browser and search for instructions on Google, but that takes some time.
 
 **navi**, on the other hand, intends to be a general purpose platform for bookmarking any command at a very low cost.
+
+## Using your own cheatsheets
+
+In this case, you need to pass the directory which contains `.cheat` files as in:
+```sh
+navi --dir /folder/with/cheats
+```
 
 ## .cheat syntax
 
