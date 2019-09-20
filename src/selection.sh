@@ -1,11 +1,20 @@
 #!/usr/bin/env bash
 
+selection::standardize() {
+    local readonly str="$(cat)"
+
+    local readonly tags="$(echo "$str" | awk -F'[' '{print $NF}' | tr -d ']')"
+    local readonly core="$(echo "$str" | sed -e "s/ \[${tags}\]$//")"
+
+    echo "${core}^${tags}"
+}
+
 selection::core() {
-    cut -d'^' -f2
+    cut -d'^' -f1
 }
 
 selection::tags() {
-    cut -d'^' -f1
+    cut -d'^' -f2
 }
 
 selection::core_is_comment() {

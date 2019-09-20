@@ -9,7 +9,8 @@ ui::select() {
 
     echo "$cheats" \
         | cheat::read_many \
-        | ui::pick -i --ansi --delimiter '\^' --with-nth 2
+        | ui::pick -i --ansi \
+        | selection::standardize
 }
 
 ui::clear_previous_line() {
