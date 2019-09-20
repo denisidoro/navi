@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+source "${SCRIPT_DIR}/src/arg.sh"
+source "${SCRIPT_DIR}/src/cheat.sh"
+source "${SCRIPT_DIR}/src/docs.sh"
+source "${SCRIPT_DIR}/src/misc.sh"
+source "${SCRIPT_DIR}/src/selection.sh"
+source "${SCRIPT_DIR}/src/str.sh"
+source "${SCRIPT_DIR}/src/ui.sh"
+
+source "${SCRIPT_DIR}/src/main.sh"
+
+##? Command cheatsheet tool
+##?
+##? Usage:
+##?     cheats [options]
+##?
+##? Options:
+##?     --print                               Prevent script execution [default: false]
+##?     --no-interpolation                    Prevent argument interpolation [default: false]
+
+VERSION="0.3.0"
+docs::eval "$@"
+main "$@"

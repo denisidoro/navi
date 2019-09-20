@@ -8,7 +8,7 @@ main() {
     local cmd="$(selection::command "$selection" "$cheat")"
     local arg value
 
-    if $no_interpolation; then
+    if ! $interpolation; then
         echo "$cmd"
         exit 0
     fi

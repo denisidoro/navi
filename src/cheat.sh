@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 cheat::find() {
-	find "${cheat_folder:-"${DIR}/sheets"}" -iname '*.cheat'
+	find "${cheat_dir:-"${SCRIPT_DIR}/cheats"}" -iname '*.cheat'
 }
 
 cheat::read_many() {
