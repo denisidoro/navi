@@ -25,6 +25,4 @@ docs::eval() {
       -d|--dir) wait_for="dir";;
     esac 
    done
-
-   echo "cheat_dir: ${cheat_dir:-}"
 }
