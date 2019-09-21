@@ -5,7 +5,7 @@ ui::pick() {
 }
 
 ui::select() {
-   local readonly cheats="$1"
+   local -r cheats="$1"
 
    echo "$cheats" \
       | cheat::read_many \
