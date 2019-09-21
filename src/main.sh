@@ -8,12 +8,7 @@ main() {
    local cmd="$(selection::command "$selection" "$cheat")"
    local arg value
 
-   if ! $interpolation; then
-      echo "$cmd"
-      exit 0
-   fi
-
-   while true; do
+   while $interpolation; do
       arg="$(echo "$cmd" | arg::next || echo "")"
       if [ -z "$arg" ]; then
          break
@@ -29,7 +24,9 @@ main() {
       cmd="$(echo "$cmd" | arg::interpolate "$arg" "$value")"
    done
 
-   if $print; then
+   local readonly unresolved_arg="$(echo "$cmd" | arg::next || echo "")"
+
+   if $print || [ -n "$unresolved_arg" ]; then
       echo "$cmd"
    else
       eval "$cmd"
