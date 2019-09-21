@@ -2,15 +2,7 @@
 set -euo pipefail
 
 export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-cd "$SCRIPT_DIR"
-
-command_exists () {
-    type "$1" &> /dev/null
-}
-
-echoerr() { 
-	echo "$@" 1>&2
-}
+source "${SCRIPT_DIR}/src/main.sh"
 
 sha256() {
 	if command_exists sha256sum; then
@@ -29,6 +21,8 @@ header() {
 	echo "$*"
 	echo
 }
+
+cd "$SCRIPT_DIR"
 
 header "git pull"
 git pull
