@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-cd "$SCRIPT_DIR"
+navi_script_dir=${navi_script_dir:-"$(cd "$(dirname "$0")/.." && pwd)"}
+pushd "${navi_script_dir}"
 
 echo "git pull"
 git pull
 
-version="$(grep VERSION "${SCRIPT_DIR}/navi" | grep -Eo '[0-9\.]+')"
+version="$(grep VERSION "${navi_script_dir}/navi" | grep -Eo '[0-9\.]+')"
 tag="v${version}"
 tar="https://github.com/denisidoro/navi/archive/${tag}.tar.gz"
 formula="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/navi.rb"
@@ -15,16 +15,16 @@ formula="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/navi.rb
 echo "Attempting to release version ${tag}..."
 
 echo "git tag"
-git tag -a "$tag" -m "$tag"
+git tag -a "${tag}" -m "${tag}"
 
 echo "git push"
 git push --follow-tags
 
 echo "rm formula"
-rm "$formula" || true
+rm "${formula}" || true
 
 echo "brew create"
-brew create "$tar"
+brew create "${tar}"
 
 echo "output"
-grep "url" "$formula" -A1
+grep "url" "${formula}" -A1
