@@ -27,7 +27,10 @@ cheat::from_selection() {
    for cheat in $cheats; do
       if grep -q "% $tags" "$cheat"; then
          echo "$cheat"
-         break
+         exit 0
       fi
    done
+
+   echoerr "No valid cheatsheet!"
+   exit 67 
 }

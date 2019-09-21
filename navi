@@ -11,11 +11,11 @@ source "${SCRIPT_DIR}/src/main.sh"
 ##?     cheats [options]
 ##?
 ##? Options:
-##?     --print                               Prevent script execution [default: false]
-##?     --no-interpolation                    Prevent argument interpolation [default: false]
+##?     --print                      Prevent script execution [default: false]
+##?     --no-interpolation           Prevent argument interpolation [default: false]
+##?     --no-preview                 Hide command preview window [default: false]
 
 VERSION="0.6.1"
 docs::eval "$@"
 
-health::fzf
 main "$@"
