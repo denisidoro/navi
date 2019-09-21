@@ -4,27 +4,55 @@ set -euo pipefail
 export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$SCRIPT_DIR"
 
-echo "git pull"
-git pull
+command_exists () {
+    type "$1" &> /dev/null
+}
+
+echoerr() { 
+	echo "$@" 1>&2
+}
+
+sha256() {
+	if command_exists sha256sum; then
+  		sha256sum
+  	elif command_exists shasum; then
+  		shasum -a 256
+  	elif command_exists openssl; then
+  		openssl dgst -sha256
+  	else
+  		echoerr "Unable to calculate sha256!"
+  		exit 43
+	fi
+}
+
+header() {
+	echo "$*"
+	echo
+}
+
+header "git pull"
+#git pull
 
 version="$(grep VERSION "${SCRIPT_DIR}/navi" | grep -Eo '[0-9\.]+')"
 tag="v${version}"
 tar="https://github.com/denisidoro/navi/archive/${tag}.tar.gz"
 formula="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/navi.rb"
 
-echo "Attempting to release version ${tag}..."
+header "Attempting to release version ${tag}..."
+read -p "Press enter to continue"
 
-echo "git tag"
-git tag -a "$tag" -m "$tag"
+header "git tag"
+#git tag -a "$tag" -m "$tag"
 
-echo "git push"
-git push --follow-tags
+header "git push"
+#git push --follow-tags
 
-echo "rm formula"
+header "rm formula"
 rm "$formula" || true
 
-echo "brew create"
-brew create "$tar"
+header "tar sha256"
+sha="$(curl -sL "$tar" | sha256 | awk '{print $1}')"
 
-echo "output"
-grep "url" "$formula" -A1
+header "output"
+echo "  url \"${tar}\""
+echo "  sha256 \"${sha}\""
