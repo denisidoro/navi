@@ -1,13 +1,61 @@
 % git
 
-# Clear everything
-git clean -dxf
+# Set global git user name
+git config --global user.name "<name>"
 
-# Sign all commits in a branch based on master
-git rebase master -S -f
+# Set global git user email
+git config --global user.email "<email>"
+
+# Initializes a git repository
+git init
+
+# Adds a remote for a git repository
+git remote add <remote name> <remote URL>
 
 # Checkout to branch
 # Change branch
 git checkout <branch>
 
 $ branch: git branch --format='%(refname:short)'
+
+# Displays the current status of a git repository
+git status
+
+# Displays the changes made to a file
+git diff <filename>
+
+# Stages a changed file for commit
+git add <filename>
+
+# Stages all changed files for commit
+git add .
+
+# Saves the changes to a file in a commit
+git commit -m "<commit message>"
+
+# Pushes committed changes to remote repository
+git push -u <remote name> <branch name>
+
+# Pushes changes to a remote repository overwriting another branch
+git push <remote name> <branch>:<branch to overwrite>
+
+# Overwrites remote branch with local branch changes
+git push <remote name> <branch name> -f
+
+# Pulls changes to a remote repo to the local repo
+git pull --ff-only
+
+# Merges changes on one branch into current branch
+git merge <branch name>
+
+# Displays log of commits for a repo
+git log
+
+# Displays formatted log of commits for a repo
+git log --all --decorate --oneline --graph
+
+# Clear everything
+git clean -dxf
+
+# Sign all commits in a branch based on master
+git rebase master -S -f
