@@ -31,7 +31,7 @@ header() {
 }
 
 header "git pull"
-#git pull
+git pull
 
 version="$(grep VERSION "${SCRIPT_DIR}/navi" | grep -Eo '[0-9\.]+')"
 tag="v${version}"
@@ -42,10 +42,10 @@ header "Attempting to release version ${tag}..."
 read -p "Press enter to continue"
 
 header "git tag"
-#git tag -a "$tag" -m "$tag"
+git tag -a "$tag" -m "$tag"
 
 header "git push"
-#git push --follow-tags
+git push --follow-tags
 
 header "rm formula"
 rm "$formula" || true
