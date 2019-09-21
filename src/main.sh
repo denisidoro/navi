@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+source "${SCRIPT_DIR}/src/arg.sh"
+source "${SCRIPT_DIR}/src/cheat.sh"
+source "${SCRIPT_DIR}/src/docs.sh"
+source "${SCRIPT_DIR}/src/healthcheck.sh"
+source "${SCRIPT_DIR}/src/misc.sh"
+source "${SCRIPT_DIR}/src/selection.sh"
+source "${SCRIPT_DIR}/src/str.sh"
+source "${SCRIPT_DIR}/src/ui.sh"
+
 main() {
    local readonly cheats="$(cheat::find)"
    local readonly selection="$(ui::select "$cheats")"

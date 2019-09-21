@@ -3,14 +3,6 @@ set -euo pipefail
 
 export SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-source "${SCRIPT_DIR}/src/arg.sh"
-source "${SCRIPT_DIR}/src/cheat.sh"
-source "${SCRIPT_DIR}/src/docs.sh"
-source "${SCRIPT_DIR}/src/misc.sh"
-source "${SCRIPT_DIR}/src/selection.sh"
-source "${SCRIPT_DIR}/src/str.sh"
-source "${SCRIPT_DIR}/src/ui.sh"
-
 source "${SCRIPT_DIR}/src/main.sh"
 
 ##? Command cheatsheet tool
@@ -24,4 +16,6 @@ source "${SCRIPT_DIR}/src/main.sh"
 
 VERSION="0.6.1"
 docs::eval "$@"
+
+health::fzf
 main "$@"
