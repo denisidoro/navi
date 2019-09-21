@@ -1,22 +1,20 @@
 % git
 
 # Set global git user name
-git config --global user.name "<name>"
+git config --global user.name <name>
 
 # Set global git user email
-git config --global user.email "<email>"
+git config --global user.email <email>
 
 # Initializes a git repository
 git init
 
 # Adds a remote for a git repository
-git remote add <remote name> <remote URL>
+git remote add <remote_name> <remote_url>
 
 # Checkout to branch
 # Change branch
 git checkout <branch>
-
-$ branch: git branch --format='%(refname:short)'
 
 # Displays the current status of a git repository
 git status
@@ -31,22 +29,22 @@ git add <filename>
 git add .
 
 # Saves the changes to a file in a commit
-git commit -m "<commit message>"
+git commit -m "<message>"
 
 # Pushes committed changes to remote repository
-git push -u <remote name> <branch name>
+git push -u <remote_name> <branch_name>
 
 # Pushes changes to a remote repository overwriting another branch
-git push <remote name> <branch>:<branch to overwrite>
+git push <remote_name> <branch>:<branch_to_overwrite>
 
 # Overwrites remote branch with local branch changes
-git push <remote name> <branch name> -f
+git push <remote_name> <branch_name> -f
 
 # Pulls changes to a remote repo to the local repo
 git pull --ff-only
 
 # Merges changes on one branch into current branch
-git merge <branch name>
+git merge <branch_name>
 
 # Displays log of commits for a repo
 git log
@@ -59,3 +57,5 @@ git clean -dxf
 
 # Sign all commits in a branch based on master
 git rebase master -S -f
+
+$ branch: git branch --format='%(refname:short)'

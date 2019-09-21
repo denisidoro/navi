@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+ARG_REGEX="<[0-9a-zA-Z_]+>"
+
 arg::fn() {
    awk -F'---' '{print $1}'
 }
@@ -16,7 +18,7 @@ arg::interpolate() {
 }
 
 arg::next() {
-   grep -Eo '<[0-9a-zA-Z_]+>' \
+   grep -Eo "$ARG_REGEX" \
       | head -n1 \
       | tr -d '<' \
       | tr -d '>'
