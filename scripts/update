@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+cd "$SCRIPT_DIR"
+
+git pull
+"${SCRIPT_DIR}/scripts/install" || true

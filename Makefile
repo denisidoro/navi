@@ -6,3 +6,9 @@ uninstall:
 
 release:
 	scripts/release
+
+update:
+	scripts/update
+
+lint:
+	scripts/lint
