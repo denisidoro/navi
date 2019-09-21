@@ -5,10 +5,10 @@ dep() {
    :
 }
 
-command_exists () {
-    type "$1" &> /dev/null
+command_exists() {
+   type "$1" &> /dev/null
 }
 
-echoerr() { 
-	echo "$@" 1>&2
+echoerr() {
+   echo "$@" 1>&2
 }

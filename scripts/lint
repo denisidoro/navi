@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+cd "${SCRIPT_DIR}"
+find . -iname '*.sh' | xargs -I% dot code beautify %
+dot code beautify "${SCRIPT_DIR}/navi"

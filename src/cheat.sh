@@ -32,5 +32,5 @@ cheat::from_selection() {
    done
 
    echoerr "No valid cheatsheet!"
-   exit 67 
+   exit 67
 }
