@@ -16,7 +16,7 @@ arg::interpolate() {
 }
 
 arg::next() {
-   grep -Eo '<[0-9a-zA-Z\-_]+>' \
+   grep -Eo '<[0-9a-zA-Z_]+>' \
       | head -n1 \
       | tr -d '<' \
       | tr -d '>'
