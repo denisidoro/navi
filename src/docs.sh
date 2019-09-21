@@ -2,7 +2,7 @@
 set -euo pipefail
 
 docs::extract_help() {
-   local readonly file="$1"
+   local -r file="$1"
    grep "^##?" "$file" | cut -c 5-
 }
 
@@ -12,7 +12,7 @@ docs::eval() {
    print=false
    interpolation=true
 
-   for arg in $@; do
+   for arg in "$@"; do
       case $wait_for in
          dir) NAVI_DIR="$arg"; wait_for="" ;;
       esac
