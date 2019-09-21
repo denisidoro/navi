@@ -19,10 +19,10 @@ cheat::read_many() {
 }
 
 cheat::from_selection() {
-   local readonly cheats="$1"
-   local readonly selection="$2"
+   local -r cheats="$1"
+   local -r selection="$2"
 
-   local readonly tags="$(echo "$selection" | selection::tags)"
+   local -r tags="$(echo "$selection" | selection::tags)"
 
    for cheat in $cheats; do
       if grep -q "% $tags" "$cheat"; then

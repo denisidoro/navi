@@ -2,9 +2,9 @@
 set -euo pipefail
 
 main() {
-   local readonly cheats="$(cheat::find)"
-   local readonly selection="$(ui::select "$cheats")"
-   local readonly cheat="$(cheat::from_selection "$cheats" "$selection")"
+   local -r cheats="$(cheat::find)"
+   local -r selection="$(ui::select "$cheats")"
+   local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
    local cmd="$(selection::command "$selection" "$cheat")"
    local arg value
 
