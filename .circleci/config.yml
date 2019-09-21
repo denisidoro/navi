@@ -2,7 +2,9 @@
 #
 # Check https://circleci.com/docs/2.0/language-clojure/ for more details
 #
-version: 2
+version: 2.1
+orbs:
+  shellcheck: 'circleci/shellcheck@0.7.0'
 
 job_defaults: &defaults
     docker:
@@ -24,3 +26,12 @@ workflows:
   run-tests:
     jobs:
       - tests
+  shellcheck:
+    jobs:
+      - shellcheck/check:
+          exclude: './cheats/*'
+      - shellcheck/check:
+          pattern: 'navi'
+      - shellcheck/check:
+          pattern: '*'
+          path: ./scripts/
