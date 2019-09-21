@@ -10,3 +10,10 @@ test::fail() {
    echo "Test failed..."
    exit 42
 }
+
+test::run() {
+	echo
+	echo "-> $1"
+	shift
+	eval "$*" && test::success || test::fail
+}

@@ -17,7 +17,7 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - run: ./test/find_cheats
+      - run: ./test/run
 
 workflows:
   version: 2
