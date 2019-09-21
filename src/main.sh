@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
 source "${SCRIPT_DIR}/src/arg.sh"
 source "${SCRIPT_DIR}/src/cheat.sh"
@@ -10,10 +9,11 @@ source "${SCRIPT_DIR}/src/selection.sh"
 source "${SCRIPT_DIR}/src/str.sh"
 source "${SCRIPT_DIR}/src/ui.sh"
 
-main() {
+handler::main() {
    local readonly cheats="$(cheat::find)"
    local readonly selection="$(ui::select "$cheats")"
    local readonly cheat="$(cheat::from_selection "$cheats" "$selection")"
+   [ -z "$cheat" ] && exit 67
    local cmd="$(selection::command "$selection" "$cheat")"
    local arg value
 
@@ -40,4 +40,18 @@ main() {
    else
       eval "$cmd"
    fi
+}
+
+handler::preview() {
+   local readonly selection="$(echo "$query" | selection::standardize)"
+   local readonly cheats="$(cheat::find)"
+   local readonly cheat="$(cheat::from_selection "$cheats" "$selection")"
+   [ -n "$cheat" ] && selection::command "$selection" "$cheat"
+}
+
+main() {
+   case ${entry_point:-} in
+      preview) handler::preview "$@" 2>/dev/null || echo "Unable to find command for '${query:-}'";;
+      *) health::fzf && handler::main "$@" ;;
+   esac
 }

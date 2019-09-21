@@ -9,12 +9,15 @@ docs::extract_help() {
 docs::eval() {
    local wait_for=""
 
+   entry_point="main"
    print=false
    interpolation=true
+   preview=true
 
    for arg in $@; do
       case $wait_for in
          dir) NAVI_DIR="$arg"; wait_for="" ;;
+         command-for) query="$(echo "$arg" | tr "^" " ")"; entry_point="preview"; break ;;
       esac
 
       case $arg in
@@ -22,6 +25,8 @@ docs::eval() {
          --no-interpolation) interpolation=false ;;
          --version) echo "${VERSION:-unknown}" && exit 0 ;;
          --help) docs::extract_help "$0" && exit 0 ;;
+         --command-for) wait_for="command-for" ;;
+         --no-preview) preview=false ;;
          -d|--dir) wait_for="dir" ;;
       esac
    done
