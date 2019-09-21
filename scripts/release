@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-navi_script_dir=${navi_script_dir:-"$(cd "$(dirname "$0")/.." && pwd)"}
+source "$(dirname -- "$0")/vars"
 pushd "${navi_script_dir}"
 
 echo "git pull"

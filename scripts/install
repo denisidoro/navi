@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-navi_base_dir=${navi_base_dir:-"$(cd "$(dirname "$0")/.." && pwd)"}
+source "$(dirname -- "$0")/vars"
+echo "${navi_bin_dir}"
 
-navi_bin_dir=${navi_bin_dir:-"/usr/local/bin"}
 cat << EO_NAVI_BIN > "${navi_bin_dir}/navi"
 #!/usr/bin/env bash
-${navi_base_dir}/navi '$@'
+${navi_script_dir}/navi '$@'
 EO_NAVI_BIN
 
 chmod +x "${navi_bin_dir}/navi"

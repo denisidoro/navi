@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-navi_bin_dir=${navi_bin_dir:-"/usr/local/bin"}
+source "$(dirname -- "$0")/vars"}
 rm -vf "${navi_bin_dir}/navi" || true
