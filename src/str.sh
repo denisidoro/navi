@@ -5,14 +5,14 @@ str::length() {
 }
 
 str::sub() {
-   local readonly start="${1:-0}"
-   local readonly finish="${2:-99999}"
+   local -r start="${1:-0}"
+   local -r finish="${2:-99999}"
 
    cut -c "$((start + 1))-$((finish - 1))"
 }
 
 str::column() {
-   local readonly n="${1:-}"
+   local -r n="${1:-}"
 
    if [ -n "$n" ]; then
       awk "{print \$$n}"
