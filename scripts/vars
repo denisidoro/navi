@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-export navi_bin_dir=${navi_bin_dir:="/usr/local/bin"}
-export navi_script_dir=${navi_script_dir:="$(cd "$(dirname -- "$0")/.." && pwd)"}
+navi_bin_dir=${navi_bin_dir:="/usr/local/bin"}
+navi_script_dir=${navi_script_dir:="$(cd "$(dirname -- "$0")/.." && pwd)"}
