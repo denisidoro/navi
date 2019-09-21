@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+navi_script_dir=${navi_script_dir:-"$(cd "$(dirname -- "$0")/.." && pwd)"}
+
+source "${navi_script_dir}/src/arg.sh"
+source "${navi_script_dir}/src/cheat.sh"
+source "${navi_script_dir}/src/docs.sh"
+source "${navi_script_dir}/src/misc.sh"
+source "${navi_script_dir}/src/selection.sh"
+source "${navi_script_dir}/src/str.sh"
+source "${navi_script_dir}/src/ui.sh"
+
+source "${navi_script_dir}/src/main.sh"
+
+##? Command cheatsheet tool
+##?
+##? Usage:
+##?     cheats [options]
+##?
+##? Options:
+##?     --print                               Prevent script execution [default: false]
+##?     --no-interpolation                    Prevent argument interpolation [default: false]
+
+VERSION="0.6.0"
+docs::eval "$@"
+main "$@"
