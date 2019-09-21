@@ -82,7 +82,7 @@ For example, this is a valid `.cheat` file:
 # Change branch
 git checkout <branch>
 
-$ branch: git branch --format='%(refname:short)'
+$ branch: git branch | awk '{print $NF}'
 ```
 
 For advanced usage, please refer to the files in [/cheats](https://github.com/denisidoro/navi/tree/master/cheats).
