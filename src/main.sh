@@ -51,7 +51,7 @@ handler::preview() {
 
 main() {
    case ${entry_point:-} in
-      preview) handler::preview "$@" 2>/dev/null || echo "Unable to find command for '${query:-}'";;
+      preview) handler::preview "$@" 2>/dev/null || echo "Unable to find command for '${query:-}'" ;;
       *) health::fzf && handler::main "$@" ;;
    esac
 }

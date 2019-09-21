@@ -12,8 +12,8 @@ test::fail() {
 }
 
 test::run() {
-	echo
-	echo "-> $1"
-	shift
-	eval "$*" && test::success || test::fail
+   echo
+   echo "-> $1"
+   shift
+   eval "$*" && test::success || test::fail
 }
