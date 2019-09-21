@@ -15,7 +15,7 @@ source "${SCRIPT_DIR}/src/main.sh"
 ##?     --no-interpolation           Prevent argument interpolation [default: false]
 ##?     --no-preview                 Hide command preview window [default: false]
 
-VERSION="0.6.1"
+VERSION="0.7.0"
 docs::eval "$@"
 
 main "$@"

@@ -58,4 +58,4 @@ git clean -dxf
 # Sign all commits in a branch based on master
 git rebase master -S -f
 
-$ branch: git branch --format='%(refname:short)'
+$ branch: git branch | awk '{print $NF}'
