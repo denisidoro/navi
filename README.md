@@ -1,14 +1,12 @@
 # navi <img src="https://user-images.githubusercontent.com/3226564/65362934-b4432500-dbdf-11e9-8f75-815fbc5cbf8f.png" alt="icon" height="28px"/> [![CircleCI](https://circleci.com/gh/denisidoro/navi.svg?style=svg)](https://circleci.com/gh/denisidoro/navi) 
 
-
-
 An interactive cheatsheet tool for the command-line so that you'll never say the following again:
 
 >— *How to run that command again?*<br>
 — *Oh, it's not in my bash history*<br>
 — *Geez, it's almost what I wanted but I need to change some args*
 
-<img src="https://user-images.githubusercontent.com/3226564/65347073-8dbbc480-dbb4-11e9-886f-0f10d56def74.gif" alt="Demo" width="60%" />
+![Demo](https://user-images.githubusercontent.com/3226564/65380182-69431380-dcac-11e9-9af8-0f7b3c869d0f.gif)
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands, prompting for argument values.
 
