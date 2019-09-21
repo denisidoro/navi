@@ -89,6 +89,7 @@ For advanced usage, please refer to the files in [/cheats](https://github.com/de
 
 ## Alternatives
 
+- [cmdmenu](https://github.com/amacfie/cmdmenu);
 - [denisidoro/beavr](https://github.com/denisidoro/beavr);
 - [how2](https://github.com/santinic/how2);
 - [howdoi](https://github.com/gleitz/howdoi);
