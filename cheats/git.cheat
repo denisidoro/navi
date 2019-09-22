@@ -29,7 +29,7 @@ git add <filename>
 git add .
 
 # Saves the changes to a file in a commit
-git commit -m "<message>"
+git commit -m <message>
 
 # Pushes committed changes to remote repository
 git push -u <remote_name> <branch_name>

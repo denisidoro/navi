@@ -6,6 +6,16 @@ opts::extract_help() {
    grep "^##?" "$file" | cut -c 5-
 }
 
+opts::preview_hack() {
+   local readonly arg="$1"
+
+   if [ ${arg:0:1} = "'" ]; then
+      echo "${arg:1:${#arg}-2}"
+   else
+      echo "$arg"
+   fi
+}
+
 opts::eval() {
    local readonly wait_for=""
 
@@ -17,7 +27,7 @@ opts::eval() {
    for arg in "$@"; do
       case $wait_for in
          path) NAVI_PATH="$arg"; wait_for="" ;;
-         preview) query="$(echo "$arg" | tr "^" " ")"; wait_for=""; break ;;
+         preview) query="$(opts::preview_hack "$arg" | tr "^" " ")"; wait_for=""; break ;;
          search) query="$arg"; wait_for=""; export NAVI_PATH="${NAVI_PATH}:$(search::full_path "$query")"; ;;
          query) query="$arg"; wait_for="" ;;
       esac
