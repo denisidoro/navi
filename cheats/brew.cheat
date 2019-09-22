@@ -1,0 +1,36 @@
+% brew, cask
+
+# update brew
+brew update
+
+# upgrade brew
+brew upgrade
+
+# brew info
+brew info <package>
+
+# brew cask info
+brew cask info <casks>
+
+# brew install
+brew install <package>
+
+# brew caks install
+brew cask install <casks>
+
+# brew uninstall
+brew uninstall <installed>
+
+# brew cask uninstall
+brew cask uninstall <caskinstalled>
+
+# brew edit package
+brew edit <package>
+
+# brew edit cask
+brew cask edit <casks>
+
+$ package: brew search
+$ casks: brew search --casks
+$ installed: brew list
+$ caskinstalled: brew cask list
