@@ -2,9 +2,10 @@
 
 source "${SCRIPT_DIR}/src/arg.sh"
 source "${SCRIPT_DIR}/src/cheat.sh"
-source "${SCRIPT_DIR}/src/docs.sh"
-source "${SCRIPT_DIR}/src/healthcheck.sh"
+source "${SCRIPT_DIR}/src/health.sh"
 source "${SCRIPT_DIR}/src/misc.sh"
+source "${SCRIPT_DIR}/src/opts.sh"
+source "${SCRIPT_DIR}/src/search.sh"
 source "${SCRIPT_DIR}/src/selection.sh"
 source "${SCRIPT_DIR}/src/str.sh"
 source "${SCRIPT_DIR}/src/ui.sh"
@@ -51,7 +52,18 @@ handler::preview() {
 
 main() {
    case ${entry_point:-} in
-      preview) handler::preview "$@" 2>/dev/null || echo "Unable to find command for '${query:-}'" ;;
-      *) health::fzf && handler::main "$@" ;;
+      preview) 
+         handler::preview "$@"  \
+            || echo "Unable to find command for '${query:-}'" 
+            ;;
+      search) 
+         health::fzf 
+         search::save "$query" || true
+         handler::main "$@"
+         ;;
+      *) 
+         health::fzf 
+         handler::main "$@" 
+         ;;
    esac
 }

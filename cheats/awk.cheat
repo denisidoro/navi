@@ -1,4 +1,4 @@
-% awk, text processing, string
+% awk, string
 
-# Print nth column
-awk '{print $<n>}
+# Print last column
+echo '1 2 3' | awk '{print $NF}'

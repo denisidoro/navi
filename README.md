@@ -10,33 +10,74 @@ An interactive cheatsheet tool for the command-line so that you'll never say the
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands, prompting for argument values.
 
-## Installation
+Table of Contents
+-----------------
 
-**Using [brew](https://brew.sh/):**
-```sh
-brew install denisidoro/tools/navi
-```
+   * [Installation](#installation)
+      * [Using Homebrew or Linuxbrew](#using-homebrew-or-linuxbrew)
+      * [Using git](#using-git)
+   * [Upgrading navi](#upgrading-fzf)
+   * [Usage](#usage)
+   * [Related projects](#related-projects)
+   * [<a href="LICENSE">License</a>](#license)
 
-**Without brew:**
+Installation
+------------
+
+### Using Homebrew or Linuxbrew
+
+You can use [Homebrew](http://brew.sh/) or [Linuxbrew](http://linuxbrew.sh/)
+to install **navi**.
+
+### Using git
+
+Alternatively, you can "git clone" this repository to any directory and run `make`.
+
 ```sh
-git clone http://github.com/denisidoro/navi /opt/navi
+git clone --depth 1 http://github.com/denisidoro/navi /opt/navi
 cd /opt/navi
 sudo make install
 # install fzf: https://github.com/junegunn/fzf
 ```
 
-## Usage
+Upgrading navi
+-------------
 
-Simply call: 
-```sh
-navi
-```
+**navi** is being actively developed and you might want to upgrade it once in a while. Please follow the instruction below depending on the installation method used:
 
-## Trying it out online
+- brew: `brew update; brew reinstall navi`
+- git: `cd /opt/navi && sudo make update`
 
-Head to [this playground](https://www.katacoda.com/denisidoro/scenarios/navi) for previewing **navi**.
+Usage
+-----
 
-## Motivation
+By simply running `navi` you will be prompted with the default cheatsheets.
+
+### Preventing execution
+
+If you run `navi query <cmd>`, the results will be pre-filtered.
+
+### Pre-filtering
+
+If you run `navi query <cmd>`, the results will be pre-filtered.
+
+### Searching online repositories
+
+If you run `navi search <cmd>`, **navi** will try to download cheatsheets from online repositories as well.
+
+Please note that these cheatsheets 
+
+### More options
+
+Please refer to `navi --help` for more details.
+
+Trying it out online
+--------------------
+
+If you don't have access to bash at the moment and you want to live preview **navi**, head to [this playground](https://www.katacoda.com/denisidoro/scenarios/navi). It'll start a docker container with instructions for you to install and use the tool. Note: login required.
+
+Motivation
+----------
 
 The main objectives are:
 - to increase discoverability, by finding commands given keywords or descriptions;
@@ -50,23 +91,29 @@ Or you can launch a browser and search for instructions on Google, but that take
 
 **navi**, on the other hand, intends to be a general purpose platform for bookmarking any command at a very low cost.
 
-## Using your own cheatsheets
+Cheatsheets
+-----------
 
-In this case, you need to pass the directory which contains `.cheat` files as in:
+### Using your own custom cheatsheets
+
+In this case, you need to pass a `:`-separated list of separated directories which contain `.cheat`:
 ```sh
-navi --dir "/folder/with/cheats"
+navi --path "/folder/with/cheats"
 ```
 
 Alternatively, you can set an environment variable in your `.bashrc`-like file:
 ```sh
-export NAVI_DIR="/folder/with/cheats"
+export NAVI_PATH="/folder/with/cheats:/another/folder"
 ```
 
-## Submitting cheatsheets
+### Submitting cheatsheets
 
 Feel free to fork this project and open a PR for me to include your contributions.
 
-## .cheat syntax
+.cheat syntax
+-------------
+
+### Overview
 
 - lines starting with `%` should contain tags which will be added to any command in a given file;
 - lines starting with `#` should be descriptions of commands;
@@ -83,16 +130,16 @@ git checkout <branch>
 $ branch: git branch | awk '{print $NF}'
 ```
 
-For advanced usage, please refer to the files in [/cheats](https://github.com/denisidoro/navi/tree/master/cheats).
+### Variables
 
-## Alternatives
+Commands that contain variable names inside brackets (eg `<branch>`)
 
-- [cmdmenu](https://github.com/amacfie/cmdmenu);
-- [denisidoro/beavr](https://github.com/denisidoro/beavr);
-- [how2](https://github.com/santinic/how2);
-- [howdoi](https://github.com/gleitz/howdoi);
-- [cheat](https://github.com/cheat/cheat).
+Related projects
+----------------
 
-## Etymology
+https://github.com/denisidoro/navi/wiki/Related-projects
+
+Etymology
+---------
 
 In [The Legend of Zelda Ocarina of Time](https://zelda.gamepedia.com/Ocarina_of_Time), [navi](https://zelda.gamepedia.com/Navi) is a character that provides [Link](https://zelda.gamepedia.com/Link) with a variety of clues to help him solve puzzles and progress in his quest.

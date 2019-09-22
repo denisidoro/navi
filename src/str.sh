@@ -25,3 +25,7 @@ str::last_paragraph_line() {
    awk '(!NF) { exit } { print $0 }' \
       | tail -n1
 }
+
+str::first_word() {
+   awk '{print $1}'
+}
