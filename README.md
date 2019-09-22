@@ -16,10 +16,24 @@ Table of Contents
    * [Installation](#installation)
       * [Using Homebrew or Linuxbrew](#using-homebrew-or-linuxbrew)
       * [Using git](#using-git)
-   * [Upgrading navi](#upgrading-fzf)
+   * [Upgrading](#upgrading-fzf)
    * [Usage](#usage)
+      * [Preventing execution](#preventing-execution)
+      * [Pre-filtering](#pre-filtering)
+      * [Searching online repositories](#searching-online-repositories)
+      * [More options](#more-options)
+      * [Preventing execution](#preventing-execution)
+   * [Trying out online](#trying-out-online)
+   * [Motivation](#motivation)
+   * [Cheatsheets](#cheatsheets)
+      * [Using your own custom cheatsheets](#using-your-own-custom-cheatsheets)
+      * [Submitting cheatsheets](#submitting-cheatsheets)
+   * [Cheatsheet syntax](#cheatsheet-syntax)
+      * [Syntax overview](#syntax-overview)
+      * [Variables](#variables)
+      * [FZF options](#fzf-options)
    * [Related projects](#related-projects)
-   * [<a href="LICENSE">License</a>](#license)
+   * [Etymology](#etymology)
 
 Installation
 ------------
@@ -40,8 +54,8 @@ sudo make install
 # install fzf: https://github.com/junegunn/fzf
 ```
 
-Upgrading navi
--------------
+Upgrading
+---------
 
 **navi** is being actively developed and you might want to upgrade it once in a while. Please follow the instruction below depending on the installation method used:
 
@@ -55,7 +69,7 @@ By simply running `navi` you will be prompted with the default cheatsheets.
 
 ### Preventing execution
 
-If you run `navi query <cmd>`, the results will be pre-filtered.
+If you run `navi --print`, the selected command won't be executed. It will be printed to stdout instead.
 
 ### Pre-filtering
 
@@ -65,13 +79,13 @@ If you run `navi query <cmd>`, the results will be pre-filtered.
 
 If you run `navi search <cmd>`, **navi** will try to download cheatsheets from online repositories as well.
 
-Please note that these cheatsheets 
+Please note that these cheatsheets aren't curated by **navi**'s maintainers and should be taken with a grain of salt. If you're not sure about executing these commands, make sure to check the preview window or use the `--print` option.
 
 ### More options
 
 Please refer to `navi --help` for more details.
 
-Trying it out online
+Trying out online
 --------------------
 
 If you don't have access to bash at the moment and you want to live preview **navi**, head to [this playground](https://www.katacoda.com/denisidoro/scenarios/navi). It'll start a docker container with instructions for you to install and use the tool. Note: login required.
@@ -110,10 +124,12 @@ export NAVI_PATH="/folder/with/cheats:/another/folder"
 
 Feel free to fork this project and open a PR for me to include your contributions.
 
-.cheat syntax
--------------
+Cheatsheet syntax
+-----------------
 
-### Overview
+Cheatsheets are describe in `.cheat` files:
+
+### Syntax overview
 
 - lines starting with `%` should contain tags which will be added to any command in a given file;
 - lines starting with `#` should be descriptions of commands;
@@ -132,12 +148,36 @@ $ branch: git branch | awk '{print $NF}'
 
 ### Variables
 
-Commands that contain variable names inside brackets (eg `<branch>`)
+The interface prompts for variable names inside brackets (eg `<branch>`).
+
+The command for generating possible inputs can refer other variables:
+```sh
+# If you select 2 for x, the possible values of y will be 12 and 22
+echo <x> <y>
+
+$ x: echo -e '1\n2\n3' | tr '\n' ' '
+$ y: echo "$((x+10))" "$((x+20))"
+```
+
+### FZF options
+
+You can make pick a specific column of a selection and set the number of lines considered as headers:
+
+```sh
+# This will pick the 3rd column and use the first line as header
+docker rmi <image_id>
+
+$ image_id: docker images --- --headers 1 --column 3
+```
 
 Related projects
 ----------------
 
-https://github.com/denisidoro/navi/wiki/Related-projects
+There are many similar projects out there ([bro](https://github.com/hubsmoke/bro), [eg](https://github.com/srsudar/eg), [cheat.sh](https://github.com/chubin/cheat.sh), [cmdmenu](https://github.com/amacfie/cmdmenu), [cheat](https://github.com/cheat/cheat), [beavr](https://github.com/denisidoro/beavr), [how2](https://github.com/santinic/how2) and [howdoi](https://github.com/gleitz/howdoi), to name a few).
+
+Most of them provide excellent cheatsheet repositories, but lack a nice UI.
+
+In any case, **navi** has the option to search for some of these repositories (#installation).
 
 Etymology
 ---------
