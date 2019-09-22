@@ -5,17 +5,37 @@ export SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 source "${SCRIPT_DIR}/src/main.sh"
 
-##? Command cheatsheet tool
+##? An interactive cheatsheet tool for the command-line
 ##?
 ##? Usage:
-##?     cheats [options]
+##?    cheats [command] [<args>...] [options]
+##?
+##? Commands:
+##?    search <cmd>         Search for cheatsheets on online repositories
+##?    query  <cmd>         Pre-filter results
 ##?
 ##? Options:
-##?     --print                      Prevent script execution [default: false]
-##?     --no-interpolation           Prevent argument interpolation [default: false]
-##?     --no-preview                 Hide command preview window [default: false]
+##?    --print              Prevent script execution
+##?    --path               List of paths to look for cheats
+##?    --no-interpolation   Prevent argument interpolation
+##?    --no-preview         Hide command preview window
+##?
+##? Examples:
+##?    cheats
+##?    cheats --path '/some/folder:/another/folder'
+##?    cheats search awk
+##?    cheats search docker --print
+##?    cheats query git
+##?
+##? More info:
+##?    search               
+##?       Queries cheatsheets from http://cheat.sh
+##?       Please note that these cheatsheets may not work out of the box
+##?       Always check the preview window before executing commands!
+##?    full docs
+##?       Please refer to the README at https://github.com/denisidoro/navi
 
-VERSION="0.7.0"
-docs::eval "$@"
+VERSION="0.8.0"
+opts::eval "$@"
 
 main "$@"
