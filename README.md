@@ -6,7 +6,7 @@ An interactive cheatsheet tool for the command-line so that you'll never say the
 — *Oh, it's not in my bash history*<br>
 — *Geez, it's almost what I wanted but I need to change some args*
 
-![Demo](https://user-images.githubusercontent.com/3226564/65380182-69431380-dcac-11e9-9af8-0f7b3c869d0f.gif)
+![Demo](https://user-images.githubusercontent.com/3226564/65389667-0181dc80-dd2f-11e9-9fac-c875ed7c7b53.gif)
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands, prompting for argument values.
 
@@ -16,13 +16,12 @@ Table of Contents
    * [Installation](#installation)
       * [Using Homebrew or Linuxbrew](#using-homebrew-or-linuxbrew)
       * [Using git](#using-git)
-   * [Upgrading](#upgrading-fzf)
+   * [Upgrading](#upgrading)
    * [Usage](#usage)
       * [Preventing execution](#preventing-execution)
       * [Pre-filtering](#pre-filtering)
       * [Searching online repositories](#searching-online-repositories)
       * [More options](#more-options)
-      * [Preventing execution](#preventing-execution)
    * [Trying out online](#trying-out-online)
    * [Motivation](#motivation)
    * [Cheatsheets](#cheatsheets)
@@ -45,7 +44,7 @@ to install **navi**.
 
 ### Using git
 
-Alternatively, you can "git clone" this repository to any directory and run `make`.
+Alternatively, you can `git clone` this repository and run `make`:
 
 ```sh
 git clone --depth 1 http://github.com/denisidoro/navi /opt/navi
@@ -127,7 +126,7 @@ Feel free to fork this project and open a PR for me to include your contribution
 Cheatsheet syntax
 -----------------
 
-Cheatsheets are describe in `.cheat` files:
+Cheatsheets are describe in `.cheat` files.
 
 ### Syntax overview
 
@@ -156,7 +155,7 @@ The command for generating possible inputs can refer other variables:
 echo <x> <y>
 
 $ x: echo -e '1\n2\n3' | tr '\n' ' '
-$ y: echo "$((x+10))" "$((x+20))"
+$ y: echo "$((x+10))" "$((x+20))" | tr '\n' ' '
 ```
 
 ### FZF options
@@ -177,7 +176,7 @@ There are many similar projects out there ([bro](https://github.com/hubsmoke/bro
 
 Most of them provide excellent cheatsheet repositories, but lack a nice UI.
 
-In any case, **navi** has the option to search for some of these repositories (#installation).
+In any case, **navi** has the option to [search for some of these repositories](#installation).
 
 Etymology
 ---------

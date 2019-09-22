@@ -19,7 +19,7 @@ opts::eval() {
          path) NAVI_PATH="$arg"; wait_for="" ;;
          preview) query="$(echo "$arg" | tr "^" " ")"; wait_for=""; break ;;
          search) query="$arg"; wait_for=""; export NAVI_PATH="${NAVI_PATH}:$(search::full_path "$query")"; ;;
-         query) query="$arg". wait_for="" ;;
+         query) query="$arg"; wait_for="" ;;
       esac
 
       case $arg in
