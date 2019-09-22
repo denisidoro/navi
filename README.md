@@ -176,7 +176,7 @@ There are many similar projects out there ([bro](https://github.com/hubsmoke/bro
 
 Most of them provide excellent cheatsheet repositories, but lack a nice UI.
 
-In any case, **navi** has the option to [search for some of these repositories](#installation).
+In any case, **navi** has the option to [search for some of these repositories](#searching-online-repositories).
 
 Etymology
 ---------
