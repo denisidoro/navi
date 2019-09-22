@@ -40,7 +40,10 @@ Installation
 ### Using Homebrew or Linuxbrew
 
 You can use [Homebrew](http://brew.sh/) or [Linuxbrew](http://linuxbrew.sh/)
-to install **navi**.
+to install **navi**:
+```sh
+brew install denisidoro/tools/navi
+```
 
 ### Using git
 
