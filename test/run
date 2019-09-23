@@ -11,5 +11,3 @@ for test in $tests; do
 done
 
 test::finish
-echo "$PASSED"
-echo "$FAILED"

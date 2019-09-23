@@ -6,7 +6,7 @@ check_all_vars() {
    for var in $(cat "$1" | grep -Eo "<[^>]*>"); do
       if ! echo "$var" | grep -qE "$ARG_REGEX"; then
          echoerr "$var isn't a valid variable name!"
-         exit 1
+         return 1
       fi
    done
 }

@@ -13,6 +13,7 @@ test::success() {
 test::fail() {
    FAILED=$((FAILED+1))
    echo "Test failed..."
+   return
 }
 
 test::run() {
@@ -26,7 +27,7 @@ test::finish() {
    echo
    if [ $FAILED -gt 0 ]; then
       echo "${PASSED} tests passed but ${FAILED} failed... :("
-      exit 99
+      exit "${FAILED}"
    else
       echo "All ${PASSED} tests passed! :)"
       exit 0
