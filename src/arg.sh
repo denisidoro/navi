@@ -4,8 +4,10 @@ ARG_REGEX="<[0-9a-zA-Z_]+>"
 ARG_DELIMITER="£"
 
 arg::dict() {
-   local -r fn="$(awk -F'---' '{print $1}')"
-   local -r opts="$(awk -F'---' '{print $2}')"
+   # capture stdin because subsequent attempts to read it fail
+   local -r stdin="$(cat -)"
+   local -r fn="$(echo "$stdin" | awk -F'---' '{print $1}')"
+   local -r opts="$(echo "$stdin" | awk -F'---' '{print $2}')"
 
    dict::new fn "$fn" opts "$opts"
 }
