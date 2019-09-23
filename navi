@@ -28,7 +28,7 @@ source "${SCRIPT_DIR}/src/main.sh"
 ##?    cheats query git
 ##?
 ##? More info:
-##?    search               
+##?    search
 ##?       Queries cheatsheets from http://cheat.sh
 ##?       Please note that these cheatsheets may not work out of the box
 ##?       Always check the preview window before executing commands!

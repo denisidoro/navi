@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 cheat::find() {
-  for path in $(echo "$NAVI_PATH" | tr ':' '\n'); do
-    find "$path" -iname '*.cheat'
-  done
+   for path in $(echo "$NAVI_PATH" | tr ':' '\n'); do
+      find "$path" -iname '*.cheat'
+   done
 }
 
 cheat::read_many() {

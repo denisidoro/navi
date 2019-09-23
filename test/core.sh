@@ -23,12 +23,12 @@ test::run() {
 }
 
 test::finish() {
-  echo
-  if [ $FAILED -gt 0 ]; then
-    echo "${PASSED} tests passed but ${FAILED} failed... :("
-    exit 99
-  else
-    echo "All ${PASSED} tests passed! :)"
-    exit 0
-  fi
+   echo
+   if [ $FAILED -gt 0 ]; then
+      echo "${PASSED} tests passed but ${FAILED} failed... :("
+      exit 99
+   else
+      echo "All ${PASSED} tests passed! :)"
+      exit 0
+   fi
 }
