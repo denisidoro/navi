@@ -18,6 +18,7 @@ arg::interpolate() {
 
 arg::next() {
    grep -Eo "$ARG_REGEX" \
+      | xargs \
       | head -n1 \
       | tr -d '<' \
       | tr -d '>'
@@ -32,7 +33,7 @@ arg::pick() {
    local -r arg_dict="$(grep "$prefix" "$cheat" | str::sub $((length + 1)) | arg::dict)"
 
    local -r fn="$(echo "$arg_dict" | dict::get fn)"
-   local -r args_str="$(echo "$arg_dict" | dic::get opts | tr ' ' '\n' || echo "")"
+   local -r args_str="$(echo "$arg_dict" | dict::get opts | tr ' ' '\n' || echo "")"
    local arg_name=""
 
    for arg_str in $args_str; do
