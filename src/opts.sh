@@ -13,6 +13,7 @@ opts::eval() {
    local interpolation=true
    local preview=true
    local path="${NAVI_PATH:-${NAVI_DIR:-${SCRIPT_DIR}/cheats}}"
+   local autoselect=true
 
    for arg in "$@"; do
       case $wait_for in
@@ -33,8 +34,9 @@ opts::eval() {
          search) entry_point="search"; wait_for="search" ;;
          preview) entry_point="preview"; wait_for="preview" ;;
          q|query) wait_for="query" ;;
+         --no-autoselect) autoselect=false ;;
       esac
    done
 
-   dict::new entry_point "$entry_point" print "$print" interpolation "$interpolation" preview "$preview" query "${query:-}" path "$path"
+   dict::new entry_point "$entry_point" print "$print" interpolation "$interpolation" preview "$preview" query "${query:-}" path "$path" autoselect "$autoselect"
 }

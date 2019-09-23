@@ -14,6 +14,7 @@ ui::select() {
    local -r query="$(dict::get "$OPTIONS" query)"
    local -r entry_point="$(dict::get "$OPTIONS" entry_point)"
    local -r preview="$(dict::get "$OPTIONS" preview)"
+   local -r autoselect="$(dict::get "$OPTIONS" autoselect)"
 
    local args=()
    args+=("-i")
@@ -28,6 +29,9 @@ ui::select() {
    if [ "$entry_point" = "search" ]; then
       args+=("--header")
       args+=("Displaying online results. Please refer to 'navi --help' for details")
+   fi
+   if [ "$autoselect" == true ]; then
+      args+=("--select-1")
    fi
 
    echo "$cheats" \
