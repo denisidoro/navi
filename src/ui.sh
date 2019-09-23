@@ -6,7 +6,7 @@ ui::pick() {
 
 ui::select() {
    local -r cheats="$1"
-   local -r script_path="$(which navi | head -n1 || echo "${SCRIPT_DIR}/navi")"
+   local -r script_path="${SCRIPT_DIR}/navi"
    local -r preview_cmd="echo \"{}\" | tr ' ' '^' | xargs -I% \"${script_path}\" preview %"
 
    local args=()
