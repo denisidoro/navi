@@ -17,7 +17,7 @@ opts::preview_hack() {
 }
 
 opts::eval() {
-   local -r wait_for=""
+   local wait_for=""
 
    entry_point="main"
    print=false

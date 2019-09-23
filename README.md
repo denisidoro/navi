@@ -112,7 +112,7 @@ Cheatsheets
 
 ### Using your own custom cheatsheets
 
-In this case, you need to pass a `:`-separated list of separated directories which contain `.cheat`:
+In this case, you need to pass a `:`-separated list of separated directories which contain `.cheat` files:
 ```sh
 navi --path "/folder/with/cheats"
 ```
@@ -129,13 +129,13 @@ Feel free to fork this project and open a PR for me to include your contribution
 Cheatsheet syntax
 -----------------
 
-Cheatsheets are describe in `.cheat` files.
+Cheatsheets are described in `.cheat` files.
 
 ### Syntax overview
 
 - lines starting with `%` should contain tags which will be added to any command in a given file;
 - lines starting with `#` should be descriptions of commands;
-- lines starting with `$` should contain commands that generate suggestion values for a given argument;
+- lines starting with `$` should contain commands that generate a list of possible values for a given argument;
 - all the other non-empty lines are considered as executable commands.
 
 For example, this is a valid `.cheat` file:
@@ -157,8 +157,8 @@ The command for generating possible inputs can refer other variables:
 # If you select 2 for x, the possible values of y will be 12 and 22
 echo <x> <y>
 
-$ x: echo -e '1\n2\n3' | tr '\n' ' '
-$ y: echo "$((x+10))" "$((x+20))" | tr '\n' ' '
+$ x: echo -e '1\n2\n3'
+$ y: echo -e "$((x+10))\n$((x+20))"
 ```
 
 ### FZF options
@@ -175,7 +175,7 @@ $ image_id: docker images --- --headers 1 --column 3
 Related projects
 ----------------
 
-There are many similar projects out there ([bro](https://github.com/hubsmoke/bro), [eg](https://github.com/srsudar/eg), [cheat.sh](https://github.com/chubin/cheat.sh), [cmdmenu](https://github.com/amacfie/cmdmenu), [cheat](https://github.com/cheat/cheat), [beavr](https://github.com/denisidoro/beavr), [how2](https://github.com/santinic/how2) and [howdoi](https://github.com/gleitz/howdoi), to name a few).
+There are many similar projects out there ([bro](https://github.com/hubsmoke/bro), [eg](https://github.com/srsudar/eg), [cheat.sh](https://github.com/chubin/cheat.sh), [tldr](https://github.com/tldr-pages/tldr), [cmdmenu](https://github.com/amacfie/cmdmenu), [cheat](https://github.com/cheat/cheat), [beavr](https://github.com/denisidoro/beavr), [how2](https://github.com/santinic/how2) and [howdoi](https://github.com/gleitz/howdoi), to name a few).
 
 Most of them provide excellent cheatsheet repositories, but lack a nice UI.
 
