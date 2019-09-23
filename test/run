@@ -4,7 +4,7 @@ set -euo pipefail
 export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 source "${SCRIPT_DIR}/test/core.sh"
 
-tests="$(find "$SCRIPT_DIR/test" -iname '*_test.sh')"
+tests="$(find "$SCRIPT_DIR/test" -iname "*${1:-}*_test.sh")"
 
 for test in $tests; do
 	source "$test"
