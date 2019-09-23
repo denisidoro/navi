@@ -8,5 +8,6 @@ export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "${SCRIPT_DIR}"
 find . -iname '*.sh' | xargs -I% dot code beautify %
 find scripts/* | xargs -I% dot code beautify %
+find shell/* | xargs -I% dot code beautify %
 dot code beautify "${SCRIPT_DIR}/test/run"
 dot code beautify "${SCRIPT_DIR}/navi"
