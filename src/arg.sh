@@ -2,11 +2,12 @@
 
 ARG_REGEX="<[0-9a-zA-Z_]+>"
 
-arg::dict() {
-   local -r fn="$(awk -F'---' '{print $1}')"
-   local -r opts="$(awk -F'---' '{print $2}')"
+arg::fn() {
+   awk -F'---' '{print $1}'
+}
 
-   dict::new fn "$fn" opts "$opts"
+arg::opts() {
+   awk -F'---' '{print $2}'
 }
 
 arg::interpolate() {
@@ -29,10 +30,10 @@ arg::pick() {
 
    local -r prefix="$ ${arg}:"
    local -r length="$(echo "$prefix" | str::length)"
-   local -r arg_dict="$(grep "$prefix" "$cheat" | str::sub $((length + 1)) | arg::dict)"
+   local -r arg_description="$(grep "$prefix" "$cheat" | str::sub $((length + 1)))"
 
-   local -r fn="$(echo "$arg_dict" | dict::get fn)"
-   local -r args_str="$(echo "$arg_dict" | dic::get opts | tr ' ' '\n' || echo "")"
+   local -r fn="$(echo "$arg_description" | arg::fn)"
+   local -r args_str="$(echo "$arg_description" | arg::opts | tr ' ' '\n' || echo "")"
    local arg_name=""
 
    for arg_str in $args_str; do
