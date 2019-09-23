@@ -2,6 +2,7 @@
 
 source "${SCRIPT_DIR}/src/arg.sh"
 source "${SCRIPT_DIR}/src/cheat.sh"
+source "${SCRIPT_DIR}/src/dict.sh"
 source "${SCRIPT_DIR}/src/health.sh"
 source "${SCRIPT_DIR}/src/misc.sh"
 source "${SCRIPT_DIR}/src/opts.sh"

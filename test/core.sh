@@ -23,6 +23,16 @@ test::run() {
    eval "$*" && test::success || test::fail
 }
 
+test::equals() {
+   local -r actual="$(cat | tr -d '\n')"
+   local -r expected="$(echo "${1:-}" | tr -d '\n' | sed 's/\\n//g')"
+
+   if [[ "$actual" != "$expected" ]]; then
+      echo "Expected '${expected}' but got '${actual}'"
+      return 2
+   fi
+}
+
 test::finish() {
    echo
    if [ $FAILED -gt 0 ]; then
