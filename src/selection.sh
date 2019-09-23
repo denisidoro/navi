@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-selection::standardize() {
+selection::dict() {
    local -r str="$(cat)"
 
    local -r tags="$(echo "$str" | awk -F'[' '{print $NF}' | tr -d ']')"
@@ -13,7 +13,7 @@ selection::core_is_comment() {
    grep -qE '^#'
 }
 
-selection::dict() {
+selection::cmd() {
    local -r selection="$1"
    local -r cheat="$2"
 

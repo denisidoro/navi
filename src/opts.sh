@@ -27,7 +27,7 @@ opts::eval() {
    for arg in "$@"; do
       case $wait_for in
          path) NAVI_PATH="$arg"; wait_for="" ;;
-         preview) query="$(opts::preview_hack "$arg" | tr "^" " ")"; wait_for=""; break ;;
+         preview) query="$(opts::preview_hack "$arg" | sed 's/£/ /g')"; wait_for=""; break ;;
          search) query="$arg"; wait_for=""; export NAVI_PATH="${NAVI_PATH}:$(search::full_path "$query")"; ;;
          query) query="$arg"; wait_for="" ;;
       esac

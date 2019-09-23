@@ -7,7 +7,7 @@ ui::pick() {
 ui::select() {
    local -r cheats="$1"
    local -r script_path="${SCRIPT_DIR}/navi"
-   local -r preview_cmd="echo \"{}\" | tr ' ' '^' | xargs -I% \"${script_path}\" preview %"
+   local -r preview_cmd="echo \"{}\" | tr ' ' '£' | xargs -I% \"${script_path}\" preview %"
 
    local args=()
    args+=("-i")
@@ -27,7 +27,7 @@ ui::select() {
    echo "$cheats" \
       | cheat::read_many \
       | ui::pick "${args[@]}" \
-      | selection::standardize
+      | selection::dict
 }
 
 ui::clear_previous_line() {
