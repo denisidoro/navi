@@ -3,7 +3,7 @@
 DICT_DELIMITER='\f'
 
 dict::_post() {
-   sed -E 's/; /\\n/g' | awk 'NF > 0' | sort
+   sed -E 's/; /\\n/g' | awk 'NF > 0' | dict::_unescape_value | sort
 }
 
 dict::new() {
