@@ -24,7 +24,7 @@ cheat::from_selection() {
    local -r cheats="$1"
    local -r selection="$2"
 
-   local -r tags="$(echo "$selection" | selection::tags)"
+   local -r tags="$(dict::get "$selection" tags)"
 
    for cheat in $cheats; do
       if grep -q "% $tags" "$cheat"; then

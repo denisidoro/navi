@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 ARG_REGEX="<[0-9a-zA-Z_]+>"
+ARG_DELIMITER="£"
 
-arg::fn() {
-   awk -F'---' '{print $1}'
-}
+arg::dict() {
+   local -r fn="$(awk -F'---' '{print $1}')"
+   local -r opts="$(awk -F'---' '{print $2}')"
 
-arg::opts() {
-   awk -F'---' '{print $2}'
+   dict::new fn "$fn" opts "$opts"
 }
 
 arg::interpolate() {
@@ -19,21 +19,35 @@ arg::interpolate() {
 
 arg::next() {
    grep -Eo "$ARG_REGEX" \
+      | xargs \
       | head -n1 \
       | tr -d '<' \
       | tr -d '>'
 }
 
+arg::deserialize() {
+   local -r arg="$1"
+
+   if [ ${arg:0:1} = "'" ]; then
+      local -r out="$(echo "${arg:1:${#arg}-2}")"
+   else
+      local -r out="$arg"
+   fi
+
+   echo "$out" | sed "s/${ARG_DELIMITER}/ /g"
+}
+
+# TODO: separation of concerns
 arg::pick() {
    local -r arg="$1"
    local -r cheat="$2"
 
    local -r prefix="$ ${arg}:"
    local -r length="$(echo "$prefix" | str::length)"
-   local -r arg_description="$(grep "$prefix" "$cheat" | str::sub $((length + 1)))"
+   local -r arg_dict="$(grep "$prefix" "$cheat" | str::sub $((length + 1)) | arg::dict)"
 
-   local -r fn="$(echo "$arg_description" | arg::fn)"
-   local -r args_str="$(echo "$arg_description" | arg::opts | tr ' ' '\n' || echo "")"
+   local -r fn="$(dict::get "$arg_dict" fn)"
+   local -r args_str="$(dict::get "$arg_dict" opts | tr ' ' '\n' || echo "")"
    local arg_name=""
 
    for arg_str in $args_str; do

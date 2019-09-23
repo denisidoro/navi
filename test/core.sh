@@ -2,6 +2,9 @@
 
 source "${SCRIPT_DIR}/src/main.sh"
 
+OPTIONS="$(opts::eval "$@")"
+export NAVI_PATH="$(dict::get "$OPTIONS" path)"
+
 PASSED=0
 FAILED=0
 
@@ -21,6 +24,16 @@ test::run() {
    echo "-> $1"
    shift
    eval "$*" && test::success || test::fail
+}
+
+test::equals() {
+   local -r actual="$(cat | tr -d '\n')"
+   local -r expected="$(echo "${1:-}" | tr -d '\n' | sed 's/\\n//g')"
+
+   if [[ "$actual" != "$expected" ]]; then
+      echo "Expected '${expected}' but got '${actual}'"
+      return 2
+   fi
 }
 
 test::finish() {

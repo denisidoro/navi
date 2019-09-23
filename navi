@@ -36,6 +36,7 @@ source "${SCRIPT_DIR}/src/main.sh"
 ##?       Please refer to the README at https://github.com/denisidoro/navi
 
 VERSION="0.8.1"
-opts::eval "$@"
 
+OPTIONS="$(opts::eval "$@")"
+export NAVI_PATH="$(dict::get "$OPTIONS" path)"
 main "$@"

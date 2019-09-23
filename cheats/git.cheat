@@ -58,4 +58,7 @@ git clean -dxf
 # Sign all commits in a branch based on master
 git rebase master -S -f
 
+# See all open pull requests of a user on Github
+url::open 'https://github.com/pulls?&q=author:<user>+is:open+is:pr'
+
 $ branch: git branch | awk '{print $NF}'

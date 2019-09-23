@@ -2,6 +2,7 @@
 
 source "${SCRIPT_DIR}/src/arg.sh"
 source "${SCRIPT_DIR}/src/cheat.sh"
+source "${SCRIPT_DIR}/src/dict.sh"
 source "${SCRIPT_DIR}/src/health.sh"
 source "${SCRIPT_DIR}/src/misc.sh"
 source "${SCRIPT_DIR}/src/opts.sh"
@@ -14,8 +15,11 @@ handler::main() {
    local -r cheats="$(cheat::find)"
    local -r selection="$(ui::select "$cheats")"
    local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
+
    [ -z "$cheat" ] && exit 67
-   local cmd="$(selection::command "$selection" "$cheat")"
+
+   local -r interpolation="$(dict::get "$OPTIONS" interpolation)"
+   local cmd="$(selection::cmd "$selection" "$cheat")"
    local arg value
 
    while $interpolation; do
@@ -36,6 +40,7 @@ handler::main() {
 
    local -r unresolved_arg="$(echo "$cmd" | arg::next || echo "")"
 
+   local -r print="$(dict::get "$OPTIONS" print)"
    if $print || [ -n "$unresolved_arg" ]; then
       echo "$cmd"
    else
@@ -44,26 +49,37 @@ handler::main() {
 }
 
 handler::preview() {
-   local -r selection="$(echo "$query" | selection::standardize)"
+   local -r query="$1"
+   local -r selection="$(echo "$query" | selection::dict)"
    local -r cheats="$(cheat::find)"
    local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
-   [ -n "$cheat" ] && selection::command "$selection" "$cheat"
+   [ -n "$cheat" ] && selection::cmd "$selection" "$cheat"
+}
+
+handler::text() {
+   dict::get "$OPTIONS" text
+   ui::clear_previous_line
 }
 
 main() {
-   case ${entry_point:-} in
+   case "$(dict::get "$OPTIONS" entry_point)" in
       preview)
-         handler::preview "$@"  \
-            || echo "Unable to find command for '${query:-}'"
+         local -r query="$(dict::get "$OPTIONS" query)"
+         handler::preview "$query"  \
+            || echo "Unable to find command for '$query'"
          ;;
       search)
          health::fzf
+         local -r query="$(dict::get "$OPTIONS" query)"
          search::save "$query" || true
-         handler::main "$@"
+         handler::main
+         ;;
+      text)
+         handler::text
          ;;
       *)
          health::fzf
-         handler::main "$@"
+         handler::main
          ;;
    esac
 }

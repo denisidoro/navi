@@ -5,21 +5,21 @@ export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 source "${SCRIPT_DIR}/src/main.sh"
 
 sha256() {
-	if command_exists sha256sum; then
-  		sha256sum
-  	elif command_exists shasum; then
-  		shasum -a 256
-  	elif command_exists openssl; then
-  		openssl dgst -sha256
-  	else
-  		echoerr "Unable to calculate sha256!"
-  		exit 43
-	fi
+   if command_exists sha256sum; then
+      sha256sum
+   elif command_exists shasum; then
+      shasum -a 256
+   elif command_exists openssl; then
+      openssl dgst -sha256
+   else
+      echoerr "Unable to calculate sha256!"
+      exit 43
+   fi
 }
 
 header() {
-	echo "$*"
-	echo
+   echo "$*"
+   echo
 }
 
 cd "$SCRIPT_DIR"

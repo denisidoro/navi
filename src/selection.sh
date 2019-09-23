@@ -1,31 +1,23 @@
 #!/usr/bin/env bash
 
-selection::standardize() {
+selection::dict() {
    local -r str="$(cat)"
 
    local -r tags="$(echo "$str" | awk -F'[' '{print $NF}' | tr -d ']')"
    local -r core="$(echo "$str" | sed -e "s/ \[${tags}\]$//")"
 
-   echo "${core}^${tags}"
-}
-
-selection::core() {
-   cut -d'^' -f1
-}
-
-selection::tags() {
-   cut -d'^' -f2
+   dict::new core "$core" tags "$tags"
 }
 
 selection::core_is_comment() {
    grep -qE '^#'
 }
 
-selection::command() {
+selection::cmd() {
    local -r selection="$1"
    local -r cheat="$2"
 
-   local -r core="$(echo $selection | selection::core)"
+   local -r core="$(echo "$selection" | dict::get core)"
 
    if echo "$core" | selection::core_is_comment; then
       grep "$core" "$cheat" -A999 \
