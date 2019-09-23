@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 search::cheat() {
-   local readonly cmd="$(echo "$1" | str::first_word)"
+   local -r cmd="$(echo "$1" | str::first_word)"
 
    echo "% ${cmd}, cheatsh"
    echo
@@ -9,7 +9,7 @@ search::cheat() {
 }
 
 search::filename() {
-   local readonly cmd="$(echo "$1" | str::first_word)"
+   local -r cmd="$(echo "$1" | str::first_word)"
 
    echo "${cmd}_cheatsh" \
       | head -n1 \
@@ -19,16 +19,16 @@ search::filename() {
 }
 
 search::full_path() {
-   local readonly cmd="$(echo "$1" | str::first_word)"
+   local -r cmd="$(echo "$1" | str::first_word)"
 
    echo "/tmp/navi/$(search::filename "$cmd").cheat"
 }
 
 search::save() {
-   local readonly cmd="$(echo "$1" | str::first_word)"
+   local -r cmd="$(echo "$1" | str::first_word)"
 
-   local readonly filepath="$(search::full_path "$cmd")"
-   local readonly filedir="$(dirname "$filepath")"
+   local -r filepath="$(search::full_path "$cmd")"
+   local -r filedir="$(dirname "$filepath")"
 
    if [ -f "$filepath" ]; then
       return

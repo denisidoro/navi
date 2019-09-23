@@ -11,9 +11,9 @@ source "${SCRIPT_DIR}/src/str.sh"
 source "${SCRIPT_DIR}/src/ui.sh"
 
 handler::main() {
-   local readonly cheats="$(cheat::find)"
-   local readonly selection="$(ui::select "$cheats")"
-   local readonly cheat="$(cheat::from_selection "$cheats" "$selection")"
+   local -r cheats="$(cheat::find)"
+   local -r selection="$(ui::select "$cheats")"
+   local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
    [ -z "$cheat" ] && exit 67
    local cmd="$(selection::command "$selection" "$cheat")"
    local arg value
@@ -34,7 +34,7 @@ handler::main() {
       cmd="$(echo "$cmd" | arg::interpolate "$arg" "$value")"
    done
 
-   local readonly unresolved_arg="$(echo "$cmd" | arg::next || echo "")"
+   local -r unresolved_arg="$(echo "$cmd" | arg::next || echo "")"
 
    if $print || [ -n "$unresolved_arg" ]; then
       echo "$cmd"
@@ -44,9 +44,9 @@ handler::main() {
 }
 
 handler::preview() {
-   local readonly selection="$(echo "$query" | selection::standardize)"
-   local readonly cheats="$(cheat::find)"
-   local readonly cheat="$(cheat::from_selection "$cheats" "$selection")"
+   local -r selection="$(echo "$query" | selection::standardize)"
+   local -r cheats="$(cheat::find)"
+   local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
    [ -n "$cheat" ] && selection::command "$selection" "$cheat"
 }
 

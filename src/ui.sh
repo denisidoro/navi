@@ -5,9 +5,9 @@ ui::pick() {
 }
 
 ui::select() {
-   local readonly cheats="$1"
-   local readonly script_path="$(which navi | head -n1 || echo "${SCRIPT_DIR}/navi")"
-   local readonly preview_cmd="echo \"{}\" | tr ' ' '^' | xargs -I% \"${script_path}\" preview %"
+   local -r cheats="$1"
+   local -r script_path="$(which navi | head -n1 || echo "${SCRIPT_DIR}/navi")"
+   local -r preview_cmd="echo \"{}\" | tr ' ' '^' | xargs -I% \"${script_path}\" preview %"
 
    local args=()
    args+=("-i")
