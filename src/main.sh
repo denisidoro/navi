@@ -30,7 +30,7 @@ handler::main() {
 
       value="$(arg::pick "$arg" "$cheat" || echo "")"
       if [ -z "$value" ]; then
-         echo "$cmd"
+         echoerr "Unable to fetch suggestions for '$arg'!"
          exit 0
       fi
 
@@ -42,7 +42,7 @@ handler::main() {
 
    local -r print="$(dict::get "$OPTIONS" print)"
    if $print || [ -n "$unresolved_arg" ]; then
-      echoerr "Unable to fetch suggestions for '$arg'!"
+      echo "$cmd"
    else
       eval "$cmd"
    fi
