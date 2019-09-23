@@ -30,7 +30,7 @@ ui::select() {
       args+=("--header")
       args+=("Displaying online results. Please refer to 'navi --help' for details")
    fi
-   if [ "$autoselect" == true ]; then
+   if [ "$autoselect" ]; then
       args+=("--select-1")
    fi
 
