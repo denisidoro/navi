@@ -2,12 +2,12 @@
 set -euo pipefail
 
 opts::extract_help() {
-   local readonly file="$1"
+   local -r file="$1"
    grep "^##?" "$file" | cut -c 5-
 }
 
 opts::preview_hack() {
-   local readonly arg="$1"
+   local -r arg="$1"
 
    if [ ${arg:0:1} = "'" ]; then
       echo "${arg:1:${#arg}-2}"
@@ -17,7 +17,7 @@ opts::preview_hack() {
 }
 
 opts::eval() {
-   local readonly wait_for=""
+   local -r wait_for=""
 
    entry_point="main"
    print=false

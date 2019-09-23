@@ -11,8 +11,8 @@ arg::opts() {
 }
 
 arg::interpolate() {
-   local readonly arg="$1"
-   local readonly value="$2"
+   local -r arg="$1"
+   local -r value="$2"
 
    sed "s|<${arg}>|\"${value}\"|g"
 }
@@ -25,15 +25,15 @@ arg::next() {
 }
 
 arg::pick() {
-   local readonly arg="$1"
-   local readonly cheat="$2"
+   local -r arg="$1"
+   local -r cheat="$2"
 
-   local readonly prefix="$ ${arg}:"
-   local readonly length="$(echo "$prefix" | str::length)"
-   local readonly arg_description="$(grep "$prefix" "$cheat" | str::sub $((length + 1)))"
+   local -r prefix="$ ${arg}:"
+   local -r length="$(echo "$prefix" | str::length)"
+   local -r arg_description="$(grep "$prefix" "$cheat" | str::sub $((length + 1)))"
 
-   local readonly fn="$(echo "$arg_description" | arg::fn)"
-   local readonly args_str="$(echo "$arg_description" | arg::opts | tr ' ' '\n' || echo "")"
+   local -r fn="$(echo "$arg_description" | arg::fn)"
+   local -r args_str="$(echo "$arg_description" | arg::opts | tr ' ' '\n' || echo "")"
    local arg_name=""
 
    for arg_str in $args_str; do
