@@ -39,10 +39,16 @@ dict::assoc() {
 }
 
 dict::get() {
-  local -r key="$1"
+  if [ $# = 1 ]; then
+    local -r input="$(cat)"
+    local -r key="$1"
+  else
+    local -r input="$1"
+    local -r key="$2"
+  fi
 
   local -r prefix="${key}[^:]*: "
-  local -r result="$(grep -E "^${prefix}")"
+  local -r result="$(echo "$input" | grep -E "^${prefix}")"
   local -r matches="$(echo "$result" | wc -l || echo 0)"
 
   if [ $matches -gt 1 ]; then

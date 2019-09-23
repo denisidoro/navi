@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 ARG_REGEX="<[0-9a-zA-Z_]+>"
+ARG_DELIMITER="£"
 
 arg::dict() {
    local -r fn="$(awk -F'---' '{print $1}')"
@@ -24,6 +25,19 @@ arg::next() {
       | tr -d '>'
 }
 
+arg::deserialize() {
+   local -r arg="$1"
+
+   if [ ${arg:0:1} = "'" ]; then
+      local -r out="$(echo "${arg:1:${#arg}-2}")"
+   else
+      local -r out="$arg"
+   fi
+
+   echo "$out" | sed "s/${ARG_DELIMITER}/ /g"
+}
+
+# TODO: separation of concerns
 arg::pick() {
    local -r arg="$1"
    local -r cheat="$2"
@@ -32,8 +46,8 @@ arg::pick() {
    local -r length="$(echo "$prefix" | str::length)"
    local -r arg_dict="$(grep "$prefix" "$cheat" | str::sub $((length + 1)) | arg::dict)"
 
-   local -r fn="$(echo "$arg_dict" | dict::get fn)"
-   local -r args_str="$(echo "$arg_dict" | dict::get opts | tr ' ' '\n' || echo "")"
+   local -r fn="$(dict::get "$arg_dict" fn)"
+   local -r args_str="$(dict::get "$arg_dict" opts | tr ' ' '\n' || echo "")"
    local arg_name=""
 
    for arg_str in $args_str; do

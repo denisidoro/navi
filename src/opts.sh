@@ -6,28 +6,17 @@ opts::extract_help() {
    grep "^##?" "$file" | cut -c 5-
 }
 
-opts::preview_hack() {
-   local -r arg="$1"
-
-   if [ ${arg:0:1} = "'" ]; then
-      echo "${arg:1:${#arg}-2}"
-   else
-      echo "$arg"
-   fi
-}
-
 opts::eval() {
    local wait_for=""
-
-   entry_point="main"
-   print=false
-   interpolation=true
-   preview=true
+   local entry_point="main"
+   local print=false
+   local interpolation=true
+   local preview=true
 
    for arg in "$@"; do
       case $wait_for in
          path) NAVI_PATH="$arg"; wait_for="" ;;
-         preview) query="$(opts::preview_hack "$arg" | sed 's/£/ /g')"; wait_for=""; break ;;
+         preview) query="$(arg::deserialize "$arg")"; wait_for="" ;;
          search) query="$arg"; wait_for=""; export NAVI_PATH="${NAVI_PATH}:$(search::full_path "$query")"; ;;
          query) query="$arg"; wait_for="" ;;
       esac
@@ -45,6 +34,8 @@ opts::eval() {
          q|query) wait_for="query" ;;
       esac
    done
+
+   dict::new entry_point "$entry_point" print "$print" interpolation "$interpolation" preview "$preview" query "${query:-}"
 }
 
 opts::fallback_path() {

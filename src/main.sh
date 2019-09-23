@@ -15,7 +15,10 @@ handler::main() {
    local -r cheats="$(cheat::find)"
    local -r selection="$(ui::select "$cheats")"
    local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
+
    [ -z "$cheat" ] && exit 67
+
+   local -r interpolation="$(dict::get "$OPTIONS" interpolation)"
    local cmd="$(selection::cmd "$selection" "$cheat")"
    local arg value
 
@@ -37,6 +40,7 @@ handler::main() {
 
    local -r unresolved_arg="$(echo "$cmd" | arg::next || echo "")"
 
+   local -r print="$(dict::get "$OPTIONS" print)"
    if $print || [ -n "$unresolved_arg" ]; then
       echo "$cmd"
    else
@@ -45,6 +49,7 @@ handler::main() {
 }
 
 handler::preview() {
+   local -r query="$1"
    local -r selection="$(echo "$query" | selection::dict)"
    local -r cheats="$(cheat::find)"
    local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
@@ -52,19 +57,21 @@ handler::preview() {
 }
 
 main() {
-   case ${entry_point:-} in
+   case "$(dict::get "$OPTIONS" entry_point)" in
       preview)
-         handler::preview "$@"  \
-            || echo "Unable to find command for '${query:-}'"
+         local -r query="$(dict::get "$OPTIONS" query)"
+         handler::preview "$query"  \
+            || echo "Unable to find command for '$query'"
          ;;
       search)
          health::fzf
+         local -r query="$(dict::get "$OPTIONS" query)"
          search::save "$query" || true
-         handler::main "$@"
+         handler::main
          ;;
       *)
          health::fzf
-         handler::main "$@"
+         handler::main
          ;;
    esac
 }

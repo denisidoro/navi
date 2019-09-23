@@ -4,10 +4,16 @@ ui::pick() {
    fzf --height '100%' --inline-info "$@"
 }
 
+# TODO: separation of concerns
 ui::select() {
    local -r cheats="$1"
+
    local -r script_path="${SCRIPT_DIR}/navi"
-   local -r preview_cmd="echo \"{}\" | tr ' ' '£' | xargs -I% \"${script_path}\" preview %"
+   local -r preview_cmd="echo \"{}\" | tr ' ' '${ARG_DELIMITER}' | xargs -I% \"${script_path}\" preview %"
+
+   local -r query="$(dict::get "$OPTIONS" query)"
+   local -r entry_point="$(dict::get "$OPTIONS" entry_point)"
+   local -r preview="$(dict::get "$OPTIONS" preview)"
 
    local args=()
    args+=("-i")
@@ -16,7 +22,7 @@ ui::select() {
       args+=("--preview"); args+=("$preview_cmd")
       args+=("--preview-window"); args+=("up:1")
    fi
-   if [ -n "${query:-}" ]; then
+   if [ -n "$query" ]; then
       args+=("--query=${query} ")
    fi
    if [ "${entry_point:-}" = "search" ]; then
