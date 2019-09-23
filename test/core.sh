@@ -2,13 +2,18 @@
 
 source "${SCRIPT_DIR}/src/main.sh"
 
+PASSED=0
+FAILED=0
+
 test::success() {
+   PASSED=$((PASSED+1))
    echo "Test passed!"
 }
 
 test::fail() {
+   FAILED=$((FAILED+1))
    echo "Test failed..."
-   exit 42
+   return
 }
 
 test::run() {
@@ -16,4 +21,15 @@ test::run() {
    echo "-> $1"
    shift
    eval "$*" && test::success || test::fail
+}
+
+test::finish() {
+   echo
+   if [ $FAILED -gt 0 ]; then
+      echo "${PASSED} tests passed but ${FAILED} failed... :("
+      exit "${FAILED}"
+   else
+      echo "All ${PASSED} tests passed! :)"
+      exit 0
+   fi
 }

@@ -29,7 +29,7 @@ search::save() {
 
    local readonly filepath="$(search::full_path "$cmd")"
    local readonly filedir="$(dirname "$filepath")"
-   
+
    if [ -f "$filepath" ]; then
       return
    fi

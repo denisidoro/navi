@@ -4,21 +4,10 @@ set -euo pipefail
 export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 source "${SCRIPT_DIR}/test/core.sh"
 
-check_all_vars() {
-	local arg
-	IFS=$'\n' 
-	for var in $(cat "$1" | grep -Eo "<[^>]*>"); do
-		if ! echo "$var" | grep -qE "$ARG_REGEX"; then
-			echoerr "$var isn't a valid variable name!"
-			exit 1
-		fi
-	done
-}
+tests="$(find "$SCRIPT_DIR/test" -iname '*_test.sh')"
 
-test::run "We can find at least one known cheatsheet" \
-	'cheat::find | grep -q "docker.cheat"'
-
-for cheat in $(cheat::find); do
-	test::run "All variables in $(basename $cheat) are valid" \
-		'check_all_vars "$cheat"'
+for test in $tests; do
+	source "$test"
 done
+
+test::finish

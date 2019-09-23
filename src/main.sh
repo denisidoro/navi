@@ -52,18 +52,18 @@ handler::preview() {
 
 main() {
    case ${entry_point:-} in
-      preview) 
+      preview)
          handler::preview "$@"  \
-            || echo "Unable to find command for '${query:-}'" 
-            ;;
-      search) 
-         health::fzf 
+            || echo "Unable to find command for '${query:-}'"
+         ;;
+      search)
+         health::fzf
          search::save "$query" || true
          handler::main "$@"
          ;;
-      *) 
-         health::fzf 
-         handler::main "$@" 
+      *)
+         health::fzf
+         handler::main "$@"
          ;;
    esac
 }

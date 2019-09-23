@@ -40,9 +40,9 @@ opts::eval() {
          --command-for) wait_for="command-for" ;;
          --no-preview) preview=false ;;
          --path) wait_for="path" ;;
-         search) entry_point="search"; wait_for="search";;
-         preview) entry_point="preview"; wait_for="preview";;
-         q|query) wait_for="query";;
+         search) entry_point="search"; wait_for="search" ;;
+         preview) entry_point="preview"; wait_for="preview" ;;
+         q|query) wait_for="query" ;;
       esac
    done
 }
