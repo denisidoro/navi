@@ -7,7 +7,7 @@ source "${SCRIPT_DIR}/test/core.sh"
 tests="$(find "$SCRIPT_DIR/test" -iname "*${1:-}*_test.sh")"
 
 for test in $tests; do
-	source "$test"
+   source "$test"
 done
 
 test::finish

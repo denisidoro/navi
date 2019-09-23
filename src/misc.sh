@@ -14,13 +14,13 @@ echoerr() {
 }
 
 url::open() {
-  if command_exists xdg-open; then
-    xdg-open "$@"
-  elif command_exists open; then
-    open "$@"
-  elif command_exists google-chrome; then
-    google-chrome "$@"
-  elif command_exists firefox; then
-    firefox "$@"
-  fi
+   if command_exists xdg-open; then
+      xdg-open "$@"
+   elif command_exists open; then
+      open "$@"
+   elif command_exists google-chrome; then
+      google-chrome "$@"
+   elif command_exists firefox; then
+      firefox "$@"
+   fi
 }

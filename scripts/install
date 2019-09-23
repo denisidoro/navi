@@ -4,8 +4,8 @@ set -euo pipefail
 export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 script() {
-  echo "#!/usr/bin/env bash"
-  echo "${SCRIPT_DIR}/navi" '"$@"'
+   echo "#!/usr/bin/env bash"
+   echo "${SCRIPT_DIR}/navi" '"$@"'
 }
 
 BIN="/usr/local/bin/navi"
