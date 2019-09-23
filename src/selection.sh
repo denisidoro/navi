@@ -6,18 +6,26 @@ selection::standardize() {
    local -r tags="$(echo "$str" | awk -F'[' '{print $NF}' | tr -d ']')"
    local -r core="$(echo "$str" | sed -e "s/ \[${tags}\]$//")"
 
-   dict::new core "$core" tags "$tags"
+   echo "${core}^${tags}"
+}
+
+selection::core() {
+   cut -d'^' -f1
+}
+
+selection::tags() {
+   cut -d'^' -f2
 }
 
 selection::core_is_comment() {
    grep -qE '^#'
 }
 
-selection::dict() {
+selection::command() {
    local -r selection="$1"
    local -r cheat="$2"
 
-   local -r core="$(echo "$selection" | dict::get core)"
+   local -r core="$(echo $selection | selection::core)"
 
    if echo "$core" | selection::core_is_comment; then
       grep "$core" "$cheat" -A999 \
