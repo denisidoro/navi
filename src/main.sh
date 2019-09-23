@@ -16,7 +16,7 @@ handler::main() {
    local -r selection="$(ui::select "$cheats")"
    local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
    [ -z "$cheat" ] && exit 67
-   local cmd="$(selection::command "$selection" "$cheat")"
+   local cmd="$(selection::dict "$selection" "$cheat")"
    local arg value
 
    while $interpolation; do
@@ -48,7 +48,7 @@ handler::preview() {
    local -r selection="$(echo "$query" | selection::standardize)"
    local -r cheats="$(cheat::find)"
    local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
-   [ -n "$cheat" ] && selection::command "$selection" "$cheat"
+   [ -n "$cheat" ] && selection::dict "$selection" "$cheat"
 }
 
 main() {

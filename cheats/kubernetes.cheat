@@ -3,16 +3,16 @@
 # Print resource documentation
 kubectl explain <resource>
 
-# Get nodes (add option `-o wide` for details)
+# Get nodes (add option '-o wide' for details)
 kubectl get nodes
 
 # Get namespaces
 kubectl get namespaces
 
-# Get pods from namespace (add option `-o wide` for details)
+# Get pods from namespace (add option '-o wide' for details)
 kubectl get pods -n <namespace>
 
-# Get pods from all namespace (add option `-o wide` for details)
+# Get pods from all namespace (add option '-o wide' for details)
 kubectl get pods --all-namespaces
 
 # Get services from namespace
