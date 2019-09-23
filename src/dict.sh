@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+DICT_DELIMITER='\f'
+
 dict::_post() {
    sed -E 's/; /\\n/g' | awk 'NF > 0' | sort
 }
@@ -18,9 +20,17 @@ dict::dissoc() {
    grep -Ev "^${key}[^:]*:" | dict::_post
 }
 
+dict::_escape_value() {
+   tr '\n' "$DICT_DELIMITER"
+}
+
+dict::_unescape_value() {
+   tr "$DICT_DELIMITER" '\n'
+}
+
 dict::assoc() {
    local -r key="${1:-}"
-   local -r value="${2:-}"
+   local -r value="$(echo "${2:-}" | dict::_escape_value)"
    local -r input="$(cat)"
 
    if [ -z $key ]; then
@@ -52,9 +62,9 @@ dict::get() {
    local -r matches="$(echo "$result" | wc -l || echo 0)"
 
    if [ $matches -gt 1 ]; then
-      echo "$result"
+      echo "$result" | dict::_unescape_value
    else
-      echo "$result" | sed -E "s/${prefix}//"
+      echo "$result" | sed -E "s/${prefix}//" | dict::_unescape_value
    fi
 }
 

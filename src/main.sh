@@ -56,6 +56,11 @@ handler::preview() {
    [ -n "$cheat" ] && selection::cmd "$selection" "$cheat"
 }
 
+handler::text() {
+   dict::get "$OPTIONS" text
+   ui::clear_previous_line
+}
+
 main() {
    case "$(dict::get "$OPTIONS" entry_point)" in
       preview)
@@ -68,6 +73,9 @@ main() {
          local -r query="$(dict::get "$OPTIONS" query)"
          search::save "$query" || true
          handler::main
+         ;;
+      text)
+         handler::text
          ;;
       *)
          health::fzf

@@ -38,4 +38,5 @@ source "${SCRIPT_DIR}/src/main.sh"
 VERSION="0.8.1"
 
 OPTIONS="$(opts::eval "$@")"
+export NAVI_PATH="$(dict::get "$OPTIONS" path)"
 main "$@"
