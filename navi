@@ -37,7 +37,7 @@ source "${SCRIPT_DIR}/src/main.sh"
 
 VERSION="0.9.1"
 
-# workaround while dict::* can't handle with newlines
+# workaround while dict::* can't handle newlines
 case "${1:-}" in
   help|--help) opts::extract_help "$0" && exit 0 ;;
 esac
