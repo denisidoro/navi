@@ -58,7 +58,6 @@ handler::preview() {
 
 handler::text() {
    dict::get "$OPTIONS" text
-   ui::clear_previous_line
 }
 
 main() {

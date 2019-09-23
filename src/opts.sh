@@ -25,7 +25,7 @@ opts::eval() {
       case $arg in
          --print) print=true ;;
          --no-interpolation) interpolation=false ;;
-         --version) dict::new entry_point "text" text "${VERSION:-unknown}" && exit 0 ;;
+         --version|version) dict::new entry_point "text" text "${VERSION:-unknown}" && exit 0 ;;
          help|--help) dict::new entry_point "text" text "$(opts::extract_help "$0")" && exit 0 ;;
          --command-for) wait_for="command-for" ;;
          --no-preview) preview=false ;;
