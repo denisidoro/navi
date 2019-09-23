@@ -25,7 +25,7 @@ ui::select() {
    if [ -n "$query" ]; then
       args+=("--query=${query} ")
    fi
-   if [ "${entry_point:-}" = "search" ]; then
+   if [ "$entry_point" = "search" ]; then
       args+=("--header")
       args+=("Displaying online results. Please refer to 'navi --help' for details")
    fi
