@@ -30,7 +30,7 @@ handler::main() {
 
       value="$(arg::pick "$arg" "$cheat" || echo "")"
       if [ -z "$value" ]; then
-         echoerr "Unable to fetch suggestions for '$arg'!"
+         echo "$cmd"
          exit 0
       fi
 
@@ -58,7 +58,6 @@ handler::preview() {
 
 handler::text() {
    dict::get "$OPTIONS" text
-   ui::clear_previous_line
 }
 
 main() {
