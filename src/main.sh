@@ -42,7 +42,7 @@ handler::main() {
 
    local -r print="$(dict::get "$OPTIONS" print)"
    if $print || [ -n "$unresolved_arg" ]; then
-      echo "$cmd"
+      echoerr "Unable to fetch suggestions for '$arg'!"
    else
       eval "$cmd"
    fi
