@@ -74,6 +74,7 @@ main() {
          local -r query="$(dict::get "$OPTIONS" query)"
          handler::preview "$query"  \
             || echo "Unable to find command for '$query'"
+         echo "$NAVI_PATH"
          ;;
       search)
          health::fzf

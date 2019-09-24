@@ -1,9 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-docker run \
-  -it \
-  --entrypoint /bin/bash \
-  -v "$(pwd):/navi" \
-  ellerbrock/alpine-bash-git \
-  -c 'git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && yes | ~/.fzf/install; export PATH=$PATH:/navi; bash'
+debian="${1:-false}"
+
+if $debian; then
+   docker run \
+      -it \
+      --entrypoint /bin/bash \
+      -v "$(pwd):/navi" \
+      debian \
+      -c 'apt update; apt install -y git curl; git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && yes | ~/.fzf/install; export PATH=$PATH:/navi; bash'
+else
+   docker run \
+      -it \
+      --entrypoint /bin/bash \
+      -v "$(pwd):/navi" \
+      ellerbrock/alpine-bash-git \
+      -c 'git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && yes | ~/.fzf/install; export PATH=$PATH:/navi; bash'
+fi
+

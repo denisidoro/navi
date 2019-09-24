@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ARG_REGEX="<[0-9a-zA-Z_]+>"
-ARG_DELIMITER="£"
+ARG_DELIMITER="\f"
 
 arg::dict() {
    local -r input="$(cat)"
@@ -36,7 +36,7 @@ arg::deserialize() {
       local -r out="$arg"
    fi
 
-   echo "$out" | sed "s/${ARG_DELIMITER}/ /g"
+   echo "$out" | tr "${ARG_DELIMITER}" " "
 }
 
 # TODO: separation of concerns

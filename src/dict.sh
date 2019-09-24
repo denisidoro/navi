@@ -71,7 +71,7 @@ dict::get() {
    if [ $matches -gt 1 ]; then
       echo "$result" | dict::_unescape_value
    else
-      echo "$result" | sed -E "s/${prefix}//" | dict::_unescape_value
+      echo "$result" | sed -E "s/${prefix}//" | dict::_unescape_value | sed -E 's/^[[:space:]]*//'
    fi
 }
 
