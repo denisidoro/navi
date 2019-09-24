@@ -56,8 +56,12 @@ handler::preview() {
    [ -n "$cheat" ] && selection::cmd "$selection" "$cheat"
 }
 
-handler::text() {
-   dict::get "$OPTIONS" text
+handler::help() {
+   echo "$TEXT"
+}
+
+handler::version() {
+   echo "${VERSION:-unknown}"
 }
 
 main() {
@@ -73,8 +77,11 @@ main() {
          search::save "$query" || true
          handler::main
          ;;
-      text)
-         handler::text
+      version)
+         handler::version
+         ;;
+      help)
+         handler::help
          ;;
       *)
          health::fzf
