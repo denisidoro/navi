@@ -20,7 +20,7 @@ ui::select() {
    args+=("--ansi")
    if $preview; then
       args+=("--preview"); args+=("$preview_cmd")
-      args+=("--preview-window"); args+=("up:5")
+      args+=("--preview-window"); args+=("up:1")
    fi
    if [ -n "$query" ]; then
       args+=("--query=${query} ")
