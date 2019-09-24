@@ -3,8 +3,11 @@
 selection::dict() {
    local -r str="$(cat)"
 
-   local -r tags="$(echo "$str" | awk -F'[' '{print $NF}' | tr -d ']')"
-   local -r core="$(echo "$str" | sed -e "s/ \[${tags}\]$//")"
+   local -r index_last_bracket="$(echo "$str" | str::index_last_occurrence "[")"
+   local -r index=$((index_last_bracket-1))
+
+   local -r core="$(echo "$str" | str::sub 0 "$index")"
+   local -r tags="$(echo "$str" | str::sub $((index+1)) -1)"
 
    dict::new core "$core" tags "$tags"
 }
