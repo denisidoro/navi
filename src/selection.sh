@@ -3,13 +3,10 @@
 selection::dict() {
    local -r str="$(cat)"
 
-   local -r index_last_bracket="$(echo "$str" | str::index_last_occurrence "[")"
-   local -r index=$((index_last_bracket-1))
+   local -r tags="$(echo "$str" | awk -F'[' '{print $NF}' | tr -d ']')"
+   local -r core="$(echo "$str" | sed -e "s/ \[${tags}\]$//")"
 
-   local -r core="$(echo "$str" | str::sub 0 $index 2>/dev/null || echo "$str")"
-   local -r tags="$(echo "$str" | str::sub $index 2>/dev/null | tr -d '[' | tr -d ']' || echo "")"
-
-   dict::new core "$core" tags "$tags"
+   dict::new core "$core" tags "$tags" | sed "s/'''/'/g"
 }
 
 selection::core_is_comment() {
