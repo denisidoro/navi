@@ -12,7 +12,7 @@ str::sub() {
 
    if [[ $finish < 0 ]]; then
       local -r length=$(echo "$text" | str::length)
-      finish=$((length-finish-1))
+      finish=$((length-finish))
    fi
 
    echo "$text" | cut -c "$((start + 1))-$((finish - 1))"
