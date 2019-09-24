@@ -36,5 +36,6 @@ opts::eval() {
       esac
    done
 
-   OPTIONS="$(dict::new entry_point "$entry_point" print "$print" interpolation "$interpolation" preview "$preview" query "${query:-}" path "$path")"
+   OPTIONS="$(dict::new entry_point "$entry_point" print "$print" interpolation "$interpolation" preview "$preview" query "${query:-}")"
+   export NAVI_PATH="$path"
 }
