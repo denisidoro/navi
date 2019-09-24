@@ -5,7 +5,7 @@ ARG_DELIMITER="£"
 
 arg::dict() {
    # capture stdin because subsequent attempts to read it fail
-   local -r stdin="$(cat -)"
+   local -r stdin="$(cat)"
    local -r fn="$(echo "$stdin" | awk -F'---' '{print $1}')"
    local -r opts="$(echo "$stdin" | awk -F'---' '{print $2}')"
 
