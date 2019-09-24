@@ -8,6 +8,8 @@ script() {
    echo "${SCRIPT_DIR}/navi" '"$@"'
 }
 
-BIN="/usr/local/bin/navi"
-script > "$BIN"
-chmod +x "$BIN"
+folder="${1:-/usr/local/bin}"
+bin="${folder}/navi"
+
+script > "$bin"
+chmod +x "$bin"

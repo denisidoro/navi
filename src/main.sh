@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if ${NAVI_FORCE_GNU:-false}; then
+   source "${DOTFILES}/scripts/core/main.sh"
+fi
+
 source "${SCRIPT_DIR}/src/arg.sh"
 source "${SCRIPT_DIR}/src/cheat.sh"
 source "${SCRIPT_DIR}/src/dict.sh"
@@ -56,8 +60,12 @@ handler::preview() {
    [ -n "$cheat" ] && selection::cmd "$selection" "$cheat"
 }
 
-handler::text() {
-   dict::get "$OPTIONS" text
+handler::help() {
+   echo "$TEXT"
+}
+
+handler::version() {
+   echo "${VERSION:-unknown}"
 }
 
 main() {
@@ -66,6 +74,7 @@ main() {
          local -r query="$(dict::get "$OPTIONS" query)"
          handler::preview "$query"  \
             || echo "Unable to find command for '$query'"
+         echo "$NAVI_PATH"
          ;;
       search)
          health::fzf
@@ -73,8 +82,11 @@ main() {
          search::save "$query" || true
          handler::main
          ;;
-      text)
-         handler::text
+      version)
+         handler::version
+         ;;
+      help)
+         handler::help
          ;;
       *)
          health::fzf

@@ -29,3 +29,9 @@ str::last_paragraph_line() {
 str::first_word() {
    awk '{print $1}'
 }
+
+str::index_last_occurrence() {
+   local -r char="$1"
+
+   awk 'BEGIN{FS=""}{ for(i=1;i<=NF;i++){ if($i=="'"$char"'"){ p=i } }}END{  print p }'
+}

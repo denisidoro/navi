@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# for an explanation behind this namespace, please check
+# https://medium.com/@den.isidoro/dictionaries-in-shell-scripts-61d34e1c91c6
+
+# LIMITATIONS:
+# values with non-trivial whitespaces (newlines, subsequent spaces, etc)
+# aren't handled very well
+
 DICT_DELIMITER='\f'
 
 dict::_post() {
@@ -64,7 +71,7 @@ dict::get() {
    if [ $matches -gt 1 ]; then
       echo "$result" | dict::_unescape_value
    else
-      echo "$result" | sed -E "s/${prefix}//" | dict::_unescape_value
+      echo "$result" | sed -E "s/${prefix}//" | dict::_unescape_value | sed -E 's/^[[:space:]]*//'
    fi
 }
 

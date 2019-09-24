@@ -6,7 +6,7 @@ selection::dict() {
    local -r tags="$(echo "$str" | awk -F'[' '{print $NF}' | tr -d ']')"
    local -r core="$(echo "$str" | sed -e "s/ \[${tags}\]$//")"
 
-   dict::new core "$core" tags "$tags"
+   dict::new core "$core" tags "$tags" | sed "s/'''/'/g"
 }
 
 selection::core_is_comment() {
