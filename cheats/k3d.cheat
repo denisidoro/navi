@@ -32,3 +32,5 @@ k3d import-images
 
 # Show a list of commands or help for one command
 k3d help
+
+$ name: k3d list |awk '{print $2}' | awk 'NF {print $0}' | tail -n +2
