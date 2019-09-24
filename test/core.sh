@@ -2,7 +2,7 @@
 
 source "${SCRIPT_DIR}/src/main.sh"
 
-OPTIONS="$(opts::eval "$@")"
+opts::eval "$@"
 export NAVI_PATH="$(dict::get "$OPTIONS" path)"
 
 PASSED=0
