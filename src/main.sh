@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if ${NAVI_FORCE_GNU:-false}; then
+   source "${DOTFILES}/scripts/core/main.sh"
+fi
+
 source "${SCRIPT_DIR}/src/arg.sh"
 source "${SCRIPT_DIR}/src/cheat.sh"
 source "${SCRIPT_DIR}/src/dict.sh"

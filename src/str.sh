@@ -5,17 +5,10 @@ str::length() {
 }
 
 str::sub() {
-   local -r text="$(cat)"
-
    local -r start="${1:-0}"
-   local finish="${2:-99999}"
+   local -r finish="${2:-99999}"
 
-   if [[ $finish < 0 ]]; then
-      local -r length=$(echo "$text" | str::length)
-      finish=$((length-finish))
-   fi
-
-   echo "$text" | cut -c "$((start + 1))-$((finish - 1))"
+   cut -c "$((start + 1))-$((finish - 1))"
 }
 
 str::column() {
