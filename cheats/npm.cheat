@@ -11,10 +11,10 @@ npm install
 npm install --save-dev
 
 # install a specified package
-npm install <package-name>
+npm install <package_name>
 
 # install a specified dev package
-npm install <package-name> --save-dev
+npm install <package_name> --save-dev
 
 # install globally a specified package
-npm install <package-name> -g
+npm install <package_name> -g
