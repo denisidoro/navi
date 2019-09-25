@@ -42,7 +42,7 @@ header "git push"
 git push --follow-tags
 
 header "rm formula"
-rm "$formula" || true
+rm "$formula" 2>/dev/null || true
 
 header "tar sha256"
 sha="$(curl -sL "$tar" | sha256 | awk '{print $1}')"

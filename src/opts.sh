@@ -26,7 +26,8 @@ opts::eval() {
       case $arg in
          --print) print=true ;;
          --no-interpolation) interpolation=false ;;
-         --version|version) entry_point="version" ;;
+         --version) entry_point="version" ;;
+         --full-version) entry_point="full-version" ;;
          help|--help) entry_point="help"; TEXT="$(opts::extract_help "$0")" ;;
          --command-for) wait_for="command-for" ;;
          --no-preview) preview=false ;;
