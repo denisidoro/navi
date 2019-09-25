@@ -27,13 +27,17 @@ test::run() {
 }
 
 test::equals() {
-   local -r actual="$(cat | tr -d '\n')"
-   local -r expected="$(echo "${1:-}" | tr -d '\n' | sed 's/\\n//g')"
+   local -r actual="$(cat)"
+   local -r expected="$(echo "${1:-}")"
 
    if [[ "$actual" != "$expected" ]]; then
-      log::success "Expected '${expected}' but got '${actual}'"
+      log::error "Expected '${expected}' but got '${actual}'"
       return 2
    fi
+}
+
+test::skip() {
+   :
 }
 
 test::finish() {

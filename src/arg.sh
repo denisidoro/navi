@@ -4,7 +4,7 @@ ARG_REGEX="<[0-9a-zA-Z_]+>"
 ARG_DELIMITER="\f"
 
 arg::dict() {
-   local -r input="$(cat)"
+   local -r input="$(cat | sed 's/\\n/\\f/g')"
 
    local -r fn="$(echo "$input" | awk -F'---' '{print $1}')"
    local -r opts="$(echo "$input" | awk -F'---' '{print $2}')"
@@ -47,8 +47,8 @@ arg::pick() {
    local -r length="$(echo "$prefix" | str::length)"
    local -r arg_dict="$(grep "$prefix" "$cheat" | str::sub $((length + 1)) | arg::dict)"
 
-   local -r fn="$(dict::get "$arg_dict" fn)"
-   local -r args_str="$(dict::get "$arg_dict" opts | tr ' ' '\n' || echo "")"
+   local -r fn="$(dict::get "$arg_dict" fn | sed 's/\\f/\\n/g')"
+   local -r args_str="$(dict::get "$arg_dict" opts)"
    local arg_name=""
 
    for arg_str in $args_str; do

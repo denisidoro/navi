@@ -2,3 +2,9 @@
 
 # Print last column
 echo '1 2 3' | awk '{print $NF}'
+
+# playground
+echo <x> <y>
+
+$ x: echo -e '1\n2\n3'
+$ y: echo -e "${x}_a\n${x}_b"
