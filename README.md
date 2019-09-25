@@ -152,6 +152,8 @@ $ branch: git branch | awk '{print $NF}'
 
 The interface prompts for variable names inside brackets (eg `<branch>`).
 
+Variable names should only include alphanumeric characters and `_`.
+
 The command for generating possible inputs can refer other variables:
 ```sh
 # If you select 2 for x, the possible values of y will be 12 and 22
