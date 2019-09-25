@@ -8,7 +8,7 @@ source "${SCRIPT_DIR}/src/main.sh"
 ##? An interactive cheatsheet tool for the command-line
 ##?
 ##? Usage:
-##?    cheats [command] [<args>...] [options]
+##?    navi [command] [<args>...] [options]
 ##?
 ##? Commands:
 ##?    search <cmd>         Search for cheatsheets on online repositories
@@ -21,11 +21,11 @@ source "${SCRIPT_DIR}/src/main.sh"
 ##?    --no-preview         Hide command preview window
 ##?
 ##? Examples:
-##?    cheats
-##?    cheats --path '/some/folder:/another/folder'
-##?    cheats search awk
-##?    cheats search docker --print
-##?    cheats query git
+##?    navi
+##?    navi --path '/some/folder:/another/folder'
+##?    navi search awk
+##?    navi search docker --print
+##?    navi query git
 ##?
 ##? More info:
 ##?    search
