@@ -4,11 +4,13 @@ ui::pick() {
    local -r autoselect="$(dict::get "$OPTIONS" autoselect)"
 
    local args=()
+   args+=("--height")
+   args+=("100%")
    if ${autoselect:-false}; then
       args+=("--select-1")
    fi
 
-   fzf --height '100%' "${args[@]:-}" --inline-info "$@"
+   fzf "${args[@]:-}" --inline-info "$@"
 }
 
 # TODO: separation of concerns
