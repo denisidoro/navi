@@ -1,4 +1,4 @@
 % awk, string
 
 # Print last column
-echo '1 2 3' | awk '{print $NF}'
+echo "1 2 3" | awk '{print $NF}'

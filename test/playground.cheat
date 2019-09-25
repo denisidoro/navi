@@ -1,0 +1,7 @@
+% test, playground
+
+# single and double quotes + newlines
+echo <x> <y>
+
+$ x: echo -e '1\n2\n3'
+$ y: echo -e "${x}_a\n${x}_b"

@@ -9,10 +9,6 @@
 
 DICT_DELIMITER='\f'
 
-dict::_post() {
-   sed -E 's/; /\\n/g' | awk 'NF > 0' | dict::_unescape_value | sort
-}
-
 dict::new() {
    if [ $# = 0 ]; then
       echo ""
@@ -24,35 +20,35 @@ dict::new() {
 dict::dissoc() {
    local -r key="$1"
 
-   grep -Ev "^${key}[^:]*:" | dict::_post
+   grep -Ev "^[\s]*${key}[^:]*:"
 }
 
 dict::_escape_value() {
-   tr '\n' "$DICT_DELIMITER"
+   tr '\n' "$DICT_DELIMITER" | sed "s/\\n/${DICT_DELIMITER}/g"
+}
+
+str::_without_trailing_newline() {
+   printf "%s" "$(cat)"
+   echo
 }
 
 dict::_unescape_value() {
-   tr "$DICT_DELIMITER" '\n'
+   tr "$DICT_DELIMITER" '\n' | str::_without_trailing_newline
 }
 
 dict::assoc() {
    local -r key="${1:-}"
-   local -r value="$(echo "${2:-}" | dict::_escape_value)"
    local -r input="$(cat)"
 
    if [ -z $key ]; then
-      printf "$input" | dict::_post
+      printf "$input"
       return
    fi
 
-   if [ -n "$input" ]; then
-      local -r base="$(printf "$input" | dict::dissoc "$key"); "
-   else
-      local -r base=""
-   fi
+   local -r value="$(echo "${2:-}" | dict::_escape_value)"
 
    shift 2
-   printf "${base}${key}: ${value}" | dict::_post | dict::assoc "$@" | dict::_post
+   echo "$(echo "$input" | dict::dissoc "$key")${key}: ${value}\n" | dict::assoc "$@"
 }
 
 dict::get() {
@@ -71,7 +67,7 @@ dict::get() {
    if [ $matches -gt 1 ]; then
       echo "$result" | dict::_unescape_value
    else
-      echo "$result" | sed -E "s/${prefix}//" | dict::_unescape_value | sed -E 's/^[[:space:]]*//'
+      echo "$result" | sed -E "s/${prefix}//" | dict::_unescape_value
    fi
 }
 
