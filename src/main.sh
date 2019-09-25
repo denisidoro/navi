@@ -65,7 +65,14 @@ handler::help() {
 }
 
 handler::version() {
+   local -r full="${1:-false}"
+
    echo "${VERSION:-unknown}"
+
+   if $full; then
+      source "${SCRIPT_DIR}/src/version.sh"
+      version::code 2>/dev/null || echo "unknown code"
+   fi
 }
 
 main() {
@@ -83,7 +90,10 @@ main() {
          handler::main
          ;;
       version)
-         handler::version
+         handler::version false
+         ;;
+      full-version)
+         handler::version true
          ;;
       help)
          handler::help
