@@ -46,5 +46,5 @@ ui::select() {
 }
 
 ui::clear_previous_line() {
-   tput cuu1 && tput el || true
+   tput cuu1 2>/dev/null && tput el || true
 }
