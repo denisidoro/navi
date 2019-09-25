@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+test::coll_equals() {
+   local -r actual="$(cat)"
+   local -r expected="$(coll::new "$@")"
+
+   echo "$actual" | test::equals "$expected"
+}
+
 inc() {
    local -r x="$1"
    echo $((x+1))
@@ -24,13 +31,13 @@ odd() {
 coll_map() {
    coll::new 1 2 3 \
       | coll::map inc \
-      | test::equals "$(coll::new 2 3 4)"
+      | test::coll_equals 2 3 4
 }
 
 coll_flatmap() {
    coll::new 1 2 3 \
       | coll::map powers \
-      | test::equals "$(coll::new 10 100 20 200 30 300)"
+      | test::coll_equals 10 100 20 200 30 300
 }
 
 coll_reduce() {
@@ -42,50 +49,50 @@ coll_reduce() {
 coll_filter() {
    coll::new 1 2 3 4 5 \
       | coll::filter odd \
-      | test::equals "$(coll::new 1 3 5)"
+      | test::coll_equals 1 3 5
 }
 
 coll_remove() {
    coll::new 1 2 3 4 5 \
       | coll::remove odd \
-      | test::equals "$(coll::new 2 4)"
+      | test::coll_equals 2 4
 }
 
 coll_first() {
    coll::new 1 2 3 \
       | coll::first \
-      | test::equals "$(coll::new 1)"
+      | test::coll_equals 1
 }
 
 coll_rest() {
    coll::new 1 2 3 \
       | coll::rest \
-      | test::equals "$(coll::new 2 3)"
+      | test::coll_equals 2 3
 }
 
 coll_add() {
    coll::new 1 2 3 \
       | coll::add 4 5 \
       | coll::add 6 7 \
-      | test::equals "$(coll::new 1 2 3 4 5 6 7)"
+      | test::coll_equals 1 2 3 4 5 6 7
 }
 
 coll_concat() {
    coll::new 1 2 3 \
       | coll::add "$(coll::new 4 5)" \
-      | test::equals "$(coll::new 1 2 3 4 5)"
+      | test::coll_equals 1 2 3 4 5
 }
 
 coll_reverse() {
    coll::new 1 2 3 \
       | coll::reverse \
-      | test::equals "$(coll::new 3 2 1)"
+      | test::coll_equals 3 2 1
 }
 
 coll_set() {
    coll::new 1 2 3 2 4 2 \
       | coll::set \
-      | test::equals "$(coll::new 1 2 3 4)"
+      | test::coll_equals 1 2 3 4
 }
 
 test::run "map works" coll_map
