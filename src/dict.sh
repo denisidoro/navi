@@ -107,7 +107,7 @@ dict::update() {
    local -r input="$(cat)"
 
    local -r value="$(echo "$input" | dict::get "$key")"
-   local -r updated_value="$(eval "$fn" "$value")"
+   local -r updated_value="$("$fn" "$value")"
 
    echo "$input" | dict::assoc "$key" "$updated_value"
 }

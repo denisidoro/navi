@@ -8,13 +8,29 @@ func::list() {
 
 func::map() {
    local -r fn="$1"
-   shift
 
    for x in $(cat); do
       "$fn" "$x"
    done
 }
 
+func::filter() {
+   local -r pred="$1"
+
+   for x in $(cat); do
+      "$pred" "$x" && echo "$x" || true
+   done
+}
+
+func::remove() {
+   local -r pred="$1"
+
+   for x in $(cat); do
+     "$pred" "$x" || echo "$x"
+   done
+}
+
+# TODO: implement tailrec
 func::reduce() {
    local -r fn="$1"
    local state="$2"
