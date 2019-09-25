@@ -21,7 +21,6 @@ arg::interpolate() {
 
 arg::next() {
    grep -Eo "$ARG_REGEX" \
-      | xargs \
       | head -n1 \
       | tr -d '<' \
       | tr -d '>'
