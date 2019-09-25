@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
 
-func::list() {
+coll::new() {
    for x in "$@"; do
       echo "$x"
    done
 }
 
-func::map() {
+coll::first() {
+   head -n1
+}
+
+coll::rest() {
+   tail -n +2
+}
+
+coll::map() {
    local -r fn="$1"
 
    for x in $(cat); do
@@ -14,7 +22,7 @@ func::map() {
    done
 }
 
-func::filter() {
+coll::filter() {
    local -r pred="$1"
 
    for x in $(cat); do
@@ -22,7 +30,7 @@ func::filter() {
    done
 }
 
-func::remove() {
+coll::remove() {
    local -r pred="$1"
 
    for x in $(cat); do
@@ -30,19 +38,33 @@ func::remove() {
    done
 }
 
+coll::add() {
+   cat
+   for x in "$@"; do
+      echo "$x"
+   done
+}
+
+coll::reverse() {
+   tac
+}
+
+coll::set() {
+   sort -u
+}
+
 # TODO: implement tailrec
-func::reduce() {
+coll::reduce() {
    local -r fn="$1"
    local state="$2"
 
    local -r coll="$(cat)"
-   local -r x="$(echo "$coll" | head -n1)"
+   local -r x="$(echo "$coll" | coll::first)"
 
    if [ -z "$x" ]; then
       echo "$state"
    else
       local -r new_state="$("$fn" "$state" "$x")"
-      local -r new_coll="$(echo "$coll" | tail -n +2)"
-      echo "$new_coll" | func::reduce "$fn" "$new_state"
+      echo "$coll" | coll::rest | coll::reduce "$fn" "$new_state"
    fi
 }
