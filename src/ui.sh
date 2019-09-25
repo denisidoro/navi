@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 
 ui::pick() {
-   fzf --height '100%' --inline-info "$@"
+   local -r autoselect="$(dict::get "$OPTIONS" autoselect)"
+
+   local args=()
+   args+=("--height")
+   args+=("100%")
+   if ${autoselect:-false}; then
+      args+=("--select-1")
+   fi
+
+   fzf "${args[@]:-}" --inline-info "$@"
 }
 
 # TODO: separation of concerns
