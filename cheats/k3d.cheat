@@ -1,0 +1,36 @@
+% k3d
+
+# Check if docker is running
+k3d check-tools
+
+# Start a subshell for a cluster
+k3d shell
+
+# Create a single k3s cluster in docker containers
+k3d create --name <cluster_name>
+
+# Create a multi-node k3s cluster in docker containers
+k3d create --name <name> --workers <worker_count>
+
+# Delete cluster
+k3d delete --name <cluster_name>
+
+# Stop cluster
+k3d stop --name <cluster_name>
+
+# Start a stopped cluster
+k3d start --name <cluster_name>
+
+# List all clusters
+k3d list
+
+# Get kubeconfig location for cluster
+k3d get-kubeconfig --name <cluster_name>
+
+# Import a comma- or space-separated list of container images from your local docker daemon into the cluster
+k3d import-images
+
+# Show a list of commands or help for one command
+k3d help
+
+$ cluster_name: k3d list |awk '{print $2}' | awk 'NF {print $0}' | tail -n +2
