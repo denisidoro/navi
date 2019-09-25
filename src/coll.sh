@@ -34,7 +34,7 @@ coll::remove() {
    local -r pred="$1"
 
    for x in $(cat); do
-     "$pred" "$x" || echo "$x"
+      "$pred" "$x" || echo "$x"
    done
 }
 
