@@ -44,7 +44,7 @@ dict::assoc() {
       printf "$input"
       return
    fi
-   
+
    local -r value="$(echo "${2:-}" | dict::_escape_value)"
 
    shift 2
