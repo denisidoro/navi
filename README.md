@@ -30,7 +30,8 @@ Table of Contents
    * [Cheatsheet syntax](#cheatsheet-syntax)
       * [Syntax overview](#syntax-overview)
       * [Variables](#variables)
-      * [FZF options](#fzf-options)
+      * [Table formatting](#table-formatting)
+   * [List customization](#list-customization)
    * [Related projects](#related-projects)
    * [Etymology](#etymology)
 
@@ -71,7 +72,7 @@ By simply running `navi` you will be prompted with the default cheatsheets.
 
 ### Preventing execution
 
-If you run `navi --print`, the selected command won't be executed. It will be printed to stdout instead.
+If you run `navi --print`, the selected snippet won't be executed. It will be printed to stdout instead.
 
 ### Pre-filtering
 
@@ -81,7 +82,7 @@ If you run `navi query <cmd>`, the results will be pre-filtered.
 
 If you run `navi search <cmd>`, **navi** will try to download cheatsheets from online repositories as well.
 
-Please note that these cheatsheets aren't curated by **navi**'s maintainers and should be taken with a grain of salt. If you're not sure about executing these commands, make sure to check the preview window or use the `--print` option.
+Please note that these cheatsheets aren't curated by **navi**'s maintainers and should be taken with a grain of salt. If you're not sure about executing these snippets, make sure to check the preview window or use the `--print` option.
 
 ### More options
 
@@ -96,7 +97,7 @@ Motivation
 ----------
 
 The main objectives are:
-- to increase discoverability, by finding commands given keywords or descriptions;
+- to increase discoverability, by finding snippets given keywords or descriptions;
 - to prevent you from running auxiliar commands, copying the result into the clipboard and then pasting into the original command;
 - to easily share one-liners with others so that they don't need to figure out how to write the commands;
 - to improve terminal usage as a whole.
@@ -105,7 +106,7 @@ Sure, you can find autocompleters out there for all your favorite commands. Howe
 
 Or you can launch a browser and search for instructions on Google, but that takes some time.
 
-**navi**, on the other hand, intends to be a general purpose platform for bookmarking any command at a very low cost.
+**navi**, on the other hand, intends to be a general purpose platform for bookmarking any snippet at a very low cost.
 
 Cheatsheets
 -----------
@@ -163,23 +164,28 @@ $ x: echo -e '1\n2\n3'
 $ y: echo -e "$((x+10))\n$((x+20))"
 ```
 
-### FZF options
+### Table formatting
 
-You can make pick a specific column of a selection and set the number of lines considered as headers:
+You can pick a specific column of a selection and set the number of lines considered as headers:
 
 ```sh
 # This will pick the 3rd column and use the first line as header
 docker rmi <image_id>
 
-$ image_id: docker images --- --headers 1 --column 3
+$ image_id: docker images --- --column 3 --headers 1
 ```
+
+List customization
+------------------
+
+Lists can be stylized with the [FZF_DEFAULT_OPTS](https://github.com/junegunn/fzf) environment variable. This way, you can change the [color scheme](https://github.com/junegunn/fzf/wiki/Color-schemes), for example.
 
 Related projects
 ----------------
 
 There are many similar projects out there ([bro](https://github.com/hubsmoke/bro), [eg](https://github.com/srsudar/eg), [cheat.sh](https://github.com/chubin/cheat.sh), [tldr](https://github.com/tldr-pages/tldr), [cmdmenu](https://github.com/amacfie/cmdmenu), [cheat](https://github.com/cheat/cheat), [beavr](https://github.com/denisidoro/beavr), [how2](https://github.com/santinic/how2) and [howdoi](https://github.com/gleitz/howdoi), to name a few).
 
-Most of them provide excellent cheatsheet repositories, but lack a nice UI.
+Most of them provide excellent cheatsheet repositories, but lack a nice UI and argument suggestions.
 
 In any case, **navi** has the option to [search for some of these repositories](#searching-online-repositories).
 
