@@ -2,7 +2,7 @@
 
 # Comment to be posted to on first time issues
 newIssueWelcomeComment: >
-  Thanks for opening your first issue here!
+  Thanks for opening your first issue here! In case you're facing a bug, please update navi to the latest version first. Maybe the bug is already solved! :)
 
 # Configuration for new-pr-welcome - https://github.com/behaviorbot/new-pr-welcome
 
