@@ -6,18 +6,32 @@ cheat::find() {
    done
 }
 
-cheat::read_many() {
-   for cheat in $(cat); do
-      awk '
-        function color(c,s) {
+cheat::read_all() {
+   for cheat in $(cheat::find); do
+      echo
+      cat "$cheat"
+      echo
+   done
+}
+
+cheat::memoized_read_all() {
+   if [ -n "${NAVI_CACHE:-}" ]; then
+      echo "$NAVI_CACHE"
+      return
+   fi
+   local -r cheats="$(cheat::read_all)"
+   echo "$cheats"
+}
+
+cheat::pretty() {
+   awk 'function color(c,s) {
            printf("\033[%dm%s\033[0m",30+c,s)
         }
 
-        /^%/ { tags=" ["substr($0, 3)"]"; next }
-        /^#/ { print color(4, $0) color(60, tags); next }
-        /^\$/ { next }
-      NF { print color(7, $0) color(60, tags); next }' "$cheat"
-   done
+      /^%/ { tags=" ["substr($0, 3)"]"; next }
+      /^#/ { print color(4, $0) color(60, tags); next }
+      /^\$/ { next }
+   NF { print color(7, $0) color(60, tags); next }'
 }
 
 cheat::from_selection() {
@@ -26,13 +40,7 @@ cheat::from_selection() {
 
    local -r tags="$(dict::get "$selection" tags)"
 
-   for cheat in $cheats; do
-      if grep -q "% $tags" "$cheat"; then
-         echo "$cheat"
-         exit 0
-      fi
-   done
-
-   echoerr "No valid cheatsheet!"
-   exit 67
+   echo "$cheats" \
+      | grep "% ${tags}" -A99999 \
+      || (echoerr "No valid cheatsheet!"; exit 67)
 }
