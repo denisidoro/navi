@@ -23,6 +23,7 @@ ui::select() {
    local -r query="$(dict::get "$OPTIONS" query)"
    local -r entry_point="$(dict::get "$OPTIONS" entry_point)"
    local -r preview="$(dict::get "$OPTIONS" preview)"
+   local -r best="$(dict::get "$OPTIONS" best)"
 
    local args=()
    args+=("-i")
@@ -31,17 +32,27 @@ ui::select() {
       args+=("--preview"); args+=("$preview_cmd")
       args+=("--preview-window"); args+=("up:1")
    fi
-   if [ -n "$query" ]; then
-      args+=("--query=${query} ")
+   if [[ -n "$query" ]] && $best; then
+      args+=("--filter"); args+=("${query} ")
+   elif  [[ -n "$query" ]] && ! $best; then
+      args+=("--query"); args+=("${query} ")
    fi
    if [ "$entry_point" = "search" ]; then
-      args+=("--header")
-      args+=("Displaying online results. Please refer to 'navi --help' for details")
+      args+=("--header"); args+=("Displaying online results. Please refer to 'navi --help' for details")
    fi
+
+   ui::_select_post() {
+      if $best; then
+         head -n1
+      else
+         cat
+      fi
+   }
 
    echo "$cheats" \
       | cheat::read_many \
       | ui::pick "${args[@]}" \
+      | ui::_select_post \
       | selection::dict
 }
 
