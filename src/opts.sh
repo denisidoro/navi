@@ -15,6 +15,17 @@ opts::eval() {
    local path="${NAVI_PATH:-${NAVI_DIR:-${SCRIPT_DIR}/cheats}}"
    local autoselect=true
 
+   case "${1:-}" in
+      --version|version) entry_point="version"; shift ;;
+      --full-version|full-version) entry_point="full-version"; shift ;;
+      --help|help) entry_point="help"; TEXT="$(opts::extract_help "$0")"; shift ;;
+      search) entry_point="search"; wait_for="search"; shift ;;
+      preview) entry_point="preview"; wait_for="preview"; shift ;;
+      query|q) wait_for="query"; shift ;;
+      home) entry_point="home"; shift ;;
+      script) entry_point="script"; shift; SCRIPT_ARGS="$@" ;;
+   esac
+
    for arg in "$@"; do
       case $wait_for in
          path) path="$arg"; wait_for="" ;;
@@ -26,15 +37,9 @@ opts::eval() {
       case $arg in
          --print) print=true ;;
          --no-interpolation) interpolation=false ;;
-         --version) entry_point="version" ;;
-         --full-version) entry_point="full-version" ;;
-         help|--help) entry_point="help"; TEXT="$(opts::extract_help "$0")" ;;
          --command-for) wait_for="command-for" ;;
          --no-preview) preview=false ;;
          --path) wait_for="path" ;;
-         search) entry_point="search"; wait_for="search" ;;
-         preview) entry_point="preview"; wait_for="preview" ;;
-         q|query) wait_for="query" ;;
          --no-autoselect) autoselect=false ;;
       esac
    done
