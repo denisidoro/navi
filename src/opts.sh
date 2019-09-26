@@ -14,6 +14,8 @@ opts::eval() {
    local preview=true
    local path="${NAVI_PATH:-${NAVI_DIR:-${SCRIPT_DIR}/cheats}}"
    local autoselect=true
+   local best=false
+   local query=""
 
    case "${1:-}" in
       --version|version) entry_point="version"; shift ;;
@@ -22,6 +24,7 @@ opts::eval() {
       search) entry_point="search"; wait_for="search"; shift ;;
       preview) entry_point="preview"; wait_for="preview"; shift ;;
       query|q) wait_for="query"; shift ;;
+      best|b) best=true; wait_for="best"; shift ;;
       home) entry_point="home"; shift ;;
       script) entry_point="script"; shift; SCRIPT_ARGS="$@" ;;
    esac
@@ -31,7 +34,7 @@ opts::eval() {
          path) path="$arg"; wait_for="" ;;
          preview) query="$(arg::deserialize "$arg")"; wait_for="" ;;
          search) query="$arg"; wait_for=""; path="${path}:$(search::full_path "$query")"; ;;
-         query) query="$arg"; wait_for="" ;;
+         query|best) query="$arg"; wait_for="" ;;
       esac
 
       case $arg in
@@ -39,11 +42,19 @@ opts::eval() {
          --no-interpolation) interpolation=false ;;
          --command-for) wait_for="command-for" ;;
          --no-preview) preview=false ;;
-         --path) wait_for="path" ;;
+         --path|--dir) wait_for="path" ;;
          --no-autoselect) autoselect=false ;;
       esac
    done
 
-   OPTIONS="$(dict::new entry_point "$entry_point" print "$print" interpolation "$interpolation" preview "$preview" autoselect "$autoselect" query "${query:-}")"
+   OPTIONS="$(dict::new \
+      entry_point "$entry_point" \
+      print "$print" \
+      interpolation "$interpolation" \
+      preview "$preview" \
+      autoselect "$autoselect" \
+      query "$query" \
+      best "$best")"
+
    export NAVI_PATH="$path"
 }
