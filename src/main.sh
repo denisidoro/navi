@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if ${NAVI_FORCE_GNU:-false}; then
-   source "${DOTFILES}/scripts/core/main.sh"
+   source "${DOTFILES}/scripts/core/main.sh" 2>/dev/null || true
 fi
 
 source "${SCRIPT_DIR}/src/arg.sh"
