@@ -96,14 +96,14 @@ coll_set() {
 }
 
 test::set_suite "coll"
-test::run "map works" coll_map
-test::run "filter works" coll_filter
-test::run "remove works" coll_remove
-test::run "first works" coll_first
-test::run "rest works" coll_rest
-test::run "add works" coll_add
+test::run "map" coll_map
+test::run "filter" coll_filter
+test::run "remove" coll_remove
+test::run "first" coll_first
+test::run "rest" coll_rest
+test::run "add" coll_add
 test::run "add can be used as concat" coll_concat
-test::run "reduce works" coll_reduce
+test::run "reduce" coll_reduce
 test::run "we can use map as flatmap" coll_flatmap
-test::run "reverse works" coll_reverse
-test::run "set works" coll_set
+test::run "reverse" coll_reverse
+test::run "set" coll_set
