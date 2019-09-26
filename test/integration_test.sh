@@ -34,12 +34,12 @@ assert_best() {
 }
 
 assert_query() {
-   export -f fzf_mock
-   NAVI_FZF_FN="fzf_mock" _navi --path "$TEST_DIR" \
+   NAVI_ENV="test" _navi --path "$TEST_DIR" \
       | test::equals "2 12"
 }
 
-test::set_suite "cheat"
+test::set_suite "integration"
+export -f fzf_mock
 test::run "version" assert_version
 test::run "help" assert_help
 test::run "home" assert_home
