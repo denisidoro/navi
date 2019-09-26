@@ -76,6 +76,14 @@ handler::version() {
    fi
 }
 
+handler::script() {
+   "${SCRIPT_DIR}/scripts/${SCRIPT_ARGS[@]}"
+}
+
+handler::home() {
+   echo "${SCRIPT_DIR}"
+}
+
 main() {
    case "$(dict::get "$OPTIONS" entry_point)" in
       preview)
@@ -95,6 +103,12 @@ main() {
          ;;
       full-version)
          handler::version true
+         ;;
+      home)
+         handler::home
+         ;;
+      script)
+         handler::script
          ;;
       help)
          handler::help
