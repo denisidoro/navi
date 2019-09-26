@@ -1,7 +1,10 @@
 % test, playground
 
-# single and double quotes + newlines
+# this should be the first test. single and double quotes + newlines
 echo <x> <y>
 
-$ x: echo -e '1\n2\n3'
-$ y: echo -e "${x}_a\n${x}_b"
+# return a constant number
+echo 42
+
+$ x: echo -e '2\n3\n4'
+$ y: echo -e "$((x+10))\n$((x+20))"
