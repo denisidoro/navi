@@ -4,7 +4,7 @@ NAVI_BIN="${SCRIPT_DIR}/navi"
 TEST_DIR="${SCRIPT_DIR}/test"
 
 _navi() {
-  "$NAVI_BIN" "$@"
+   "$NAVI_BIN" "$@"
 }
 
 fzf_mock() {
@@ -12,7 +12,7 @@ fzf_mock() {
 }
 
 assert_version() {
-  local -r version="$(cat "$NAVI_BIN" | grep VERSION | cut -d'=' -f2 | tr -d '"')"
+   local -r version="$(cat "$NAVI_BIN" | grep VERSION | cut -d'=' -f2 | tr -d '"')"
 
    _navi --version \
       | test::equals "$version"
