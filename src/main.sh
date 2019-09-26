@@ -17,7 +17,12 @@ source "${SCRIPT_DIR}/src/str.sh"
 source "${SCRIPT_DIR}/src/ui.sh"
 
 handler::main() {
-   local -r cheats="$(cheat::find)"
+   local -r cheats="$(cheat::memoized_read_all)"
+
+   if [ -z "${NAVI_CACHE:-}" ]; then
+      export NAVI_CACHE="$cheats"
+   fi
+
    local -r selection="$(ui::select "$cheats")"
    local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
 
@@ -56,7 +61,7 @@ handler::main() {
 handler::preview() {
    local -r query="$1"
    local -r selection="$(echo "$query" | selection::dict)"
-   local -r cheats="$(cheat::find)"
+   local -r cheats="$(cheat::memoized_read_all)"
    local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
    [ -n "$cheat" ] && selection::cmd "$selection" "$cheat"
 }

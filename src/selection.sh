@@ -20,7 +20,8 @@ selection::cmd() {
    local -r core="$(echo "$selection" | dict::get core)"
 
    if echo "$core" | selection::core_is_comment; then
-      grep "$core" "$cheat" -A999 \
+      echo "$cheat" \
+         | grep "$core" -A999 \
          | str::last_paragraph_line
    else
       echo "$core"
