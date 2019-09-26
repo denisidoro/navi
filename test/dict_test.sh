@@ -9,10 +9,7 @@ test::map_equals() {
    local -r actual="$(cat | dict::_unescape_value | sort)"
    local -r expected="$(dict::new "$@" | dict::_unescape_value | sort)"
 
-   if [[ "$actual" != "$expected" ]]; then
-      log::error "Expected '${expected}' but got '${actual}'"
-      return 2
-   fi
+   echo "$actual" | test::equals "$expected"
 }
 
 dict_assoc() {
@@ -103,6 +100,7 @@ dict_update() {
       | test::map_equals "foo" 42 "bar" 6
 }
 
+test::set_suite "dict"
 test::run "We can assoc a value" dict_assoc
 test::run "We can assoc multiple values" dict_assoc_multiple
 test::skip "We can assoc a nested value" dict_assoc_nested

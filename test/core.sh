@@ -7,6 +7,7 @@ opts::eval "$@"
 
 PASSED=0
 FAILED=0
+SUITE=""
 
 test::success() {
    PASSED=$((PASSED+1))
@@ -19,9 +20,13 @@ test::fail() {
    return
 }
 
+test::set_suite() {
+   SUITE="$*"
+}
+
 test::run() {
    echo
-   log::note "$1"
+   log::note "${SUITE:-unknown} - ${1:-unknown}"
    shift
    eval "$*" && test::success || test::fail
 }
