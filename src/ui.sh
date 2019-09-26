@@ -52,7 +52,7 @@ ui::select() {
    echo "$cheats" \
       | cheat::read_many \
       | ui::pick "${args[@]}" \
-      | head -n1 \
+      | ui::_select_post \
       | selection::dict
 }
 
