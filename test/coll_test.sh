@@ -95,6 +95,7 @@ coll_set() {
       | test::coll_equals 1 2 3 4
 }
 
+test::set_suite "coll"
 test::run "map works" coll_map
 test::run "filter works" coll_filter
 test::run "remove works" coll_remove

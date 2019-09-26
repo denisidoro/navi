@@ -100,6 +100,7 @@ dict_update() {
       | test::map_equals "foo" 42 "bar" 6
 }
 
+test::set_suite "dict"
 test::run "We can assoc a value" dict_assoc
 test::run "We can assoc multiple values" dict_assoc_multiple
 test::skip "We can assoc a nested value" dict_assoc_nested
