@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+export NAVI_FORCE_GNU=true
+
 source "${SCRIPT_DIR}/src/main.sh"
 source "${SCRIPT_DIR}/test/log.sh"
 

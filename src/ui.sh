@@ -10,7 +10,7 @@ ui::pick() {
       args+=("--select-1")
    fi
 
-   fzf "${args[@]:-}" --inline-info "$@"
+   "${NAVI_FZF_FN:-fzf}" "${args[@]:-}" --inline-info "$@"
 }
 
 # TODO: separation of concerns
