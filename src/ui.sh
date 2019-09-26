@@ -10,7 +10,8 @@ ui::pick() {
       args+=("--select-1")
    fi
 
-   fzf "${args[@]:-}" --inline-info "$@"
+   local -r fzf_cmd="$([ $NAVI_ENV == "test" ] && echo "fzf_mock" || echo "fzf")"
+   "$fzf_cmd" "${args[@]:-}" --inline-info "$@"
 }
 
 # TODO: separation of concerns

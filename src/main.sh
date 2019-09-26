@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if ${NAVI_FORCE_GNU:-false}; then
+if ${NAVI_FORCE_GNU:-false} && [ -n "${DOTFILES:-}" ]; then
    source "${DOTFILES}/scripts/core/main.sh"
 fi
 
