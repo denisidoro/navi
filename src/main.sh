@@ -89,6 +89,21 @@ handler::home() {
    echo "${SCRIPT_DIR}"
 }
 
+handler::widget() {
+   local widget
+   
+   case "$SH" in 
+      zsh) widget="${SCRIPT_DIR}/shell/widget.zsh" ;;
+      *) echoerr "Invalid shell: $SH"; exit 1 ;;
+   esac
+
+   if "$(dict::get "$OPTIONS" print)"; then
+      cat "$widget"
+   else
+      echo "$widget"
+   fi
+}
+
 main() {
    case "$(dict::get "$OPTIONS" entry_point)" in
       preview)
@@ -116,6 +131,9 @@ main() {
          ;;
       help)
          handler::help
+         ;;
+      widget)
+         handler::widget
          ;;
       *)
          health::fzf

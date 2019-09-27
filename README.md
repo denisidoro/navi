@@ -21,6 +21,7 @@ Table of Contents
       * [Preventing execution](#preventing-execution)
       * [Pre-filtering](#pre-filtering)
       * [Searching online repositories](#searching-online-repositories)
+      * [Shell widget](#shell-widget)
       * [More options](#more-options)
    * [Trying out online](#trying-out-online)
    * [Motivation](#motivation)
@@ -83,6 +84,23 @@ If you run `navi query <cmd>`, the results will be pre-filtered.
 If you run `navi search <cmd>`, **navi** will try to download cheatsheets from online repositories as well.
 
 Please note that these cheatsheets aren't curated by **navi**'s maintainers and should be taken with a grain of salt. If you're not sure about executing these snippets, make sure to check the preview window or use the `--print` option.
+
+### Shell widget
+
+You can use **navi** as a widget to your shell:
+![Widget](https://user-images.githubusercontent.com/3226564/65788699-03361080-e132-11e9-9e93-b2a4bc405bed.gif)
+
+This way, your history is correctly populated and you can edit the command as you wish before executing it.
+
+Right now, there's only a widget for zsh. If you want for other shells, please upvote [this issue](https://github.com/denisidoro/navi/issues/37).
+
+In order to use it, add this line to your `.zshrc`-like file:
+```sh
+source "$(navi widget zsh)"
+```
+
+Then, simply hit `Alt+G`.
+
 
 ### More options
 
