@@ -1,7 +1,9 @@
 _call_navi() {
-   # zle kill-whole-line
-   zle -U "$(NAVI_FZF_ALL_INPUTS=true navi --print "$(echo "$CUTBUFFER" | xargs)" <> /dev/tty)"
-   zle accept-line
+   local buff="$BUFFER"
+   zle kill-whole-line
+   local cmd="$(NAVI_USE_FZF_ALL_INPUTS=true navi --print <> /dev/tty)"
+   zle -U "$buff$(echo "$cmd")"
+   # zle accept-line
 }
 
 zle -N _call_navi
