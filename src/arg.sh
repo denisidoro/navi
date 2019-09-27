@@ -2,6 +2,7 @@
 
 ARG_REGEX="<[0-9a-zA-Z_]+>"
 ARG_DELIMITER="\f"
+ARG_DELIMITER_2="\v"
 
 arg::dict() {
    local -r input="$(cat | sed 's/\\n/\\f/g')"
@@ -27,15 +28,9 @@ arg::next() {
 }
 
 arg::deserialize() {
-   local -r arg="$1"
-
-   if [ ${arg:0:1} = "'" ]; then
-      local -r out="$(echo "${arg:1:${#arg}-2}")"
-   else
-      local -r out="$arg"
-   fi
-
-   echo "$out" | tr "${ARG_DELIMITER}" " "
+   local arg="$1"
+   arg="${arg:1:${#arg}-2}"
+   echo "$arg" | tr "${ARG_DELIMITER}" " " | tr "${ARG_DELIMITER_2}" "'"
 }
 
 # TODO: separation of concerns
