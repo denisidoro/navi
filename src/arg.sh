@@ -40,7 +40,7 @@ arg::pick() {
 
    local -r prefix="$ ${arg}:"
    local -r length="$(echo "$prefix" | str::length)"
-   local -r arg_dict="$(grep "$prefix" "$cheat" | str::sub $((length + 1)) | arg::dict)"
+   local -r arg_dict="$(echo "$cheat" | grep "$prefix" | str::sub $((length + 1)) | arg::dict)"
 
    local -r fn="$(dict::get "$arg_dict" fn | sed 's/\\f/\\n/g')"
    local -r args_str="$(dict::get "$arg_dict" opts)"
