@@ -41,7 +41,7 @@ dict::assoc() {
    local -r input="$(cat)"
 
    if [ -z $key ]; then
-      printf "$input"
+      printf "$(echo "$input" | tr '%' '\v')" | tr '\v' '%'
       return
    fi
 

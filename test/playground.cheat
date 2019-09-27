@@ -3,6 +3,9 @@
 # this should be the first test. single and double quotes + newlines
 echo <x> <y>
 
+# use %
+coll::new 1 2 3 | xargs -I% echo "hello %"
+
 # return a constant number
 echo 42
 
