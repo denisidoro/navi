@@ -9,8 +9,20 @@ git config --global user.email <email>
 # Initializes a git repository
 git init
 
+# Clone a git repository
+git clone -b <branch_name> <repository> <clone_directory>
+
+# View all available remote for a git repository
+git remote --verbose
+
 # Adds a remote for a git repository
 git remote add <remote_name> <remote_url>
+
+# Renames a remote for a git repository
+git remote rename <old_remote_name> <new_remote_name>
+
+# Remove a remote for a git repository
+git remote remove <remote_name>
 
 # Checkout to branch
 # Change branch
@@ -45,6 +57,9 @@ git pull --ff-only
 
 # Merges changes on one branch into current branch
 git merge <branch_name>
+
+# Abort the current conflict resolution process, and try to reconstruct the pre-merge state.
+git merge --abort
 
 # Displays log of commits for a repo
 git log
