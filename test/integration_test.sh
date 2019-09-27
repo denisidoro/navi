@@ -38,10 +38,20 @@ assert_query() {
       | test::equals "2 12"
 }
 
+export HAS_FZF="$(command_exists fzf && echo true || echo false)"
+
+test::fzf() {
+   if $HAS_FZF; then
+      test::run "$@"
+   else
+      test::skip "$@"
+   fi
+}
+
 test::set_suite "integration"
 export -f fzf_mock
 test::run "version" assert_version
 test::run "help" assert_help
 test::run "home" assert_home
-test::skip "best" assert_best # FZF setup needed in CircleCI
-test::skip "query" assert_query # FZF setup needed in CircleCI
+test::fzf "best" assert_best # FZF setup needed in CircleCI
+test::fzf "query" assert_query # FZF setup needed in CircleCI

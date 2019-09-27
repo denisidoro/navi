@@ -19,6 +19,13 @@ dict_assoc() {
       | test::equals "foo: 42"
 }
 
+dict_assoc_perc() {
+   dict::new \
+      | dict::assoc "foo" "42 %" bar "% 7" \
+      | dict::get bar \
+      | test::equals "% 7"
+}
+
 dict_assoc_multiple() {
    dict::new \
       | dict::assoc "foo" "42" "bar" "5" \
@@ -102,6 +109,7 @@ dict_update() {
 
 test::set_suite "dict"
 test::run "We can assoc a value" dict_assoc
+test::run "We can assoc values with %" dict_assoc_perc
 test::run "We can assoc multiple values" dict_assoc_multiple
 test::skip "We can assoc a nested value" dict_assoc_nested
 test::run "We can dissoc a value" dict_dissoc
