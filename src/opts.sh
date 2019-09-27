@@ -27,6 +27,7 @@ opts::eval() {
       best|b) best=true; wait_for="best"; shift ;;
       home) entry_point="home"; shift ;;
       script) entry_point="script"; shift; SCRIPT_ARGS="$@" ;;
+      widget) entry_point="widget"; shift; wait_for="widget" ;;
    esac
 
    for arg in "$@"; do
@@ -35,6 +36,7 @@ opts::eval() {
          preview) query="$(arg::deserialize "$arg")"; wait_for="" ;;
          search) query="$arg"; wait_for=""; path="${path}:$(search::full_path "$query")"; ;;
          query|best) query="$arg"; wait_for="" ;;
+         widget) SH="$arg"; wait_for="" ;;
       esac
 
       case $arg in
