@@ -91,8 +91,8 @@ handler::home() {
 
 handler::widget() {
    local widget
-   
-   case "$SH" in 
+
+   case "$SH" in
       zsh) widget="${SCRIPT_DIR}/shell/widget.zsh" ;;
       *) echoerr "Invalid shell: $SH"; exit 1 ;;
    esac
