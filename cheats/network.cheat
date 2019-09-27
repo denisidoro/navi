@@ -1,10 +1,19 @@
 % network
 
 # Kill a process running on a given port
-lsof -i :<port> | awk '{l=$2} END {print l}' | xargs kill
+lsof -i :<port> \
+   | awk '{l=$2} END {print l}' \
+   | xargs kill
 
 # List IP addresses connected on a given port
-netstat -tn 2>/dev/null | grep :<port> | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head
+netstat -tn 2>/dev/null \
+   | grep :<port> \
+   | awk '{print $5}' \
+   | cut -d: -f1 \
+   | sort \
+   | uniq -c \
+   | sort -nr \
+   | head
 
 # Find external, public IP address
 dig +short myip.opendns.com @resolver1.opendns.com
