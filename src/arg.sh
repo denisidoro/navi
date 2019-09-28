@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ARG_REGEX="<[0-9a-zA-Z]+([_-\[[:space:]]]*[0-9a-zA-Z]+)*>"
+ARG_REGEX="<\w+([- ]?\w+)*>"
 ARG_DELIMITER="\f"
 ARG_DELIMITER_2="\v"
 
