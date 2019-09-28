@@ -38,6 +38,10 @@ handler::main() {
          break
       fi
 
+      newArg=$(echo "$arg" | sed -e 's/-/_/g;s/ /_/g')
+      cmd=$(echo "$cmd" | sed "s|<${arg}>|<${newArg}>|g")
+      arg=$newArg
+
       value="$(arg::pick "$arg" "$cheat" || echo "")"
       if [ -z "$value" ]; then
          echoerr "Unable to fetch suggestions for '$arg'!"
