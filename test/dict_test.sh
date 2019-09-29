@@ -86,14 +86,14 @@ dict_get_keys() {
    dict::new \
       | dict::assoc "foo" "42" "bar.a" 5 "bar.b" 6 "baz" 63 \
       | dict::keys \
-      | test::equals "bar.a\nbar.b\nbaz\nfoo"
+      | test::equals "$(echo -e "foo\nbar.a\nbar.b\nbaz")"
 }
 
 dict_get_values() {
    dict::new \
       | dict::assoc "foo" "42" "bar.a" 5 "bar.b" 6 "baz" 63 \
       | dict::values \
-      | test::equals "5\n6\n63\n42"
+      | test::equals "$(echo -e "5\n6\n63\n42")"
 }
 
 dict_zipmap() {
@@ -107,18 +107,28 @@ dict_update() {
       | test::map_equals "foo" 42 "bar" 6
 }
 
+dict_merge() {
+   dict::new "foo" 42 "bar" 5 \
+      | dict::merge "$(dict::new "bar" 7 "lorem" "ipsum")" \
+      | test::map_equals "foo" 42
+}
+
+dict::new "foo" 42 "bar" 5
+return
+
 test::set_suite "dict"
 test::run "We can assoc a value" dict_assoc
+test::skip "We can merge dicts" dict_merge
 test::run "We can assoc values with %" dict_assoc_perc
 test::run "We can assoc multiple values" dict_assoc_multiple
-test::skip "We can assoc a nested value" dict_assoc_nested
+test::run "We can assoc a nested value" dict_assoc_nested
 test::run "We can dissoc a value" dict_dissoc
 test::run "Associng the same value is a no-op" dict_assoc_again
 test::run "Dissocing a key will replace all its subvalues" dict_dissoc_nested
 test::run "We can get a value" dict_get
 test::run "We can get a nested value" dict_get_nested
 test::run "We can get a dictionary" dict_get_dict
-test::skip "We can get all keys" dict_get_keys
-test::skip "We can get all values" dict_get_values
-test::skip "We can get create a dict from a zipmap" dict_zipmap
-test::skip "We can update a value" dict_update
+test::run "We can get all keys" dict_get_keys
+test::run "We can get all values" dict_get_values
+test::run "We can get create a dict from a zipmap" dict_zipmap
+test::run "We can update a value" dict_update
