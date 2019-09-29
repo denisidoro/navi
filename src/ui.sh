@@ -19,7 +19,7 @@ ui::select() {
    local -r cheats="$1"
 
    local -r script_path="${SCRIPT_DIR}/navi"
-   local -r preview_cmd="echo \'{}\' | tr \"'\" '${ARG_DELIMITER_2}' | tr ' ' '${ARG_DELIMITER}' | xargs -I% \"${script_path}\" preview %"
+   local -r preview_cmd="echo \'{}\' | tr \"'\" '${ARG_DELIMITER_2}' | tr ' ' '${ARG_DELIMITER}' | tr '\"' '${ARG_DELIMITER_3}' | xargs -I% \"${script_path}\" preview %"
 
    local -r query="$(dict::get "$OPTIONS" query)"
    local -r entry_point="$(dict::get "$OPTIONS" entry_point)"

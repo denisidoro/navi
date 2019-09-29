@@ -30,6 +30,8 @@ opts::eval() {
       widget) entry_point="widget"; shift; wait_for="widget" ;;
    esac
 
+   i=0
+
    for arg in "$@"; do
       case $wait_for in
          path) path="$arg"; wait_for="" ;;
@@ -42,11 +44,12 @@ opts::eval() {
       case $arg in
          --print) print=true ;;
          --no-interpolation) interpolation=false ;;
-         --command-for) wait_for="command-for" ;;
          --no-preview) preview=false ;;
          --path|--dir) wait_for="path" ;;
          --no-autoselect) autoselect=false ;;
       esac
+
+      i=$((i+1))
    done
 
    OPTIONS="$(dict::new \

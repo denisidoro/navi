@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-ARG_REGEX="<\w+([- ]?\w+)*>"
+ARG_REGEX="<[a-zA-Z_]+([- ]?\w+)*>"
 ARG_DELIMITER="\f"
 ARG_DELIMITER_2="\v"
+ARG_DELIMITER_3="\r"
 
 arg::dict() {
    local -r input="$(cat | sed 's/\\n/\\f/g')"
@@ -30,7 +31,7 @@ arg::next() {
 arg::deserialize() {
    local arg="$1"
    arg="${arg:1:${#arg}-2}"
-   echo "$arg" | tr "${ARG_DELIMITER}" " " | tr "${ARG_DELIMITER_2}" "'"
+   echo "$arg" | tr "${ARG_DELIMITER}" " " | tr "${ARG_DELIMITER_2}" "'" | tr "${ARG_DELIMITER_3}" '"'
 }
 
 # TODO: separation of concerns
@@ -61,7 +62,7 @@ arg::pick() {
          echo "$suggestions" | ui::pick --prompt "$arg: " --header-lines "${headers:-0}" | str::column "${column:-}"
       fi
    elif ${NAVI_USE_FZF_ALL_INPUTS:-false}; then
-      echo "" | ui::pick --prompt "$arg: " --print-query --height 1
+      echo "" | ui::pick --prompt "$arg: " --print-query --no-select-1 --height 1
    else
       printf "\033[0;36m${arg}:\033[0;0m " > /dev/tty
       read -r value

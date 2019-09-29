@@ -6,6 +6,7 @@ source "${SCRIPT_DIR}/src/main.sh"
 source "${SCRIPT_DIR}/test/log.sh"
 
 opts::eval "$@"
+TEST_DIR="${SCRIPT_DIR}/test"
 
 PASSED=0
 FAILED=0

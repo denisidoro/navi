@@ -11,7 +11,10 @@ check_all_vars() {
    done
 }
 
+path="$NAVI_PATH"
+NAVI_PATH="${NAVI_PATH}:${TEST_DIR}"
 for cheat in $(cheat::find); do
    test::run "All variables in $(basename $cheat) are valid" \
       'check_all_vars "$cheat"'
 done
+NAVI_PATH="$path"
