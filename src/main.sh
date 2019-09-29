@@ -38,9 +38,9 @@ handler::main() {
          break
       fi
 
-      newArg=$(echo "$arg" | sed -e 's/-/_/g;s/ /_/g')
-      cmd=$(echo "$cmd" | sed "s|<${arg}>|<${newArg}>|g")
-      arg=$newArg
+      escaped_arg=$(echo "$arg" | tr '-' '_' | tr ' ' '_')
+      cmd=$(echo "$cmd" | sed "s|<${arg}>|<${escaped_arg}>|g")
+      arg=$escaped_arg
 
       value="$(arg::pick "$arg" "$cheat" || echo "")"
       if [ -z "$value" ]; then

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+export NAVI_PATH="${SCRIPT_DIR}/test:${SCRIPT_DIR}/cheats"
+
+"${SCRIPT_DIR}/navi" "$@"
