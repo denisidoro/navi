@@ -48,7 +48,7 @@ dict::assoc() {
    local -r value="$(echo "${2:-}" | dict::_escape_value)"
 
    shift 2
-   echo "$(echo "$input" | dict::dissoc "$key")${key}: ${value}\n" | dict::assoc "$@" 
+   echo "$(echo "$input" | dict::dissoc "$key")${key}: ${value}\n" | dict::assoc "$@"
 }
 
 dict::get() {

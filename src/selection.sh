@@ -13,9 +13,10 @@ selection::core_is_comment() {
    grep -qE '^#'
 }
 
-selection::cmd() {
+selection::cmd_or_comment() {
    local -r selection="$1"
    local -r cheat="$2"
+   local -r always_cmd="${3:-false}"
 
    local -r core="$(echo "$selection" | dict::get core)"
 
@@ -23,7 +24,16 @@ selection::cmd() {
       echo "$cheat" \
          | grep "$core" -A999 \
          | str::last_paragraph_line
-   else
+   elif $always_cmd; then
       echo "$core"
+   else
+      echo "$cheat" \
+         | grep "^${core}$" -B999 \
+         | tac \
+         | str::last_paragraph_line
    fi
+}
+
+selection::cmd() {
+   selection::cmd_or_comment "$@" true
 }

@@ -6,28 +6,28 @@ brew update
 # upgrade brew
 brew upgrade
 
-# brew info
+# get info for a package
 brew info <package>
 
-# brew cask info
+# get info for a cask
 brew cask info <casks>
 
-# brew install
+# install a package
 brew install <package>
 
-# brew caks install
+# install a cask
 brew cask install <casks>
 
-# brew uninstall
+# uninstall a package
 brew uninstall <installed>
 
-# brew cask uninstall
+# uninstall a cask
 brew cask uninstall <caskinstalled>
 
-# brew edit package
+# edit package
 brew edit <package>
 
-# brew edit cask
+# edit cask
 brew cask edit <casks>
 
 $ package: brew search

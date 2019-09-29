@@ -4,18 +4,15 @@ set -euo pipefail
 debian="${1:-false}"
 
 if $debian; then
-   docker run \
-      -it \
-      --entrypoint /bin/bash \
-      -v "$(pwd):/navi" \
-      debian \
-      -c 'apt update; apt install -y git curl; git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && yes | ~/.fzf/install; export PATH=$PATH:/navi; bash'
+   image="debian"
+   setup_cmd="apt update; apt install -y git curl;"
 else
-   docker run \
-      -it \
-      --entrypoint /bin/bash \
-      -v "$(pwd):/navi" \
-      ellerbrock/alpine-bash-git \
-      -c 'git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && yes | ~/.fzf/install; export PATH=$PATH:/navi; bash'
+   image="ellerbrock/alpine-bash-git"
 fi
 
+docker run \
+   -it \
+   --entrypoint /bin/bash \
+   -v "$(pwd):/navi" \
+   "$image" \
+   -c "${setup_cmd:-}git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && yes | ~/.fzf/install; export PATH=$PATH:/navi; bash"
