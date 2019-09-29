@@ -113,9 +113,6 @@ dict_merge() {
       | test::map_equals "foo" 42
 }
 
-dict::new "foo" 42 "bar" 5
-return
-
 test::set_suite "dict"
 test::run "We can assoc a value" dict_assoc
 test::skip "We can merge dicts" dict_merge
