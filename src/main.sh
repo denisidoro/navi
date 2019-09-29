@@ -38,6 +38,10 @@ handler::main() {
          break
       fi
 
+      escaped_arg="$(echo "$arg" | tr '-' '_' | tr ' ' '_')"
+      cmd="$(echo "$cmd" | sed "s|<${arg}>|<${escaped_arg}>|g")"
+      arg="$escaped_arg"
+
       value="$(arg::pick "$arg" "$cheat" || echo "")"
       if [ -z "$value" ]; then
          echoerr "Unable to fetch suggestions for '$arg'!"

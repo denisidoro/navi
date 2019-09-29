@@ -3,6 +3,9 @@
 # this should be the first test. single and double quotes + newlines
 echo <x> <y>
 
+# variable names
+echo <x> <foo> <foo_bar> <lorem-ipsum> <dolor sit>
+
 # use %
 coll::new 1 2 3 | xargs -I% echo "hello %"
 
