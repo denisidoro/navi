@@ -92,7 +92,7 @@ dict_get_keys() {
 dict_get_values() {
    dict::new \
       | dict::assoc "foo" "42" "bar.a" 5 "bar.b" 6 "baz" 63 \
-      | dict::values
+      | dict::values \
       | test::equals "$(echo -e "5\n6\n42\n63")"
 }
 
