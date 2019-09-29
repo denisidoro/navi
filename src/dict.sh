@@ -13,7 +13,7 @@ dict::new() {
    if [ $# = 0 ]; then
       echo ""
    else
-      echo "" | dict::assoc "$@"
+      echo "" | dict::assoc "$@" | sed '/^$/d'
    fi
 }
 
@@ -48,7 +48,7 @@ dict::assoc() {
    local -r value="$(echo "${2:-}" | dict::_escape_value)"
 
    shift 2
-   echo "$(echo "$input" | dict::dissoc "$key")${key}: ${value}\n" | dict::assoc "$@"
+   echo "$(echo "$input" | dict::dissoc "$key")${key}: ${value}\n" | dict::assoc "$@" 
 }
 
 dict::get() {
@@ -72,11 +72,18 @@ dict::get() {
 }
 
 dict::keys() {
-   grep -Eo '^[^:]+: ' | sed 's/: //g'
+   grep -Eo '^[^:]+: ' \
+      | sed 's/: //g'
 }
 
 dict::values() {
-   awk -F':' '{$1=""; print $0}' | cut -c3-
+   awk -F':' '{$1=""; print $0}' \
+      | cut -c3-
+}
+
+dict::merge() {
+   awk -F':' '{$1=""; print $0}' \
+      | cut -c3-
 }
 
 dict::zipmap() {
