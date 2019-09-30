@@ -18,7 +18,13 @@ arg::interpolate() {
    local -r arg="$1"
    local -r value="$2"
 
-   sed "s|<${arg}>|\"${value}\"|g"
+   local -r words="$(echo "$value" | wc -w | xargs)"
+
+   if [[ $words > 1 ]]; then
+      sed "s|<${arg}>|\"${value}\"|g"
+   else
+      sed "s|<${arg}>|${value}|g"
+   fi
 }
 
 arg::next() {
