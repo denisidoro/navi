@@ -58,6 +58,37 @@ sudo make install
 # install fzf: https://github.com/junegunn/fzf
 ```
 
+### Using oh-my-zsh
+
+Make sure that your oh-my-zsh `ZSH_CUSTOM` directory is configured,
+then clone navi into the plugins directory.
+
+```sh
+export ZSH_CUSTOM='/path/to/.zsh'
+
+DST="$ZSH_CUSTOM/plugins"
+mkdir -p "$DST" && cd "$DST"
+git clone http://github.com/denisidoro/navi
+```
+
+To enable navi, simply add it to the oh-my-zsh plugin array:
+
+```
+# Sample ~/.zshrc
+ZSHCFG="$HOME/.zsh"
+ZSH="$ZSHCFG/oh-my-zsh"
+ZSH_CUSTOM="$ZSHCFG"
+plugins=(archlinux docker compleat git github gpg-agent ssh-agent nvm tmux fzf workon navi)
+# ...
+source "$ZSH/oh-my-zsh.sh"
+```
+
+Then use it with `Alt-G`.
+
+This method has the following advantages:
+- No PATH modification
+- No root install required
+
 Upgrading
 ---------
 
