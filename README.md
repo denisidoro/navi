@@ -92,7 +92,7 @@ Upgrading
 
 - brew: `brew update; brew reinstall navi`
 - git: `cd /opt/navi && sudo make update`
-- oh-my-zsh: `cd "$(navi home)" && sudo make update`
+- oh-my-zsh: `cd "$(navi home)" && git pull`
 
 Usage
 -----
