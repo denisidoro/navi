@@ -64,9 +64,9 @@ sudo make install
 Make sure that your oh-my-zsh `$ZSH_CUSTOM` directory is configured, then clone navi into the plugins directory.
 ```sh
 export ZSH_CUSTOM='/path/to/.zsh'
-DST="$ZSH_CUSTOM/plugins"
-mkdir -p "$DST"
-cd "$DST"
+plugins_dir="$ZSH_CUSTOM/plugins"
+mkdir -p "$plugins_dir"
+cd "$plugins_dir"
 git clone https://github.com/denisidoro/navi
 ```
 
