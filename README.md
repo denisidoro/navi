@@ -1,12 +1,12 @@
 # navi <img src="https://user-images.githubusercontent.com/3226564/65362934-b4432500-dbdf-11e9-8f75-815fbc5cbf8f.png" alt="icon" height="28px"/> [![CircleCI](https://circleci.com/gh/denisidoro/navi.svg?style=svg)](https://circleci.com/gh/denisidoro/navi) ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/denisidoro/navi?include_prereleases)
 
-An interactive cheatsheet tool for the command-line so that you'll never say the following again:
+An interactive cheatsheet tool for the command-line so that you won't say the following anymore:
 
 >— *How to run that command again?*<br>
 — *Oh, it's not in my bash history*<br>
 — *Geez, it's almost what I wanted but I need to change some args*
 
-![Demo](https://user-images.githubusercontent.com/3226564/65389667-0181dc80-dd2f-11e9-9fac-c875ed7c7b53.gif)
+![Demo](https://user-images.githubusercontent.com/3226564/66068076-4b36a800-e523-11e9-8f20-f5111522cba2.gif)
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands, prompting for argument values.
 
@@ -115,10 +115,7 @@ Please note that these cheatsheets aren't curated by **navi**'s maintainers and 
 
 ### Shell widget
 
-You can use **navi** as a widget to your shell:
-![Widget](https://user-images.githubusercontent.com/3226564/65788699-03361080-e132-11e9-9e93-b2a4bc405bed.gif)
-
-This way, your history is correctly populated and you can edit the command as you wish before executing it.
+You can use **navi** as a widget to your shell. This way, your history is correctly populated and you can edit the command as you wish before executing it.
 
 In order to use it, add this line to your `.bashrc`-like file:
 ```sh
