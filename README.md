@@ -55,7 +55,7 @@ Alternatively, you can `git clone` this repository and run `make`:
 ```sh
 git clone --depth 1 https://github.com/denisidoro/navi /opt/navi
 cd /opt/navi
-sudo make install
+sudo make install # or ./scripts/install /some/path
 # install fzf: https://github.com/junegunn/fzf
 ```
 
@@ -63,7 +63,6 @@ sudo make install
 
 Make sure that your oh-my-zsh `$ZSH_CUSTOM` directory is configured, then clone navi into the plugins directory.
 ```sh
-export ZSH_CUSTOM='/path/to/.zsh'
 plugins_dir="$ZSH_CUSTOM/plugins"
 mkdir -p "$plugins_dir"
 cd "$plugins_dir"
@@ -71,14 +70,8 @@ git clone https://github.com/denisidoro/navi
 ```
 
 Then, add it to the oh-my-zsh plugin array:
-```
-# Sample ~/.zshrc
-ZSHCFG="$HOME/.zsh"
-ZSH="$ZSHCFG/oh-my-zsh"
-ZSH_CUSTOM="$ZSHCFG"
+```sh
 plugins=(docker tmux fzf navi)
-# ...
-source "$ZSH/oh-my-zsh.sh"
 ```
 
 Finally, you can use it as a [shell widget](#shell-widget).
