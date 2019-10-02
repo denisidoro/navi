@@ -63,9 +63,9 @@ sudo make install
 Make sure that your oh-my-zsh `$ZSH_CUSTOM` directory is configured, then clone navi into the plugins directory.
 ```sh
 export ZSH_CUSTOM='/path/to/.zsh'
-DST="$ZSH_CUSTOM/plugins"
-mkdir -p "$DST"
-cd "$DST"
+plugins_dir="$ZSH_CUSTOM/plugins"
+mkdir -p "$plugins_dir"
+cd "$plugins_dir"
 git clone https://github.com/denisidoro/navi
 ```
 
@@ -91,7 +91,7 @@ Upgrading
 
 - brew: `brew update; brew reinstall navi`
 - git: `cd /opt/navi && sudo make update`
-- oh-my-zsh: `cd "$(navi home)" && sudo make update`
+- oh-my-zsh: `cd "$(navi home)" && git pull`
 
 Usage
 -----
@@ -223,7 +223,7 @@ $ image_id: docker images --- --column 3 --headers 1
 List customization
 ------------------
 
-Lists can be stylized with the [FZF_DEFAULT_OPTS](https://github.com/junegunn/fzf) environment variable. This way, you can change the [color scheme](https://github.com/junegunn/fzf/wiki/Color-schemes), for example.
+Lists can be stylized with the [$FZF_DEFAULT_OPTS](https://github.com/junegunn/fzf) environment variable. This way, you can change the [color scheme](https://github.com/junegunn/fzf/wiki/Color-schemes), for example.
 
 Related projects
 ----------------
