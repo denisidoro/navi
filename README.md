@@ -52,11 +52,38 @@ brew install denisidoro/tools/navi
 Alternatively, you can `git clone` this repository and run `make`:
 
 ```sh
-git clone --depth 1 http://github.com/denisidoro/navi /opt/navi
+git clone --depth 1 https://github.com/denisidoro/navi /opt/navi
 cd /opt/navi
 sudo make install
 # install fzf: https://github.com/junegunn/fzf
 ```
+
+
+### Using oh-my-zsh
+
+Make sure that your oh-my-zsh `$ZSH_CUSTOM` directory is configured, then clone navi into the plugins directory.
+```sh
+export ZSH_CUSTOM='/path/to/.zsh'
+plugins_dir="$ZSH_CUSTOM/plugins"
+mkdir -p "$plugins_dir"
+cd "$plugins_dir"
+git clone https://github.com/denisidoro/navi
+```
+
+Then, add it to the oh-my-zsh plugin array:
+```
+# Sample ~/.zshrc
+ZSHCFG="$HOME/.zsh"
+ZSH="$ZSHCFG/oh-my-zsh"
+ZSH_CUSTOM="$ZSHCFG"
+plugins=(docker tmux fzf navi)
+# ...
+source "$ZSH/oh-my-zsh.sh"
+```
+
+Finally, you can use it as a [shell widget](#shell-widget).
+
+This method has the advantage of not requiring root to install and disadvantage of not allowing you to invoke the script by calling `navi` (unless you add an alias to it or copy it to a folder in `$PATH`).
 
 Upgrading
 ---------
@@ -65,6 +92,7 @@ Upgrading
 
 - brew: `brew update; brew reinstall navi`
 - git: `cd /opt/navi && sudo make update`
+- oh-my-zsh: `cd "$(navi home)" && git pull`
 
 Usage
 -----
