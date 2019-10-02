@@ -10,12 +10,13 @@ An interactive cheatsheet tool for the command-line so that you'll never say the
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands, prompting for argument values.
 
-Table of Contents
+Table of contents
 -----------------
 
    * [Installation](#installation)
       * [Using Homebrew or Linuxbrew](#using-homebrew-or-linuxbrew)
       * [Using git](#using-git)
+      * [Using oh-my-zsh](#using-oh-my-zsh)
    * [Upgrading](#upgrading)
    * [Usage](#usage)
       * [Preventing execution](#preventing-execution)
@@ -57,7 +58,6 @@ cd /opt/navi
 sudo make install
 # install fzf: https://github.com/junegunn/fzf
 ```
-
 
 ### Using oh-my-zsh
 
@@ -228,7 +228,7 @@ $ image_id: docker images --- --column 3 --headers 1
 List customization
 ------------------
 
-Lists can be stylized with the [FZF_DEFAULT_OPTS](https://github.com/junegunn/fzf) environment variable. This way, you can change the [color scheme](https://github.com/junegunn/fzf/wiki/Color-schemes), for example.
+Lists can be stylized with the [$FZF_DEFAULT_OPTS](https://github.com/junegunn/fzf) environment variable. This way, you can change the [color scheme](https://github.com/junegunn/fzf/wiki/Color-schemes), for example.
 
 Related projects
 ----------------
