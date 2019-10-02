@@ -120,14 +120,18 @@ You can use **navi** as a widget to your shell:
 
 This way, your history is correctly populated and you can edit the command as you wish before executing it.
 
-Right now, there's only a widget for zsh. If you want for other shells, please upvote [this issue](https://github.com/denisidoro/navi/issues/37).
-
-In order to use it, add this line to your `.zshrc`-like file:
+In order to use it, add this line to your `.bashrc`-like file:
 ```sh
+# bash
+source "$(navi widget bash)"
+
+# zsh
 source "$(navi widget zsh)"
 ```
 
-Then, simply hit `Alt+G`.
+By default, `Ctrl+G` is assigned to launching **navi**. If you want to change the keybinding, replace the argument of `bind` or `bindkey` in [the widget file](https://github.com/denisidoro/navi/search?q=filename%3Anavi.plugin.*&unscoped_q=filename%3Anavi.plugin.*).
+
+If you want a widget for other shells, please upvote [this issue](https://github.com/denisidoro/navi/issues/37).
 
 
 ### More options

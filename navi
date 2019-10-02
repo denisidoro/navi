@@ -35,7 +35,7 @@ source "${SCRIPT_DIR}/src/main.sh"
 ##?    full docs
 ##?       Please refer to the README at https://github.com/denisidoro/navi
 
-VERSION="0.10.3"
+VERSION="0.11.0"
 NAVI_ENV="${NAVI_ENV:-prod}"
 
 opts::eval "$@"
