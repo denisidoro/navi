@@ -10,12 +10,13 @@ An interactive cheatsheet tool for the command-line so that you'll never say the
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands, prompting for argument values.
 
-Table of Contents
+Table of contents
 -----------------
 
    * [Installation](#installation)
       * [Using Homebrew or Linuxbrew](#using-homebrew-or-linuxbrew)
       * [Using git](#using-git)
+      * [Using oh-my-zsh](#using-oh-my-zsh)
    * [Upgrading](#upgrading)
    * [Usage](#usage)
       * [Preventing execution](#preventing-execution)
