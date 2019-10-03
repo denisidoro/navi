@@ -45,3 +45,13 @@ str::reverse_lines() {
       awk '{a[i++]=$0} END {for (j=i-1; j>=0;) print a[j--] }'
    fi
 }
+
+str::not_empty() {
+   local -r input="$(cat)"
+
+   if [ -n $input ]; then
+      echo "$input"
+   else
+      return 1
+   fi
+}
