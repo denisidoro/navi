@@ -35,3 +35,13 @@ str::index_last_occurrence() {
 
    awk 'BEGIN{FS=""}{ for(i=1;i<=NF;i++){ if($i=="'"$char"'"){ p=i } }}END{  print p }'
 }
+
+str::reverse_lines() {
+   if command_exists tac; then
+      tac
+   elif command_exists perl; then
+      perl -e 'print reverse <>'
+   else
+      awk '{a[i++]=$0} END {for (j=i-1; j>=0;) print a[j--] }'
+   fi
+}

@@ -2,15 +2,15 @@
 
 interpolation_one_word() {
    echo "curl http://mysite.com/<user>/profile" \
-    | arg::interpolate "user" "john" \
-    | test::equals "curl http://mysite.com/john/profile"
+      | arg::interpolate "user" "john" \
+      | test::equals "curl http://mysite.com/john/profile"
 }
 
 interpolation_multiple_words() {
    echo "cp <file> <new_file>" \
-    | arg::interpolate "file" "C:/Program Files/app/foo.exe" \
-    | arg::interpolate "new_file" "/mnt/c/Users/john/foo.exe" \
-    | test::equals 'cp "C:/Program Files/app/foo.exe" /mnt/c/Users/john/foo.exe'
+      | arg::interpolate "file" "C:/Program Files/app/foo.exe" \
+      | arg::interpolate "new_file" "/mnt/c/Users/john/foo.exe" \
+      | test::equals 'cp "C:/Program Files/app/foo.exe" /mnt/c/Users/john/foo.exe'
 }
 
 test::set_suite "arg"

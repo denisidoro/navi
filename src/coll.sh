@@ -46,7 +46,7 @@ coll::add() {
 }
 
 coll::reverse() {
-   tac
+   str::reverse_lines "$@"
 }
 
 coll::set() {
