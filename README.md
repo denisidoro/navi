@@ -3,7 +3,7 @@
 An interactive cheatsheet tool for the command-line so that you won't say the following anymore:
 
 >— *How to run that command again?*<br>
-— *Oh, it's not in my bash history*<br>
+— *Oh, it's not in my shell history*<br>
 — *Geez, it's almost what I wanted but I need to change some args*
 
 ![Demo](https://user-images.githubusercontent.com/3226564/66068076-4b36a800-e523-11e9-8f20-f5111522cba2.gif)
