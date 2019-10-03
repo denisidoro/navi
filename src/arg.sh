@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-ARG_REGEX="<[a-zA-Z_]+([- ]?\w+)*>"
+ARG_REGEX_WITHOUT_BRACKETS="[a-zA-Z_]+([- ]?\w+)*"
+ARG_REGEX="<${ARG_REGEX_WITHOUT_BRACKETS}>"
 ARG_DELIMITER="\f"
 ARG_DELIMITER_2="\v"
 ARG_DELIMITER_3="\r"
