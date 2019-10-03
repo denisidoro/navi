@@ -51,7 +51,7 @@ handler::main() {
 
       value="$(echo "$args" | coll::get $i)"
       [ -z "$value" ] && value="$(arg::pick "$arg" "$cheat")"
-      
+
       if [ -z "$value" ]; then
          echoerr "Unable to fetch suggestions for '$arg'!"
          exit 1
