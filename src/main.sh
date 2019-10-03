@@ -39,13 +39,22 @@ handler::main() {
       fi
 
       escaped_arg="$(echo "$arg" | tr '-' '_' | tr ' ' '_')"
-      cmd="$(echo "$cmd" | sed "s|<${arg}>|<${escaped_arg}>|g")"
-      arg="$escaped_arg"
+      if [[ $escaped_arg =~ $ARG_REGEX ]]; then
+      	 cmd="$(echo "$cmd" | sed "s|<${arg}>|<${escaped_arg}>|g")"
+      	 arg="$escaped_arg"
+      else
+      	 exit 1
+      fi
 
       value="$(arg::pick "$arg" "$cheat" || echo "")"
-      if [ -z "$value" ]; then
-         echoerr "Unable to fetch suggestions for '$arg'!"
-         exit 0
+      if [[ $arg =~ $ARG_REGEX ]]; then
+      	 if [ -z "$value" ]; then
+         	echoerr "Unable to fetch suggestions for '$arg'!"
+         	exit 0
+      	 fi
+
+      else
+      	 exit 1
       fi
 
       eval "local $arg"='$value'
