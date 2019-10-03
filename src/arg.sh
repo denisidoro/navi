@@ -36,8 +36,12 @@ arg::next() {
 
 arg::deserialize() {
    local arg="$1"
+
    arg="${arg:1:${#arg}-2}"
-   echo "$arg" | tr "${ARG_DELIMITER}" " " | tr "${ARG_DELIMITER_2}" "'" | tr "${ARG_DELIMITER_3}" '"'
+   echo "$arg" \
+      | tr "${ARG_DELIMITER}" " " \
+      | tr "${ARG_DELIMITER_2}" "'" \
+      | tr "${ARG_DELIMITER_3}" '"'
 }
 
 # TODO: separation of concerns

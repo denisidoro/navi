@@ -8,7 +8,6 @@ export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 files_to_lint() {
    find . -iname '*.sh'
    find scripts/*
-   find shell/*
    echo "${SCRIPT_DIR}/test/run"
    echo "${SCRIPT_DIR}/navi"
 }

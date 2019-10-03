@@ -51,15 +51,15 @@ cheat::pretty() {
       /^%/ { tags=" ["substr($0, 3)"]"; next }
       /^#/ { print color(4, $0) color(60, tags); next }
       /^\$/ { next }
-      NF { print color(7, $0) color(60, tags); next }'
+   NF { print color(7, $0) color(60, tags); next }'
 }
 
 cheat::_until_percentage() {
    awk 'BEGIN { count=0; }
 
-      /^%/ { if (count >= 1) exit; 
-             else { count++; print $0; next; } } 
-           { print $0 }'
+      /^%/ { if (count >= 1) exit;
+             else { count++; print $0; next; } }
+   { print $0 }'
 }
 
 cheat::from_selection() {

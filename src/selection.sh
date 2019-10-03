@@ -29,7 +29,7 @@ selection::cmd_or_comment() {
    else
       echo "$cheat" \
          | grep "^${core}$" -B999 \
-         | tac \
+         | str::reverse_lines \
          | str::last_paragraph_line
    fi
 }
