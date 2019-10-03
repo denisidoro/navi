@@ -28,7 +28,7 @@ selection::cmd_or_comment() {
       echo "$core"
    else
       echo "$cheat" \
-         | grep "^${core}$" -B999 \
+         | grep -E "^.?${core}$" -B999 \
          | str::reverse_lines \
          | str::last_paragraph_line
    fi
