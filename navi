@@ -11,14 +11,15 @@ source "${SCRIPT_DIR}/src/main.sh"
 ##?    navi [command] [<args>...] [options]
 ##?
 ##? Commands:
-##?    search <cmd>         Search for cheatsheets on online repositories
-##?    query  <cmd>         Pre-filter results
+##?    search <cmd>             Search for cheatsheets on online repositories
+##?    query  <cmd>             Pre-filter results
+##?    best   <cmd> <args>...   Considers the best match
 ##?
 ##? Options:
-##?    --print              Prevent script execution
-##?    --path               List of paths to look for cheats
-##?    --no-interpolation   Prevent argument interpolation
-##?    --no-preview         Hide command preview window
+##?    --print                  Prevent script execution
+##?    --path                   List of paths to look for cheats
+##?    --no-interpolation       Prevent argument interpolation
+##?    --no-preview             Hide command preview window
 ##?
 ##? Examples:
 ##?    navi
@@ -26,6 +27,7 @@ source "${SCRIPT_DIR}/src/main.sh"
 ##?    navi search awk
 ##?    navi search docker --print
 ##?    navi query git
+##?    navi best 'sql create db' root mydb
 ##?
 ##? More info:
 ##?    search
