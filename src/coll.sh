@@ -38,8 +38,16 @@ coll::remove() {
    done
 }
 
+coll::_without_empty_line() {
+   local -r input="$(cat)"
+   local -r words="$(echo "$input" | wc -w | xargs)"
+   if [[ $words > 0 ]]; then
+      echo "$input"
+   fi
+}
+
 coll::add() {
-   cat
+   cat | coll::_without_empty_line
    for x in "$@"; do
       echo "$x"
    done
@@ -51,6 +59,12 @@ coll::reverse() {
 
 coll::set() {
    sort -u
+}
+
+coll::get() {
+   local n="$1"
+   n=$((n+1))
+   sed "${n}q;d"
 }
 
 # TODO: implement tailrec

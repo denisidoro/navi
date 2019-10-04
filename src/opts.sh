@@ -16,6 +16,7 @@ opts::eval() {
    local autoselect=true
    local best=false
    local query=""
+   local args=""
 
    case "${1:-}" in
       --version|version) entry_point="version"; shift ;;
@@ -30,15 +31,13 @@ opts::eval() {
       widget) entry_point="widget"; shift; wait_for="widget" ;;
    esac
 
-   i=0
-
    for arg in "$@"; do
       case $wait_for in
-         path) path="$arg"; wait_for="" ;;
-         preview) query="$(arg::deserialize "$arg")"; wait_for="" ;;
-         search) query="$arg"; wait_for=""; path="${path}:$(search::full_path "$query")"; ;;
-         query|best) query="$arg"; wait_for="" ;;
-         widget) SH="$arg"; wait_for="" ;;
+         path) path="$arg"; wait_for=""; continue ;;
+         preview) query="$(arg::deserialize "$arg")"; wait_for=""; continue ;;
+         search) query="$arg"; wait_for=""; path="${path}:$(search::full_path "$query")"; continue ;;
+         query|best) query="$arg"; wait_for=""; continue ;;
+         widget) SH="$arg"; wait_for=""; continue ;;
       esac
 
       case $arg in
@@ -47,9 +46,8 @@ opts::eval() {
          --no-preview) preview=false ;;
          --path|--dir) wait_for="path" ;;
          --no-autoselect) autoselect=false ;;
+         *) args="$(echo "$args" | coll::add "$arg")" ;;
       esac
-
-      i=$((i+1))
    done
 
    OPTIONS="$(dict::new \
@@ -59,7 +57,8 @@ opts::eval() {
       preview "$preview" \
       autoselect "$autoselect" \
       query "$query" \
-      best "$best")"
+      best "$best" \
+      args "$args")"
 
    export NAVI_PATH="$path"
 }

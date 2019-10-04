@@ -32,6 +32,9 @@ handler::main() {
    local cmd="$(selection::cmd "$selection" "$cheat")"
    local arg value
 
+   local -r args="$(dict::get "$OPTIONS" args)"
+
+   local i=0
    while $interpolation; do
       arg="$(echo "$cmd" | arg::next || echo "")"
       if [ -z "$arg" ]; then
@@ -45,7 +48,9 @@ handler::main() {
 
       cmd="$(echo "$cmd" | sed "s|<${arg}>|<${escaped_arg}>|g")"
       arg="$escaped_arg"
-      value="$(arg::pick "$arg" "$cheat" || echo "")"
+
+      value="$(echo "$args" | coll::get $i)"
+      [ -z "$value" ] && value="$(arg::pick "$arg" "$cheat")"
 
       if [ -z "$value" ]; then
          echoerr "Unable to fetch suggestions for '$arg'!"
@@ -54,6 +59,8 @@ handler::main() {
 
       eval "local $arg"='$value'
       cmd="$(echo "$cmd" | arg::interpolate "$arg" "$value")"
+
+      i=$((i+1))
    done
 
    local -r unresolved_arg="$(echo "$cmd" | arg::next || echo "")"
