@@ -3,7 +3,7 @@
 ui::pick() {
    local -r autoselect="$(dict::get "$OPTIONS" autoselect)"
 
-   declare -a args
+   local args
    args+=("--height")
    args+=("100%")
    if ${autoselect:-false}; then
@@ -14,7 +14,6 @@ ui::pick() {
    "$fzf_cmd" "${args[@]:-}" --inline-info "$@"
 }
 
-# TODO: separation of concerns
 ui::select() {
    local -r cheats="$1"
 
@@ -42,18 +41,10 @@ ui::select() {
       args+=("--header"); args+=("Displaying online results. Please refer to 'navi --help' for details")
    fi
 
-   ui::_select_post() {
-      if $best; then
-         head -n1
-      else
-         cat
-      fi
-   }
-
    echo "$cheats" \
       | cheat::prettify \
       | ui::pick "${args[@]}" \
-      | ui::_select_post \
+      | ($best && head -n1 || cat) \
       | selection::dict
 }
 

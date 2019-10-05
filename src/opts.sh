@@ -16,12 +16,12 @@ opts::eval() {
    local autoselect=true
    local best=false
    local query=""
-   local args=""
+   local values=""
 
    case "${1:-}" in
       --version|version) entry_point="version"; shift ;;
       --full-version|full-version) entry_point="full-version"; shift ;;
-      --help|help) entry_point="help"; TEXT="$(opts::extract_help "$0")"; shift ;;
+      --help|help) entry_point="help"; shift ;;
       search) entry_point="search"; wait_for="search"; shift ;;
       preview) entry_point="preview"; wait_for="preview"; shift ;;
       query|q) wait_for="query"; shift ;;
@@ -46,7 +46,7 @@ opts::eval() {
          --no-preview) preview=false ;;
          --path|--dir) wait_for="path" ;;
          --no-autoselect) autoselect=false ;;
-         *) args="$(echo "$args" | coll::add "$arg")" ;;
+         *) values="$(echo "$values" | coll::add "$arg")" ;;
       esac
    done
 
@@ -58,7 +58,7 @@ opts::eval() {
       autoselect "$autoselect" \
       query "$query" \
       best "$best" \
-      args "$args")"
+      values "$values")"
 
    export NAVI_PATH="$path"
 }

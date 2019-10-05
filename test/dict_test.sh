@@ -6,8 +6,8 @@ inc() {
 }
 
 test::map_equals() {
-   local -r actual="$(cat | dict::_unescape_value | sort)"
-   local -r expected="$(dict::new "$@" | dict::_unescape_value | sort)"
+   local -r actual="$(cat | dict::unescape_value | sort)"
+   local -r expected="$(dict::new "$@" | dict::unescape_value | sort)"
 
    echo "$actual" | test::equals "$expected"
 }

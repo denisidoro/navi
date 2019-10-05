@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+ESCAPE_CHAR="\034"
+ESCAPE_CHAR_2="\035"
+ESCAPE_CHAR_3="\036"
+
 str::length() {
    awk '{print length}'
 }
@@ -54,4 +58,8 @@ str::not_empty() {
    else
       return 1
    fi
+}
+
+str::remove_empty_lines() {
+   sed '/^$/d'
 }

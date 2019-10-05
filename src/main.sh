@@ -6,6 +6,7 @@ fi
 
 source "${SCRIPT_DIR}/src/arg.sh"
 source "${SCRIPT_DIR}/src/cheat.sh"
+source "${SCRIPT_DIR}/src/cmd.sh"
 source "${SCRIPT_DIR}/src/coll.sh"
 source "${SCRIPT_DIR}/src/dict.sh"
 source "${SCRIPT_DIR}/src/health.sh"
@@ -21,34 +22,22 @@ handler::main() {
    cheat::export_cache "$cheats"
    local -r selection="$(ui::select "$cheats")"
    local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
-
-   [ -z "$cheat" ] && exit 67
+   [ -z "$cheat" ] && die "No valid cheatsheet!"
 
    local -r interpolation="$(dict::get "$OPTIONS" interpolation)"
-   local cmd="$(selection::cmd "$selection" "$cheat")"
-   local arg value
 
-   local -r args="$(dict::get "$OPTIONS" args)"
+   local cmd="$(selection::cmd "$selection" "$cheat")"
+   local result arg value
 
    local i=0
    while $interpolation; do
-      arg="$(echo "$cmd" | arg::next || echo "")"
-      if [ -z "$arg" ]; then
-         break
-      fi
+      result="$(cmd::loop "$cmd" "$cheat")"
+      arg="$(dict::get "$result" arg)"
+      value="$(dict::get "$result" value)"
+      cmd="$(dict::get "$result" cmd)"
 
-      escaped_arg="$(echo "$arg" | tr '-' '_' | tr ' ' '_')"
-
-      cmd="$(echo "$cmd" | sed "s|<${arg}>|<${escaped_arg}>|g")"
-      arg="$escaped_arg"
-
-      value="$(echo "$args" | coll::get $i)"
-      [ -z "$value" ] && value="$(arg::pick "$arg" "$cheat")"
-
-      if [ -z "$value" ]; then
-         echoerr "Unable to fetch suggestions for '$arg'!"
-         exit 1
-      fi
+      [ -z "$arg" ] && break
+      [ -z "$value" ] && die "Unable to fetch suggestions for '$arg'!"
 
       eval "local $arg"='$value'
       cmd="$(echo "$cmd" | arg::interpolate "$arg" "$value")"
@@ -56,14 +45,7 @@ handler::main() {
       i=$((i+1))
    done
 
-   local -r unresolved_arg="$(echo "$cmd" | arg::next || echo "")"
-
-   local -r print="$(dict::get "$OPTIONS" print)"
-   if $print || [ -n "$unresolved_arg" ]; then
-      echo "$cmd"
-   else
-      eval "$cmd"
-   fi
+   cmd::finish "$cmd"
 }
 
 handler::preview() {
@@ -75,7 +57,7 @@ handler::preview() {
 }
 
 handler::help() {
-   echo "$TEXT"
+   opts::extract_help "$0"
 }
 
 handler::version() {
@@ -86,7 +68,7 @@ handler::version() {
    if $full; then
       source "${SCRIPT_DIR}/src/version.sh"
       version::code 2>/dev/null \
-         || echoerr "unknown code"
+         || die "unknown code"
    fi
 }
 
@@ -105,7 +87,7 @@ handler::widget() {
    case "$SH" in
       zsh) widget="${SCRIPT_DIR}/navi.plugin.zsh" ;;
       bash) widget="${SCRIPT_DIR}/navi.plugin.bash" ;;
-      *) echoerr "Invalid shell: $SH"; exit 1 ;;
+      *) die "Invalid shell: $SH" ;;
    esac
 
    $print \

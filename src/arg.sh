@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
 
 ARG_REGEX="<[a-zA-Z_]+([- ]?\w+)*>"
-ARG_DELIMITER="\034"
-ARG_DELIMITER_2="\035"
-ARG_DELIMITER_3="\036"
 
 arg::dict() {
-   local -r input="$(cat | sed 's/\\n/\\f/g')"
+   local -r input="$(cat)"
 
    local -r fn="$(echo "$input" | awk -F'---' '{print $1}')"
    local -r opts="$(echo "$input" | awk -F'---' '{print $2}')"
 
    dict::new fn "$fn" opts "$opts"
+}
+
+arg::escape() {
+   echo "$*" \
+      | tr '-' '_' \
+      | tr ' ' '_'
 }
 
 arg::interpolate() {
@@ -39,18 +42,19 @@ arg::deserialize() {
 
    arg="${arg:1:${#arg}-2}"
    echo "$arg" \
-      | tr "${ARG_DELIMITER}" " " \
-      | tr "${ARG_DELIMITER_2}" "'" \
-      | tr "${ARG_DELIMITER_3}" '"'
+      | tr "${ESCAPE_CHAR}" " " \
+      | tr "${ESCAPE_CHAR_2}" "'" \
+      | tr "${ESCAPE_CHAR_3}" '"'
 }
 
 arg::serialize_code() {
-   printf "tr \"'\" '${ARG_DELIMITER_2}' | "
-   printf "tr ' ' '${ARG_DELIMITER}' | "
-   printf "tr '\"' '${ARG_DELIMITER_3}'"
+   printf "tr ' ' '${ESCAPE_CHAR}'"
+   printf " | "
+   printf "tr \"'\" '${ESCAPE_CHAR_2}'"
+   printf " | "
+   printf "tr '\"' '${ESCAPE_CHAR_3}'"
 }
 
-# TODO: separation of concerns
 arg::pick() {
    local -r arg="$1"
    local -r cheat="$2"
@@ -59,7 +63,7 @@ arg::pick() {
    local -r length="$(echo "$prefix" | str::length)"
    local -r arg_dict="$(echo "$cheat" | grep "$prefix" | str::sub $((length + 1)) | arg::dict)"
 
-   local -r fn="$(dict::get "$arg_dict" fn | sed 's/\\f/\\n/g')"
+   local -r fn="$(dict::get "$arg_dict" fn)"
    local -r args_str="$(dict::get "$arg_dict" opts)"
    local arg_name=""
 

@@ -38,7 +38,7 @@ coll::remove() {
    done
 }
 
-coll::_without_empty_line() {
+coll::without_empty_line() {
    local -r input="$(cat)"
    local -r words="$(echo "$input" | wc -w | xargs)"
    if [[ $words > 0 ]]; then
@@ -47,7 +47,7 @@ coll::_without_empty_line() {
 }
 
 coll::add() {
-   cat | coll::_without_empty_line
+   cat | coll::without_empty_line
    for x in "$@"; do
       echo "$x"
    done
