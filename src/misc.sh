@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
 
-# no-op hack to set dependency order resolution
-dep() {
-   :
-}
-
 command_exists() {
-   type "$1" &> /dev/null
+   local -r cmd="${1:-}"
+   [ -n $cmd ] && type "$cmd" &> /dev/null
 }
 
 platform::existing_command() {
