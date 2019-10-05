@@ -51,7 +51,7 @@ ui::select() {
    }
 
    echo "$cheats" \
-      | cheat::pretty \
+      | cheat::prettify \
       | ui::pick "${args[@]}" \
       | ui::_select_post \
       | selection::dict

@@ -49,7 +49,7 @@ cheat::memoized_read_all() {
    echo "$cheats"
 }
 
-cheat::pretty() {
+cheat::prettify() {
    awk 'function color(c,s) {
            printf("\033[%dm%s\033[0m",30+c,s)
         }
