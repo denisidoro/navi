@@ -6,6 +6,12 @@ cheat::find() {
    done
 }
 
+cheat::export_cache() {   
+   if [ -z "${NAVI_CACHE:-}" ]; then
+      export NAVI_CACHE="$*"
+   fi
+}
+
 cheat::_join_multiline_using_sed() {
    tr '\n' '\f' \
       | sed -E 's/\\\f *//g' \

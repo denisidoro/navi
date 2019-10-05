@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-ARG_REGEX_WITHOUT_BRACKETS="[a-zA-Z_]+([- ]?\w+)*"
-ARG_REGEX="<${ARG_REGEX_WITHOUT_BRACKETS}>"
-ARG_DELIMITER="\f"
-ARG_DELIMITER_2="\v"
-ARG_DELIMITER_3="\r"
+ARG_REGEX="<[a-zA-Z_]+([- ]?\w+)*>"
+ARG_DELIMITER="\034"
+ARG_DELIMITER_2="\035"
+ARG_DELIMITER_3="\036"
 
 arg::dict() {
    local -r input="$(cat | sed 's/\\n/\\f/g')"
@@ -43,6 +42,12 @@ arg::deserialize() {
       | tr "${ARG_DELIMITER}" " " \
       | tr "${ARG_DELIMITER_2}" "'" \
       | tr "${ARG_DELIMITER_3}" '"'
+}
+
+arg::serialize_code() {
+   printf "tr \"'\" '${ARG_DELIMITER_2}' | "
+   printf "tr ' ' '${ARG_DELIMITER}' | "
+   printf "tr '\"' '${ARG_DELIMITER_3}'"
 }
 
 # TODO: separation of concerns

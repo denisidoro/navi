@@ -18,11 +18,7 @@ source "${SCRIPT_DIR}/src/ui.sh"
 
 handler::main() {
    local -r cheats="$(cheat::memoized_read_all)"
-
-   if [ -z "${NAVI_CACHE:-}" ]; then
-      export NAVI_CACHE="$cheats"
-   fi
-
+   cheat::export_cache "$cheats"
    local -r selection="$(ui::select "$cheats")"
    local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
 
@@ -42,9 +38,6 @@ handler::main() {
       fi
 
       escaped_arg="$(echo "$arg" | tr '-' '_' | tr ' ' '_')"
-      if ! [[ $escaped_arg =~ $ARG_REGEX_WITHOUT_BRACKETS ]]; then
-         exit 1
-      fi
 
       cmd="$(echo "$cmd" | sed "s|<${arg}>|<${escaped_arg}>|g")"
       arg="$escaped_arg"
@@ -92,7 +85,8 @@ handler::version() {
 
    if $full; then
       source "${SCRIPT_DIR}/src/version.sh"
-      version::code 2>/dev/null || echo "unknown code"
+      version::code 2>/dev/null \
+         || echoerr "unknown code"
    fi
 }
 
@@ -106,6 +100,7 @@ handler::home() {
 
 handler::widget() {
    local widget
+   local -r print="$(dict::get "$OPTIONS" print)"
 
    case "$SH" in
       zsh) widget="${SCRIPT_DIR}/navi.plugin.zsh" ;;
@@ -113,11 +108,15 @@ handler::widget() {
       *) echoerr "Invalid shell: $SH"; exit 1 ;;
    esac
 
-   if "$(dict::get "$OPTIONS" print)"; then
-      cat "$widget"
-   else
-      echo "$widget"
-   fi
+   $print \
+      && cat "$widget" \
+      || echo "$widget"
+}
+
+handler::search() {
+   local -r query="$(dict::get "$OPTIONS" query)"
+   search::save "$query" || true
+   handler::main
 }
 
 main() {
@@ -125,13 +124,11 @@ main() {
       preview)
          local -r query="$(dict::get "$OPTIONS" query)"
          handler::preview "$query"  \
-            || echo "Unable to find command for '$query'"
+            || echoerr "Unable to find command for '$query'"
          ;;
       search)
          health::fzf
-         local -r query="$(dict::get "$OPTIONS" query)"
-         search::save "$query" || true
-         handler::main
+         handler::search
          ;;
       version)
          handler::version false
