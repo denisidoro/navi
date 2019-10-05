@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ui::pick() {
+ui::fzf() {
    local -r autoselect="$(dict::get "$OPTIONS" autoselect)"
 
    local args
@@ -43,7 +43,7 @@ ui::select() {
 
    echo "$cheats" \
       | cheat::prettify \
-      | ui::pick "${args[@]}" \
+      | ui::fzf "${args[@]}" \
       | ($best && head -n1 || cat) \
       | selection::dict
 }

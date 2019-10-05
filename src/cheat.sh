@@ -6,7 +6,7 @@ cheat::find() {
    done
 }
 
-cheat::export_cache() {   
+cheat::export_cache() {
    if [ -z "${NAVI_CACHE:-}" ]; then
       export NAVI_CACHE="$*"
    fi

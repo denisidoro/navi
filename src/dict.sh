@@ -39,7 +39,7 @@ dict::assoc() {
    local -r input="$(cat)"
 
    if [ -z $key ]; then
-      printf "$(echo "$input" | tr '%' "$ESCAPE_CHAR_2")" | tr '\v' "$ESCAPE_CHAR_2"
+      printf "$(echo "$input" | tr '%' "$ESCAPE_CHAR_2")" | tr "$ESCAPE_CHAR_2" '%'
       return
    fi
 

@@ -15,7 +15,9 @@ test::map_equals() {
 dict_assoc() {
    dict::new \
       | dict::assoc "foo" "42" \
-      | tr -d '\f' \
+      | tr -d "$ESCAPE_CHAR" \
+      | tr -d "$ESCAPE_CHAR_2" \
+      | tr -d "$ESCAPE_CHAR_3" \
       | test::equals "foo: 42"
 }
 
