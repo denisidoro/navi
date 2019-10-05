@@ -3,7 +3,7 @@
 ui::pick() {
    local -r autoselect="$(dict::get "$OPTIONS" autoselect)"
 
-   local args=()
+   declare -a args
    args+=("--height")
    args+=("100%")
    if ${autoselect:-false}; then
