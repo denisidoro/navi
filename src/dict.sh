@@ -7,13 +7,11 @@
 # values with non-trivial whitespaces (newlines, subsequent spaces, etc)
 # aren't handled very well
 
-DICT_DELIMITER='\f'
-
 dict::new() {
    if [ $# = 0 ]; then
       echo ""
    else
-      echo "" | dict::assoc "$@" | sed '/^$/d'
+      echo "" | dict::assoc "$@" | str::remove_empty_lines
    fi
 }
 
@@ -23,17 +21,17 @@ dict::dissoc() {
    grep -Ev "^[\s]*${key}[^:]*:"
 }
 
-dict::_escape_value() {
-   tr '\n' "$DICT_DELIMITER" | sed "s/\\n/${DICT_DELIMITER}/g"
+dict::escape_value() {
+   tr '\n' "$ESCAPE_CHAR" | sed 's/\\n/'$(printf "$ESCAPE_CHAR")'/g'
 }
 
-str::_without_trailing_newline() {
+str::without_trailing_newline() {
    printf "%s" "$(cat)"
    echo
 }
 
-dict::_unescape_value() {
-   tr "$DICT_DELIMITER" '\n' | str::_without_trailing_newline
+dict::unescape_value() {
+   tr "$ESCAPE_CHAR" '\n' | str::without_trailing_newline
 }
 
 dict::assoc() {
@@ -41,11 +39,11 @@ dict::assoc() {
    local -r input="$(cat)"
 
    if [ -z $key ]; then
-      printf "$(echo "$input" | tr '%' '\v')" | tr '\v' '%'
+      printf "$(echo "$input" | tr '%' "$ESCAPE_CHAR_2")" | tr "$ESCAPE_CHAR_2" '%'
       return
    fi
 
-   local -r value="$(echo "${2:-}" | dict::_escape_value)"
+   local -r value="$(echo "${2:-}" | dict::escape_value)"
 
    shift 2
    echo "$(echo "$input" | dict::dissoc "$key")${key}: ${value}\n" | dict::assoc "$@"
@@ -65,9 +63,9 @@ dict::get() {
    local -r matches="$(echo "$result" | wc -l || echo 0)"
 
    if [ $matches -gt 1 ]; then
-      echo "$result" | dict::_unescape_value
+      echo "$result" | dict::unescape_value
    else
-      echo "$result" | sed -E "s/${prefix}//" | dict::_unescape_value
+      echo "$result" | sed -E "s/${prefix}//" | dict::unescape_value
    fi
 }
 
@@ -77,11 +75,6 @@ dict::keys() {
 }
 
 dict::values() {
-   awk -F':' '{$1=""; print $0}' \
-      | cut -c3-
-}
-
-dict::merge() {
    awk -F':' '{$1=""; print $0}' \
       | cut -c3-
 }

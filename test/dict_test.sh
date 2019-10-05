@@ -6,8 +6,8 @@ inc() {
 }
 
 test::map_equals() {
-   local -r actual="$(cat | dict::_unescape_value | sort)"
-   local -r expected="$(dict::new "$@" | dict::_unescape_value | sort)"
+   local -r actual="$(cat | dict::unescape_value | sort)"
+   local -r expected="$(dict::new "$@" | dict::unescape_value | sort)"
 
    echo "$actual" | test::equals "$expected"
 }
@@ -15,7 +15,9 @@ test::map_equals() {
 dict_assoc() {
    dict::new \
       | dict::assoc "foo" "42" \
-      | tr -d '\f' \
+      | tr -d "$ESCAPE_CHAR" \
+      | tr -d "$ESCAPE_CHAR_2" \
+      | tr -d "$ESCAPE_CHAR_3" \
       | test::equals "foo: 42"
 }
 

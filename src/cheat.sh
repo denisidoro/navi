@@ -6,25 +6,26 @@ cheat::find() {
    done
 }
 
-cheat::_join_multiline_using_sed() {
-   tr '\n' '\f' \
-      | sed -E 's/\\\f *//g' \
-      | tr '\f' '\n'
+cheat::export_cache() {
+   if [ -z "${NAVI_CACHE:-}" ]; then
+      export NAVI_CACHE="$*"
+   fi
 }
 
-cheat::_join_multiline() {
-   if ${NAVI_USE_PERL:-false}; then
-      perl -0pe 's/\\\n *//g' \
-         || cheat::_join_multiline_using_sed
+cheat::join_lines() {
+   if command_exists perl; then
+      perl -0pe 's/\\\n *//g'
    else
-      cheat::_join_multiline_using_sed
+      tr '\n' "$ESCAPE_CHAR" \
+         | sed -E 's/\\'$(printf "$ESCAPE_CHAR")' *//g' \
+         | tr "$ESCAPE_CHAR" '\n'
    fi
 }
 
 cheat::read_all() {
    for cheat in $(cheat::find); do
       echo
-      cat "$cheat" | cheat::_join_multiline
+      cat "$cheat"
       echo
    done
 }
@@ -34,16 +35,13 @@ cheat::memoized_read_all() {
       echo "$NAVI_CACHE"
       return
    fi
-   if command_exists perl; then
-      export NAVI_USE_PERL=true
-   else
-      export NAVI_USE_PERL=false
-   fi
+
    local -r cheats="$(cheat::read_all)"
-   echo "$cheats"
+   echo "$cheats" \
+      | cheat::join_lines
 }
 
-cheat::pretty() {
+cheat::prettify() {
    awk 'function color(c,s) {
            printf("\033[%dm%s\033[0m",30+c,s)
         }
@@ -54,7 +52,7 @@ cheat::pretty() {
    NF { print color(7, $0) color(60, tags); next }'
 }
 
-cheat::_until_percentage() {
+cheat::until_percentage() {
    awk 'BEGIN { count=0; }
 
       /^%/ { if (count >= 1) exit;
@@ -70,6 +68,5 @@ cheat::from_selection() {
 
    echo "$cheats" \
       | grep "% ${tags}" -A99999 \
-      | cheat::_until_percentage \
-      || (echoerr "No valid cheatsheet!"; exit 67)
+      | cheat::until_percentage
 }

@@ -10,6 +10,7 @@ command_exists() {
 }
 
 platform::existing_command() {
+   local cmd
    for cmd in "$@"; do
       if command_exists "$cmd"; then
          echo "$cmd"
@@ -25,11 +26,16 @@ echoerr() {
 
 url::open() {
    local -r cmd="$(platform::existing_command "${BROWSER:-}" xdg-open open google-chrome firefox)"
-   "$cmd" "$@"
+   "$cmd" "$@" & disown
 }
 
 tap() {
    local -r input="$(cat)"
    echoerr "$input"
    echo "$input"
+}
+
+die() {
+   echoerr "$@"
+   exit 42
 }

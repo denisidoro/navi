@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-ui::pick() {
+ui::fzf() {
    local -r autoselect="$(dict::get "$OPTIONS" autoselect)"
 
-   declare -a args
+   local args
    args+=("--height")
    args+=("100%")
    if ${autoselect:-false}; then
@@ -14,12 +14,11 @@ ui::pick() {
    "$fzf_cmd" "${args[@]:-}" --inline-info "$@"
 }
 
-# TODO: separation of concerns
 ui::select() {
    local -r cheats="$1"
 
    local -r script_path="${SCRIPT_DIR}/navi"
-   local -r preview_cmd="echo \'{}\' | tr \"'\" '${ARG_DELIMITER_2}' | tr ' ' '${ARG_DELIMITER}' | tr '\"' '${ARG_DELIMITER_3}' | xargs -I% \"${script_path}\" preview %"
+   local -r preview_cmd="echo \'{}\' | $(arg::serialize_code) | xargs -I% \"${script_path}\" preview %"
 
    local -r query="$(dict::get "$OPTIONS" query)"
    local -r entry_point="$(dict::get "$OPTIONS" entry_point)"
@@ -42,18 +41,10 @@ ui::select() {
       args+=("--header"); args+=("Displaying online results. Please refer to 'navi --help' for details")
    fi
 
-   ui::_select_post() {
-      if $best; then
-         head -n1
-      else
-         cat
-      fi
-   }
-
    echo "$cheats" \
-      | cheat::pretty \
-      | ui::pick "${args[@]}" \
-      | ui::_select_post \
+      | cheat::prettify \
+      | ui::fzf "${args[@]}" \
+      | ($best && head -n1 || cat) \
       | selection::dict
 }
 
