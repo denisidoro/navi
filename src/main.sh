@@ -91,6 +91,7 @@ handler::widget() {
    case "$SH" in
       zsh) widget="${NAVI_HOME}/navi.plugin.zsh" ;;
       bash) widget="${NAVI_HOME}/navi.plugin.bash" ;;
+      fish) widget="${NAVI_HOME}/navi.plugin.fish" ;;
       *) die "Invalid shell: $SH" ;;
    esac
 
