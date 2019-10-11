@@ -29,7 +29,7 @@ Table of contents
    * [Cheatsheets](#cheatsheets)
       * [Using your own custom cheatsheets](#using-your-own-custom-cheatsheets)
       * [Submitting cheatsheets](#submitting-cheatsheets)
-   * [cheatsheet syntax](#cheatsheet-syntax)
+   * [Cheatsheet syntax](#cheatsheet-syntax)
       * [Syntax overview](#syntax-overview)
       * [Variables](#variables)
       * [Table formatting](#table-formatting)
