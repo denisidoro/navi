@@ -17,5 +17,5 @@ end
 bind \cg navi-widget
 
 if bind -M insert > /dev/null 2>&1
-  bind -M insert \cr navi-widget
+  bind -M insert \cg navi-widget
 end
