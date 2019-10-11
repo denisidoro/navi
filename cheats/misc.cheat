@@ -1,0 +1,18 @@
+% weather
+
+# Show weather info for current location
+curl -s "wttr.in" \
+   | grep -v "New feature" \
+   | grep -v Follow
+
+# Show weather info for a specific location
+curl -s "wttr.in/<location>" \
+   | grep -v "New feature" \
+   | grep -v Follow
+
+
+
+% qr code
+
+# Create a QR code with the content
+echo <content> | curl -F-=\<- qrenco.de

@@ -3,13 +3,13 @@ set -euo pipefail
 
 # please refer to https://github.com/denisidoro/dotfiles/blob/master/scripts/code/beautify
 
-export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 
 files_to_lint() {
    find . -iname '*.sh'
    find scripts/*
-   echo "${SCRIPT_DIR}/test/run"
-   echo "${SCRIPT_DIR}/navi"
+   echo "${NAVI_HOME}/test/run"
+   echo "${NAVI_HOME}/navi"
 }
 
 for f in $(files_to_lint); do

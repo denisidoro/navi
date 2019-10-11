@@ -17,7 +17,7 @@ ui::fzf() {
 ui::select() {
    local -r cheats="$1"
 
-   local -r script_path="${SCRIPT_DIR}/navi"
+   local -r script_path="${NAVI_HOME}/navi"
    local -r preview_cmd="echo \'{}\' | $(arg::serialize_code) | xargs -I% \"${script_path}\" preview %"
 
    local -r query="$(dict::get "$OPTIONS" query)"

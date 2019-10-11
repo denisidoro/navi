@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+export NAVI_HOME="$(cd "$(dirname "$0")" && pwd)"
 
-source "${SCRIPT_DIR}/src/main.sh"
+source "${NAVI_HOME}/src/main.sh"
 
 ##? An interactive cheatsheet tool for the command-line
 ##?

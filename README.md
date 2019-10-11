@@ -29,7 +29,7 @@ Table of contents
    * [Cheatsheets](#cheatsheets)
       * [Using your own custom cheatsheets](#using-your-own-custom-cheatsheets)
       * [Submitting cheatsheets](#submitting-cheatsheets)
-   * [Cheatsheet syntax](#cheatsheet-syntax)
+   * [cheatsheet syntax](#cheatsheet-syntax)
       * [Syntax overview](#syntax-overview)
       * [Variables](#variables)
       * [Table formatting](#table-formatting)
@@ -50,13 +50,20 @@ brew install denisidoro/tools/navi
 
 ### Using git
 
-Alternatively, you can `git clone` this repository and run `make`:
+Alternatively, you can `git clone` this repository:
 
 ```sh
 git clone --depth 1 https://github.com/denisidoro/navi /opt/navi
 cd /opt/navi
-sudo make install # or ./scripts/install /some/path
-# install fzf: https://github.com/junegunn/fzf
+
+# to install in your $PATH
+sudo make install 
+
+# to install in an arbitrary folder
+./scripts/install /some/path
+
+# install fzf
+# refer to https://github.com/junegunn/fzf
 ```
 
 ### Using oh-my-zsh
@@ -76,7 +83,7 @@ plugins=(docker tmux fzf navi)
 
 Finally, you can use it as a [shell widget](#shell-widget).
 
-This method has the advantage of not requiring root to install and disadvantage of not allowing you to invoke the script by calling `navi` (unless you add an alias to it or copy it to a folder in `$PATH`).
+This method has the advantage of not requiring root to install and the disadvantage of not allowing you to invoke the script by calling `navi` (unless you add an alias to it or copy it to a folder in `$PATH`).
 
 Upgrading
 ---------
@@ -167,10 +174,10 @@ export NAVI_PATH="/folder/with/cheats:/another/folder"
 
 Feel free to fork this project and open a PR for me to include your contributions.
 
-Cheatsheet syntax
+cheatsheet syntax
 -----------------
 
-Cheatsheets are described in `.cheat` files.
+cheatsheets are described in `.cheat` files.
 
 ### Syntax overview
 
