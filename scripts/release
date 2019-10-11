@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-source "${SCRIPT_DIR}/src/main.sh"
+export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
+source "${NAVI_HOME}/src/main.sh"
 
 sha256() {
    if command_exists sha256sum; then
@@ -22,12 +22,12 @@ header() {
    echo
 }
 
-cd "$SCRIPT_DIR"
+cd "$NAVI_HOME"
 
 header "git pull"
 git pull
 
-version="$(grep VERSION "${SCRIPT_DIR}/navi" | grep -Eo '[0-9\.]+')"
+version="$(grep VERSION "${NAVI_HOME}/navi" | grep -Eo '[0-9\.]+')"
 tag="v${version}"
 tar="https://github.com/denisidoro/navi/archive/${tag}.tar.gz"
 formula="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/navi.rb"

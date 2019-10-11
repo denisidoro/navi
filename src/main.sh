@@ -4,18 +4,18 @@ if ${NAVI_FORCE_GNU:-false} && [ -n "${DOTFILES:-}" ]; then
    source "${DOTFILES}/scripts/core/main.sh"
 fi
 
-source "${SCRIPT_DIR}/src/arg.sh"
-source "${SCRIPT_DIR}/src/cheat.sh"
-source "${SCRIPT_DIR}/src/cmd.sh"
-source "${SCRIPT_DIR}/src/coll.sh"
-source "${SCRIPT_DIR}/src/dict.sh"
-source "${SCRIPT_DIR}/src/health.sh"
-source "${SCRIPT_DIR}/src/misc.sh"
-source "${SCRIPT_DIR}/src/opts.sh"
-source "${SCRIPT_DIR}/src/search.sh"
-source "${SCRIPT_DIR}/src/selection.sh"
-source "${SCRIPT_DIR}/src/str.sh"
-source "${SCRIPT_DIR}/src/ui.sh"
+source "${NAVI_HOME}/src/arg.sh"
+source "${NAVI_HOME}/src/cheat.sh"
+source "${NAVI_HOME}/src/cmd.sh"
+source "${NAVI_HOME}/src/coll.sh"
+source "${NAVI_HOME}/src/dict.sh"
+source "${NAVI_HOME}/src/health.sh"
+source "${NAVI_HOME}/src/misc.sh"
+source "${NAVI_HOME}/src/opts.sh"
+source "${NAVI_HOME}/src/search.sh"
+source "${NAVI_HOME}/src/selection.sh"
+source "${NAVI_HOME}/src/str.sh"
+source "${NAVI_HOME}/src/ui.sh"
 
 handler::main() {
    local -r cheats="$(cheat::memoized_read_all)"
@@ -66,18 +66,22 @@ handler::version() {
    echo "${VERSION:-unknown}"
 
    if $full; then
-      source "${SCRIPT_DIR}/src/version.sh"
+      source "${NAVI_HOME}/src/version.sh"
       version::code 2>/dev/null \
          || die "unknown code"
    fi
 }
 
 handler::script() {
-   "${SCRIPT_DIR}/scripts/${SCRIPT_ARGS[@]}"
+   "${NAVI_HOME}/scripts/"${SCRIPT_ARGS[@]}
+}
+
+handler::fn() {
+   ${SCRIPT_ARGS[@]}
 }
 
 handler::home() {
-   echo "${SCRIPT_DIR}"
+   echo "${NAVI_HOME}"
 }
 
 handler::widget() {
@@ -85,8 +89,9 @@ handler::widget() {
    local -r print="$(dict::get "$OPTIONS" print)"
 
    case "$SH" in
-      zsh) widget="${SCRIPT_DIR}/navi.plugin.zsh" ;;
-      bash) widget="${SCRIPT_DIR}/navi.plugin.bash" ;;
+      zsh) widget="${NAVI_HOME}/navi.plugin.zsh" ;;
+      bash) widget="${NAVI_HOME}/navi.plugin.bash" ;;
+      fish) widget="${NAVI_HOME}/navi.plugin.fish" ;;
       *) die "Invalid shell: $SH" ;;
    esac
 
@@ -123,6 +128,9 @@ main() {
          ;;
       script)
          handler::script
+         ;;
+      fn)
+         handler::fn
          ;;
       help)
          handler::help

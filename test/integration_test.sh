@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-NAVI_BIN="${SCRIPT_DIR}/navi"
-TEST_DIR="${SCRIPT_DIR}/test"
+NAVI_BIN="${NAVI_HOME}/navi"
+TEST_DIR="${NAVI_HOME}/test"
 
 _navi() {
    "$NAVI_BIN" "$@"

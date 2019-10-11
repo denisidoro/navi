@@ -1,0 +1,20 @@
+% osx, mac os
+
+# Lock system
+pmset displaysleepnow
+
+# Show hidden files in Finder
+defaults write com.apple.finder AppleShowAllFiles -bool true; \
+   killall Finder
+
+# Hide hidden files in Finder
+defaults write com.apple.finder AppleShowAllFiles -bool false; \
+   killall Finder
+
+# Show items in desktop
+defaults write com.apple.finder CreateDesktop -bool true; \
+   killall Finder
+
+# Hide items in desktop
+defaults write com.apple.finder CreateDesktop -bool false; \
+   killall Finder

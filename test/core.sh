@@ -2,11 +2,11 @@
 
 export NAVI_FORCE_GNU=true
 
-source "${SCRIPT_DIR}/src/main.sh"
-source "${SCRIPT_DIR}/test/log.sh"
+source "${NAVI_HOME}/src/main.sh"
+source "${NAVI_HOME}/test/log.sh"
 
 opts::eval "$@"
-TEST_DIR="${SCRIPT_DIR}/test"
+TEST_DIR="${NAVI_HOME}/test"
 
 PASSED=0
 FAILED=0

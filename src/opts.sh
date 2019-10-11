@@ -12,7 +12,7 @@ opts::eval() {
    local print=false
    local interpolation=true
    local preview=true
-   local path="${NAVI_PATH:-${NAVI_DIR:-${SCRIPT_DIR}/cheats}}"
+   local path="${NAVI_PATH:-${NAVI_DIR:-${NAVI_HOME}/cheats}}"
    local autoselect=true
    local best=false
    local query=""
@@ -28,6 +28,7 @@ opts::eval() {
       best|b) best=true; wait_for="best"; shift ;;
       home) entry_point="home"; shift ;;
       script) entry_point="script"; shift; SCRIPT_ARGS="$@" ;;
+      fn) entry_point="fn"; shift; SCRIPT_ARGS="$@" ;;
       widget) entry_point="widget"; shift; wait_for="widget" ;;
    esac
 
