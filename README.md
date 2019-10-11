@@ -174,10 +174,10 @@ export NAVI_PATH="/folder/with/cheats:/another/folder"
 
 Feel free to fork this project and open a PR for me to include your contributions.
 
-cheatsheet syntax
+Cheatsheet syntax
 -----------------
 
-cheatsheets are described in `.cheat` files.
+Cheatsheets are described in `.cheat` files.
 
 ### Syntax overview
 
