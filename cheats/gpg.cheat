@@ -1,0 +1,39 @@
+% gpg
+
+# gpg version
+gpg --version
+
+# gpg generate key
+gpg --gen-key
+
+# list keys
+gpg --list-keys
+
+# distribute public key to key server
+gpg --keyserver hkp://pool.sks-keyservers.net --send-keys <public-key>
+
+# export public key
+gpg --output <filename.gpg> --export <email>
+
+# import public key
+gpg --import <filename.gpg>
+
+# encrypt document
+gpg --output <output-filename.gpg> --encrypt --recipient <public_key> <input-filename>
+
+# decrypt document
+gpg --output <filename> --decrypt <filename.gpg>
+
+# make a signature
+gpg --output <filename.sig> --sign <filename>
+
+# verify signature
+gpg --output <filename> <filename> --decrypt <filename.sig>
+
+# clearsign documents
+gpg --clearsign <filename>
+
+# detach signature
+gpg --output <filename.sig> --detach-sig <filename>
+
+
