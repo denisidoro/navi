@@ -84,8 +84,8 @@ plugins=(docker tmux fzf navi)
 Lastly, reload your `zshrc` or spawn a new terminal to load navi. Once this is done, you should be able to use it 
 as a [shell widget](#shell-widget) with no additional setup.
 
-> Please note that when installing as an oh-my-zsh plugin, `navi` will not be available as command. If you also want 
-> to be able to run the command, interactively, you will need to do one of the following: 
+> Please note that when installing as an oh-my-zsh plugin, `navi` will not be available as a command. If you also want 
+> to be able to run the command interactively, you will need to do one of the following: 
 
 - Install it to /usr/bin/local (via `sudo make install`)
 - Manually set your `PATH` so that navi can be found.
