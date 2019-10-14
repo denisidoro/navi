@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+ui::fzf_cmd() {
+  [ "$NAVI_ENV" == "test" ] && echo fzf_mock && return
+  command_exists sk && echo sk && return
+  echo "fzf -i"
+}
+
 ui::fzf() {
    local -r autoselect="$(dict::get "$OPTIONS" autoselect)"
 
@@ -10,8 +16,7 @@ ui::fzf() {
       args+=("--select-1")
    fi
 
-   local -r fzf_cmd="$([ $NAVI_ENV == "test" ] && echo "fzf_mock" || echo "fzf")"
-   "$fzf_cmd" ${args[@]:-} --inline-info "$@"
+   $(ui::fzf_cmd) ${args[@]:-} --inline-info "$@"
 }
 
 ui::select() {
@@ -26,7 +31,6 @@ ui::select() {
    local -r best="$(dict::get "$OPTIONS" best)"
 
    local args=()
-   args+=("-i")
    args+=("--ansi")
    if $preview; then
       args+=("--preview"); args+=("$preview_cmd")
