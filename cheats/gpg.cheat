@@ -10,30 +10,30 @@ gpg --gen-key
 gpg --list-keys
 
 # distribute public key to key server
-gpg --keyserver <key-server> --send-keys <public-key>
+gpg --keyserver <key_server> --send-keys <public_key>
 
 # export public key
-gpg --output <filename.gpg> --export <email>
+gpg --output <filename_gpg> --export <key_name>
 
 # import public key
-gpg --import <filename.gpg>
+gpg --import <filename_gpg>
 
 # encrypt document
-gpg --output <output-filename.gpg> --encrypt --recipient <public_key> <input-filename>
+gpg --output <output_filename_gpg> --encrypt --recipient <public_key> <input_filename>
 
 # decrypt document
-gpg --output <filename> --decrypt <filename.gpg>
+gpg --output <filename> --decrypt <filename_gpg>
 
 # make a signature
-gpg --output <filename.sig> --sign <filename>
+gpg --output <filename_sig> --sign <filename>
 
 # verify signature
-gpg --output <filename> <filename> --decrypt <filename.sig>
+gpg --output <filename> <filename> --decrypt <filename_sig>
 
 # clearsign documents
 gpg --clearsign <filename>
 
 # detach signature
-gpg --output <filename.sig> --detach-sig <filename>
+gpg --output <filename_sig> --detach-sig <filename>
 
 
