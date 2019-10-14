@@ -81,7 +81,7 @@ git fetch origin pull/<pr_number>/head:pr/<pr_number> \
    && git checkout pr/<pr_number>
 
 # Add a new module
-git submodule add <repository> [<path>]
+git submodule add <repository> <path>
 
 # Update module
 git submodule update --init
