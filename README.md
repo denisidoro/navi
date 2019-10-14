@@ -76,14 +76,28 @@ cd "$plugins_dir"
 git clone https://github.com/denisidoro/navi
 ```
 
-Then, add it to the oh-my-zsh plugin array:
+Then, add it to the oh-my-zsh plugin array to automatically enable the zsh widget:
 ```sh
 plugins=(docker tmux fzf navi)
 ```
 
-Finally, you can use it as a [shell widget](#shell-widget).
+Lastly, reload your `zshrc` or spawn a new terminal to load navi. Once this is done, you should be able to use it 
+as a [shell widget](#shell-widget) with no additional setup.
 
-This method has the advantage of not requiring root to install and the disadvantage of not allowing you to invoke the script by calling `navi` (unless you add an alias to it or copy it to a folder in `$PATH`).
+> Please note that when installing as an oh-my-zsh plugin, `navi` will not be available as a command. If you also want 
+> to be able to run the command interactively, you will need to do one of the following: 
+
+- Install it to /usr/bin/local (via `sudo make install`)
+- Manually set your `PATH` so that navi can be found.
+
+You can manually update your path by adding a line like this in your `.zshrc`:
+
+```sh
+export PATH=$PATH:"$ZSH_CUSTOM/plugins/navi"
+```
+
+And verify that it works by running `which navi` after reloading your configuration.
+
 
 Upgrading
 ---------
