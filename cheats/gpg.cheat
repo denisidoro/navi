@@ -35,5 +35,3 @@ gpg --clearsign <filename>
 
 # detach signature
 gpg --output <filename_sig> --detach-sig <filename>
-
-

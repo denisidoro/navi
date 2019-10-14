@@ -25,7 +25,6 @@ git remote rename <old_remote_name> <new_remote_name>
 git remote remove <remote_name>
 
 # Checkout to branch
-# Change branch
 git checkout <branch>
 
 # Displays the current status of a git repository

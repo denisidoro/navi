@@ -47,7 +47,6 @@ $ container_id: docker ps --- --headers 1 --column 1
 
 
 
-
 % docker-compose, container
 
 # Builds, (re)creates, starts, and attaches to containers for all services
