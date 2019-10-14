@@ -138,6 +138,9 @@ source "$(navi widget bash)"
 
 # zsh
 source "$(navi widget zsh)"
+
+# fish
+source (navi widget fish)
 ```
 
 By default, `Ctrl+G` is assigned to launching **navi**. If you want to change the keybinding, replace the argument of `bind` or `bindkey` in [the widget file](https://github.com/denisidoro/navi/search?q=filename%3Anavi.plugin.*&unscoped_q=filename%3Anavi.plugin.*).
