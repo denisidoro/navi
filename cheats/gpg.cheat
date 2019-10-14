@@ -10,7 +10,7 @@ gpg --gen-key
 gpg --list-keys
 
 # distribute public key to key server
-gpg --keyserver hkp://pool.sks-keyservers.net --send-keys <public-key>
+gpg --keyserver <key-server> --send-keys <public-key>
 
 # export public key
 gpg --output <filename.gpg> --export <email>
