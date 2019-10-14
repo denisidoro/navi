@@ -25,7 +25,6 @@ git remote rename <old_remote_name> <new_remote_name>
 git remote remove <remote_name>
 
 # Checkout to branch
-# Change branch
 git checkout <branch>
 
 # Displays the current status of a git repository
@@ -79,5 +78,20 @@ navi fn url::open 'https://github.com/pulls?&q=author:<user>+is:open+is:pr'
 # Checkout a branch from a fork
 git fetch origin pull/<pr_number>/head:pr/<pr_number> \
    && git checkout pr/<pr_number>
+
+# Add a new module
+git submodule add <repository> <path>
+
+# Update module
+git submodule update --init
+
+# Update module without init
+git submodule update
+
+# Pull all submodules
+git submodule foreach git pull origin master
+
+# Update all submodules
+git submodule update --init --recursive
 
 $ branch: git branch | awk '{print $NF}'

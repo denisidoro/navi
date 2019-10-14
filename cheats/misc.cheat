@@ -14,5 +14,5 @@ curl -s "wttr.in/<location>" \
 
 % qr code
 
-# Create a QR code with the content
+# Create a QR code with some content
 echo <content> | curl -F-=\<- qrenco.de

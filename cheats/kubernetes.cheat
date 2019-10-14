@@ -1,5 +1,14 @@
 % kubernetes, k8s
 
+# Print all contexts
+kubectl config get-contexts
+
+# Print current context of kubeconfig
+kubectl config current-context
+
+# Set context of kubeconfig
+kubectl config use-context <context>
+
 # Print resource documentation
 kubectl explain <resource>
 
