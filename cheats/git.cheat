@@ -80,4 +80,19 @@ navi fn url::open 'https://github.com/pulls?&q=author:<user>+is:open+is:pr'
 git fetch origin pull/<pr_number>/head:pr/<pr_number> \
    && git checkout pr/<pr_number>
 
+# Add a new module
+git submodule add <repository> [<path>]
+
+# Update module
+git submodule update --init
+
+# Update module without init
+git submodule update
+
+# Pull all submodules
+git submodule foreach git pull origin master
+
+# Update all submodules
+git submodule update --init --recursive
+
 $ branch: git branch | awk '{print $NF}'

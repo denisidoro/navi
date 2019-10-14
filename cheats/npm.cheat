@@ -1,0 +1,20 @@
+# initial new package
+npm init
+
+# initial immediately a new package
+npm init -y
+
+# install all dependencies packages
+npm install
+
+# install all dev dependencies packages
+npm install --save-dev
+
+# install a specified package
+npm install <package_name>
+
+# install a specified dev package
+npm install <package_name> --save-dev
+
+# install globally a specified package
+npm install <package_name> -g
