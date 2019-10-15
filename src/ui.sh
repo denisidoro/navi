@@ -11,7 +11,7 @@ ui::fzf() {
    fi
 
    local -r fzf_cmd="$([ $NAVI_ENV == "test" ] && echo "fzf_mock" || echo "fzf")"
-   "$fzf_cmd" "${args[@]:-}" --inline-info "$@"
+   "$fzf_cmd" ${args[@]:-} --inline-info "$@"
 }
 
 ui::select() {
