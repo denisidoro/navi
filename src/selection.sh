@@ -23,14 +23,16 @@ selection::cmd_or_comment() {
    if echo "$core" | selection::core_is_comment; then
       echo "$cheat" \
          | grep "$core" -A999 \
-         | str::last_paragraph_line
+         | str::last_paragraph_line \
+         | cmd::escape
    elif $always_cmd; then
       echo "$core"
    else
       echo "$cheat" \
          | grep "^${core}$" -B999 \
          | str::reverse_lines \
-         | str::last_paragraph_line
+         | str::last_paragraph_line \
+         | cmd::escape
    fi
 }
 

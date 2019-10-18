@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+cmd::escape() {
+   tr '\\' "$ESCAPE_CHAR_3"
+}
+
+cmd::unescape() {
+   tr "$ESCAPE_CHAR_3" '\\'
+}
+
 cmd::loop() {
    local -r cmd="$1"
    local -r cheat="$2"
@@ -28,7 +36,7 @@ cmd::loop() {
 }
 
 cmd::finish() {
-   local -r cmd="$1"
+   local -r cmd="$(echo "$1" | cmd::unescape)"
 
    local -r unresolved_arg="$(echo "$cmd" | arg::next)"
 
