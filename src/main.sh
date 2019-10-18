@@ -53,7 +53,7 @@ handler::preview() {
    local -r selection="$(echo "$query" | selection::dict)"
    local -r cheats="$(cheat::memoized_read_all)"
    local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
-   [ -n "$cheat" ] && selection::cmd_or_comment "$selection" "$cheat"
+   [ -n "$cheat" ] && selection::cmd_or_comment "$selection" "$cheat" | cmd::unescape
 }
 
 handler::help() {
