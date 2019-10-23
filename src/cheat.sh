@@ -2,7 +2,7 @@
 
 cheat::find() {
    for path in $(echo "$NAVI_PATH" | tr ':' '\n'); do
-      find "$path" -iname '*.cheat'
+      find -L "$path" -iname '*.cheat'
    done
 }
 
