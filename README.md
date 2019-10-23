@@ -8,7 +8,7 @@ An interactive cheatsheet tool for the command-line so that you won't say the fo
 
 ![Demo](https://user-images.githubusercontent.com/3226564/66068076-4b36a800-e523-11e9-8f20-f5111522cba2.gif)
 
-**navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands, prompting for argument values.
+**navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands, with argument values prompted to you.
 
 Table of contents
 -----------------
