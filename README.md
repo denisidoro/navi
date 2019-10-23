@@ -104,9 +104,15 @@ Upgrading
 
 **navi** is being actively developed and you might want to upgrade it once in a while. Please follow the instruction below depending on the installation method used:
 
-- brew: `brew update; brew reinstall navi`
-- git: `cd /opt/navi && sudo make update`
-- oh-my-zsh: `cd "$(navi home)" && git pull`
+```sh
+# brew
+brew update
+brew reinstall navi
+
+# git or oh-my-zsh
+cd "$(navi home)"
+git pull
+```
 
 Usage
 -----
