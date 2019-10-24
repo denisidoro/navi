@@ -43,7 +43,7 @@ ui::select() {
 
    echo "$cheats" \
       | cheat::prettify \
-      | column -t -s $(printf "$ESCAPE_CHAR_3") \
+      | str::column $(printf "$ESCAPE_CHAR_3") \
       | ui::fzf "${args[@]}" \
       | ($best && head -n1 || cat) \
       | selection::dict "$cheats"
@@ -54,5 +54,6 @@ ui::clear_previous_line() {
 }
 
 ui::width() {
+   shopt -s checkwinsize; (:;:) 2> /dev/null || true
    tput cols 2>/dev/null || echo 130
 }

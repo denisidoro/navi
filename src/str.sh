@@ -63,3 +63,14 @@ str::not_empty() {
 str::remove_empty_lines() {
    sed '/^$/d'
 }
+
+str::column() {
+   local -r txt="$(cat)"
+   local -r separator="$1"
+
+   if command_exists column; then
+      echo "$txt" | column -t -s "$separator"
+   else
+      echo "$txt" | awk -F "$separator" -vOFS='\t' 'NF > 0 { $1 = $1 } 1'
+   fi
+}

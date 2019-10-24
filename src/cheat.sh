@@ -42,12 +42,12 @@ cheat::memoized_read_all() {
 }
 
 cheat::prettify() {
-  local -r columns="$(tput cols)"
+   local -r columns="$(ui::width)"
    awk \
-     -v COMMENT_MAX=$((columns * 55 / 100)) \
-     -v SNIPPET_MAX=0 \
-     -v SEP="$ESCAPE_CHAR_3" \
-     'function color(c,s,max) {
+      -v COMMENT_MAX=$((columns * 55 / 100)) \
+      -v SNIPPET_MAX=0 \
+      -v SEP="$ESCAPE_CHAR_3" \
+      'function color(c,s,max) {
            if (max > 0 && length(s) > max) {
               s=substr(s, 0, max)
               s=s"…"
