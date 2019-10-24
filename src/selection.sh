@@ -26,7 +26,7 @@ selection::resolve_ellipsis() {
     local -r tags="$(selection_str::tags "$str")"
     local -r cheat="$(cheat::from_tags "$cheats" "$tags")"
 
-    echo "$(echo "$cheat" | grep "$(echo "$comment" | tr -d "…")" | str::sub 2)  $(echo "$cheat" | grep "$(echo "$snippet" | tr -d "…")")  [${tags}]"
+    echo "$(echo "$cheat" | grep "$(echo "$comment" | tr -d "…")" | str::sub 2)  ${snippet}  [${tags}]"
   else
     echo "$str"
   fi 

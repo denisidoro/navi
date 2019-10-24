@@ -44,23 +44,21 @@ cheat::memoized_read_all() {
 cheat::prettify() {
   local -r columns="$(tput cols)"
    awk \
-     -v COMMENT_MAX=$((columns * 48 / 100)) \
-     -v SNIPPET_MAX=$((columns * 24 / 100)) \
+     -v COMMENT_MAX=$((columns * 55 / 100)) \
+     -v SNIPPET_MAX=0 \
      -v SEP="$ESCAPE_CHAR_3" \
      'function color(c,s,max) {
            if (max > 0 && length(s) > max) {
-              s2=substr(s, 0, max)
-              s2=s2"…"
-           } else {
-              s2=s
+              s=substr(s, 0, max)
+              s=s"…"
            }
-           printf("\033[%dm%s", 30+c, s2)
+           printf("\033[%dm%s", c, s)
         }
 
       /^%/ { tags="["substr($0, 3)"]"; next }
       /^#/ { comment=substr($0, 3); next }
       /^\$/ { next }
-   NF { print color(4, comment, COMMENT_MAX) color(-30, SEP, 0) color(7, $0, SNIPPET_MAX) color(-30, SEP, 0) color(60, tags, 0); next }'
+   NF { print color(34, comment, COMMENT_MAX) color(0, SEP, 0) color(37, $0, SNIPPET_MAX) color(0, SEP, 0) color(90, tags, 0); next }'
 }
 
 cheat::until_percentage() {
