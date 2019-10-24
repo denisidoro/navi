@@ -30,7 +30,7 @@ ui::select() {
    args+=("--ansi")
    if $preview; then
       args+=("--preview"); args+=("$preview_cmd")
-      args+=("--preview-window"); args+=("up:1")
+      args+=("--preview-window"); args+=("up:2")
    fi
    if [[ -n "$query" ]] && $best; then
       args+=("--filter"); args+=("${query} ")
@@ -43,6 +43,8 @@ ui::select() {
 
    echo "$cheats" \
       | cheat::prettify \
+      | head \
+      | column -t -s "X" \
       | ui::fzf "${args[@]}" \
       | ($best && head -n1 || cat) \
       | selection::dict

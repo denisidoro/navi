@@ -43,13 +43,13 @@ cheat::memoized_read_all() {
 
 cheat::prettify() {
    awk 'function color(c,s) {
-           printf("\033[%dm%s\033[0m",30+c,s)
+           printf("\033[%dm%s",30+c,s)
         }
 
-      /^%/ { tags=" ["substr($0, 3)"]"; next }
-      /^#/ { print color(4, $0) color(60, tags); next }
+      /^%/ { tags="["substr($0, 3)"]"; next }
+      /^#/ { comment=substr($0, 3); next }
       /^\$/ { next }
-   NF { print color(7, $0) color(60, tags); next }'
+   NF { print color(4, comment) color(-30, "X") color(7, $0) color(-30, "X") color(60, tags); next }'
 }
 
 cheat::until_percentage() {

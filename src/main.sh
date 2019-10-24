@@ -26,7 +26,7 @@ handler::main() {
 
    local -r interpolation="$(dict::get "$OPTIONS" interpolation)"
 
-   local cmd="$(selection::cmd "$selection" "$cheat")"
+   local cmd="$(selection::snippet "$selection")"
    local result arg value
 
    local i=0
@@ -53,7 +53,11 @@ handler::preview() {
    local -r selection="$(echo "$query" | selection::dict)"
    local -r cheats="$(cheat::memoized_read_all)"
    local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
-   [ -n "$cheat" ] && selection::cmd_or_comment "$selection" "$cheat" | cmd::unescape
+   [ -n "$cheat" ] && (
+      printf '\033[34m# '; selection::comment "$selection" | cmd::unescape
+      printf '\033[0m'
+      selection::snippet "$selection" | cmd::unescape
+   )
 }
 
 handler::help() {

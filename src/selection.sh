@@ -1,41 +1,21 @@
 #!/usr/bin/env bash
 
 selection::dict() {
-   local -r str="$(cat)"
+   local -r str="$(sed -E "s/  +/   /g")"
 
-   local -r tags="$(echo "$str" | awk -F'[' '{print $NF}' | tr -d ']')"
-   local -r core="$(echo "$str" | sed -e "s/ \[${tags}\]$//")"
+   local -r comment="$(echo "$str" | awk -F "   " '{print $1}')"
+   local -r snippet="$(echo "$str" | awk -F "   " '{print $2}')"
+   local -r tags="$(echo "$str" | awk -F "   " '{print $3}' | tr -d '[' | tr -d ']')"
 
-   dict::new core "$core" tags "$tags" | sed "s/'''/'/g"
+   dict::new comment "$comment" snippet "$snippet" tags "$tags" | sed "s/'''/'/g"
 }
 
-selection::core_is_comment() {
-   grep -qE '^#'
-}
-
-selection::cmd_or_comment() {
+selection::comment() {
    local -r selection="$1"
-   local -r cheat="$2"
-   local -r always_cmd="${3:-false}"
-
-   local -r core="$(echo "$selection" | dict::get core)"
-
-   if echo "$core" | selection::core_is_comment; then
-      echo "$cheat" \
-         | grep "$core" -A999 \
-         | str::last_paragraph_line \
-         | cmd::escape
-   elif $always_cmd; then
-      echo "$core"
-   else
-      echo "$cheat" \
-         | grep "^${core}$" -B999 \
-         | str::reverse_lines \
-         | str::last_paragraph_line \
-         | cmd::escape
-   fi
+   dict::get "$selection" comment
 }
 
-selection::cmd() {
-   selection::cmd_or_comment "$@" true
+selection::snippet() {
+   local -r selection="$1"
+   dict::get "$selection" snippet
 }
