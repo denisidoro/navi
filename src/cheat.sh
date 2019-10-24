@@ -42,14 +42,25 @@ cheat::memoized_read_all() {
 }
 
 cheat::prettify() {
-   awk 'function color(c,s) {
-           printf("\033[%dm%s",30+c,s)
+  local -r columns="$(tput cols)"
+   awk \
+     -v COMMENT_MAX=$((columns * 48 / 100)) \
+     -v SNIPPET_MAX=$((columns * 24 / 100)) \
+     -v SEP="$ESCAPE_CHAR_3" \
+     'function color(c,s,max) {
+           if (max > 0 && length(s) > max) {
+              s2=substr(s, 0, max)
+              s2=s2"…"
+           } else {
+              s2=s
+           }
+           printf("\033[%dm%s", 30+c, s2)
         }
 
       /^%/ { tags="["substr($0, 3)"]"; next }
       /^#/ { comment=substr($0, 3); next }
       /^\$/ { next }
-   NF { print color(4, comment) color(-30, "X") color(7, $0) color(-30, "X") color(60, tags); next }'
+   NF { print color(4, comment, COMMENT_MAX) color(-30, SEP, 0) color(7, $0, SNIPPET_MAX) color(-30, SEP, 0) color(60, tags, 0); next }'
 }
 
 cheat::until_percentage() {
@@ -60,13 +71,20 @@ cheat::until_percentage() {
    { print $0 }'
 }
 
+cheat::from_tags() {
+   local -r cheats="$1"
+   local -r tags="$2"
+
+   echo "$cheats" \
+      | grep "% ${tags}" -A99999 \
+      | cheat::until_percentage
+}
+
 cheat::from_selection() {
    local -r cheats="$1"
    local -r selection="$2"
 
    local -r tags="$(dict::get "$selection" tags)"
 
-   echo "$cheats" \
-      | grep "% ${tags}" -A99999 \
-      | cheat::until_percentage
+   cheat::from_tags "$cheats" "$tags"
 }

@@ -43,13 +43,16 @@ ui::select() {
 
    echo "$cheats" \
       | cheat::prettify \
-      | head \
-      | column -t -s "X" \
+      | column -t -s $(printf "$ESCAPE_CHAR_3") \
       | ui::fzf "${args[@]}" \
       | ($best && head -n1 || cat) \
-      | selection::dict
+      | selection::dict "$cheats"
 }
 
 ui::clear_previous_line() {
    tput cuu1 2>/dev/null && tput el || true
+}
+
+ui::width() {
+   tput cols 2>/dev/null || echo 130
 }

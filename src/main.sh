@@ -50,8 +50,8 @@ handler::main() {
 
 handler::preview() {
    local -r query="$1"
-   local -r selection="$(echo "$query" | selection::dict)"
    local -r cheats="$(cheat::memoized_read_all)"
+   local -r selection="$(echo "$query" | selection::dict "$cheats")"
    local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
    [ -n "$cheat" ] && (
       printf '\033[34m# '; selection::comment "$selection" | cmd::unescape
