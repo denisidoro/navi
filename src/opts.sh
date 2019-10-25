@@ -17,6 +17,9 @@ opts::eval() {
    local best=false
    local query=""
    local values=""
+   local with_nth="3,1,2"
+   local nth="1,2,3"
+   local col_widths="15,50,0"
 
    case "${1:-}" in
       --version|version) entry_point="version"; shift ;;
@@ -39,6 +42,8 @@ opts::eval() {
          search) query="$arg"; wait_for=""; path="${path}:$(search::full_path "$query")"; continue ;;
          query|best) query="$arg"; wait_for=""; continue ;;
          widget) SH="$arg"; wait_for=""; continue ;;
+         col-style) col_widths="$(echo "$arg" | tr -c '[0-9]' ' ' | xargs | tr ' ' ',')"; with_nth="$(echo "$arg" | tr '[0-9]' ' ' | tr -d ',' | tr c 1 | tr s 2 | tr t 3 | xargs | tr ' ' ',')"; wait_for=""; continue ;;
+         col-search) nth="$arg" ; wait_for=""; continue ;;
       esac
 
       case $arg in
@@ -47,6 +52,8 @@ opts::eval() {
          --no-preview) preview=false ;;
          --path|--dir) wait_for="path" ;;
          --no-autoselect) autoselect=false ;;
+         --col-style) wait_for="col-style" ;;
+         --col-search) wait_for="col-search" ;;
          *) values="$(echo "$values" | coll::add "$arg")" ;;
       esac
    done
@@ -57,9 +64,12 @@ opts::eval() {
       interpolation "$interpolation" \
       preview "$preview" \
       autoselect "$autoselect" \
+      nth "$nth" \
       query "$query" \
       best "$best" \
-      values "$values")"
+      values "$values" \
+      with-nth "${with_nth}" \
+      col-widths "$col_widths")"
 
    export NAVI_PATH="$path"
 }

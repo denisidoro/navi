@@ -2,6 +2,8 @@
 
 ui::fzf() {
    local -r autoselect="$(dict::get "$OPTIONS" autoselect)"
+   local -r with_nth="$(dict::get "$OPTIONS" with-nth)"
+   local -r nth="$(dict::get "$OPTIONS" nth)"
 
    local args
    args+=("--height")
@@ -10,6 +12,7 @@ ui::fzf() {
       args+=("--select-1")
    fi
 
+   export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS:---height 70% --reverse --border --inline-info --cycle}"
    local -r fzf_cmd="$([ $NAVI_ENV == "test" ] && echo "fzf_mock" || echo "fzf")"
    "$fzf_cmd" ${args[@]:-} --inline-info "$@"
 }
@@ -18,12 +21,14 @@ ui::select() {
    local -r cheats="$1"
 
    local -r script_path="${NAVI_HOME}/navi"
-   local -r preview_cmd="echo \'{}\' | $(arg::serialize_code) | xargs -I% \"${script_path}\" preview %"
+   local -r preview_cmd="\"${script_path}\" preview \$(echo \'{}\' | $(arg::serialize_code))"
 
    local -r query="$(dict::get "$OPTIONS" query)"
    local -r entry_point="$(dict::get "$OPTIONS" entry_point)"
    local -r preview="$(dict::get "$OPTIONS" preview)"
    local -r best="$(dict::get "$OPTIONS" best)"
+   local -r with_nth="$(dict::get "$OPTIONS" with-nth)"
+   local -r nth="$(dict::get "$OPTIONS" nth)"
 
    local args=()
    args+=("-i")
@@ -40,10 +45,13 @@ ui::select() {
    if [ "$entry_point" = "search" ]; then
       args+=("--header"); args+=("Displaying online results. Please refer to 'navi --help' for details")
    fi
+   args+=("--with-nth"); args+=("$with_nth")
+   args+=("--nth"); args+=("$nth")
+   args+=("--delimiter"); args+=('\s\s+');
 
    echo "$cheats" \
       | cheat::prettify \
-      | str::column $(printf "$ESCAPE_CHAR_3") \
+      | str::as_column $(printf "$ESCAPE_CHAR_3") \
       | ui::fzf "${args[@]}" \
       | ($best && head -n1 || cat) \
       | selection::dict "$cheats"
@@ -55,5 +63,9 @@ ui::clear_previous_line() {
 
 ui::width() {
    shopt -s checkwinsize; (:;:) 2> /dev/null || true
-   tput cols 2>/dev/null || echo 130
+   if command_exists tput; then
+      tput cols
+   else
+      echo 130
+   fi
 }

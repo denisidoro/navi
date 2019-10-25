@@ -1,19 +1,25 @@
 #!/usr/bin/env bash
 
+SELECTION_ESCAPE_STR="   "
+
 selection_str::cleanup() {
-   sed -E "s/  +/   /g"
+   sed -E "s/  +/${SELECTION_ESCAPE_STR}/g"
+}
+
+selection_str::without_ellipsis() {
+   tr -d "…"
 }
 
 selection_str::comment() {
-   echo "$*" | awk -F "   " '{print $1}'
+   echo "$*" | awk -F "${SELECTION_ESCAPE_STR}" '{print $1}' | selection_str::without_ellipsis
 }
 
 selection_str::snippet() {
-   echo "$*" | awk -F "   " '{print $2}'
+   echo "$*" | awk -F "${SELECTION_ESCAPE_STR}" '{print $2}' | selection_str::without_ellipsis
 }
 
 selection_str::tags() {
-   echo "$*" | awk -F "   " '{print $3}' | tr -d '[' | tr -d ']'
+   echo "$*" | awk -F "${SELECTION_ESCAPE_STR}" '{print $3}' | selection_str::without_ellipsis
 }
 
 selection::resolve_ellipsis() {
@@ -25,8 +31,7 @@ selection::resolve_ellipsis() {
       local -r snippet="$(selection_str::snippet "$str")"
       local -r tags="$(selection_str::tags "$str")"
       local -r cheat="$(cheat::from_tags "$cheats" "$tags")"
-
-      echo "$(echo "$cheat" | grep "$(echo "$comment" | tr -d "…")" | str::sub 2)  ${snippet}  [${tags}]"
+      echo "$(echo "$cheat" | grep "$comment" | str::sub 2)${SELECTION_ESCAPE_STR}${snippet}${SELECTION_ESCAPE_STR}${tags}"
    else
       echo "$str"
    fi
@@ -34,7 +39,7 @@ selection::resolve_ellipsis() {
 
 selection::dict() {
    local -r cheats="$1"
-   local -r str="$(selection::resolve_ellipsis "$cheats" | selection_str::cleanup)"
+   local -r str="$(selection::resolve_ellipsis "$cheats")"
 
    local -r comment="$(selection_str::comment "$str")"
    local -r snippet="$(selection_str::snippet "$str")"

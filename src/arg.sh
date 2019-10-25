@@ -38,7 +38,7 @@ arg::next() {
 }
 
 arg::deserialize() {
-   local arg="$1"
+   local arg="${1:-}"
 
    arg="${arg:1:${#arg}-2}"
    echo "$arg" \
