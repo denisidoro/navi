@@ -1,4 +1,4 @@
-% crontab, scheduling
+% crontab, schedule
 
 # List cron jobs
 crontab -l
