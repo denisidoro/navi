@@ -30,7 +30,7 @@ ui::select() {
    local -r entry_point="$(dict::get "$OPTIONS" entry_point)"
    local -r preview="$(dict::get "$OPTIONS" preview)"
    local -r best="$(dict::get "$OPTIONS" best)"
-   
+
    local args=()
    args+=("-i")
    args+=("--ansi")
@@ -72,12 +72,12 @@ ui::width() {
 ui::print_preview() {
    local -r selection="$1"
 
-local -r comment="$(selection::comment "$selection" | cmd::unescape)"
-local -r snippet="$(selection::snippet "$selection" | cmd::unescape)"
-local -r tags="$(selection::tags "$selection" | cmd::unescape)"
+   local -r comment="$(selection::comment "$selection" | cmd::unescape)"
+   local -r snippet="$(selection::snippet "$selection" | cmd::unescape)"
+   local -r tags="$(selection::tags "$selection" | cmd::unescape)"
 
-      printf '\033[34m# '; echo -n "$comment"
-      printf " \033[90m["; echo -n "$tags"; echo "]"
-      printf '\033[0m'
-      echo "$snippet"
+   printf '\033[34m# '; echo -n "$comment"
+   printf " \033[90m["; echo -n "$tags"; echo "]"
+   printf '\033[0m'
+   echo "$snippet"
 }
