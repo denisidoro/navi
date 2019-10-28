@@ -15,6 +15,7 @@ Options:
    --no-interpolation       Prevent argument interpolation
    --no-preview             Hide command preview window
    --fzf-overrides          Overrides for fzf commands [default: --with-nth 3,1,2 --exact]
+   --col-widths             Set column widths [default: 15,50,0]
 
 Environment variables:
    NAVI_PATH                List of :-separated paths to look for cheats
@@ -28,6 +29,7 @@ Examples:
    navi query git                        # filter results by "git"
    navi best 'sql create db' root mydb   # uses a snippet as a CLI
    source "$(navi widget zsh)"           # loads the zsh widget
+   navi --col-widths 10,50,0             # limits the first two columns's width
    navi --fzf-overrides '--with-nth 1,2' # shows only the comment and tag columns
    navi --fzf-overrides '--nth 1,2'      # search will consider only the first two columns
    navi --fzf-overrides '--no-exact'     # looser search algorithm
@@ -35,12 +37,16 @@ Examples:
 More info:
 
    search
-      Queries cheatsheets from http://cheat.sh
-      Please note that these cheatsheets may not work out of the box
-      Always check the preview window before executing commands!
+      http://cheat.sh is used for cheatsheet retrieval
+      please note that these cheatsheets may not work out of the box
+      always check the preview window before executing commands!
 
-   fzf's with-nth
+   --col-widths
+      the number is the percentage relative to the terminal width
+      0 means that a column will be as wide as necessary
+
+   fzf's --with-nth
       1 refers to the comment column; 2, snippet; 3, tag
 
    full docs
-      Please refer to the README at https://github.com/denisidoro/navi
+      please refer to the README at https://github.com/denisidoro/navi

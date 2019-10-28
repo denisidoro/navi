@@ -56,7 +56,7 @@ cheat::with_nth() {
 cheat::prettify() {
    local -r print="$(dict::get "$OPTIONS" print)"
    local -r widths="$(dict::get "$OPTIONS" col-widths | tr ',' $'\n')"
-   local -r numbered_with_nth="$(dict::get "$OPTIONS" fzf-overrides | cheat::with_nth | tr ',' $'\n' | str::with_line_numbers | tap)"
+   local -r numbered_with_nth="$(dict::get "$OPTIONS" fzf-overrides | cheat::with_nth | tr ',' $'\n' | str::with_line_numbers)"
 
    if [ -n "$numbered_with_nth" ]; then
      local -r comment_index="$(cheat::get_index "$numbered_with_nth" 1 2>/dev/null)"

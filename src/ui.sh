@@ -17,8 +17,6 @@ ui::fzf() {
    export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} ${fzf_overrides}"
 
    local -r fzf_cmd="$([ $NAVI_ENV == "test" ] && echo "fzf_mock" || echo "fzf")"
-   #echoerr "$FZF_DEFAULT_OPTS"
-   #echoerr "$fzf_cmd" ${args[@]:-} --inline-info "$@"
    "$fzf_cmd" ${args[@]:-} --inline-info "$@"
 }
 
@@ -69,4 +67,17 @@ ui::width() {
    else
       echo 130
    fi
+}
+
+ui::print_preview() {
+   local -r selection="$1"
+
+local -r comment="$(selection::comment "$selection" | cmd::unescape)"
+local -r snippet="$(selection::snippet "$selection" | cmd::unescape)"
+local -r tags="$(selection::tags "$selection" | cmd::unescape)"
+
+      printf '\033[34m# '; echo -n "$comment"
+      printf " \033[90m["; echo -n "$tags"; echo "]"
+      printf '\033[0m'
+      echo "$snippet"
 }

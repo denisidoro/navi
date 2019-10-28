@@ -31,7 +31,12 @@ selection::resolve_ellipsis() {
       local -r snippet="$(selection_str::snippet "$str")"
       local -r tags="$(selection_str::tags "$str")"
       local -r cheat="$(cheat::from_tags "$cheats" "$tags")"
-      echo "$(echo "$cheat" | grep "$comment" | str::sub 2)${SELECTION_ESCAPE_STR}${snippet}${SELECTION_ESCAPE_STR}${tags}"
+
+      local -r tags2="$(echo "$cheat" | head -n1 | str::sub 2)"
+      local -r comment2="$(echo "$cheat" | grep "$comment" | str::sub 2)"
+      local -r snippet2="$(echo "$cheat" | grep "$comment2" -A 999| str::last_paragraph_line)"
+
+      echo "${comment2}${SELECTION_ESCAPE_STR}${snippet2}${SELECTION_ESCAPE_STR}${tags2}"
    else
       echo "$str"
    fi
@@ -56,4 +61,9 @@ selection::comment() {
 selection::snippet() {
    local -r selection="$1"
    dict::get "$selection" snippet
+}
+
+selection::tags() {
+   local -r selection="$1"
+   dict::get "$selection" tags
 }
