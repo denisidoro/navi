@@ -33,7 +33,7 @@ selection::resolve_ellipsis() {
       local -r cheat="$(cheat::from_tags "$cheats" "$tags")"
 
       local -r tags2="$(echo "$cheat" | head -n1 | str::sub 2)"
-      local -r comment2="$(echo "$cheat" | grep "$comment" | str::sub 2)"
+      local -r comment2="$(echo "$cheat" | grep "$comment" | str::last_line | str::sub 2)"
       local -r snippet2="$(echo "$cheat" | grep "$comment2" -A 999| str::last_paragraph_line)"
 
       echo "${comment2}${SELECTION_ESCAPE_STR}${snippet2}${SELECTION_ESCAPE_STR}${tags2}"
