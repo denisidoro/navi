@@ -13,8 +13,8 @@ ui::fzf() {
       args+=("--select-1")
    fi
 
-   local fzf_opts="${FZF_DEFAULT_OPTS:---height 70% --reverse --border --inline-info --cycle}"
-   export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} ${fzf_overrides}"
+   local -r fzf_opts="${FZF_DEFAULT_OPTS:---height 70% --reverse --border --inline-info --cycle}"
+   export FZF_DEFAULT_OPTS="${fzf_opts} ${fzf_overrides}"
 
    local -r fzf_cmd="$([ $NAVI_ENV == "test" ] && echo "fzf_mock" || echo "fzf")"
    "$fzf_cmd" ${args[@]:-} --inline-info "$@"
