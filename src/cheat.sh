@@ -49,18 +49,29 @@ cheat::get_index() {
   echo $((i - 1))
 }
 
+cheat::with_nth() {
+  grep -Eo 'with\-nth +([^ ]+)' | awk '{print $NF}'
+}
+
 cheat::prettify() {
    local -r print="$(dict::get "$OPTIONS" print)"
    local -r widths="$(dict::get "$OPTIONS" col-widths | tr ',' $'\n')"
-   local -r numbered_with_nth="$(dict::get "$OPTIONS" with-nth | tr ',' $'\n' | str::with_line_numbers)"
-   local -r comment_index="$(cheat::get_index "$numbered_with_nth" 1 2>/dev/null)"
-   local -r snippet_index="$(cheat::get_index "$numbered_with_nth" 2 2>/dev/null)"
-   local -r tag_index="$(cheat::get_index "$numbered_with_nth" 3 2>/dev/null)"
-   local -r comment_width="$(echo "$widths" | coll::get $comment_index 2>/dev/null || echo 0)"
-   local -r snippet_width="$(echo "$widths" | coll::get $snippet_index 2>/dev/null || echo 0)"
-   local -r tag_width="$(echo "$widths" | coll::get $tag_index 2>/dev/null || echo 0)"
+   local -r numbered_with_nth="$(dict::get "$OPTIONS" fzf-overrides | cheat::with_nth | tr ',' $'\n' | str::with_line_numbers | tap)"
 
-   local -r columns="$(ui::width)"
+   if [ -n "$numbered_with_nth" ]; then
+     local -r comment_index="$(cheat::get_index "$numbered_with_nth" 1 2>/dev/null)"
+     local -r snippet_index="$(cheat::get_index "$numbered_with_nth" 2 2>/dev/null)"
+     local -r tag_index="$(cheat::get_index "$numbered_with_nth" 3 2>/dev/null)"
+     local -r comment_width="$(echo "$widths" | coll::get $comment_index 2>/dev/null || echo 0)"
+     local -r snippet_width="$(echo "$widths" | coll::get $snippet_index 2>/dev/null || echo 0)"
+     local -r tag_width="$(echo "$widths" | coll::get $tag_index 2>/dev/null || echo 0)"
+     local -r columns="$(ui::width)"
+  else
+     local -r comment_width=0
+     local -r snippet_width=0
+     local -r tag_width=0
+     local -r columns=0
+  fi
 
    awk \
       -v COMMENT_MAX=$((columns * comment_width / 100)) \

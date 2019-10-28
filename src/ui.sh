@@ -4,6 +4,7 @@ ui::fzf() {
    local -r autoselect="$(dict::get "$OPTIONS" autoselect)"
    local -r with_nth="$(dict::get "$OPTIONS" with-nth)"
    local -r nth="$(dict::get "$OPTIONS" nth)"
+   local -r fzf_overrides="$(dict::get "$OPTIONS" fzf-overrides)"
 
    local args
    args+=("--height")
@@ -12,8 +13,12 @@ ui::fzf() {
       args+=("--select-1")
    fi
 
-   export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS:---height 70% --reverse --border --inline-info --cycle}"
+   local fzf_opts="${FZF_DEFAULT_OPTS:---height 70% --reverse --border --inline-info --cycle}"
+   export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} ${fzf_overrides}"
+
    local -r fzf_cmd="$([ $NAVI_ENV == "test" ] && echo "fzf_mock" || echo "fzf")"
+   #echoerr "$FZF_DEFAULT_OPTS"
+   #echoerr "$fzf_cmd" ${args[@]:-} --inline-info "$@"
    "$fzf_cmd" ${args[@]:-} --inline-info "$@"
 }
 
@@ -27,9 +32,7 @@ ui::select() {
    local -r entry_point="$(dict::get "$OPTIONS" entry_point)"
    local -r preview="$(dict::get "$OPTIONS" preview)"
    local -r best="$(dict::get "$OPTIONS" best)"
-   local -r with_nth="$(dict::get "$OPTIONS" with-nth)"
-   local -r nth="$(dict::get "$OPTIONS" nth)"
-
+   
    local args=()
    args+=("-i")
    args+=("--ansi")
@@ -45,8 +48,6 @@ ui::select() {
    if [ "$entry_point" = "search" ]; then
       args+=("--header"); args+=("Displaying online results. Please refer to 'navi --help' for details")
    fi
-   args+=("--with-nth"); args+=("$with_nth")
-   args+=("--nth"); args+=("$nth")
    args+=("--delimiter"); args+=('\s\s+');
 
    echo "$cheats" \
