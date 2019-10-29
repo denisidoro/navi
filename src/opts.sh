@@ -19,6 +19,7 @@ opts::eval() {
    local values=""
    local col_widths="15,50,0"
    local fzf_overrides="--with-nth 3,1,2 --exact"
+   local fzf_opts="${FZF_DEFAULT_OPTS:---height 70% --reverse --border --inline-info --cycle}"
 
    case "${1:-}" in
       --version|version) entry_point="version"; shift ;;
@@ -73,4 +74,5 @@ opts::eval() {
       col-widths "$col_widths")"
 
    export NAVI_PATH="$path"
+   export FZF_DEFAULT_OPTS="$fzf_opts"
 }
