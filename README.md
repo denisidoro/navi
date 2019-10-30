@@ -6,7 +6,7 @@ An interactive cheatsheet tool for the command-line so that you won't say the fo
 — *Oh, it's not in my shell history*<br>
 — *Geez, it's almost what I wanted but I need to change some args*
 
-![Demo](https://user-images.githubusercontent.com/3226564/67786208-40513380-fa4d-11e9-9962-75e5cfe552f1.gif)
+![Demo](https://user-images.githubusercontent.com/3226564/67864139-ebbcbf80-fb03-11e9-9abb-8e6664f77915.gif)
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands, with argument values prompted to you.
 
