@@ -59,6 +59,7 @@ cheat::prettify() {
    local -r print="$(dict::get "$OPTIONS" print)"
    local -r widths="$(dict::get "$OPTIONS" col-widths | tr ',' $'\n')"
    local -r numbered_with_nth="$(dict::get "$OPTIONS" fzf-overrides | cheat::with_nth | tr ',' $'\n' | str::with_line_numbers)"
+   local -r colors="$(dict::get "$OPTIONS" col-colors | xargs | tr ',' $'\n')"
 
    if [ -n "$numbered_with_nth" ]; then
       local -r comment_index="$(cheat::get_index "$numbered_with_nth" 1 2>/dev/null)"
@@ -67,6 +68,9 @@ cheat::prettify() {
       local -r comment_width="$(echo "$widths" | coll::get $comment_index 2>/dev/null || echo 0)"
       local -r snippet_width="$(echo "$widths" | coll::get $snippet_index 2>/dev/null || echo 0)"
       local -r tag_width="$(echo "$widths" | coll::get $tag_index 2>/dev/null || echo 0)"
+      local -r comment_color="$(echo "$colors" | coll::get $comment_index 2>/dev/null || echo 0)"
+      local -r snippet_color="$(echo "$colors" | coll::get $snippet_index 2>/dev/null || echo 0)"
+      local -r tag_color="$(echo "$colors" | coll::get $tag_index 2>/dev/null || echo 0)"
       local -r columns="$(ui::width)"
    else
       local -r comment_width=0
@@ -76,6 +80,9 @@ cheat::prettify() {
    fi
 
    awk \
+      -v COMMENT_COLOR=$comment_color \
+      -v SNIPPET_COLOR=$snippet_color \
+      -v TAG_COLOR=$tag_color \
       -v COMMENT_MAX=$((columns * comment_width / 100)) \
       -v SNIPPET_MAX=$((columns * snippet_width / 100)) \
       -v TAG_MAX=$((columns * tag_width / 100)) \
@@ -93,13 +100,13 @@ cheat::prettify() {
       /^\$/ { next }
    BEGIN { ORS="" }
    NF {
-    print color(34, comment, COMMENT_MAX)
+    print color(COMMENT_COLOR, comment, COMMENT_MAX)
     print color(0, SEP, 0)
-    print color(37, $0, SNIPPET_MAX)
+    print color(SNIPPET_COLOR, $0, SNIPPET_MAX)
     print color(0, SEP, 0)
-    print color(90, tags, TAG_MAX);
+    print color(TAG_COLOR, tags, TAG_MAX);
     print color(0, SEP, 0)
-    print color(90, "\033", 0);
+    print color(DEFAULT, "\033", 0);
     print "\n"
     next
    }'

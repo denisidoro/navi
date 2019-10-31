@@ -25,3 +25,11 @@ $ device: adb devices --- --headers 1 --column 1
 "$ANDROID_HOME/tools/emulator" -avd <emulator> -netdelay none -netspeed full
 
 $ emulator: "$ANDROID_HOME/tools/emulator" -list-avds
+
+
+
+
+% text
+
+# Print the last line
+tail -n1

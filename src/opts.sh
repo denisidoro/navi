@@ -18,6 +18,7 @@ opts::eval() {
    local query=""
    local values=""
    local col_widths="15,50,0"
+   local col_colors="90,33,37"
    local fzf_overrides="--with-nth 3,1,2 --exact"
 
    case "${1:-}" in
@@ -42,6 +43,7 @@ opts::eval() {
          query|best) query="$arg"; wait_for=""; continue ;;
          widget) SH="$arg"; wait_for=""; continue ;;
          col-widths) col_widths="$(echo "$arg" | xargs | tr ' ' ',')"; wait_for=""; continue ;;
+         col-colors) col_colors="$(echo "$arg")"; wait_for=""; continue ;;
          fzf-overrides) fzf_overrides="$arg" ; wait_for=""; continue ;;
       esac
 
@@ -55,6 +57,7 @@ opts::eval() {
          --no-autoselect) autoselect=false ;;
          --autoselect) autoselect=true ;;
          --col-widths) wait_for="col-widths" ;;
+         --col-colors) wait_for="col-colors" ;;
          --fzf-overrides) wait_for="fzf-overrides" ;;
          *) values="$(echo "$values" | coll::add "$arg")" ;;
       esac
@@ -70,6 +73,7 @@ opts::eval() {
       best "$best" \
       values "$values" \
       fzf-overrides "$fzf_overrides" \
+      col-colors "$col_colors" \
       col-widths "$col_widths")"
 
    export NAVI_PATH="$path"

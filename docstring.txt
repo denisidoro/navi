@@ -14,6 +14,7 @@ Options:
    --path                   List of :-separated paths to look for cheats
    --no-interpolation       Prevent argument interpolation
    --no-preview             Hide command preview window
+   --no-autoselect          Prevents autoselecting single entries in a list
    --fzf-overrides          Overrides for fzf commands [default: --with-nth 3,1,2 --exact]
    --col-widths             Set column widths [default: 15,50,0]
 
@@ -44,6 +45,9 @@ More info:
    --col-widths
       the number is the percentage relative to the terminal width
       0 means that a column will be as wide as necessary
+
+   fzf properties
+      please refer to https://github.com/junegunn/fzf for further details
 
    fzf's --with-nth
       1 refers to the comment column; 2, snippet; 3, tag
