@@ -7,6 +7,7 @@ fi
 source "${NAVI_HOME}/src/arg.sh"
 source "${NAVI_HOME}/src/cheat.sh"
 source "${NAVI_HOME}/src/cmd.sh"
+source "${NAVI_HOME}/src/clipboard.sh"
 source "${NAVI_HOME}/src/coll.sh"
 source "${NAVI_HOME}/src/dict.sh"
 source "${NAVI_HOME}/src/health.sh"

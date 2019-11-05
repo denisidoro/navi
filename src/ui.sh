@@ -21,6 +21,7 @@ ui::select() {
 
    local -r script_path="${NAVI_HOME}/navi"
    local -r preview_cmd="\"${script_path}\" preview \$(echo \'{}\' | $(arg::serialize_code))"
+   local -r ctrl_y_cmd="execute(echo '{}' | $(clip::cmd))+abort"
 
    local -r query="$(dict::get "$OPTIONS" query)"
    local -r entry_point="$(dict::get "$OPTIONS" entry_point)"
@@ -31,6 +32,7 @@ ui::select() {
    local args=()
    args+=("-i")
    args+=("--ansi")
+   args+=("--bind"); args+=("ctrl-y:${ctrl_y_cmd}")
    if $preview; then
       args+=("--preview"); args+=("$preview_cmd")
       args+=("--preview-window"); args+=("up:2")
