@@ -46,7 +46,7 @@ handler::main() {
       i=$((i+1))
    done
 
-   cmd::finish "$cmd"
+   cmd::finish "$cmd" "$selection"
 }
 
 handler::preview() {

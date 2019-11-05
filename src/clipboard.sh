@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
-clip::cmd() {
+clip::set() {
+   local -r input="${1:-}"
+
    if command_exists pbcopy; then
-      echo pbcopy
+      echo "$input" | pbcopy
+   elif command_exists clip.exe; then
+      echo "$input" | clip.exe
    elif command_exists xclip; then
-      echo xclip -sel clip
+      echo "$input" | xclip -sel clip
    elif command_exists xsel; then
-      echo xsel -i -b
+      echo "$input" | xsel -i -b
    fi
 }

@@ -21,7 +21,6 @@ ui::select() {
 
    local -r script_path="${NAVI_HOME}/navi"
    local -r preview_cmd="\"${script_path}\" preview \$(echo \'{}\' | $(arg::serialize_code))"
-   local -r ctrl_y_cmd="execute(echo '{}' | $(clip::cmd))+abort"
 
    local -r query="$(dict::get "$OPTIONS" query)"
    local -r entry_point="$(dict::get "$OPTIONS" entry_point)"
@@ -32,7 +31,6 @@ ui::select() {
    local args=()
    args+=("-i")
    args+=("--ansi")
-   args+=("--bind"); args+=("ctrl-y:${ctrl_y_cmd}")
    if $preview; then
       args+=("--preview"); args+=("$preview_cmd")
       args+=("--preview-window"); args+=("up:2")
@@ -45,16 +43,22 @@ ui::select() {
    if [ "$entry_point" = "search" ]; then
       args+=("--header"); args+=("Displaying online results. Please refer to 'navi --help' for details")
    fi
-   args+=("--delimiter"); args+=('\s\s+');
+   args+=("--delimiter"); args+=('\s\s+')
+   args+=("--expect"); args+=("ctrl-y")
 
    export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} ${fzf_overrides}"
 
-   echo "$cheats" \
+   local -r result="$(echo "$cheats" \
       | cheat::prettify \
       | str::as_column $(printf "$ESCAPE_CHAR_3") \
-      | ui::fzf "${args[@]}" \
+      | ui::fzf "${args[@]}")"
+
+   local -r key="$(echo "$result" | head -n1)"
+
+   echo "$result" \
+      | tail -n +2 \
       | ($best && head -n1 || cat) \
-      | selection::dict "$cheats"
+      | selection::dict "$cheats" "$key"
 }
 
 ui::clear_previous_line() {
