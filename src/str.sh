@@ -17,9 +17,10 @@ str::sub() {
 
 str::column() {
    local -r n="${1:-}"
+   local -r separator="${2:-  +}"
 
    if [ -n "$n" ]; then
-      awk "{print \$$n}"
+      awk -F "$separator" --"{print \$$n}"
    else
       cat
    fi
