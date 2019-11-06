@@ -11,5 +11,8 @@ clip::set() {
       echo "$input" | xclip -sel clip
    elif command_exists xsel; then
       echo "$input" | xsel -i -b
+   else
+      echo "$input"
+      die "Unable to set clipboard"
    fi
 }
