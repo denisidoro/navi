@@ -20,7 +20,7 @@ str::column() {
    local -r separator="$(echo "${2:-}" | or "  +")"
 
    if [ -n "$n" ]; then
-      awk -F "$separator" "{print \$$n}"
+      awk -F "${separator:- }" "{print \$$n}"
    else
       cat
    fi
