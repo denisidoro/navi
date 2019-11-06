@@ -4,8 +4,8 @@ Usage:
    navi [command] [<args>...] [options]
 
 Commands:
-   search <cmd>             Search for cheatsheets on online repositories
    query  <cmd>             Pre-filter results
+   search <cmd>             Search for cheatsheets on online repositories
    best   <cmd> <args>...   Considers the best match
    widget <shell>           Prints the path for the widget file to be sourced
 
@@ -17,6 +17,9 @@ Options:
    --fzf-overrides          Overrides for fzf commands [default: --with-nth 3,1,2 --exact]
    --col-widths             Set column widths [default: 15,50,0]
 
+Keybindings:
+   Ctrl-y                   Copy snippet to clipboard
+
 Environment variables:
    NAVI_PATH                List of :-separated paths to look for cheats
    FZF_DEFAULT_OPTS         Default fzf options (e.g. '--layout=reverse')
@@ -26,7 +29,7 @@ Examples:
    navi --print                          # doesn't execute the snippet
    navi --path '/some/dir:/other/dir'    # uses custom cheats
    navi search docker                    # uses online data
-   navi query git                        # filter results by "git"
+   navi query git                        # filters results by "git"
    navi best 'sql create db' root mydb   # uses a snippet as a CLI
    source "$(navi widget zsh)"           # loads the zsh widget
    navi --col-widths 10,50,0             # limits the first two columns's width

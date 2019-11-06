@@ -37,11 +37,15 @@ cmd::loop() {
 
 cmd::finish() {
    local -r cmd="$(echo "$1" | cmd::unescape)"
+   local -r selection="${2:-}"
 
+   local -r key="$(selection::key "$selection")"
    local -r unresolved_arg="$(echo "$cmd" | arg::next)"
 
    local -r print="$(dict::get "$OPTIONS" print)"
-   if $print || [ -n "$unresolved_arg" ]; then
+   if [[ "$key" = "ctrl-y" ]]; then
+      clip::set "$cmd"
+   elif $print || [ -n "$unresolved_arg" ]; then
       echo "$cmd"
    else
       eval "$cmd"

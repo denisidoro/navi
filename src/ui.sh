@@ -43,16 +43,22 @@ ui::select() {
    if [ "$entry_point" = "search" ]; then
       args+=("--header"); args+=("Displaying online results. Please refer to 'navi --help' for details")
    fi
-   args+=("--delimiter"); args+=('\s\s+');
+   args+=("--delimiter"); args+=('\s\s+')
+   args+=("--expect"); args+=("ctrl-y")
 
    export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} ${fzf_overrides}"
 
-   echo "$cheats" \
+   local -r result="$(echo "$cheats" \
       | cheat::prettify \
       | str::as_column $(printf "$ESCAPE_CHAR_3") \
-      | ui::fzf "${args[@]}" \
+      | ui::fzf "${args[@]}")"
+
+   local -r key="$(echo "$result" | head -n1)"
+
+   echo "$result" \
+      | tail -n +2 \
       | ($best && head -n1 || cat) \
-      | selection::dict "$cheats"
+      | selection::dict "$cheats" "$key"
 }
 
 ui::clear_previous_line() {
