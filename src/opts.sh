@@ -18,7 +18,7 @@ opts::eval() {
    local query=""
    local values=""
    local col_widths="15,50,0"
-   local col_colors="90,33,37"
+   local col_colors="90,34,37"
    local fzf_overrides="--with-nth 3,1,2 --exact"
    local fzf_opts="${FZF_DEFAULT_OPTS:---height 70% --reverse --border --inline-info --cycle}"
 

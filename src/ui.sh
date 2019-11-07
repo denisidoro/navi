@@ -81,8 +81,12 @@ ui::print_preview() {
    local -r snippet="$(selection::snippet "$selection" | cmd::unescape)"
    local -r tags="$(selection::tags "$selection" | cmd::unescape)"
 
-   printf '\033[34m# '; echo -n "$comment"
-   printf " \033[90m["; echo -n "$tags"; echo "]"
-   printf '\033[0m'
+   local -r comment_color="$(style::comment_color)"
+   local -r snippet_color="$(style::snippet_color)"
+   local -r tag_color="$(style::tag_color)"  
+
+   printf "\033[${comment_color}m# "; echo -n "$comment"
+   printf " \033[${tag_color}m["; echo -n "$tags"; echo "]"
+   printf "\033[${snippet_color}m"
    echo "$snippet"
 }

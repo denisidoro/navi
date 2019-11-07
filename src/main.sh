@@ -16,6 +16,7 @@ source "${NAVI_HOME}/src/opts.sh"
 source "${NAVI_HOME}/src/search.sh"
 source "${NAVI_HOME}/src/selection.sh"
 source "${NAVI_HOME}/src/str.sh"
+source "${NAVI_HOME}/src/style.sh"
 source "${NAVI_HOME}/src/ui.sh"
 
 handler::main() {

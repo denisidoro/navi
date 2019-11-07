@@ -41,43 +41,18 @@ cheat::memoized_read_all() {
       | cheat::join_lines
 }
 
-# TODO: move this elsewhere
-cheat::get_index() {
-   local -r txt="$1"
-   local -r ref="$2"
-
-   local -r i="$(echo "$txt" | grep "${ref}\$" | awk '{print $1}')"
-   echo $((i - 1))
-}
-
-# TODO: move this elsewhere
-cheat::with_nth() {
-   grep -Eo 'with\-nth +([^ ]+)' | awk '{print $NF}'
-}
-
 cheat::prettify() {
    local -r print="$(dict::get "$OPTIONS" print)"
-   local -r widths="$(dict::get "$OPTIONS" col-widths | tr ',' $'\n')"
-   local -r numbered_with_nth="$(dict::get "$OPTIONS" fzf-overrides | cheat::with_nth | tr ',' $'\n' | str::with_line_numbers)"
-   local -r colors="$(dict::get "$OPTIONS" col-colors | xargs | tr ',' $'\n')"
 
-   if [ -n "$numbered_with_nth" ]; then
-      local -r comment_index="$(cheat::get_index "$numbered_with_nth" 1 2>/dev/null)"
-      local -r snippet_index="$(cheat::get_index "$numbered_with_nth" 2 2>/dev/null)"
-      local -r tag_index="$(cheat::get_index "$numbered_with_nth" 3 2>/dev/null)"
-      local -r comment_width="$(echo "$widths" | coll::get $comment_index 2>/dev/null || echo 0)"
-      local -r snippet_width="$(echo "$widths" | coll::get $snippet_index 2>/dev/null || echo 0)"
-      local -r tag_width="$(echo "$widths" | coll::get $tag_index 2>/dev/null || echo 0)"
-      local -r comment_color="$(echo "$colors" | coll::get $comment_index 2>/dev/null || echo 0)"
-      local -r snippet_color="$(echo "$colors" | coll::get $snippet_index 2>/dev/null || echo 0)"
-      local -r tag_color="$(echo "$colors" | coll::get $tag_index 2>/dev/null || echo 0)"
-      local -r columns="$(ui::width)"
-   else
-      local -r comment_width=0
-      local -r snippet_width=0
-      local -r tag_width=0
-      local -r columns=0
-   fi
+   local -r comment_width="$(style::comment_width)"
+   local -r snippet_width="$(style::snippet_width)"
+   local -r tag_width="$(style::tag_width)"
+
+   local -r comment_color="$(style::comment_color)"
+   local -r snippet_color="$(style::snippet_color)"
+   local -r tag_color="$(style::tag_color)"
+  
+   local -r columns="$(ui::width || echo 0)"
 
    awk \
       -v COMMENT_COLOR=$comment_color \
