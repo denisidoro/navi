@@ -51,7 +51,7 @@ cheat::prettify() {
    local -r comment_color="$(style::comment_color)"
    local -r snippet_color="$(style::snippet_color)"
    local -r tag_color="$(style::tag_color)"
-  
+
    local -r columns="$(ui::width || echo 0)"
 
    awk \

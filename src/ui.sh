@@ -83,7 +83,7 @@ ui::print_preview() {
 
    local -r comment_color="$(style::comment_color)"
    local -r snippet_color="$(style::snippet_color)"
-   local -r tag_color="$(style::tag_color)"  
+   local -r tag_color="$(style::tag_color)"
 
    printf "\033[${comment_color}m# "; echo -n "$comment"
    printf " \033[${tag_color}m["; echo -n "$tags"; echo "]"
