@@ -14,8 +14,10 @@ Options:
    --path                   List of :-separated paths to look for cheats
    --no-interpolation       Prevent argument interpolation
    --no-preview             Hide command preview window
+   --no-autoselect          Prevents autoselecting single entries in a list
    --fzf-overrides          Overrides for fzf commands [default: --with-nth 3,1,2 --exact]
    --col-widths             Set column widths [default: 15,50,0]
+   --col-colors             Set color ANSI codes [default: 90,34,37]
 
 Keybindings:
    Ctrl-y                   Copy snippet to clipboard
@@ -33,6 +35,7 @@ Examples:
    navi best 'sql create db' root mydb   # uses a snippet as a CLI
    source "$(navi widget zsh)"           # loads the zsh widget
    navi --col-widths 10,50,0             # limits the first two columns's width
+   navi --col-colors 32,32,32            # make all columns green
    navi --fzf-overrides '--with-nth 1,2' # shows only the comment and tag columns
    navi --fzf-overrides '--nth 1,2'      # search will consider only the first two columns
    navi --fzf-overrides '--no-exact'     # looser search algorithm
@@ -47,6 +50,9 @@ More info:
    --col-widths
       the number is the percentage relative to the terminal width
       0 means that a column will be as wide as necessary
+
+   fzf properties
+      please refer to https://github.com/junegunn/fzf for further details
 
    fzf's --with-nth
       1 refers to the comment column; 2, snippet; 3, tag

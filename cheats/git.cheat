@@ -94,6 +94,12 @@ git submodule foreach git pull origin master
 # Update all submodules
 git submodule update --init --recursive
 
+# Start ssh agent
+eval "$(ssh-agent -s)"; ssh-add
+
+# Skip git hooks
+git commit --no-verify
+
 $ branch: git branch | awk '{print $NF}'
 $ toplevel_directory: git rev-parse --show-toplevel
 $ unstaged_files: git --no-pager diff --name-only
