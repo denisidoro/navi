@@ -44,13 +44,14 @@ selection::resolve_ellipsis() {
 
 selection::dict() {
    local -r cheats="$1"
+   local -r key="${2:-}"
    local -r str="$(selection::resolve_ellipsis "$cheats")"
 
    local -r comment="$(selection_str::comment "$str")"
    local -r snippet="$(selection_str::snippet "$str")"
    local -r tags="$(selection_str::tags "$str")"
 
-   dict::new comment "$comment" snippet "$snippet" tags "$tags" | sed "s/'''/'/g"
+   dict::new comment "$comment" snippet "$snippet" tags "$tags" key "$key" | sed "s/'''/'/g"
 }
 
 selection::comment() {
@@ -66,4 +67,9 @@ selection::snippet() {
 selection::tags() {
    local -r selection="$1"
    dict::get "$selection" tags
+}
+
+selection::key() {
+   local -r selection="$1"
+   dict::get "$selection" key
 }
