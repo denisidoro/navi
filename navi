@@ -2,42 +2,9 @@
 set -euo pipefail
 
 export NAVI_HOME="$(cd "$(dirname "$0")" && pwd)"
-
 source "${NAVI_HOME}/src/main.sh"
 
-##? An interactive cheatsheet tool for the command-line
-##?
-##? Usage:
-##?    navi [command] [<args>...] [options]
-##?
-##? Commands:
-##?    search <cmd>             Search for cheatsheets on online repositories
-##?    query  <cmd>             Pre-filter results
-##?    best   <cmd> <args>...   Considers the best match
-##?
-##? Options:
-##?    --print                  Prevent script execution
-##?    --path                   List of paths to look for cheats
-##?    --no-interpolation       Prevent argument interpolation
-##?    --no-preview             Hide command preview window
-##?
-##? Examples:
-##?    navi
-##?    navi --path '/some/folder:/another/folder'
-##?    navi search awk
-##?    navi search docker --print
-##?    navi query git
-##?    navi best 'sql create db' root mydb
-##?
-##? More info:
-##?    search
-##?       Queries cheatsheets from http://cheat.sh
-##?       Please note that these cheatsheets may not work out of the box
-##?       Always check the preview window before executing commands!
-##?    full docs
-##?       Please refer to the README at https://github.com/denisidoro/navi
-
-VERSION="0.14.3"
+VERSION="0.15.2"
 NAVI_ENV="${NAVI_ENV:-prod}"
 
 opts::eval "$@"

@@ -1,4 +1,4 @@
-% tar, zip, gzip, compression
+% compression
 
 # Create a tar containing files
 tar cf <name>.tar <files>

@@ -35,3 +35,15 @@ die() {
    echoerr "$@"
    exit 42
 }
+
+or() {
+   local -r x="$(cat)"
+   local -r y="${1:-}"
+
+   if [ -n "$x" ]; then
+      echo "$x"
+   elif [ $# -gt 0 ]; then
+      shift
+      echo "$y" | or "$@"
+   fi
+}

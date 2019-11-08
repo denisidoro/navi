@@ -17,9 +17,10 @@ str::sub() {
 
 str::column() {
    local -r n="${1:-}"
+   local -r separator="$(echo "${2:-}" | or "  +")"
 
    if [ -n "$n" ]; then
-      awk "{print \$$n}"
+      awk -F "${separator:- }" "{print \$$n}"
    else
       cat
    fi
@@ -62,4 +63,23 @@ str::not_empty() {
 
 str::remove_empty_lines() {
    sed '/^$/d'
+}
+
+str::last_line() {
+   tail -n1
+}
+
+str::as_column() {
+   local -r txt="$(cat)"
+   local -r separator="$1"
+
+   if command_exists column; then
+      echo "$txt" | column -t -s "$separator"
+   else
+      echo "$txt" | awk -F "$separator" -vOFS='  ' 'NF > 0 { $1 = $1 } 1'
+   fi
+}
+
+str::with_line_numbers() {
+   awk '{printf("%d %s\n", NR,$0)}'
 }

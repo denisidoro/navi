@@ -6,7 +6,7 @@ An interactive cheatsheet tool for the command-line so that you won't say the fo
 — *Oh, it's not in my shell history*<br>
 — *Geez, it's almost what I wanted but I need to change some args*
 
-![Demo](https://user-images.githubusercontent.com/3226564/66068076-4b36a800-e523-11e9-8f20-f5111522cba2.gif)
+![Demo](https://user-images.githubusercontent.com/3226564/67864139-ebbcbf80-fb03-11e9-9abb-8e6664f77915.gif)
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands, with argument values prompted to you.
 
@@ -88,7 +88,7 @@ as a [shell widget](#shell-widget) with no additional setup.
 > to be able to run the command interactively, you will need to do one of the following: 
 
 - Install it to /usr/bin/local (via `sudo make install`)
-- Manually set your `PATH` so that navi can be found.
+- Manually set `$PATH` so that navi can be found.
 
 You can manually update your path by adding a line like this in your `.zshrc`:
 
@@ -249,6 +249,12 @@ List customization
 ------------------
 
 Lists can be stylized with the [$FZF_DEFAULT_OPTS](https://github.com/junegunn/fzf) environment variable. This way, you can change the [color scheme](https://github.com/junegunn/fzf/wiki/Color-schemes), for example.
+
+In addition:
+- the `--fzf-overrides` option allows you to hide columns, for example
+- the `--col-widths` option allows you to limit column widths
+
+Please refer to `navi --help` for more details.
 
 Related projects
 ----------------

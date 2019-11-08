@@ -30,14 +30,14 @@ git checkout <branch>
 # Displays the current status of a git repository
 git status
 
-# Displays the changes made to a file
-git diff <filename>
+# Displays unstaged changes for file
+git diff <toplevel_directory>/<unstaged_files>
 
-# Stages a changed file for commit
-git add <filename>
+# Stages a changed file
+git add <toplevel_directory>/<unstaged_files>
 
-# Stages all changed files for commit
-git add .
+# Stages all changed files
+git add -A
 
 # Saves the changes to a file in a commit
 git commit -m <message>
@@ -94,4 +94,12 @@ git submodule foreach git pull origin master
 # Update all submodules
 git submodule update --init --recursive
 
+# Start ssh agent
+eval "$(ssh-agent -s)"; ssh-add
+
+# Skip git hooks
+git commit --no-verify
+
 $ branch: git branch | awk '{print $NF}'
+$ toplevel_directory: git rev-parse --show-toplevel
+$ unstaged_files: git --no-pager diff --name-only

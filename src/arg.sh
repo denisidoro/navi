@@ -38,7 +38,7 @@ arg::next() {
 }
 
 arg::deserialize() {
-   local arg="$1"
+   local arg="${1:-}"
 
    arg="${arg:1:${#arg}-2}"
    echo "$arg" \
@@ -79,7 +79,7 @@ arg::pick() {
    if [ -n "$fn" ]; then
       local suggestions="$(eval "$fn" 2>/dev/null)"
       if [ -n "$suggestions" ]; then
-         echo "$suggestions" | ui::fzf --prompt "$arg: " --header-lines "${headers:-0}" | str::column "${column:-}"
+         echo "$suggestions" | ui::fzf --prompt "$arg: " --header-lines "${headers:-0}" | str::column "${column:-}" "${separator:-}"
       fi
    elif ${NAVI_USE_FZF_ALL_INPUTS:-false}; then
       echo "" | ui::fzf --prompt "$arg: " --print-query --no-select-1 --height 1

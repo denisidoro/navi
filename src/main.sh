@@ -7,6 +7,7 @@ fi
 source "${NAVI_HOME}/src/arg.sh"
 source "${NAVI_HOME}/src/cheat.sh"
 source "${NAVI_HOME}/src/cmd.sh"
+source "${NAVI_HOME}/src/clipboard.sh"
 source "${NAVI_HOME}/src/coll.sh"
 source "${NAVI_HOME}/src/dict.sh"
 source "${NAVI_HOME}/src/health.sh"
@@ -15,6 +16,7 @@ source "${NAVI_HOME}/src/opts.sh"
 source "${NAVI_HOME}/src/search.sh"
 source "${NAVI_HOME}/src/selection.sh"
 source "${NAVI_HOME}/src/str.sh"
+source "${NAVI_HOME}/src/style.sh"
 source "${NAVI_HOME}/src/ui.sh"
 
 handler::main() {
@@ -26,7 +28,7 @@ handler::main() {
 
    local -r interpolation="$(dict::get "$OPTIONS" interpolation)"
 
-   local cmd="$(selection::cmd "$selection" "$cheat")"
+   local cmd="$(selection::snippet "$selection")"
    local result arg value
 
    local i=0
@@ -45,15 +47,15 @@ handler::main() {
       i=$((i+1))
    done
 
-   cmd::finish "$cmd"
+   cmd::finish "$cmd" "$selection"
 }
 
 handler::preview() {
    local -r query="$1"
-   local -r selection="$(echo "$query" | selection::dict)"
    local -r cheats="$(cheat::memoized_read_all)"
+   local -r selection="$(echo "$query" | selection::dict "$cheats")"
    local -r cheat="$(cheat::from_selection "$cheats" "$selection")"
-   [ -n "$cheat" ] && selection::cmd_or_comment "$selection" "$cheat" | cmd::unescape
+   [ -n "$cheat" ] && ui::print_preview "$selection"
 }
 
 handler::help() {
