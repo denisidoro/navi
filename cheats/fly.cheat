@@ -1,0 +1,154 @@
+% fly, concourse, pipeline, ci-cd
+
+# Show Concourse help
+fly --help
+
+
+
+# List all Concourse target aliases
+fly targets
+
+# Delete saved configuration for a target
+fly --target <target> delete-target
+
+# Sync concourse version with target
+fly --target <target> sync
+
+# Login to a selected target
+fly --target <target> login
+
+
+
+# List all teams within a Concourse target
+fly --target <target> teams
+
+# Show the configuration for a given team
+fly --target <target> get-team --team-name <team>
+
+# Delete a team from Concourse installation
+fly --target <target> destroy-team -n <team>
+
+
+
+# list all pipelines
+fly --target <target> pipelines
+
+# Make pipeline public
+fly --target <target> expose-pipeline --pipeline <pipeline>
+
+# Make pipeline private
+fly --target <target> hide-pipeline --pipeline <pipeline>
+
+# Get pipeline / show pipeline
+fly --target <target> get-pipeline --pipeline <pipeline>
+
+# Pause a pipeline
+fly --target <target> pause-pipeline --pipeline <pipeline>
+
+# Unpause a pipeline
+fly --target <target> unpause-pipeline --pipeline <pipeline>
+
+# Rename a pipeline
+fly --target <target> rename-pipeline --old-name <pipeline> \
+--new-name <new_pipeline>
+
+# Create pipeline without variables
+fly --target <target> set-pipeline --pipeline <new_pipeline> \
+--config <pipeline_yaml>
+
+# Create pipeline with variables
+fly --target <target> set-pipeline --pipeline <new_pipeline> \
+--config <pipeline_yaml> --load-vars-from <pipeline_vars>
+
+# Update pipeline without variables
+fly --target <target> set-pipeline --pipeline <pipeline> \
+--config <pipeline_yaml>
+
+# Update pipeline with variables
+fly --target <target> set-pipeline --pipeline <new_pipeline> \
+--config <pipeline_yaml> --load-vars-from <pipeline_vars>
+
+# Validate pipeline without variables
+fly validate-pipeline --config <pipeline_yaml>
+
+# Validate pipeline with variables
+fly validate-pipeline --config <pipeline_yaml> \
+--load-vars-from <pipeline_vars>
+
+# Delete a pipeline
+fly --target <target> destroy-pipeline --pipeline <pipeline>
+
+
+
+# List the jobs of a pipeline
+fly --target <target> jobs --pipeline <pipeline>
+
+# Pause a job on a pipeline
+fly --target <target> pause-job --job=<pipeline>/<job>
+
+# Unpause a job on a pipeline
+fly --target <target> unpause-job --job=<pipeline>/<job>
+
+# Trigger a job on a pipeline
+fly --target <target> trigger-job --job=<pipeline>/<job>
+
+
+
+# List the latest builds for a job
+fly --target <target> builds --job=<pipeline>/<job> \
+--count=<amount>
+
+# Hijack a pipeline job for debugging
+fly --target <target> hijack --job=<pipeline>/<job> \
+--build <build>
+
+# Watch the log output from a running job
+fly --target <target> watch --job=<pipeline>/<job> \
+--build <build>
+
+# Abort a running build
+fly --target <target> abort-build --job=<pipeline>/<job> \
+--build <build>
+
+
+
+# List the users who have been active for the past 2 months
+fly --target <target> active-users
+
+# List the access of the current user
+fly --target <target> userinfo
+
+
+
+# List the resources for a pipeline
+fly --target <target> resources --pipeline <pipeline>
+
+# Check a resource
+fly --target <target> check-resource --resource=<pipeline>/<resource>
+
+# List the versions of a resource
+fly --target <target> resource-versions --resource=<pipeline>/<resource>
+
+# Pin a resource version
+fly --target <target> pin-resource --resource=<pipeline>/<resource> \
+--version <version>
+
+# Unpin a resource version
+fly --target <target> unpin-resource --resource=<pipeline>/<resource>
+
+
+
+
+
+$ target:   fly targets --- --column 1
+$ team:     fly -t "$target" teams
+$ job:      fly -t "$target" jobs --pipeline "$pipeline" --- --column 1
+$ build:    fly -t "$target" builds --job="$pipeline"/"$job" --- --column 3
+$ resource: fly -t "$target" resources --pipeline "$pipeline" --- --column 1
+$ version:  fly -t "$target" resource-versions --resource="$pipeline"/"$resource" --- --column 2
+$ pipeline: fly -t "$target" pipelines --- --column 1
+$ pipeline_yaml: ls *.yml || ls
+$ pipeline_vars: ls *.yml || ls
+
+
+
