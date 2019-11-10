@@ -106,7 +106,7 @@ Upgrading
 
 ```sh
 # brew
-brew upgrade
+brew upgrade navi
 
 # git or oh-my-zsh
 cd "$(navi home)"
