@@ -106,8 +106,7 @@ Upgrading
 
 ```sh
 # brew
-brew update
-brew reinstall navi
+brew upgrade navi
 
 # git or oh-my-zsh
 cd "$(navi home)"
