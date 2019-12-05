@@ -56,8 +56,7 @@ ui::select() {
    local -r key="$(echo "$result" | head -n1)"
 
    echo "$result" \
-      | tail -n +2 \
-      | ($best && head -n1 || cat) \
+      | ($best && head -n1 || tail -n +2) \
       | selection::dict "$cheats" "$key"
 }
 
