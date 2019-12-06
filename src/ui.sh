@@ -73,6 +73,10 @@ ui::width() {
    fi
 }
 
+ui::remove_dep_order() {
+   sed -E 's/^[^;]+; //'
+}
+
 ui::print_preview() {
    local -r selection="$1"
 
@@ -87,5 +91,5 @@ ui::print_preview() {
    printf "\033[${comment_color}m# "; echo -n "$comment"
    printf " \033[${tag_color}m["; echo -n "$tags"; echo "]"
    printf "\033[${snippet_color}m"
-   echo "$snippet"
+   echo "$snippet" | ui::remove_dep_order
 }
