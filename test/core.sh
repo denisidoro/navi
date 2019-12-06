@@ -53,6 +53,16 @@ test::equals() {
    fi
 }
 
+test::contains() {
+   local -r actual="$(cat)"
+   local -r regex="$(echo "${1:-}")"
+
+   if ! echo "$actual" | grep -qE "$regex"; then
+      log::error "Expected to contain '${regex}' but got '${actual}'"
+      return 2
+   fi
+}
+
 test::finish() {
    echo
    if [ $SKIPPED -gt 0 ]; then
