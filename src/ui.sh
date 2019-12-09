@@ -11,6 +11,7 @@ ui::fzf() {
    if ${autoselect:-false}; then
       args+=("--select-1")
    fi
+   args+=("--bind"); args+=("ctrl-j:down,ctrl-k:up")
 
    local -r fzf_cmd="$([ $NAVI_ENV == "test" ] && echo "fzf_mock" || echo "fzf")"
    "$fzf_cmd" ${args[@]:-} --inline-info "$@"
