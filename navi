@@ -4,7 +4,7 @@ set -euo pipefail
 export NAVI_HOME="$(cd "$(dirname "$0")" && pwd)"
 source "${NAVI_HOME}/src/main.sh"
 
-VERSION="0.15.5"
+VERSION="0.16.0"
 NAVI_ENV="${NAVI_ENV:-prod}"
 
 opts::eval "$@"
