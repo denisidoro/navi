@@ -46,7 +46,7 @@ cmd::finish() {
    if [[ "$key" = "ctrl-y" ]]; then
       clip::set "$cmd"
    elif $print || [ -n "$unresolved_arg" ]; then
-      echo "$cmd"
+      echo "$cmd" | ui::remove_dep_order
    else
       eval "$cmd"
    fi

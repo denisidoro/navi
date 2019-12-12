@@ -21,6 +21,8 @@ Options:
 
 Keybindings:
    Ctrl-y                   Copy snippet to clipboard
+   Ctrl-j                   Move down one entry
+   Ctrl-k                   Move up one entry
 
 Environment variables:
    NAVI_PATH                List of :-separated paths to look for cheats

@@ -6,6 +6,8 @@ source "${NAVI_HOME}/test/core.sh"
 
 tests="$(find "$NAVI_HOME/test" -iname "${1:-}*_test.sh")"
 
+NAVI_PATH="${NAVI_HOME}/cheats"
+
 for test in $tests; do
    source "$test"
 done

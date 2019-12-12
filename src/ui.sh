@@ -11,6 +11,7 @@ ui::fzf() {
    if ${autoselect:-false}; then
       args+=("--select-1")
    fi
+   args+=("--bind"); args+=("ctrl-j:down,ctrl-k:up")
 
    local -r fzf_cmd="$([ $NAVI_ENV == "test" ] && echo "fzf_mock" || echo "fzf")"
    "$fzf_cmd" ${args[@]:-} --inline-info "$@"
@@ -56,8 +57,7 @@ ui::select() {
    local -r key="$(echo "$result" | head -n1)"
 
    echo "$result" \
-      | tail -n +2 \
-      | ($best && head -n1 || cat) \
+      | ($best && head -n1 || tail -n +2) \
       | selection::dict "$cheats" "$key"
 }
 
@@ -74,6 +74,10 @@ ui::width() {
    fi
 }
 
+ui::remove_dep_order() {
+   sed -E 's/^[^;]+; //'
+}
+
 ui::print_preview() {
    local -r selection="$1"
 
@@ -88,5 +92,5 @@ ui::print_preview() {
    printf "\033[${comment_color}m# "; echo -n "$comment"
    printf " \033[${tag_color}m["; echo -n "$tags"; echo "]"
    printf "\033[${snippet_color}m"
-   echo "$snippet"
+   echo "$snippet" | ui::remove_dep_order
 }

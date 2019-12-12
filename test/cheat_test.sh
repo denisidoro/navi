@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 assert_docker_cheat() {
-   cheat::find | grep -q "docker.cheat"
+   cheat::find | test::contains "docker.cheat"
 }
 
 test::set_suite "cheat"
