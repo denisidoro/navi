@@ -1,0 +1,130 @@
+% cf, pcf, pivotal cloud foundry, paas
+
+
+### Information
+# Get the extended list of help
+cf help -a
+
+# Get current version of cf
+cf version
+
+# Get information about current org
+cf org
+
+# Get information about current space
+cf space
+
+# Get information about current target
+cf target
+
+# Get list of all apps
+cf apps
+
+# Get list of all services
+cf services
+
+# Get list of all routes
+cf routes
+
+# Get list of all network policies
+cf network-policies
+
+
+
+### Login
+# Login to your CF/PCF instance
+cf login -a <API_URL>
+
+# Login to your CF/PCF instance with username and password
+cf login -a <API_URL> -u <USERNAME> -p <PASSWORD>
+
+# Login and specify target directly
+cf login -a <API_URL> -u <USERNAME> -p <PASSWORD> -o <ORG> -s <SPACE>
+
+
+
+### Target
+# Set target org
+cf target -o <org>
+
+# Set target space
+cf target -o <org> -s <space>
+
+
+### Application manipulation
+## Information
+# Get the guid of an app
+cf app <app> --guid
+
+# Get the status of an app
+cf app <app>
+
+## Status
+# Start an app
+cf start <app>
+
+# Stop an app
+cf stop <app>
+
+# Restart an app
+cf restart <app>
+
+# Rebuild the application package and restart
+cf restage <app>
+
+## Deletion
+# Delete an app
+cf delete <app>
+
+# Delete an app no prompt
+cf delete <app> -f
+
+# Delete an app and routes
+cf delete <app> -r
+
+
+
+### Networking - A bit slow due to filtering
+# Add network policy
+cf add-network-policy <add_network_source> \
+--destination-app <add_network_destination> \
+--protocol <add_network_protocol> \
+--port <add_network_port>
+
+# Remove network-policy
+cf remove-network-policy <remove_network_source> \
+--destination-app <remove_network_destination> \
+--protocol <remove_network_protocol> \
+--port <remove_network_port>
+
+
+### Services
+# Bind a service to an application
+cf bind-service <app> <service>
+
+# Unbind a service from an application
+cf unbind-service <app> <service>
+
+# Share a service between spaces
+cf share-service <service> -o <org> -s <space>
+
+# Unshare a service from a spaces
+cf unshare-service <service> -o <org> -s <space>
+
+
+
+# Autocomplete variables
+$ org: 		cf orgs | awk 'NR>3 {print}'
+$ space: 	cf target -o "$org" > /dev/null && cf spaces | awk 'NR>3 {print $1}'
+$ service: 	cf services | awk 'NR>3 {print $1}' | sed '/TIP:/d'
+$ route: 	cf routes | awk 'NR>3 {if ($4 ~ /^\//){ print $2 "." $3 $4} else {print $2 "." $3}}'
+$ app: 		cf apps | awk 'NR>4 {print $1}'
+
+$ add_network_source: 		cf apps | awk 'NR>4 {print $1}'
+$ add_network_destination:  	cf apps | awk 'NR>4 {print $1}' | sed "/$add_network_source/d"
+$ add_network_protocol: 	printf "tcp \nudp"
+
+$ remove_network_source: 	cf network-policies | awk 'NR>3 {print $1}' | uniq
+$ remove_network_destination: 	cf network-policies | grep "^$remove_network_source" | awk '{print $2}' | uniq
+$ remove_network_protocol: 	cf network-policies | grep "^$remove_network_source" | grep "$remove_network_destination" | awk '{print $3}' | uniq
+$ remove_network_port: 		cf network-policies | grep "^$remove_network_source" | grep "$remove_network_destination" | awk '{print $4}' | uniq
