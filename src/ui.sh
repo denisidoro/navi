@@ -20,8 +20,10 @@ ui::fzf() {
 ui::select() {
    local -r cheats="$1"
 
+   [[ "$SHELL" =~ 'fish' ]] || local -r sub='$'
+
    local -r script_path="${NAVI_HOME}/navi"
-   local -r preview_cmd="\"${script_path}\" preview \$(echo \'{}\' | $(arg::serialize_code))"
+   local -r preview_cmd="\"${script_path}\" preview ${sub:-}(echo \'{}\' | $(arg::serialize_code))"
 
    local -r query="$(dict::get "$OPTIONS" query)"
    local -r entry_point="$(dict::get "$OPTIONS" entry_point)"
