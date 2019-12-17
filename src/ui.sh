@@ -20,7 +20,7 @@ ui::fzf() {
 ui::select() {
    local -r cheats="$1"
 
-   [[ "$SHELL" =~ 'fish' ]] || local -r sub='$'
+   [[ "${SHELL:-}" =~ 'fish' ]] || local -r sub='$'
 
    local -r script_path="${NAVI_HOME}/navi"
    local -r preview_cmd="\"${script_path}\" preview ${sub:-}(echo \'{}\' | $(arg::serialize_code))"
