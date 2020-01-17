@@ -19,14 +19,28 @@ arg::escape() {
 
 arg::interpolate() {
    local -r arg="$1"
-   local -r value="$2"
+   local -r value="$(echo "$2" | tr "$ESCAPE_CHAR_3" '\n')"
 
-   local -r words="$(echo "$value" | wc -w | xargs)"
+   local -r lines="$(echo "$value" | wc -l)"
 
-   if [[ $words > 1 ]]; then
-      sed "s|<${arg}>|\"${value}\"|g"
+   if [ $lines -lt 2 ]; then
+
+      local -r words="$(echo "$value" | wc -w | xargs)"
+
+      if [[ $words > 1 ]]; then
+         sed "s|<${arg}>|\"${value}\"|g"
+      else
+         sed "s|<${arg}>|${value}|g"
+      fi
+
    else
-      sed "s|<${arg}>|${value}|g"
+
+      local -r newvalue="$(echo "$value" \
+         | xargs -I% echo '"%"' \
+         | tr '\n' ' ')"
+
+      sed "s|<${arg}>|${newvalue}|g"
+
    fi
 }
 
@@ -78,8 +92,19 @@ arg::pick() {
 
    if [ -n "$fn" ]; then
       local suggestions="$(eval "$fn" 2>/dev/null)"
+
+      local args
+      args+=("--prompt"); args+=("${arg}: ")
+      args+=("--header-lines"); args+=("${headers:-0}")
+      if ${multi:-false}; then
+         args+=("-m")
+      fi
+
       if [ -n "$suggestions" ]; then
-         echo "$suggestions" | ui::fzf --prompt "$arg: " --header-lines "${headers:-0}" | str::column "${column:-}" "${separator:-}"
+         echo "$suggestions" \
+            | ui::fzf ${args[@]:-} \
+            | str::column "${column:-}" "${separator:-}" \
+            | tr '\n' "$ESCAPE_CHAR_3"
       fi
    elif ${NAVI_USE_FZF_ALL_INPUTS:-false}; then
       echo "" | ui::fzf --prompt "$arg: " --print-query --no-select-1 --height 1
