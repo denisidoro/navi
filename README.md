@@ -32,7 +32,9 @@ Table of contents
    * [Cheatsheet syntax](#cheatsheet-syntax)
       * [Syntax overview](#syntax-overview)
       * [Variables](#variables)
-      * [Table formatting](#table-formatting)
+      * [Variable options](#variable-options)
+         * [Table formatting](#table-formatting)
+         * [Multiple choice](#multiple-choice)
    * [List customization](#list-customization)
    * [Related projects](#related-projects)
    * [Etymology](#etymology)
@@ -233,15 +235,30 @@ $ x: echo -e '1\n2\n3'
 $ y: echo -e "$((x+10))\n$((x+20))"
 ```
 
-### Table formatting
+### Variable options
 
-You can pick a specific column of a selection and set the number of lines considered as headers:
+For lines starting with `$` you can add extra options using `---`.
+
+#### Table formatting
+
+You can pick a specific column of a selection and set the number of lines considered as headers via `--column` and `--headers`:
 
 ```sh
 # This will pick the 3rd column and use the first line as header
 docker rmi <image_id>
 
 $ image_id: docker images --- --column 3 --headers 1
+```
+
+#### Multiple choice
+
+You can select multiple values via `--multi` and hitting `<TAB>`:
+
+```sh
+# The resulting command will be something like: cat "a.txt" "b.txt"
+cat <files>
+
+$ files: ls --- --multi true
 ```
 
 List customization
