@@ -2,7 +2,7 @@
 set -euo pipefail
 
 opts::extract_help() {
-   local -r file="${NAVI_HOME}/docstring.txt"
+   local -r file="${NAVI_HOME}/src/docstring.txt"
    cat "$file"
 }
 

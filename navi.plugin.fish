@@ -1,7 +1,7 @@
 function navi-widget -d "Show cheat sheets"
   begin
     stty sane
-    env NAVI_USE_FZF_ALL_INPUTS=true navi --print query (commandline) | perl -pe 'chomp if eof' | read -lz result
+    env NAVI_USE_FZF_ALL_INPUTS=true navi --print (commandline) | perl -pe 'chomp if eof' | read -lz result
     and commandline -- $result
   end
   commandline -f repaint
