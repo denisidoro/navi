@@ -252,7 +252,7 @@ $ image_id: docker images --- --column 3 --headers 1
 
 #### Multiple choice
 
-You can select multiple values via `--multi`:
+You can select multiple values via `--multi` and hitting `<TAB>`:
 
 ```sh
 # The resulting command will be something like: cat "a.txt" "b.txt"
