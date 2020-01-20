@@ -67,6 +67,8 @@ arg::serialize_code() {
    printf "tr \"'\" '${ESCAPE_CHAR_2}'"
    printf " | "
    printf "tr '\"' '${ESCAPE_CHAR_3}'"
+   printf " | "
+   printf "tr '\\\\' '${ESCAPE_CHAR_4}'"
 }
 
 arg::pick() {
