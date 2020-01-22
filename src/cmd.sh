@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 cmd::escape() {
-   tr '\\' "$ESCAPE_CHAR_4"
+   tr '\\' "$ESCAPE_CHAR_3"
 }
 
 cmd::unescape() {
-   tr "$ESCAPE_CHAR_4" '\\'
+   tr "$ESCAPE_CHAR_3" '\\'
 }
 
 cmd::loop() {

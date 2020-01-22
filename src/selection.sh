@@ -15,7 +15,7 @@ selection_str::comment() {
 }
 
 selection_str::snippet() {
-   echo "$*" | awk -F "${SELECTION_ESCAPE_STR}" '{print $2}' | selection_str::without_ellipsis | cmd::escape
+   echo "$*" | awk -F "${SELECTION_ESCAPE_STR}" '{print $2}' | selection_str::without_ellipsis
 }
 
 selection_str::tags() {
