@@ -3,7 +3,6 @@
 ESCAPE_CHAR="\034"
 ESCAPE_CHAR_2="\035"
 ESCAPE_CHAR_3="\036"
-ESCAPE_CHAR_4="\037"
 
 str::length() {
    awk '{print length}'
