@@ -31,12 +31,14 @@ git checkout <branch>
 git status
 
 # Displays unstaged changes for file
-git diff <toplevel_directory>/<unstaged_files>
+cd <toplevel_directory>; \
+    git diff <unstaged_files>
 
-# Stages a changed file
-git add <toplevel_directory>/<unstaged_files>
+# Stage single or multiple files
+cd <toplevel_directory>; \
+    git add <changed_files>;
 
-# Stages all changed files
+# Stage all files in project
 git add -A
 
 # Saves the changes to a file in a commit
@@ -94,12 +96,13 @@ git submodule foreach git pull origin master
 # Update all submodules
 git submodule update --init --recursive
 
-# Start ssh agent
-eval "$(ssh-agent -s)"; ssh-add
-
 # Skip git hooks
 git commit --no-verify
 
+# Create new branch from current HEAD
+git checkout -b <new_branch_name>
+
 $ branch: git branch | awk '{print $NF}'
 $ toplevel_directory: git rev-parse --show-toplevel
-$ unstaged_files: git --no-pager diff --name-only
+$ unstaged_files: git status --untracked-files=no -s --porcelain | awk '{print $NF}' --- --multi true
+$ changed_files: git status --untracked-files=all -s --porcelain | awk '{print $NF}' --- --multi true
