@@ -77,7 +77,7 @@ ui::width() {
 }
 
 ui::remove_dep_order() {
-   sed -E 's/^[^;]+; //'
+   sed -E 's/^: [^;]+; //'
 }
 
 ui::print_preview() {
