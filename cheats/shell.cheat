@@ -152,7 +152,7 @@ scp <username-remote>:<file-to-send-path> <path-to-recieve>
 scp <file-to-send> <username-remote>:<where-to-put>
 
 # Escape files with spaces in name like this
-<-path-to-file>\\\ <name-png>
+<path-to-file>\\\ <name-png>
 
 % Shell System
 
