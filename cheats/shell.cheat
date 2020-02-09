@@ -14,7 +14,7 @@ apropos directory / apropos search (...)
 sudo nano /etc/motd
 
 # Run a script as background process
-python script.py &
+<process> &
 
 #List all running processes
 ps -A
