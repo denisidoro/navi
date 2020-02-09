@@ -16,11 +16,11 @@ sudo nano /etc/motd
 # Run a script as background process
 python script.py &
 
-# List all running process's
-ps aux
+#List all running processes
+ps -A
 
 # Kill a running process
-sudo kill <12345>
+killall <Process-name>
 
 % Shell System
 
@@ -30,17 +30,11 @@ pwd
 # Copy to clipboard
 pwd | pbcopy
 
-# Paste
-pbpaste
-
 # Get the current hostname
 hostname
 
 # Get the current users
 users
-
-# Get all info about the environment
-env
 
 # Show calendar
 cal
@@ -55,25 +49,14 @@ exit
 
 # Use -R option to change permissions recursively.
 
-# List
 ps -ef | grep apache | grep -v grep
 
+# List
 # Change permissions
 chmod 755 <index>
 
 # Change group
-chgrp <group-name> <index>
-
-% Shell WordPress Files/Folder Permissions
-
-# Let apache be owner
-chown <www-data>:<www-data> -R *
-
-# Change directory permissions rwxr-xr-x
-find . -type d -exec chmod 755 {} \;
-
-# Change file permissions rw-r--r--
-find . -type f -exec chmod 644 {} \;
+chgrp <group-name-from> <group-name-to>
 
 % Shell Directories
 
@@ -99,16 +82,16 @@ cd -
 mkdir <dirname>
 
 # Remove (empty) directory
-rmdir <sample-dirname>
+rmdir <dirname>
 
 # Remove directory with all contents without prompt
-rm -rf <sample-dirname>
+rm -rf <dirname>
 
 # Remove directory contents and keep directory
 rm -rf *
 
-# Checkout directory
-cd <sample-dirname>
+# Change directory
+cd <dirname>
 
 % shell Symlinks
 
@@ -126,29 +109,20 @@ unlink <sample-dirname>
 # Make (empty) file
 touch <filename-txt>
 
-# Change creation date
-touch –t <yymmddhhmm> <filename>
-
-# Change modified date
-touch –mt <yymmddhhmm> <filename>
-
 # Duplicate file
-cp <filename-txt> <filename-copy-txt>
+cp <filename> <file-copyname>
 
 # Copy/Page folder with content
 cp -a <old-folder>/ <new-folder>
 
 # Move/Rename file
-mv <current-filename-txt> <new-filename-txt>
+mv <current-filename-path> <new-filename-path>
 
 # Move/Rename file and prompt before overwriting an existing file
-mv -i <current-filename-txt> <new-filename-txt>
+mv -i <current-filename> <new-filename>
 
 # Remove file
 rm <filename-txt>
-
-# View file
-less <filename-txt> / more <sample-filename-txt>
 
 # Write to file (will overwrite existing content)
 cat > <filename-txt> 
@@ -160,7 +134,7 @@ find <filename-txt>
 grep -r <string> *
 
 # Search and replace within file
-sed -i 's/<original-text>/<new-text>/g' <filename-txt>
+sed -i s/<original-text>/<new-text>/g <filename-txt>
 
 # MD5 hash for files
 md5 <filename-txt>
@@ -169,7 +143,7 @@ md5 <filename-txt>
 tar c <folder> | md5sum
 
 # Encrypt file
-openssl enc -aes-256-cbc -e -in <sample-filename-txt -out <sample-encrypted-txt>
+openssl enc -aes-256-cbc -e -in <sample-filename-txt> -out <sample-encrypted-txt>
 
 # Decrypt file
 openssl enc -aes-256-cbc -d -in <sample-encrypted> -out <sample-filename>
@@ -183,7 +157,7 @@ ssh <username@remote>
 scp <username@remote>:<file-to-send-path> <path-to-recieve> 
 
 # Copy file from local to server
-scp <file-to-end> <username@remote>:<where-to-put>
+scp <file-to-send> <username@remote>:<where-to-put>
 
 # Escape files with spaces in name like this
 <-path-to-file>\\\ <name-png>
@@ -211,7 +185,7 @@ tail error.log -f -n 0
 % Shell Apps
 
 # Start appliction
-open -a <programme> 
+xdg-open <programme> 
 
 # Open finder with current folder
 open .
@@ -219,13 +193,13 @@ open .
 % Shell Variables
 
 # Register variable
-export <TESTING>=<Sample-Text>
+export <TESTING>=<Variable-text>
 
 # Echo variable
-echo $<TESTING>
+echo $<Variable>
 
 # Unset variable
-unset <TESTING>
+unset <Variable>
 
 % Shell Output & Redirects
 
@@ -239,8 +213,8 @@ cat <file1-txt> >> <file2-txt>
 cat <file1-txt> | <word-count> | cat > <file2-txt>
 
 # Sort the content of a file (like cat)
-sort <hello.txt>
-.txt
+sort <hello-txt>
+
 # Save to sorted content to a new file
 cat <file1-txt> | sort > <sorted-file1-txt>
 
