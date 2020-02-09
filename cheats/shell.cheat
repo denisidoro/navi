@@ -27,9 +27,6 @@ killall <Process-name>
 # Get the current path
 pwd
 
-# Copy to clipboard
-pwd | pbcopy
-
 # Get the current hostname
 hostname
 
@@ -48,12 +45,7 @@ exit
 % Shell Permissions
 
 # Use -R option to change permissions recursively.
-
 ps -ef | grep apache | grep -v grep
-
-# List
-# Change permissions
-chmod 755 <index>
 
 # Change group
 chgrp <group-name-from> <group-name-to>
