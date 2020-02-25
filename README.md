@@ -1,5 +1,7 @@
 # navi <img src="https://user-images.githubusercontent.com/3226564/65362934-b4432500-dbdf-11e9-8f75-815fbc5cbf8f.png" alt="icon" height="28px"/> [![CircleCI](https://circleci.com/gh/denisidoro/navi.svg?style=svg)](https://circleci.com/gh/denisidoro/navi) ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/denisidoro/navi?include_prereleases)
 
+> :information_source: This whole codebase is being rewritten in [Rust](https://www.rust-lang.org/). If you want to contribute, please refer to [this issue](https://github.com/denisidoro/navi/issues/154). :+1:
+
 An interactive cheatsheet tool for the command-line so that you won't say the following anymore:
 
 >— *How to run that command again?*<br>
