@@ -2,10 +2,12 @@
 set -euo pipefail
 
 export NAVI_HOME="$(cd "$(dirname "$0")" && pwd)"
-source "${NAVI_HOME}/src/main.sh"
+cd "$NAVI_HOME"
 
-VERSION="0.18.3"
-NAVI_ENV="${NAVI_ENV:-prod}"
+bin="${NAVI_HOME}/target/debug/rusty"
 
-opts::eval "$@"
-main "$@"
+if [ -f "$bin" ]; then
+    "$bin" "$@"
+else
+    cargo run "$@"
+fi
