@@ -103,13 +103,12 @@ fn main() -> Result<(), Box<dyn Error>> {
     if output.status.success() {
         let raw_output = String::from_utf8(output.stdout)?;
         let snippet = raw_output.split('\t').nth(5).unwrap();
-        let args: Vec<&str> = snippet.split(' ').collect();
+        // let args: Vec<String> = shell_words::split(&snippet[..]).unwrap();
 
-        if args.len() < 2 {
-            Command::new(&args[0]).spawn()?;
-        } else {
-            Command::new(&args[0]).args(&args[1..]).spawn()?;
-        }
+        Command::new("bash")
+           .arg("-c")
+           .arg(&snippet[..])
+           .spawn()?;
 
         Ok(())
     } else {
