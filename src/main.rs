@@ -7,9 +7,9 @@ use std::io::{self, BufRead};
 use std::fs;
 use std::path::Path;
 use std::env;
+use std::process;
+use regex::Regex;
 
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
 where P: AsRef<Path>, {
     let file = File::open(filename)?;
@@ -55,7 +55,7 @@ fn parse_file(path: &str, stdin: &mut std::process::ChildStdin) {
             else { 
                 let full_snippet = gen_snippet(&snippet, &line);
                 match stdin.write(format!("{col0}\t{col1}\t{col2}\t{tags}\t{comment}\t{snippet}\t\n", 
-                                          col0 = Colour::Red.paint(limit_str(&tags[2..], 26)), 
+                                          col0 = Colour::Red.paint(limit_str(&tags[2..], 16)), 
                                           col1 = Colour::Blue.paint(limit_str(&comment[2..], 26)), 
                                           col2 = Colour::Green.paint(&full_snippet),
                                           tags = &tags[2..],
@@ -70,18 +70,31 @@ fn parse_file(path: &str, stdin: &mut std::process::ChildStdin) {
     }
 }
 
+fn extract_elements(argstr: &String) -> (&str, &str, &str) {
+        let mut parts = argstr.split('\t').skip(3);
+        let tags = parts.next().unwrap();
+        let comment = parts.next().unwrap();
+        let snippet = parts.next().unwrap();
+        (tags, comment, snippet)
+}
+
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
 
     if args.len() > 1 && args[1] == "preview" {
-        args[2].split('\t').skip(3).for_each(|x| println!("{}", x));
-        panic!("hi")
+        let (tags, comment, snippet) = extract_elements(&args[2]);
+        println!("{comment} {tags} \n{snippet}", 
+                                          comment = Colour::Blue.paint(comment), 
+                                          tags = Colour::Red.paint(format!("[{}]", tags)), 
+                                          snippet = Colour::Green.paint(snippet));
+
+        process::exit(0x0100)
     }
     
     let mut child = Command::new("fzf")
         .args(&["--preview", "./navi preview {}", 
                 "--height", "100%", 
-                "--preview-window", "up:3",
+                "--preview-window", "up:2",
                 "--with-nth", "1,2,3",
                 "--delimiter", "\t",
                 "--ansi"])
@@ -100,10 +113,17 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
 
     let output = child.wait_with_output()?;
+    
+
     if output.status.success() {
         let raw_output = String::from_utf8(output.stdout)?;
         let snippet = raw_output.split('\t').nth(5).unwrap();
-        // let args: Vec<String> = shell_words::split(&snippet[..]).unwrap();
+
+        let re = Regex::new(r"<(.*?)>").unwrap();
+        for cap in re.captures_iter(snippet) {
+            let varname = &cap[0];
+            println!("{}", &varname[1..varname.len()-1]);
+        }
 
         Command::new("bash")
            .arg("-c")
