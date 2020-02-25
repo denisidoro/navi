@@ -7,7 +7,6 @@ use std::io::{self, BufRead};
 use std::fs;
 use std::path::Path;
 use std::env;
-use ansi_term::Style;
 
 // The output is wrapped in a Result to allow matching on errors
 // Returns an Iterator to the Reader of the lines of the file.
@@ -25,13 +24,19 @@ fn gen_snippet(snippet: &String, line: &String) -> String {
     }
 }
 
+fn limit_str(text: &str, length: usize) -> String {
+    if text.len() > length {
+        format!("{}…", &text[..length-1])
+    } else {
+        format!("{:width$}", text, width = length) 
+    }
+}
+
 fn parse_file(path: &str, stdin: &mut std::process::ChildStdin) {
 
     let mut tags = String::from("");
     let mut comment = String::from("");
     let mut snippet = String::from("");
-
-    let style = Style::new().hidden();
 
     if let Ok(lines) = read_lines(path) {
         for l in lines {
@@ -48,7 +53,15 @@ fn parse_file(path: &str, stdin: &mut std::process::ChildStdin) {
             }
             else if line.len() < 1 { }
             else { 
-                match stdin.write(format!("{} {} {}\n", Colour::Red.paint(&tags[2..]), Colour::Blue.paint(&comment[2..]), Colour::Green.paint(gen_snippet(&snippet, &line))).as_bytes()) {
+                let full_snippet = gen_snippet(&snippet, &line);
+                match stdin.write(format!("{col0}\t{col1}\t{col2}\t{tags}\t{comment}\t{snippet}\t\n", 
+                                          col0 = Colour::Red.paint(limit_str(&tags[2..], 26)), 
+                                          col1 = Colour::Blue.paint(limit_str(&comment[2..], 26)), 
+                                          col2 = Colour::Green.paint(&full_snippet),
+                                          tags = &tags[2..],
+                                          comment = &comment[2..],
+                                          snippet = &full_snippet)
+                                          .as_bytes()) {
                     Ok(_) => snippet = String::from(""),
                     Err(_) => break,
                 } 
@@ -61,8 +74,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
 
     if args.len() > 1 && args[1] == "preview" {
-        println!("preview");
-        println!("{}", args[2]);
+        args[2].split('\t').skip(3).for_each(|x| println!("{}", x));
         panic!("hi")
     }
     
@@ -70,6 +82,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         .args(&["--preview", "./navi preview {}", 
                 "--height", "100%", 
                 "--preview-window", "up:3",
+                "--with-nth", "1,2,3",
+                "--delimiter", "\t",
                 "--ansi"])
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -85,18 +99,18 @@ fn main() -> Result<(), Box<dyn Error>> {
         parse_file(path.unwrap().path().into_os_string().to_str().unwrap(), stdin);
     }
 
-    /*for i in 0..10 {
-        match stdin.write(simulated_expensive_calculation(i).as_bytes()) {
-            Ok(_) => (),
-            Err(_) => break,
-        };
-    }*/
-
     let output = child.wait_with_output()?;
-
     if output.status.success() {
         let raw_output = String::from_utf8(output.stdout)?;
-        println!("result: {:#?}", raw_output);
+        let snippet = raw_output.split('\t').nth(5).unwrap();
+        let args: Vec<&str> = snippet.split(' ').collect();
+
+        if args.len() < 2 {
+            Command::new(&args[0]).spawn()?;
+        } else {
+            Command::new(&args[0]).args(&args[1..]).spawn()?;
+        }
+
         Ok(())
     } else {
         let err = String::from_utf8(output.stderr)?;
