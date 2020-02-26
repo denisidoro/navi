@@ -1,7 +1,8 @@
-        use clap::ArgMatches;
+
+use ansi_term::Colour;
+use clap::ArgMatches;
 use std::error::Error;
 use std::process;
-use ansi_term::Colour;
 
 fn extract_elements(argstr: &str) -> (&str, &str, &str) {
     let mut parts = argstr.split('\t').skip(3);

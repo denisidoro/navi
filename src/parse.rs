@@ -74,11 +74,11 @@ fn read_file(path: &str, stdin: &mut std::process::ChildStdin) {
 }
 
 pub fn read_all(stdin: &mut std::process::ChildStdin) {
-        let paths = fs::read_dir("./cheats").unwrap();
-        for path in paths {
-            read_file(
-                path.unwrap().path().into_os_string().to_str().unwrap(),
-                stdin,
-            );
-        }
+    let paths = fs::read_dir("./cheats").unwrap();
+    for path in paths {
+        read_file(
+            path.unwrap().path().into_os_string().to_str().unwrap(),
+            stdin,
+        );
+    }
 }

@@ -1,11 +1,11 @@
+use clap::ArgMatches;
 use regex::Regex;
 use std::error::Error;
 use std::io::Write;
-use std::process::{Command};
-use clap::ArgMatches;
+use std::process::Command;
 
-use crate::parse;
 use crate::fzf;
+use crate::parse;
 
 pub fn main(_matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
     let output = fzf::call(|stdin| {

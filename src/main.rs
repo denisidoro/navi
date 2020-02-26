@@ -1,11 +1,11 @@
 use std::error::Error;
 
-mod option;
-mod shell;
-mod preview;
-mod fzf;
-mod parse;
 mod core;
+mod fzf;
+mod option;
+mod parse;
+mod preview;
+mod shell;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let matches = option::parse();

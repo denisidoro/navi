@@ -19,6 +19,6 @@ pub fn main(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
             .unwrap(),
         file
     );
-    
+
     Ok(())
 }

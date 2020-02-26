@@ -1,5 +1,5 @@
-use std::process::{Command, Stdio};
 use std::process;
+use std::process::{Command, Stdio};
 
 pub fn call<F>(f: F) -> process::Output
 where
