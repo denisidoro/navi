@@ -1,6 +1,5 @@
 use ansi_term::Colour;
 use regex::Regex;
-use std::env;
 use std::error::Error;
 use std::fs;
 use std::fs::File;
@@ -143,11 +142,25 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     match matches.subcommand().0 {
         "preview" => main_preview(&matches),
-        "shell" => main_core(&matches),
+        "widget" => main_shell(&matches),
         _ => main_core(&matches)
     }
 
 }
+
+fn main_shell(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
+
+    let file = match matches.subcommand().1.unwrap().value_of("shell").unwrap() {
+        "zsh" => "navi.plugin.zsh",
+        "fish" => "navi.plugin.fish",
+        _ => "navi.plugin.bash"
+    };
+
+    println!("{}/{}", std::env::current_exe().unwrap().parent().unwrap().as_os_str().to_str().unwrap(), file);
+    Ok(())
+
+}
+
 
 fn main_preview(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
 
@@ -165,7 +178,7 @@ fn main_preview(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
 
     }
 
-fn main_core(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
+fn main_core(_matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
 
     let output = call_fzf(|stdin| {
         let paths = fs::read_dir("./cheats").unwrap();
