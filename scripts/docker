@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
+
+cd "$NAVI_HOME"
+
+docker run \
+    -e HOMEBREW_NO_AUTO_UPDATE=1 \
+    -v "$(pwd):/navi" \
+    -it linuxbrew/debian \
+    bash -c 'export NAVI_PATH="/navi/cheats"; brew install fzf; brew install denisidoro/tools/navirs; bash'
