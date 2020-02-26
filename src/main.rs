@@ -18,9 +18,9 @@ where
     Ok(io::BufReader::new(file).lines())
 }
 
-fn gen_snippet(snippet: &String, line: &String) -> String {
+fn gen_snippet(snippet: &str, line: &str) -> String {
     if snippet.is_empty() {
-        line.clone()
+        line.to_string()
     } else {
         format!("{}{}", &snippet[..snippet.len() - 2], line)
     }
@@ -78,7 +78,7 @@ fn parse_file(path: &str, stdin: &mut std::process::ChildStdin) {
     }
 }
 
-fn extract_elements(argstr: &String) -> (&str, &str, &str) {
+fn extract_elements(argstr: &str) -> (&str, &str, &str) {
     let mut parts = argstr.split('\t').skip(3);
     let tags = parts.next().unwrap();
     let comment = parts.next().unwrap();
@@ -156,10 +156,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             let varname = &bracketed_varname[1..bracketed_varname.len() - 1];
 
             let output = call_fzf(|stdin| {
-                stdin.write(b"foo\n").unwrap();
-                stdin.write(b"bar\n").unwrap();
-                stdin.write(b"baz\n").unwrap();
-                stdin.write(format!("{}\n", varname).as_bytes()).unwrap();
+                stdin.write_all(b"foo\n").unwrap();
+                stdin.write_all(b"bar\n").unwrap();
+                stdin.write_all(b"baz\n").unwrap();
+                stdin.write_all(format!("{}\n", varname).as_bytes()).unwrap();
             });
 
             let value = String::from_utf8(output.stdout).unwrap();
