@@ -13,17 +13,17 @@ jobs:
       matrix:
         # This should work with only the `include`s but it currently doesn't because of this bug:
         # https://github.community/t5/How-to-use-Git-and-GitHub/GitHub-Actions-Matrix-options-dont-work-as-documented/td-p/29558
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
         include:
           - os: ubuntu-latest
-            artifact_name: navi
-            asset_name: navi-linux-amd64
-          - os: windows-latest
-            artifact_name: navi.exe
-            asset_name: navi-windows-amd64
+            artifact_name: navi.tar.gz
+            asset_name: navi-linux-amd64.tar.gz
+          # - os: windows-latest
+          #   artifact_name: navi.exe
+          #   asset_name: navi-windows-amd64
           - os: macos-latest
-            artifact_name: navi
-            asset_name: navi-macos-amd64
+            artifact_name: navi.tar.gz
+            asset_name: navi-macos-amd64.tar.gz
 
     steps:
     - uses: hecrj/setup-rust-action@v1.3.1
@@ -31,7 +31,7 @@ jobs:
         rust-version: stable
     - uses: actions/checkout@v1
     - name: Build
-      run: cargo build --release --locked
+      run: cargo build --release --locked && cd target/release && tar -czf navi.tar.gz navi
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v1-release
       with:
