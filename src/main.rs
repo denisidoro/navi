@@ -117,9 +117,7 @@ where
 
     f(stdin);
 
-    let output = child.wait_with_output().unwrap();
-
-    output
+    child.wait_with_output().unwrap()
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
