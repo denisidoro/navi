@@ -6,4 +6,5 @@ export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 version="$1"
 
 git tag -a "v${version}" -m 'WIP version written in Rust. Use 1.0.0 instead'
-git push
+git push origin --tags
+
