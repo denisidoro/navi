@@ -24,4 +24,7 @@ $ device: adb devices --- --headers 1 --column 1
 # Start emulator
 "$ANDROID_HOME/tools/emulator" -avd <emulator> -netdelay none -netspeed full
 
+# TODO: remove this
+echo "$(ls -la)"
+
 $ emulator: "$ANDROID_HOME/tools/emulator" -list-avds
