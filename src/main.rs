@@ -19,7 +19,7 @@ where
 }
 
 fn gen_snippet(snippet: &String, line: &String) -> String {
-    if snippet.len() < 1 {
+    if snippet.is_empty() {
         line.clone()
     } else {
         format!("{}{}", &snippet[..snippet.len() - 2], line)
@@ -50,12 +50,12 @@ fn parse_file(path: &str, stdin: &mut std::process::ChildStdin) {
             }
             // TODO
             else if line.ends_with('\\') {
-                snippet = if snippet.len() > 0 {
+                snippet = if !snippet.is_empty() {
                     format!("{}{}", &snippet[..snippet.len() - 2], line)
                 } else {
                     line
                 }
-            } else if line.len() < 1 {
+            } else if line.is_empty() {
             } else {
                 let full_snippet = gen_snippet(&snippet, &line);
                 match stdin.write(
@@ -158,9 +158,9 @@ fn main() -> Result<(), Box<dyn Error>> {
             let varname = &bracketed_varname[1..bracketed_varname.len() - 1];
 
             let output = call_fzf(|stdin| {
-                stdin.write("foo\n".as_bytes()).unwrap();
-                stdin.write("bar\n".as_bytes()).unwrap();
-                stdin.write("baz\n".as_bytes()).unwrap();
+                stdin.write(b"foo\n").unwrap();
+                stdin.write(b"bar\n").unwrap();
+                stdin.write(b"baz\n").unwrap();
                 stdin.write(format!("{}\n", varname).as_bytes()).unwrap();
             });
 
