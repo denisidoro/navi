@@ -1,5 +1,4 @@
 use ansi_term::Colour;
-use clap::{App, Arg, ArgMatches, SubCommand};
 use regex::Regex;
 use std::error::Error;
 use std::fs;
@@ -9,6 +8,9 @@ use std::io::{self, BufRead};
 use std::path::Path;
 use std::process;
 use std::process::{Command, Stdio};
+use clap::ArgMatches;
+
+mod option;
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
 where
@@ -121,26 +123,8 @@ where
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let matches = App::new("navi")
-        .version("0.1.0")
-        .about("An interactive cheatsheet tool for the command line")
-        .subcommand(
-            SubCommand::with_name("widget")
-                .about("returns the absolute path of shell widgets")
-                .arg(
-                    Arg::with_name("shell")
-                        .help("zsh, bash or fish")
-                        .index(1)
-                        .required(true),
-                ),
-        )
-        .subcommand(
-            SubCommand::with_name("preview")
-                .about("[internal] pretty-prints a line selection")
-                .arg(Arg::with_name("line").index(1).required(true)),
-        )
-        .get_matches();
 
+    let matches = option::parse();
     // println!("Value for config: {:#?}", matches);
 
     match matches.subcommand().0 {
