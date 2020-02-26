@@ -22,12 +22,14 @@ fn limit_str(text: &str, length: usize) -> String {
     }
 }
 
-fn parse_variable_line(line: &str) -> (&str, &str, &str) {
+fn parse_variable_line(line: &str) -> (&str, &str, Option<&str>) {
     let re = Regex::new(r"^\$\s*([^:]+):(.*)").unwrap();
     let caps = re.captures(line).unwrap();
     let variable = caps.get(1).unwrap().as_str().trim();
-    let command = caps.get(2).unwrap().as_str();
-    (variable, command, command)
+    let mut command_plus_opts = caps.get(2).unwrap().as_str().split("---");
+    let command = command_plus_opts.next().unwrap();
+    let opts = command_plus_opts.next();
+    (variable, command, opts)
 }
 
 fn read_file(path: &str, variables: &mut HashMap<String, String>, stdin: &mut std::process::ChildStdin) {
