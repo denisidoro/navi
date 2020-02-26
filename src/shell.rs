@@ -1,4 +1,4 @@
-        use clap::ArgMatches;
+use clap::ArgMatches;
 use std::error::Error;
 
 pub fn main(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
@@ -19,5 +19,6 @@ pub fn main(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
             .unwrap(),
         file
     );
+    
     Ok(())
 }
