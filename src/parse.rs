@@ -1,5 +1,7 @@
 use crate::filesystem;
 use ansi_term::Colour;
+use regex::Regex;
+use std::collections::HashMap;
 use std::env;
 use std::fs;
 use std::io::Write;
@@ -20,7 +22,21 @@ fn limit_str(text: &str, length: usize) -> String {
     }
 }
 
-fn read_file(path: &str, stdin: &mut std::process::ChildStdin) {
+fn parse_variable_line(line: &str) -> (&str, &str, Option<&str>) {
+    let re = Regex::new(r"^\$\s*([^:]+):(.*)").unwrap();
+    let caps = re.captures(line).unwrap();
+    let variable = caps.get(1).unwrap().as_str().trim();
+    let mut command_plus_opts = caps.get(2).unwrap().as_str().split("---");
+    let command = command_plus_opts.next().unwrap();
+    let opts = command_plus_opts.next();
+    (variable, command, opts)
+}
+
+fn read_file(
+    path: &str,
+    variables: &mut HashMap<String, String>,
+    stdin: &mut std::process::ChildStdin,
+) {
     let mut tags = String::from("");
     let mut comment = String::from("");
     let mut snippet = String::from("");
@@ -29,10 +45,12 @@ fn read_file(path: &str, stdin: &mut std::process::ChildStdin) {
         for l in lines {
             let line = l.unwrap();
             if line.starts_with('%') {
-                tags = line;
+                tags = String::from(&line[2..]);
             } else if line.starts_with('#') {
-                comment = line;
+                comment = String::from(&line[2..]);
             } else if line.starts_with('$') {
+                let (variable, command, _) = parse_variable_line(&line[..]);
+                variables.insert(format!("{};{}", tags, variable), String::from(command));
             }
             // TODO
             else if line.ends_with('\\') {
@@ -47,11 +65,11 @@ fn read_file(path: &str, stdin: &mut std::process::ChildStdin) {
                 match stdin.write(
                     format!(
                         "{col0}\t{col1}\t{col2}\t{tags}\t{comment}\t{snippet}\t\n",
-                        col0 = Colour::Red.paint(limit_str(&tags[2..], 16)),
-                        col1 = Colour::Blue.paint(limit_str(&comment[2..], 26)),
+                        col0 = Colour::Red.paint(limit_str(&tags[..], 16)),
+                        col1 = Colour::Blue.paint(limit_str(&comment[..], 26)),
                         col2 = &full_snippet,
-                        tags = &tags[2..],
-                        comment = &comment[2..],
+                        tags = tags,
+                        comment = comment,
                         snippet = &full_snippet
                     )
                     .as_bytes(),
@@ -64,17 +82,23 @@ fn read_file(path: &str, stdin: &mut std::process::ChildStdin) {
     }
 }
 
-pub fn read_all(stdin: &mut std::process::ChildStdin) {
+pub fn read_all(stdin: &mut std::process::ChildStdin) -> HashMap<String, String> {
+    let mut variables: HashMap<String, String> = HashMap::new();
+
     let folders_str =
         env::var("NAVI_PATH").unwrap_or(format!("{}/../../cheats", filesystem::exe_path_string()));
     let folders = folders_str.split(':');
+
     for folder in folders {
         let paths = fs::read_dir(folder).unwrap();
         for path in paths {
             read_file(
                 path.unwrap().path().into_os_string().to_str().unwrap(),
+                &mut variables,
                 stdin,
             );
         }
     }
+
+    variables
 }

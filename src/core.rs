@@ -1,35 +1,50 @@
 use clap::ArgMatches;
 use regex::Regex;
+use std::collections::HashMap;
 use std::error::Error;
 use std::io::Write;
-use std::process::Command;
+use std::process::{Command, Stdio};
 
 use crate::fzf;
 use crate::parse;
 
 pub fn main(_matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
-    let output = fzf::call(|stdin| {
-        parse::read_all(stdin);
-    });
+    let (output, variables) = fzf::call(|stdin| parse::read_all(stdin));
 
     if output.status.success() {
         let raw_output = String::from_utf8(output.stdout)?;
-        let snippet = raw_output.split('\t').nth(5).unwrap();
+        let mut parts = raw_output.split('\t');
+        parts.next();
+        parts.next();
+        parts.next();
+        let tags = parts.next().unwrap();
+        parts.next();
+        let snippet = parts.next().unwrap();
         let mut full_snippet = String::from(snippet);
 
         let re = Regex::new(r"<(.*?)>").unwrap();
         for cap in re.captures_iter(snippet) {
-            println!("{}", &cap[0]);
             let bracketed_varname = &cap[0];
             let varname = &bracketed_varname[1..bracketed_varname.len() - 1];
+            let k = format!("{};{}", tags, varname);
 
-            let output = fzf::call(|stdin| {
-                stdin.write_all(b"foo\n").unwrap();
-                stdin.write_all(b"bar\n").unwrap();
-                stdin.write_all(b"baz\n").unwrap();
-                stdin
-                    .write_all(format!("{}\n", varname).as_bytes())
-                    .unwrap();
+            let suggestions = match variables.get(&k[..]) {
+                Some(c) => {
+                    let child = Command::new("bash")
+                        .stdout(Stdio::piped())
+                        .arg("-c")
+                        .arg(c)
+                        .spawn()
+                        .unwrap();
+
+                    String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap()
+                }
+                None => String::from("TODO\n"),
+            };
+
+            let (output, _) = fzf::call(|stdin| {
+                stdin.write_all(suggestions.as_bytes()).unwrap();
+                HashMap::new()
             });
 
             let value = String::from_utf8(output.stdout).unwrap();

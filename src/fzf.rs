@@ -1,10 +1,11 @@
 use crate::filesystem;
+use std::collections::HashMap;
 use std::process;
 use std::process::{Command, Stdio};
 
-pub fn call<F>(f: F) -> process::Output
+pub fn call<F>(f: F) -> (process::Output, HashMap<String, String>)
 where
-    F: Fn(&mut process::ChildStdin) -> (),
+    F: Fn(&mut process::ChildStdin) -> HashMap<String, String>,
 {
     let mut child = Command::new("fzf")
         .args(&[
@@ -34,7 +35,7 @@ where
         .ok_or("Child process stdin has not been captured!")
         .unwrap();
 
-    f(stdin);
+    let result = f(stdin);
 
-    child.wait_with_output().unwrap()
+    (child.wait_with_output().unwrap(), result)
 }
