@@ -4,7 +4,7 @@ set -euo pipefail
 export NAVI_HOME="$(cd "$(dirname "$0")" && pwd)"
 cd "$NAVI_HOME"
 
-bin="${NAVI_HOME}/target/debug/rusty"
+bin="${NAVI_HOME}/target/debug/navi"
 
 if [ -f "$bin" ]; then
     "$bin" "$@"

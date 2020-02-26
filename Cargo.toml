@@ -1,5 +1,5 @@
 [package]
-name = "rusty"
+name = "navi"
 version = "0.1.0"
 authors = ["Denis Isidoro <denis_isidoro@live.com>"]
 edition = "2018"
