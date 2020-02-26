@@ -159,7 +159,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                 stdin.write_all(b"foo\n").unwrap();
                 stdin.write_all(b"bar\n").unwrap();
                 stdin.write_all(b"baz\n").unwrap();
-                stdin.write_all(format!("{}\n", varname).as_bytes()).unwrap();
+                stdin
+                    .write_all(format!("{}\n", varname).as_bytes())
+                    .unwrap();
             });
 
             let value = String::from_utf8(output.stdout).unwrap();
