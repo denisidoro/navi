@@ -1,4 +1,3 @@
-
 use clap::{App, Arg, ArgMatches, SubCommand};
 
 pub fn parse<'a>() -> ArgMatches<'a> {

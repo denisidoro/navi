@@ -1,4 +1,3 @@
-
 use ansi_term::Colour;
 use clap::ArgMatches;
 use std::error::Error;
