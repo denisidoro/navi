@@ -1,6 +1,7 @@
 use std::error::Error;
 
 mod core;
+mod filesystem;
 mod fzf;
 mod option;
 mod parse;

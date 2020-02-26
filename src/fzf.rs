@@ -1,3 +1,4 @@
+use crate::filesystem;
 use std::process;
 use std::process::{Command, Stdio};
 
@@ -17,7 +18,10 @@ where
             "\t",
             "--ansi",
         ])
-        .args(&["--preview", "./navi preview {}"])
+        .args(&[
+            "--preview",
+            format!("{} preview {{}}", filesystem::exe_string()).as_str(),
+        ])
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::inherit())

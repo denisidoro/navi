@@ -36,7 +36,10 @@ pub fn main(_matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
             full_snippet = full_snippet.replace(bracketed_varname, &value[..value.len() - 1]);
         }
 
-        Command::new("echo").arg(&full_snippet[..]).spawn()?;
+        Command::new("bash")
+            .arg("-c")
+            .arg(&full_snippet[..])
+            .spawn()?;
 
         Ok(())
     } else {

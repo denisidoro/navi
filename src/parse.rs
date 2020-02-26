@@ -1,17 +1,7 @@
+use crate::filesystem;
 use ansi_term::Colour;
 use std::fs;
-use std::fs::File;
 use std::io::Write;
-use std::io::{self, BufRead};
-use std::path::Path;
-
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where
-    P: AsRef<Path>,
-{
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
-}
 
 fn gen_snippet(snippet: &str, line: &str) -> String {
     if snippet.is_empty() {
@@ -34,7 +24,7 @@ fn read_file(path: &str, stdin: &mut std::process::ChildStdin) {
     let mut comment = String::from("");
     let mut snippet = String::from("");
 
-    if let Ok(lines) = read_lines(path) {
+    if let Ok(lines) = filesystem::read_lines(path) {
         for l in lines {
             let line = l.unwrap();
             if line.starts_with('%') {
