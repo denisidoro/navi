@@ -57,7 +57,7 @@ fn parse_file(path: &str, stdin: &mut std::process::ChildStdin) {
                 match stdin.write(format!("{col0}\t{col1}\t{col2}\t{tags}\t{comment}\t{snippet}\t\n", 
                                           col0 = Colour::Red.paint(limit_str(&tags[2..], 16)), 
                                           col1 = Colour::Blue.paint(limit_str(&comment[2..], 26)), 
-                                          col2 = Colour::Green.paint(&full_snippet),
+                                          col2 = &full_snippet,
                                           tags = &tags[2..],
                                           comment = &comment[2..],
                                           snippet = &full_snippet)
@@ -78,6 +78,33 @@ fn extract_elements(argstr: &String) -> (&str, &str, &str) {
         (tags, comment, snippet)
 }
 
+fn call_fzf<F>(f: F) -> process::Output 
+    where F: Fn(&mut process::ChildStdin) -> () {
+    let mut child = Command::new("fzf")
+        .args(&["--height", "100%", 
+                "--preview-window", "up:2",
+                "--with-nth", "1,2,3",
+                "--delimiter", "\t",
+                "--ansi"])
+        .args(&["--preview", "./navi preview {}"]) 
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::inherit())
+        .spawn()
+        .unwrap();
+
+    let stdin = child.stdin
+        .as_mut()
+        .ok_or("Child process stdin has not been captured!")
+        .unwrap();
+
+    f(stdin);
+
+    let output = child.wait_with_output().unwrap();
+
+    output
+}
+
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
 
@@ -86,48 +113,41 @@ fn main() -> Result<(), Box<dyn Error>> {
         println!("{comment} {tags} \n{snippet}", 
                                           comment = Colour::Blue.paint(comment), 
                                           tags = Colour::Red.paint(format!("[{}]", tags)), 
-                                          snippet = Colour::Green.paint(snippet));
-
+                                          snippet = snippet);
         process::exit(0x0100)
     }
     
-    let mut child = Command::new("fzf")
-        .args(&["--preview", "./navi preview {}", 
-                "--height", "100%", 
-                "--preview-window", "up:2",
-                "--with-nth", "1,2,3",
-                "--delimiter", "\t",
-                "--ansi"])
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::inherit())
-        .spawn()?;
-
-    let stdin = child.stdin
-        .as_mut()
-        .ok_or("Child process stdin has not been captured!")?;
-
-    let paths = fs::read_dir("./cheats").unwrap();
-    for path in paths {
-        parse_file(path.unwrap().path().into_os_string().to_str().unwrap(), stdin);
-    }
-
-    let output = child.wait_with_output()?;
-    
+    let output = call_fzf(|stdin| {
+        let paths = fs::read_dir("./cheats").unwrap();
+        for path in paths {
+            parse_file(path.unwrap().path().into_os_string().to_str().unwrap(), stdin);
+        }
+    });
 
     if output.status.success() {
         let raw_output = String::from_utf8(output.stdout)?;
         let snippet = raw_output.split('\t').nth(5).unwrap();
+        let mut full_snippet = String::from(snippet);
 
         let re = Regex::new(r"<(.*?)>").unwrap();
         for cap in re.captures_iter(snippet) {
-            let varname = &cap[0];
-            println!("{}", &varname[1..varname.len()-1]);
+            println!("{}", &cap[0]);
+            let bracketed_varname = &cap[0];
+            let varname = &bracketed_varname[1..bracketed_varname.len()-1];
+
+            let output = call_fzf(|stdin| {
+                stdin.write("foo\n".as_bytes()).unwrap();
+                stdin.write("bar\n".as_bytes()).unwrap();
+                stdin.write("baz\n".as_bytes()).unwrap();
+                stdin.write(format!("{}\n", varname).as_bytes()).unwrap();
+            });
+
+            let value = String::from_utf8(output.stdout).unwrap();
+            full_snippet = full_snippet.replace(bracketed_varname, &value[..value.len()-1]);
         }
 
-        Command::new("bash")
-           .arg("-c")
-           .arg(&snippet[..])
+        Command::new("echo")
+           .arg(&full_snippet[..])
            .spawn()?;
 
         Ok(())
