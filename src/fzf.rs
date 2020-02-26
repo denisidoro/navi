@@ -1,7 +1,7 @@
 use crate::filesystem;
+use std::collections::HashMap;
 use std::process;
 use std::process::{Command, Stdio};
-use std::collections::HashMap;
 
 pub fn call<F>(f: F) -> (process::Output, HashMap<String, String>)
 where

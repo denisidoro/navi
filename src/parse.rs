@@ -1,10 +1,10 @@
 use crate::filesystem;
 use ansi_term::Colour;
+use regex::Regex;
+use std::collections::HashMap;
 use std::env;
 use std::fs;
 use std::io::Write;
-use std::collections::HashMap;
-use regex::Regex;
 
 fn gen_snippet(snippet: &str, line: &str) -> String {
     if snippet.is_empty() {
@@ -32,7 +32,11 @@ fn parse_variable_line(line: &str) -> (&str, &str, Option<&str>) {
     (variable, command, opts)
 }
 
-fn read_file(path: &str, variables: &mut HashMap<String, String>, stdin: &mut std::process::ChildStdin) {
+fn read_file(
+    path: &str,
+    variables: &mut HashMap<String, String>,
+    stdin: &mut std::process::ChildStdin,
+) {
     let mut tags = String::from("");
     let mut comment = String::from("");
     let mut snippet = String::from("");

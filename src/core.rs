@@ -1,17 +1,15 @@
 use clap::ArgMatches;
 use regex::Regex;
+use std::collections::HashMap;
 use std::error::Error;
 use std::io::Write;
 use std::process::{Command, Stdio};
-use std::collections::HashMap;
 
 use crate::fzf;
 use crate::parse;
 
 pub fn main(_matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
-    let (output, variables) = fzf::call(|stdin| {
-        parse::read_all(stdin)
-    });
+    let (output, variables) = fzf::call(|stdin| parse::read_all(stdin));
 
     if output.status.success() {
         let raw_output = String::from_utf8(output.stdout)?;
@@ -23,7 +21,7 @@ pub fn main(_matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
         parts.next();
         let snippet = parts.next().unwrap();
         let mut full_snippet = String::from(snippet);
-        
+
         let re = Regex::new(r"<(.*?)>").unwrap();
         for cap in re.captures_iter(snippet) {
             let bracketed_varname = &cap[0];
@@ -32,15 +30,15 @@ pub fn main(_matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
 
             let suggestions = match variables.get(&k[..]) {
                 Some(c) => {
-                   let child = Command::new("bash")
-                   .stdout(Stdio::piped())
-                    .arg("-c")
-                    .arg(c)
-                    .spawn()
-                    .unwrap();
-                    
+                    let child = Command::new("bash")
+                        .stdout(Stdio::piped())
+                        .arg("-c")
+                        .arg(c)
+                        .spawn()
+                        .unwrap();
+
                     String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap()
-                },
+                }
                 None => String::from("TODO\n"),
             };
 
