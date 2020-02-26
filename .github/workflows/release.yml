@@ -10,6 +10,9 @@ jobs:
     name: Publish for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      # This should work with only the `include`s but it currently doesn't because of this bug:
+      # https://github.community/t5/How-to-use-Git-and-GitHub/GitHub-Actions-Matrix-options-dont-work-as-documented/td-p/29558
+      os: [ubuntu-latest, windows-latest, macos-latest]
       matrix:
         include:
           - os: ubuntu-latest
