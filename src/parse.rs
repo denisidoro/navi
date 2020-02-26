@@ -2,6 +2,7 @@ use crate::filesystem;
 use ansi_term::Colour;
 use std::fs;
 use std::io::Write;
+use std::env;
 
 fn gen_snippet(snippet: &str, line: &str) -> String {
     if snippet.is_empty() {
@@ -64,11 +65,15 @@ fn read_file(path: &str, stdin: &mut std::process::ChildStdin) {
 }
 
 pub fn read_all(stdin: &mut std::process::ChildStdin) {
-    let paths = fs::read_dir("./cheats").unwrap();
-    for path in paths {
-        read_file(
-            path.unwrap().path().into_os_string().to_str().unwrap(),
-            stdin,
-        );
+    let folders_str = env::var("NAVI_PATH").unwrap_or(format!("{}/../../cheats", filesystem::exe_path_string()));
+    let folders = folders_str.split(':');
+    for folder in folders {
+        let paths = fs::read_dir(folder).unwrap();
+        for path in paths {
+            read_file(
+                path.unwrap().path().into_os_string().to_str().unwrap(),
+                stdin,
+            );
+        }
     }
 }
