@@ -6,11 +6,13 @@ use std::fs::File;
 use std::io::Write;
 use std::io::{self, BufRead};
 use std::path::Path;
-use std::process;
-use std::process::{Command, Stdio};
+use std::process::{Command};
 use clap::ArgMatches;
 
 mod option;
+mod shell;
+mod preview;
+mod fzf;
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
 where
@@ -80,47 +82,6 @@ fn parse_file(path: &str, stdin: &mut std::process::ChildStdin) {
     }
 }
 
-fn extract_elements(argstr: &str) -> (&str, &str, &str) {
-    let mut parts = argstr.split('\t').skip(3);
-    let tags = parts.next().unwrap();
-    let comment = parts.next().unwrap();
-    let snippet = parts.next().unwrap();
-    (tags, comment, snippet)
-}
-
-fn call_fzf<F>(f: F) -> process::Output
-where
-    F: Fn(&mut process::ChildStdin) -> (),
-{
-    let mut child = Command::new("fzf")
-        .args(&[
-            "--height",
-            "100%",
-            "--preview-window",
-            "up:2",
-            "--with-nth",
-            "1,2,3",
-            "--delimiter",
-            "\t",
-            "--ansi",
-        ])
-        .args(&["--preview", "./navi preview {}"])
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::inherit())
-        .spawn()
-        .unwrap();
-
-    let stdin = child
-        .stdin
-        .as_mut()
-        .ok_or("Child process stdin has not been captured!")
-        .unwrap();
-
-    f(stdin);
-
-    child.wait_with_output().unwrap()
-}
 
 fn main() -> Result<(), Box<dyn Error>> {
 
@@ -128,50 +89,15 @@ fn main() -> Result<(), Box<dyn Error>> {
     // println!("Value for config: {:#?}", matches);
 
     match matches.subcommand().0 {
-        "preview" => main_preview(&matches),
-        "widget" => main_shell(&matches),
+        "preview" => preview::main(&matches),
+        "widget" => shell::main(&matches),
         _ => main_core(&matches),
     }
 }
 
-fn main_shell(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
-    let file = match matches.subcommand().1.unwrap().value_of("shell").unwrap() {
-        "zsh" => "navi.plugin.zsh",
-        "fish" => "navi.plugin.fish",
-        _ => "navi.plugin.bash",
-    };
-
-    println!(
-        "{}/{}",
-        std::env::current_exe()
-            .unwrap()
-            .parent()
-            .unwrap()
-            .as_os_str()
-            .to_str()
-            .unwrap(),
-        file
-    );
-    Ok(())
-}
-
-fn main_preview(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
-    // println!("Value for config: {:#?}", matches.subcommand().1.unwrap().value_of("line").unwrap());
-
-    let (tags, comment, snippet) =
-        extract_elements(matches.subcommand().1.unwrap().value_of("line").unwrap()); // ("foo", "bar", "baz"); // extract_elements(&args[2]);
-    println!(
-        "{comment} {tags} \n{snippet}",
-        comment = Colour::Blue.paint(comment),
-        tags = Colour::Red.paint(format!("[{}]", tags)),
-        snippet = snippet
-    );
-
-    process::exit(0x0100)
-}
 
 fn main_core(_matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
-    let output = call_fzf(|stdin| {
+    let output = fzf::call(|stdin| {
         let paths = fs::read_dir("./cheats").unwrap();
         for path in paths {
             parse_file(
@@ -192,7 +118,7 @@ fn main_core(_matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
             let bracketed_varname = &cap[0];
             let varname = &bracketed_varname[1..bracketed_varname.len() - 1];
 
-            let output = call_fzf(|stdin| {
+            let output = fzf::call(|stdin| {
                 stdin.write_all(b"foo\n").unwrap();
                 stdin.write_all(b"bar\n").unwrap();
                 stdin.write_all(b"baz\n").unwrap();
