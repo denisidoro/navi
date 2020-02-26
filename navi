@@ -4,10 +4,13 @@ set -euo pipefail
 export NAVI_HOME="$(cd "$(dirname "$0")" && pwd)"
 cd "$NAVI_HOME"
 
-bin="${NAVI_HOME}/target/debug/navi"
+release_bin="${NAVI_HOME}/target/release/navi"
+debug_bin="${NAVI_HOME}/target/debug/navi"
 
-if [ -f "$bin" ]; then
-    "$bin" "$@"
+if [ -f "$release_bin" ]; then
+    "$release_bin" "$@"
+elif [ -f "$debug_bin" ]; then
+    "$debug_bin" "$@"
 else
-    cargo run "$@"
+    cargo run -- "$@"
 fi

@@ -1,6 +1,6 @@
 use ansi_term::Colour;
+use clap::{App, Arg, ArgMatches, SubCommand};
 use regex::Regex;
-use std::env;
 use std::error::Error;
 use std::fs;
 use std::fs::File;
@@ -121,19 +121,72 @@ where
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let args: Vec<String> = env::args().collect();
+    let matches = App::new("navi")
+        .version("0.1.0")
+        .about("An interactive cheatsheet tool for the command line")
+        .subcommand(
+            SubCommand::with_name("widget")
+                .about("returns the absolute path of shell widgets")
+                .arg(
+                    Arg::with_name("shell")
+                        .help("zsh, bash or fish")
+                        .index(1)
+                        .required(true),
+                ),
+        )
+        .subcommand(
+            SubCommand::with_name("preview")
+                .about("[internal] pretty-prints a line selection")
+                .arg(Arg::with_name("line").index(1).required(true)),
+        )
+        .get_matches();
 
-    if args.len() > 1 && args[1] == "preview" {
-        let (tags, comment, snippet) = extract_elements(&args[2]);
-        println!(
-            "{comment} {tags} \n{snippet}",
-            comment = Colour::Blue.paint(comment),
-            tags = Colour::Red.paint(format!("[{}]", tags)),
-            snippet = snippet
-        );
-        process::exit(0x0100)
+    // println!("Value for config: {:#?}", matches);
+
+    match matches.subcommand().0 {
+        "preview" => main_preview(&matches),
+        "widget" => main_shell(&matches),
+        _ => main_core(&matches),
     }
+}
 
+fn main_shell(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
+    let file = match matches.subcommand().1.unwrap().value_of("shell").unwrap() {
+        "zsh" => "navi.plugin.zsh",
+        "fish" => "navi.plugin.fish",
+        _ => "navi.plugin.bash",
+    };
+
+    println!(
+        "{}/{}",
+        std::env::current_exe()
+            .unwrap()
+            .parent()
+            .unwrap()
+            .as_os_str()
+            .to_str()
+            .unwrap(),
+        file
+    );
+    Ok(())
+}
+
+fn main_preview(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
+    // println!("Value for config: {:#?}", matches.subcommand().1.unwrap().value_of("line").unwrap());
+
+    let (tags, comment, snippet) =
+        extract_elements(matches.subcommand().1.unwrap().value_of("line").unwrap()); // ("foo", "bar", "baz"); // extract_elements(&args[2]);
+    println!(
+        "{comment} {tags} \n{snippet}",
+        comment = Colour::Blue.paint(comment),
+        tags = Colour::Red.paint(format!("[{}]", tags)),
+        snippet = snippet
+    );
+
+    process::exit(0x0100)
+}
+
+fn main_core(_matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
     let output = call_fzf(|stdin| {
         let paths = fs::read_dir("./cheats").unwrap();
         for path in paths {
