@@ -5,6 +5,7 @@ use std::process;
 
 fn extract_elements(argstr: &str) -> (&str, &str, &str) {
     let mut parts = argstr.split('\t').skip(3);
+    // println!("{:#?}", parts);
     let tags = parts.next().unwrap();
     let comment = parts.next().unwrap();
     let snippet = parts.next().unwrap();
@@ -23,5 +24,5 @@ pub fn main(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
         snippet = snippet
     );
 
-    process::exit(0x0100)
+    process::exit(0)
 }
