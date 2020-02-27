@@ -8,13 +8,17 @@ cd "$NAVI_HOME"
 cargo build --release --locked
 
 rm -rf "$TAR_DIR" 2> /dev/null || true
-mkdir -p "$TAR_DIR" 2> /dev/null || tru
+mkdir -p "$TAR_DIR" 2> /dev/null || true
 
 cp -r "${NAVI_HOME}/cheats" "$TAR_DIR"
-cp "${NAVI_HOME}/navi.plugin.bash" "$TAR_DIR"
-cp "${NAVI_HOME}/navi.plugin.fish" "$TAR_DIR"
-cp "${NAVI_HOME}/navi.plugin.zsh" "$TAR_DIR"
-cp "${NAVI_HOME}/target/release/navi" "$TAR_DIR"
+
+for f in \
+    "${NAVI_HOME}/navi.plugin.bash" \
+    "${NAVI_HOME}/navi.plugin.fish" \
+    "${NAVI_HOME}/navi.plugin.zsh" \
+    "${NAVI_HOME}/target/release/navi"; do
+    cp "$f" "$TAR_DIR"
+done
 
 cd "${NAVI_HOME}/target/tar"
 tar -czf navi.tar.gz *
