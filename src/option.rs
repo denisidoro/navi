@@ -25,5 +25,17 @@ pub fn parse<'a>() -> ArgMatches<'a> {
                 .arg(Arg::with_name("args")
                                .multiple(true)),
         )
+        .subcommand(
+            SubCommand::with_name("search")
+                .about("search for cheatsheets on online repositories")
+                .arg(Arg::with_name("args")
+                               .multiple(true)),
+        )
+        .subcommand(
+            SubCommand::with_name("query")
+                .about("pre-filter results")
+                .arg(Arg::with_name("args")
+                               .multiple(true)),
+        )
         .get_matches()
 }
