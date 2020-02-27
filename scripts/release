@@ -6,6 +6,7 @@ TAR_DIR="${NAVI_HOME}/target/tar"
 
 cd "$NAVI_HOME"
 cargo build --release --locked
+chmod +x "${NAVI_HOME}/target/release/navi"
 
 rm -rf "$TAR_DIR" 2> /dev/null || true
 mkdir -p "$TAR_DIR" 2> /dev/null || true
