@@ -2,9 +2,19 @@
 set -euo pipefail
 
 export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
+TAR_DIR="${NAVI_HOME}/target/tar"
 
-version="$1"
+cd "$NAVI_HOME"
+cargo build --release --locked
 
-git tag -a "v${version}" -m 'WIP version written in Rust. Use 1.0.0 instead'
-git push origin --tags
+rm -rf "$TAR_DIR" 2> /dev/null || true
+mkdir -p "$TAR_DIR" 2> /dev/null || tru
 
+cp -r "${NAVI_HOME}/cheats" "$TAR_DIR"
+cp "${NAVI_HOME}/navi.plugin.bash" "$TAR_DIR"
+cp "${NAVI_HOME}/navi.plugin.fish" "$TAR_DIR"
+cp "${NAVI_HOME}/navi.plugin.zsh" "$TAR_DIR"
+cp "${NAVI_HOME}/target/release/navi" "$TAR_DIR"
+
+cd "${NAVI_HOME}/target/tar"
+tar -czf navi.tar.gz *

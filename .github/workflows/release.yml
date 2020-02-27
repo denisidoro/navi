@@ -31,7 +31,7 @@ jobs:
         rust-version: stable
     - uses: actions/checkout@v1
     - name: Build
-      run: cargo build --release --locked && cd target/release && tar -czf navi.tar.gz navi
+      run: scripts/release
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v1-release
       with:
