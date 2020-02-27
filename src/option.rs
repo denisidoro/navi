@@ -19,5 +19,11 @@ pub fn parse<'a>() -> ArgMatches<'a> {
                 .about("[internal] pretty-prints a line selection")
                 .arg(Arg::with_name("line").index(1).required(true)),
         )
+        .subcommand(
+            SubCommand::with_name("best")
+                .about("selects the best match automatically")
+                .arg(Arg::with_name("args")
+                               .multiple(true)),
+        )
         .get_matches()
 }
