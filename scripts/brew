@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
+
+command_exists() {
+   type "$1" &>/dev/null
+}
+
+sha256() {
+   if command_exists sha256sum; then
+      sha256sum
+   elif command_exists shasum; then
+      shasum -a 256
+   elif command_exists openssl; then
+      openssl dgst -sha256
+   else
+      echoerr "Unable to calculate sha256!"
+      exit 43
+   fi
+}
+
+header() {
+   echo "$*"
+   echo
+}
+
+sha_for() {
+    local -r variant="$1"
+    local -r url="https://github.com/denisidoro/navi/releases/download/v${version}/navi-${variant}.tar.gz"
+    curl -sL "$url" | sha256 | awk '{print $1}'
+}
+
+version="$1"
+
+header "sha_for linux-amd64..."
+sha_linux="$(sha_for "linux-amd64")"
+
+header "sha_for macos-amd64..."
+sha_osx="$(sha_for "macos-amd64")"
+
+header "rb..."
+curl -s https://raw.githubusercontent.com/denisidoro/homebrew-tools/master/navirs.rb \
+    | sed -E "s/version ['\"].*/version '${version}'/" \
+    | awk '!x{x=sub("sha256","sha_osx")}7' \
+    | awk '!x{x=sub("sha256","sha_linux")}7' \
+    | sed -E "s/sha_osx.*/sha256 \"${sha_osx}\"/" \
+    | sed -E "s/sha_linux.*/sha256 \"${sha_linux}\"/"
