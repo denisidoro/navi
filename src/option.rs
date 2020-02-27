@@ -22,20 +22,17 @@ pub fn parse<'a>() -> ArgMatches<'a> {
         .subcommand(
             SubCommand::with_name("best")
                 .about("selects the best match automatically")
-                .arg(Arg::with_name("args")
-                               .multiple(true)),
+                .arg(Arg::with_name("args").multiple(true)),
         )
         .subcommand(
             SubCommand::with_name("search")
                 .about("search for cheatsheets on online repositories")
-                .arg(Arg::with_name("args")
-                               .multiple(true)),
+                .arg(Arg::with_name("args").multiple(true)),
         )
         .subcommand(
             SubCommand::with_name("query")
                 .about("pre-filter results")
-                .arg(Arg::with_name("args")
-                               .multiple(true)),
+                .arg(Arg::with_name("args").multiple(true)),
         )
         .get_matches()
 }

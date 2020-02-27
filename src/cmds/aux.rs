@@ -1,5 +1,5 @@
-use std::process;
 use std::error::Error;
+use std::process;
 
 pub fn abort() -> Result<(), Box<dyn Error>> {
     eprintln!("This version of navi doesn't support this command.");
