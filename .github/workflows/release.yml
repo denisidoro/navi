@@ -18,12 +18,11 @@ jobs:
           - os: ubuntu-latest
             artifact_name: navi.tar.gz
             asset_name: navi-linux-amd64.tar.gz
-          # - os: windows-latest
-          #   artifact_name: navi.exe
-          #   asset_name: navi-windows-amd64
+            target: aarch64-unknown-linux-musl
           - os: macos-latest
             artifact_name: navi.tar.gz
-            asset_name: navi-macos-amd64.tar.gz
+            asset_name: navi-osx-amd64.tar.gz
+            target: 
 
     steps:
     - uses: hecrj/setup-rust-action@v1.3.1
@@ -31,7 +30,7 @@ jobs:
         rust-version: stable
     - uses: actions/checkout@v1
     - name: Build
-      run: scripts/release
+      run: scripts/release ${{ matrix.target }}
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v1-release
       with:

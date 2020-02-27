@@ -4,20 +4,31 @@ set -euo pipefail
 export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 TAR_DIR="${NAVI_HOME}/target/tar"
 
-cd "$NAVI_HOME"
-cargo build --release --locked
-chmod +x "${NAVI_HOME}/target/release/navi"
+target="${1:-}"
 
-rm -rf "$TAR_DIR" 2> /dev/null || true
+cd "$NAVI_HOME"
+
+rm -rf "${NAVI_HOME}/target" 2> /dev/null || true
+
+if [ -n "$target" ]; then
+    cargo install cross 2> /dev/null || true
+    cross build --release --locked --target "$target"
+    bin_folder="${target}/release"
+else 
+    cargo build --release --locked
+    bin_folder="release"
+fi
+
+bin_path="${NAVI_HOME}/target/${bin_folder}/navi"
+chmod +x "$bin_path"
 mkdir -p "$TAR_DIR" 2> /dev/null || true
 
 cp -r "${NAVI_HOME}/cheats" "$TAR_DIR"
-
 for f in \
     "${NAVI_HOME}/navi.plugin.bash" \
     "${NAVI_HOME}/navi.plugin.fish" \
     "${NAVI_HOME}/navi.plugin.zsh" \
-    "${NAVI_HOME}/target/release/navi"; do
+    "$bin_path"; do
     cp "$f" "$TAR_DIR"
 done
 
