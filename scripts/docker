@@ -7,5 +7,5 @@ cd "$NAVI_HOME"
 
 docker run \
     -e HOMEBREW_NO_AUTO_UPDATE=1 \
-    -it linuxbrew/debian \
+    -it linuxbrew/alpine \
     bash -c 'brew install denisidoro/tools/navirs; bash'
