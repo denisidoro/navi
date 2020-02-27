@@ -3,6 +3,10 @@ set -euo pipefail
 
 export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 
+echoerr() {
+   echo "$@" 1>&2
+}
+
 command_exists() {
    type "$1" &>/dev/null
 }
@@ -21,8 +25,8 @@ sha256() {
 }
 
 header() {
-   echo "$*"
-   echo
+   echoerr "$*"
+   echoerr
 }
 
 sha_for() {

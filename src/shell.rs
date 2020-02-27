@@ -9,7 +9,7 @@ pub fn main(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
         _ => "navi.plugin.bash",
     };
 
-    println!("{}/../../{}", filesystem::exe_path_string(), file);
+    println!("{}/{}", filesystem::exe_path_string(), file);
 
     Ok(())
 }
