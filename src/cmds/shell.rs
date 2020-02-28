@@ -1,15 +1,15 @@
 use std::error::Error;
 
-use crate::option::Config;
+use crate::filesystem;
 
-pub fn main(config: Config) -> Result<(), Box<dyn Error>> {
-    /*let file = match matches.subcommand().1.unwrap().value_of("shell").unwrap() {
+pub fn main(shell: &str) -> Result<(), Box<dyn Error>> {
+    let file = match shell {
         "zsh" => "navi.plugin.zsh",
         "fish" => "navi.plugin.fish",
         _ => "navi.plugin.bash",
     };
 
-    println!("{}/{}", filesystem::exe_path_string(), file);*/
+    println!("{}/{}", filesystem::exe_path_string(), file);
 
     Ok(())
 }
