@@ -92,16 +92,15 @@ pub fn read_all(stdin: &mut std::process::ChildStdin) -> HashMap<String, String>
     let folders = folders_str.split(':');
 
     for folder in folders {
-        // println!("folder {}", folder);
-        let paths = fs::read_dir(folder);
-        if let Ok(p) = paths {
-                for path in p {
-                    read_file(
-                        path.unwrap().path().into_os_string().to_str().unwrap(),
-                        &mut variables,
-                        stdin,
-                    );
-                }
+        if let Ok(paths) = fs::read_dir(folder) {
+            for path in p {
+                read_file(
+                    path.unwrap().path().into_os_string().to_str().unwrap(),
+                    &mut variables,
+                    stdin,
+                );
+            }
+        }
     }
 
     variables
