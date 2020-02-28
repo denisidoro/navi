@@ -9,4 +9,4 @@ edition = "2018"
 [dependencies]
 regex = "1.3.4"
 ansi_term = "0.12"
-clap = "2.33.0"
+structopt = "0.3"

@@ -1,4 +1,3 @@
-use clap::ArgMatches;
 use regex::Regex;
 use std::collections::HashMap;
 use std::error::Error;
@@ -7,8 +6,9 @@ use std::process::{Command, Stdio};
 
 use crate::fzf;
 use crate::parse;
+use crate::option::Config;
 
-pub fn main(_matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
+pub fn main(_config: Config) -> Result<(), Box<dyn Error>> {
     let (output, variables) = fzf::call(|stdin| parse::read_all(stdin));
 
     if output.status.success() {

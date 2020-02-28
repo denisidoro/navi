@@ -1,8 +1,8 @@
-use clap::ArgMatches;
 use std::error::Error;
 
+use crate::option::Config;
 use super::aux;
 
-pub fn main(_matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
+pub fn main(_config: Config) -> Result<(), Box<dyn Error>> {
     aux::abort()
 }
