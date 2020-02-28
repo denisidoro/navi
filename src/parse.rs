@@ -86,14 +86,13 @@ fn read_file(
 pub fn read_all(stdin: &mut std::process::ChildStdin) -> HashMap<String, String> {
     let mut variables: HashMap<String, String> = HashMap::new();
 
-    // println!("before");
     let folders_str =
         env::var("NAVI_PATH").unwrap_or(format!("{}/cheats", filesystem::exe_path_string()));
     let folders = folders_str.split(':');
 
     for folder in folders {
         if let Ok(paths) = fs::read_dir(folder) {
-            for path in p {
+            for path in paths {
                 read_file(
                     path.unwrap().path().into_os_string().to_str().unwrap(),
                     &mut variables,
