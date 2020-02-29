@@ -14,8 +14,8 @@ pub enum Variant {
     Query(String),
 }
 
-pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
-    let fzf_opts = match variant {
+fn gen_fzf_opts(variant: Variant) -> fzf::Opts {
+    match variant {
         Variant::Core => Default::default(),
         Variant::Filter(f) => fzf::Opts {
             filter: Some(f),
@@ -25,19 +25,28 @@ pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
             query: Some(q),
             ..Default::default()
         },
-    };
+    }
+}
 
-    let (output, variables) = fzf::call(fzf_opts, |stdin| cheat::read_all(&config, stdin));
+fn extract(raw_output: &str) -> (&str, &str) {
+    let mut parts = raw_output.split('\n').next().unwrap().split('\t');
+    parts.next();
+    parts.next();
+    parts.next();
+    let tags = parts.next().unwrap();
+    parts.next();
+    let snippet = parts.next().unwrap();
+    (tags, snippet)
+}
+
+pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
+    let (output, variables) = fzf::call(gen_fzf_opts(variant), |stdin| {
+        cheat::read_all(&config, stdin)
+    });
 
     if output.status.success() {
         let raw_output = String::from_utf8(output.stdout)?;
-        let mut parts = raw_output.split('\n').next().unwrap().split('\t');
-        parts.next();
-        parts.next();
-        parts.next();
-        let tags = parts.next().unwrap();
-        parts.next();
-        let snippet = parts.next().unwrap();
+        let (tags, snippet) = extract(&raw_output[..]);
         let mut full_snippet = String::from(snippet);
 
         let re = Regex::new(r"<(.*?)>").unwrap();
