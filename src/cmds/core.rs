@@ -8,8 +8,8 @@ use crate::fzf;
 use crate::option::Config;
 use crate::parse;
 
-pub fn main(_config: Config) -> Result<(), Box<dyn Error>> {
-    let (output, variables) = fzf::call(|stdin| parse::read_all(stdin));
+pub fn main(query: &str, config: Config) -> Result<(), Box<dyn Error>> {
+    let (output, variables) = fzf::call(query, |stdin| parse::read_all(&config, stdin));
 
     if output.status.success() {
         let raw_output = String::from_utf8(output.stdout)?;
@@ -42,7 +42,7 @@ pub fn main(_config: Config) -> Result<(), Box<dyn Error>> {
                 None => String::from("TODO\n"),
             };
 
-            let (output, _) = fzf::call(|stdin| {
+            let (output, _) = fzf::call("", |stdin| {
                 stdin.write_all(suggestions.as_bytes()).unwrap();
                 HashMap::new()
             });

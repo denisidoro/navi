@@ -1,9 +1,10 @@
 use crate::filesystem;
+
 use std::collections::HashMap;
 use std::process;
 use std::process::{Command, Stdio};
 
-pub fn call<F>(f: F) -> (process::Output, HashMap<String, String>)
+pub fn call<F>(query: &str, f: F) -> (process::Output, HashMap<String, String>)
 where
     F: Fn(&mut process::ChildStdin) -> HashMap<String, String>,
 {
@@ -18,6 +19,8 @@ where
             "--delimiter",
             "\t",
             "--ansi",
+            "--query",
+            query,
         ])
         .args(&[
             "--preview",
