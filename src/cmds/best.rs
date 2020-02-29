@@ -1,8 +1,9 @@
 use std::error::Error;
 
-use super::aux;
+use crate::cmds;
+use crate::cmds::core::Variant;
 use crate::option::Config;
 
-pub fn main(_args: Vec<String>, _config: Config) -> Result<(), Box<dyn Error>> {
-    aux::abort()
+pub fn main(args: Vec<String>, config: Config) -> Result<(), Box<dyn Error>> {
+    cmds::core::main(Variant::Filter(args.join(" ")), config)
 }

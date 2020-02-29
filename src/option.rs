@@ -5,6 +5,9 @@ pub struct Config {
     #[structopt(short, long, env = "NAVI_PATH")]
     pub path: Option<String>,
 
+    #[structopt(long)]
+    pub print: bool,
+
     #[structopt(subcommand)]
     pub cmd: Option<Command>,
 }

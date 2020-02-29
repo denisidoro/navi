@@ -1,12 +1,13 @@
 use std::env;
 use std::error::Error;
 
+mod cheat;
 mod cmds;
 mod filesystem;
 mod fzf;
 mod option;
-mod parse;
 
+use crate::cmds::core::Variant;
 use option::Command;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -17,8 +18,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     } else {
         let mut config = option::parse();
 
-        println!("{:#?}", config.path);
-
         match config.cmd.as_mut() {
             Some(c) => match c {
                 Command::Query { args } => cmds::query::main(args.to_vec(), config),
@@ -26,7 +25,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 Command::Search { args } => cmds::search::main(args.to_vec(), config),
                 Command::Widget { shell } => cmds::shell::main(&shell[..]),
             },
-            None => cmds::core::main("", config),
+            None => cmds::core::main(Variant::Core, config),
         }
     }
 }

@@ -4,7 +4,6 @@ use std::process;
 
 fn extract_elements(argstr: &str) -> (&str, &str, &str) {
     let mut parts = argstr.split('\t').skip(3);
-    // println!("{:#?}", parts);
     let tags = parts.next().unwrap();
     let comment = parts.next().unwrap();
     let snippet = parts.next().unwrap();
