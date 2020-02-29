@@ -18,11 +18,11 @@ pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
     let fzf_opts = match variant {
         Variant::Core => Default::default(),
         Variant::Filter(f) => fzf::Opts {
-            filter: Some(f.to_string()),
+            filter: Some(f),
             ..Default::default()
         },
         Variant::Query(q) => fzf::Opts {
-            query: Some(q.to_string()),
+            query: Some(q),
             ..Default::default()
         },
     };
