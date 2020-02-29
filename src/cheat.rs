@@ -1,8 +1,9 @@
 use crate::filesystem;
+use crate::option::Config;
+
 use ansi_term::Colour;
 use regex::Regex;
 use std::collections::HashMap;
-use std::env;
 use std::fs;
 use std::io::Write;
 
@@ -83,19 +84,16 @@ fn read_file(
     }
 }
 
-pub fn read_all(stdin: &mut std::process::ChildStdin) -> HashMap<String, String> {
+pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMap<String, String> {
     let mut variables: HashMap<String, String> = HashMap::new();
 
-    // println!("before");
-    let folders_str =
-        env::var("NAVI_PATH").unwrap_or(format!("{}/cheats", filesystem::exe_path_string()));
+    let fallback = format!("{}/cheats", filesystem::exe_path_string());
+    let folders_str = config.path.as_ref().unwrap_or(&fallback);
     let folders = folders_str.split(':');
 
     for folder in folders {
-        // println!("folder {}", folder);
-        let paths = fs::read_dir(folder);
-        if paths.is_ok() {
-            for path in paths.unwrap() {
+        if let Ok(paths) = fs::read_dir(folder) {
+            for path in paths {
                 read_file(
                     path.unwrap().path().into_os_string().to_str().unwrap(),
                     &mut variables,

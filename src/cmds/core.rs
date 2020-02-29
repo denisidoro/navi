@@ -1,25 +1,52 @@
-use clap::ArgMatches;
 use regex::Regex;
 use std::collections::HashMap;
 use std::error::Error;
 use std::io::Write;
 use std::process::{Command, Stdio};
 
+use crate::cheat;
 use crate::fzf;
-use crate::parse;
+use crate::option::Config;
 
-pub fn main(_matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
-    let (output, variables) = fzf::call(|stdin| parse::read_all(stdin));
+pub enum Variant {
+    Core,
+    Filter(String),
+    Query(String),
+}
+
+fn gen_fzf_opts(variant: Variant) -> fzf::Opts {
+    match variant {
+        Variant::Core => Default::default(),
+        Variant::Filter(f) => fzf::Opts {
+            filter: Some(f),
+            ..Default::default()
+        },
+        Variant::Query(q) => fzf::Opts {
+            query: Some(q),
+            ..Default::default()
+        },
+    }
+}
+
+fn extract(raw_output: &str) -> (&str, &str) {
+    let mut parts = raw_output.split('\n').next().unwrap().split('\t');
+    parts.next();
+    parts.next();
+    parts.next();
+    let tags = parts.next().unwrap();
+    parts.next();
+    let snippet = parts.next().unwrap();
+    (tags, snippet)
+}
+
+pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
+    let (output, variables) = fzf::call(gen_fzf_opts(variant), |stdin| {
+        cheat::read_all(&config, stdin)
+    });
 
     if output.status.success() {
         let raw_output = String::from_utf8(output.stdout)?;
-        let mut parts = raw_output.split('\t');
-        parts.next();
-        parts.next();
-        parts.next();
-        let tags = parts.next().unwrap();
-        parts.next();
-        let snippet = parts.next().unwrap();
+        let (tags, snippet) = extract(&raw_output[..]);
         let mut full_snippet = String::from(snippet);
 
         let re = Regex::new(r"<(.*?)>").unwrap();
@@ -42,19 +69,23 @@ pub fn main(_matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
                 None => String::from("TODO\n"),
             };
 
-            let (output, _) = fzf::call(|stdin| {
+            let (output, _) = fzf::call(Default::default(), |stdin| {
                 stdin.write_all(suggestions.as_bytes()).unwrap();
-                HashMap::new()
+                HashMap::new() // TODO
             });
 
             let value = String::from_utf8(output.stdout).unwrap();
             full_snippet = full_snippet.replace(bracketed_varname, &value[..value.len() - 1]);
         }
 
-        Command::new("bash")
-            .arg("-c")
-            .arg(&full_snippet[..])
-            .spawn()?;
+        if config.print {
+            println!("{}", full_snippet);
+        } else {
+            Command::new("bash")
+                .arg("-c")
+                .arg(&full_snippet[..])
+                .spawn()?;
+        }
 
         Ok(())
     } else {

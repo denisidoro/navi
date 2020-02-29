@@ -1,8 +1,9 @@
-use clap::ArgMatches;
 use std::error::Error;
 
-use super::aux;
+use crate::cmds;
+use crate::cmds::core::Variant;
+use crate::option::Config;
 
-pub fn main(_matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
-    aux::abort()
+pub fn main(args: Vec<String>, config: Config) -> Result<(), Box<dyn Error>> {
+    cmds::core::main(Variant::Query(args.join(" ")), config)
 }
