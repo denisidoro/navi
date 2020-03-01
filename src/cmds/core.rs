@@ -14,18 +14,35 @@ pub enum Variant {
     Query(String),
 }
 
-fn gen_fzf_opts(variant: Variant) -> fzf::Opts {
+fn gen_core_fzf_opts(variant: Variant, config: &Config) -> fzf::Opts {
+    let mut opts = fzf::Opts {
+            preview: !config.no_preview,
+            autoselect: !config.no_autoselect,
+            overrides: config.fzf_overrides.as_ref(),
+            ..Default::default()
+        };
+
     match variant {
-        Variant::Core => Default::default(),
-        Variant::Filter(f) => fzf::Opts {
-            filter: Some(f),
-            ..Default::default()
-        },
-        Variant::Query(q) => fzf::Opts {
-            query: Some(q),
-            ..Default::default()
-        },
+        Variant::Core => (),
+        Variant::Filter(f) => opts.filter = Some(f) ,
+        Variant::Query(q) => opts.query = Some(q)
     }
+
+    opts
+}
+
+fn gen_suggestion_fzf_opts(config: &Config, suggestion_opts: Option<cheat::SuggestionOpts>) -> fzf::Opts {
+    let mut opts = fzf::Opts {
+        preview: false,
+            autoselect: !config.no_autoselect,
+            ..Default::default()
+        };
+
+if let Some(o) = suggestion_opts {
+    opts.multi = o.multi;
+}
+
+        opts
 }
 
 fn extract(raw_output: &str) -> (&str, &str) {
@@ -40,7 +57,7 @@ fn extract(raw_output: &str) -> (&str, &str) {
 }
 
 pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
-    let (output, variables) = fzf::call(gen_fzf_opts(variant), |stdin| {
+    let (output, variables) = fzf::call(gen_core_fzf_opts(variant, &config), |stdin| {
         cheat::read_all(&config, stdin)
     });
 
@@ -49,33 +66,32 @@ pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
         let (tags, snippet) = extract(&raw_output[..]);
         let mut full_snippet = String::from(snippet);
 
-        let re = Regex::new(r"<(.*?)>").unwrap();
+        let re = Regex::new(r"<(\w[\w\d\-_]*)>").unwrap();
         for cap in re.captures_iter(snippet) {
             let bracketed_varname = &cap[0];
             let varname = &bracketed_varname[1..bracketed_varname.len() - 1];
             let k = format!("{};{}", tags, varname);
 
-            let suggestions = match variables.get(&k[..]) {
-                Some(c) => {
+            if let Some(suggestion) = variables.get(&k[..]) {
                     let child = Command::new("bash")
                         .stdout(Stdio::piped())
                         .arg("-c")
-                        .arg(c)
+                        .arg(&suggestion.0)
                         .spawn()
                         .unwrap();
 
-                    String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap()
-                }
-                None => String::from("TODO\n"),
-            };
+                    let suggestions = String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap();
 
-            let (output, _) = fzf::call(Default::default(), |stdin| {
+
+            let (sub_output, _) = fzf::call(gen_suggestion_fzf_opts(&config, &suggestion.1), |stdin| {
                 stdin.write_all(suggestions.as_bytes()).unwrap();
                 HashMap::new() // TODO
             });
 
-            let value = String::from_utf8(output.stdout).unwrap();
+            let value = String::from_utf8(sub_output.stdout).unwrap();
             full_snippet = full_snippet.replace(bracketed_varname, &value[..value.len() - 1]);
+                    }
+
         }
 
         if config.print {

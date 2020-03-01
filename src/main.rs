@@ -24,6 +24,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 Command::Best { args } => cmds::best::main(args.to_vec(), config),
                 Command::Search { args } => cmds::search::main(args.to_vec(), config),
                 Command::Widget { shell } => cmds::shell::main(&shell[..]),
+                Command::Home => cmds::home::main(),
             },
             None => cmds::core::main(Variant::Core, config),
         }

@@ -7,6 +7,15 @@ use std::collections::HashMap;
 use std::fs;
 use std::io::Write;
 
+#[derive(Default)]
+pub struct SuggestionOpts {
+    pub header_lines: u8,
+    pub column: Option<u8>,
+    pub multi: bool
+}
+
+pub type Value = (String, Option<SuggestionOpts>);
+
 fn gen_snippet(snippet: &str, line: &str) -> String {
     if snippet.is_empty() {
         line.to_string()
@@ -23,22 +32,31 @@ fn limit_str(text: &str, length: usize) -> String {
     }
 }
 
-fn parse_variable_line(line: &str) -> (&str, &str, Option<&str>) {
+fn parse_opts(text: &str) -> SuggestionOpts {
+    SuggestionOpts {
+        header_lines: 0,
+        column: None,
+    }
+}
+
+fn parse_variable_line(line: &str) -> (&str, &str, Option<SuggestionOpts>) {
     let re = Regex::new(r"^\$\s*([^:]+):(.*)").unwrap();
     let caps = re.captures(line).unwrap();
     let variable = caps.get(1).unwrap().as_str().trim();
     let mut command_plus_opts = caps.get(2).unwrap().as_str().split("---");
     let command = command_plus_opts.next().unwrap();
-    let opts = command_plus_opts.next();
+    let opts = match command_plus_opts.next() {
+        Some(o) => Some(parse_opts(o)),
+        None => None,
+    };
     (variable, command, opts)
 }
 
 fn read_file(
     path: &str,
-    variables: &mut HashMap<String, String>,
+    variables: &mut HashMap<String, Value>,
     stdin: &mut std::process::ChildStdin,
 ) {
-    // println!("reading {}", path);
     let mut tags = String::from("");
     let mut comment = String::from("");
     let mut snippet = String::from("");
@@ -51,8 +69,8 @@ fn read_file(
             } else if line.starts_with('#') {
                 comment = String::from(&line[2..]);
             } else if line.starts_with('$') {
-                let (variable, command, _) = parse_variable_line(&line[..]);
-                variables.insert(format!("{};{}", tags, variable), String::from(command));
+                let (variable, command, opts) = parse_variable_line(&line[..]);
+                variables.insert(format!("{};{}", tags, variable), (String::from(command), opts));
             }
             // TODO
             else if line.ends_with('\\') {
@@ -84,8 +102,8 @@ fn read_file(
     }
 }
 
-pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMap<String, String> {
-    let mut variables: HashMap<String, String> = HashMap::new();
+pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMap<String, Value> {
+    let mut variables: HashMap<String, Value> = HashMap::new();
 
     let fallback = format!("{}/cheats", filesystem::exe_path_string());
     let folders_str = config.path.as_ref().unwrap_or(&fallback);

@@ -8,6 +8,15 @@ pub struct Config {
     #[structopt(long)]
     pub print: bool,
 
+    #[structopt(long)]
+    pub no_autoselect: bool,
+
+    #[structopt(long)]
+    pub no_preview: bool,
+
+    #[structopt(long)]
+    pub fzf_overrides: Option<String>,
+
     #[structopt(subcommand)]
     pub cmd: Option<Command>,
 }
@@ -15,6 +24,7 @@ pub struct Config {
 #[derive(Debug, StructOpt)]
 pub enum Command {
     Query { args: Vec<String> },
+    Home,
     Search { args: Vec<String> },
     Best { args: Vec<String> },
     Widget { shell: String },
