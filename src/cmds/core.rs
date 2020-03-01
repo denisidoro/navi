@@ -1,13 +1,12 @@
-use regex::Regex;
-use std::collections::HashMap;
-use std::error::Error;
-use std::io::Write;
-use std::process::{Command, Stdio};
-
 use crate::cheat;
 use crate::cmds;
 use crate::fzf;
 use crate::option::Config;
+use regex::Regex;
+use std::collections::HashMap;
+use std::error::Error;
+use std::io::{stdin, stdout, Write};
+use std::process::{Command, Stdio};
 
 pub enum Variant {
     Core,
@@ -91,7 +90,15 @@ pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
 
                     String::from_utf8(sub_output.stdout).unwrap()
                 }
-                None => "asdf".to_string(),
+                None => {
+                    let reader = stdin();
+                    let mut out = stdout();
+                    let mut buffer: String = String::new();
+
+                    out.write(b"foo: ").unwrap();
+                    reader.read_line(&mut buffer).unwrap();
+                    buffer.to_string()
+                }
             };
 
             full_snippet = full_snippet.replace(bracketed_varname, &value[..value.len() - 1]);
