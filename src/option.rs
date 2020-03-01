@@ -1,3 +1,4 @@
+use std::env;
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
@@ -35,6 +36,22 @@ pub enum Command {
     Widget { shell: String },
 }
 
+pub enum InternalCommand {
+    Preview { line: String },
+}
+
 pub fn parse() -> Config {
     Config::from_args()
+}
+
+pub fn internal_command() -> Option<InternalCommand> {
+    let mut args = env::args();
+    args.next();
+    if args.next() == Some(String::from("preview")) {
+        Some(InternalCommand::Preview {
+            line: args.next().unwrap(),
+        })
+    } else {
+        None
+    }
 }
