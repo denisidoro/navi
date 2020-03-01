@@ -8,12 +8,14 @@ use std::process::{Command, Stdio};
 pub struct Opts<'a> {
     pub query: Option<String>,
     pub filter: Option<String>,
+    pub prompt: Option<String>,
     pub preview: bool,
     pub autoselect: bool,
     pub overrides: Option<&'a String>,
     pub header_lines: u8,
     pub multi: bool,
     pub copyable: bool,
+    pub suggestions: bool,
 }
 
 impl Default for Opts<'_> {
@@ -25,15 +27,17 @@ impl Default for Opts<'_> {
             autoselect: true,
             overrides: None,
             header_lines: 0,
+            prompt: None,
             multi: false,
             copyable: false,
+            suggestions: true,
         }
     }
 }
 
-pub fn call<F>(opts: Opts, stdin_fn: F) -> (process::Output, HashMap<String, cheat::Value>)
+pub fn call<F>(opts: Opts, stdin_fn: F) -> (process::Output, Option<HashMap<String, cheat::Value>>)
 where
-    F: Fn(&mut process::ChildStdin) -> HashMap<String, cheat::Value>,
+    F: Fn(&mut process::ChildStdin) -> Option<HashMap<String, cheat::Value>>,
 {
     let mut c = Command::new("fzf");
 
@@ -77,6 +81,10 @@ where
         c.args(&["--filter", &f]);
     }
 
+    if let Some(p) = opts.prompt {
+        c.args(&["--prompt", &p]);
+    }
+
     if opts.header_lines > 0 {
         c.args(&["--header-lines", format!("{}", opts.header_lines).as_str()]);
     }
@@ -89,6 +97,9 @@ where
             .for_each(|s| {
                 c.arg(s);
             });
+    }
+    if !opts.suggestions {
+        c.args(&["--print-query", "--no-select-1", "--height", "1"]);
     }
 
     let mut child = c

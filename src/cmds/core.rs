@@ -5,7 +5,7 @@ use crate::option::Config;
 use regex::Regex;
 use std::collections::HashMap;
 use std::error::Error;
-use std::io::{stdin, stdout, Write};
+use std::io::Write;
 use std::process::{Command, Stdio};
 
 pub enum Variant {
@@ -32,7 +32,7 @@ fn gen_core_fzf_opts(variant: Variant, config: &Config) -> fzf::Opts {
     opts
 }
 
-fn extract(raw_output: &str) -> (&str, &str, &str) {
+fn extract_from_selections(raw_output: &str) -> (&str, &str, &str) {
     let mut lines = raw_output.split('\n');
     let key = lines.next().unwrap();
     let mut parts = lines.next().unwrap().split('\t');
@@ -45,73 +45,93 @@ fn extract(raw_output: &str) -> (&str, &str, &str) {
     (key, tags, snippet)
 }
 
+fn prompt_with_suggestions(config: &Config, suggestion: &cheat::Value) -> String {
+    let child = Command::new("bash")
+        .stdout(Stdio::piped())
+        .arg("-c")
+        .arg(&suggestion.0)
+        .spawn()
+        .unwrap();
+
+    let suggestions = String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap();
+
+    let mut opts = fzf::Opts {
+        preview: false,
+        autoselect: !config.no_autoselect,
+        ..Default::default()
+    };
+
+    if let Some(o) = &suggestion.1 {
+        opts.multi = o.multi;
+    }
+
+    let (output, _) = fzf::call(opts, |stdin| {
+        stdin.write_all(suggestions.as_bytes()).unwrap();
+        None
+    });
+
+    String::from_utf8(output.stdout).unwrap()
+}
+
+fn prompt_without_suggestions(varname: &str) -> String {
+    let opts = fzf::Opts {
+        preview: false,
+        autoselect: false,
+        suggestions: false,
+        prompt: Some(format!("{}: ", varname)),
+        ..Default::default()
+    };
+
+    let (output, _) = fzf::call(opts, |_stdin| None);
+
+    String::from_utf8(output.stdout).unwrap()
+}
+
+fn replace_variables_from_snippet(
+    snippet: &str,
+    tags: &str,
+    variables: HashMap<String, cheat::Value>,
+    config: &Config,
+) -> String {
+    let mut interpolated_snippet = String::from(snippet);
+
+    let re = Regex::new(r"<(\w[\w\d\-_]*)>").unwrap();
+    for cap in re.captures_iter(snippet) {
+        let bracketed_varname = &cap[0];
+        let varname = &bracketed_varname[1..bracketed_varname.len() - 1];
+        let k = format!("{};{}", tags, varname);
+
+        let value = match variables.get(&k[..]) {
+            Some(suggestion) => prompt_with_suggestions(&config, suggestion),
+            None => prompt_without_suggestions(varname),
+        };
+
+        interpolated_snippet =
+            interpolated_snippet.replace(bracketed_varname, &value[..value.len() - 1]);
+    }
+
+    interpolated_snippet
+}
+
 pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
     let (output, variables) = fzf::call(gen_core_fzf_opts(variant, &config), |stdin| {
-        cheat::read_all(&config, stdin)
+        Some(cheat::read_all(&config, stdin))
     });
 
     if output.status.success() {
         let raw_output = String::from_utf8(output.stdout)?;
-        let (key, tags, snippet) = extract(&raw_output[..]);
-        let mut full_snippet = String::from(snippet);
-
-        let re = Regex::new(r"<(\w[\w\d\-_]*)>").unwrap();
-        for cap in re.captures_iter(snippet) {
-            let bracketed_varname = &cap[0];
-            let varname = &bracketed_varname[1..bracketed_varname.len() - 1];
-            let k = format!("{};{}", tags, varname);
-
-            let value = match variables.get(&k[..]) {
-                Some(suggestion) => {
-                    let child = Command::new("bash")
-                        .stdout(Stdio::piped())
-                        .arg("-c")
-                        .arg(&suggestion.0)
-                        .spawn()
-                        .unwrap();
-
-                    let suggestions =
-                        String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap();
-
-                    let mut opts = fzf::Opts {
-                        preview: false,
-                        autoselect: !config.no_autoselect,
-                        ..Default::default()
-                    };
-
-                    if let Some(o) = &suggestion.1 {
-                        opts.multi = o.multi;
-                    }
-
-                    let (sub_output, _) = fzf::call(opts, |stdin| {
-                        stdin.write_all(suggestions.as_bytes()).unwrap();
-                        HashMap::new() // TODO
-                    });
-
-                    String::from_utf8(sub_output.stdout).unwrap()
-                }
-                None => {
-                    let reader = stdin();
-                    let mut out = stdout();
-                    let mut buffer: String = String::new();
-
-                    out.write(b"foo: ").unwrap();
-                    reader.read_line(&mut buffer).unwrap();
-                    buffer.to_string()
-                }
-            };
-
-            full_snippet = full_snippet.replace(bracketed_varname, &value[..value.len() - 1]);
-        }
+        let (key, tags, snippet) = extract_from_selections(&raw_output[..]);
+        let interpolated_snippet =
+            replace_variables_from_snippet(snippet, tags, variables.unwrap(), &config);
 
         if key == "ctrl-y" {
             cmds::aux::abort("copying snippets to the clipboard", 2)?
         } else if config.print {
-            println!("{}", full_snippet);
+            println!("{}", interpolated_snippet);
         } else {
             Command::new("bash")
                 .arg("-c")
-                .arg(&full_snippet[..])
+                .arg(&interpolated_snippet[..])
                 .spawn()?;
         }
 
