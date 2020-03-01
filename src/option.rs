@@ -19,7 +19,6 @@ pub struct Config {
 
     #[structopt(long)]
     pub col_colors: Option<String>,*/
-
     #[structopt(long)]
     pub fzf_overrides: Option<String>,
 

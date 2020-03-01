@@ -47,7 +47,7 @@ where
         "--ansi",
         "--bind",
         "ctrl-j:down,ctrl-k:up",
-        "--exact"
+        "--exact",
     ]);
 
     if opts.autoselect {
@@ -59,10 +59,7 @@ where
     }
 
     if opts.copyable {
-        c.args(&[
-            "--expect",
-            "ctrl-y,enter"
-        ]);
+        c.args(&["--expect", "ctrl-y,enter"]);
     }
 
     if opts.preview {

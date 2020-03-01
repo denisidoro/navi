@@ -5,9 +5,9 @@ use std::io::Write;
 use std::process::{Command, Stdio};
 
 use crate::cheat;
+use crate::cmds;
 use crate::fzf;
 use crate::option::Config;
-use crate::cmds;
 
 pub enum Variant {
     Core,
@@ -62,41 +62,44 @@ pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
             let varname = &bracketed_varname[1..bracketed_varname.len() - 1];
             let k = format!("{};{}", tags, varname);
 
-            if let Some(suggestion) = variables.get(&k[..]) {
-                let child = Command::new("bash")
-                    .stdout(Stdio::piped())
-                    .arg("-c")
-                    .arg(&suggestion.0)
-                    .spawn()
-                    .unwrap();
+            let value = match variables.get(&k[..]) {
+                Some(suggestion) => {
+                    let child = Command::new("bash")
+                        .stdout(Stdio::piped())
+                        .arg("-c")
+                        .arg(&suggestion.0)
+                        .spawn()
+                        .unwrap();
 
-                let suggestions =
-                    String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap();
+                    let suggestions =
+                        String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap();
 
-                let mut opts = fzf::Opts {
-                    preview: false,
-                    autoselect: !config.no_autoselect,
-                    ..Default::default()
-                };
+                    let mut opts = fzf::Opts {
+                        preview: false,
+                        autoselect: !config.no_autoselect,
+                        ..Default::default()
+                    };
 
-                if let Some(o) = &suggestion.1 {
-                    opts.multi = o.multi;
+                    if let Some(o) = &suggestion.1 {
+                        opts.multi = o.multi;
+                    }
+
+                    let (sub_output, _) = fzf::call(opts, |stdin| {
+                        stdin.write_all(suggestions.as_bytes()).unwrap();
+                        HashMap::new() // TODO
+                    });
+
+                    String::from_utf8(sub_output.stdout).unwrap()
                 }
+                None => "asdf".to_string(),
+            };
 
-                let (sub_output, _) = fzf::call(opts, |stdin| {
-                    stdin.write_all(suggestions.as_bytes()).unwrap();
-                    HashMap::new() // TODO
-                });
-
-                let value = String::from_utf8(sub_output.stdout).unwrap();
-                full_snippet = full_snippet.replace(bracketed_varname, &value[..value.len() - 1]);
-            }
+            full_snippet = full_snippet.replace(bracketed_varname, &value[..value.len() - 1]);
         }
 
         if key == "ctrl-y" {
-cmds::aux::abort("copying snippets to the clipboard", 2)?
-        }
-        else if config.print {
+            cmds::aux::abort("copying snippets to the clipboard", 2)?
+        } else if config.print {
             println!("{}", full_snippet);
         } else {
             Command::new("bash")
