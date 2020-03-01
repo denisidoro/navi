@@ -47,6 +47,7 @@ where
         "--ansi",
         "--bind",
         "ctrl-j:down,ctrl-k:up",
+        "--exact"
     ]);
 
     if opts.autoselect {

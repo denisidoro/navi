@@ -14,6 +14,12 @@ pub struct Config {
     #[structopt(long)]
     pub no_preview: bool,
 
+    /*#[structopt(long)]
+    pub col_widths: Option<String>,
+
+    #[structopt(long)]
+    pub col_colors: Option<String>,*/
+
     #[structopt(long)]
     pub fzf_overrides: Option<String>,
 

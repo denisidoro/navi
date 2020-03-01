@@ -7,6 +7,7 @@ use std::process::{Command, Stdio};
 use crate::cheat;
 use crate::fzf;
 use crate::option::Config;
+use crate::cmds;
 
 pub enum Variant {
     Core,
@@ -52,7 +53,7 @@ pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
 
     if output.status.success() {
         let raw_output = String::from_utf8(output.stdout)?;
-        let (_key, tags, snippet) = extract(&raw_output[..]);
+        let (key, tags, snippet) = extract(&raw_output[..]);
         let mut full_snippet = String::from(snippet);
 
         let re = Regex::new(r"<(\w[\w\d\-_]*)>").unwrap();
@@ -92,7 +93,10 @@ pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
             }
         }
 
-        if config.print {
+        if key == "ctrl-y" {
+cmds::aux::abort("copying snippets to the clipboard", 2)?
+        }
+        else if config.print {
             println!("{}", full_snippet);
         } else {
             Command::new("bash")
