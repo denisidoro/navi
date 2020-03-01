@@ -29,10 +29,10 @@ pub struct Config {
 
 #[derive(Debug, StructOpt)]
 pub enum Command {
-    Query { args: Vec<String> },
+    Query { query: String },
     Home,
-    Search { args: Vec<String> },
-    Best { args: Vec<String> },
+    Search { query: String },
+    Best { query: String, args: Vec<String> },
     Widget { shell: String },
 }
 

@@ -21,9 +21,11 @@ fn main() -> Result<(), Box<dyn Error>> {
             match config.cmd.as_mut() {
                 None => cmds::core::main(Variant::Core, config),
                 Some(c) => match c {
-                    Command::Query { args } => cmds::query::main(args.to_vec(), config),
-                    Command::Best { args } => cmds::best::main(args.to_vec(), config),
-                    Command::Search { args } => cmds::search::main(args.to_vec(), config),
+                    Command::Query { query } => cmds::query::main(query.clone(), config),
+                    Command::Best { query, args } => {
+                        cmds::best::main(query.clone(), args.to_vec(), config)
+                    }
+                    Command::Search { query } => cmds::search::main(query.clone(), config),
                     Command::Widget { shell } => cmds::shell::main(&shell[..]),
                     Command::Home => cmds::home::main(),
                 },

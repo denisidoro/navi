@@ -8,6 +8,7 @@ use regex::Regex;
 use std::collections::HashMap;
 use std::error::Error;
 use std::io::Write;
+use std::process;
 use std::process::{Command, Stdio};
 
 pub enum Variant {
@@ -65,7 +66,9 @@ fn prompt_with_suggestions(config: &Config, suggestion: &cheat::Value) -> String
 
     if let Some(o) = &suggestion.1 {
         opts.multi = o.multi;
-    }
+        opts.header_lines = o.header_lines;
+        opts.nth = o.column;
+    };
 
     let (output, _) = fzf::call(opts, |stdin| {
         stdin.write_all(suggestions.as_bytes()).unwrap();
@@ -120,26 +123,30 @@ pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
         Some(cheat::read_all(&config, stdin))
     });
 
-    if output.status.success() {
-        let raw_output = String::from_utf8(output.stdout)?;
-        let (key, tags, snippet) = extract_from_selections(&raw_output[..]);
-        let interpolated_snippet =
-            replace_variables_from_snippet(snippet, tags, variables.unwrap(), &config);
+    match output.status.code() {
+        Some(0) => {
+            let raw_output = String::from_utf8(output.stdout)?;
+            let (key, tags, snippet) = extract_from_selections(&raw_output[..]);
+            let interpolated_snippet =
+                replace_variables_from_snippet(snippet, tags, variables.unwrap(), &config);
 
-        if key == "ctrl-y" {
-            cmds::aux::abort("copying snippets to the clipboard", 2)?
-        } else if config.print {
-            println!("{}", interpolated_snippet);
-        } else {
-            Command::new("bash")
-                .arg("-c")
-                .arg(&interpolated_snippet[..])
-                .spawn()?;
+            if key == "ctrl-y" {
+                cmds::aux::abort("copying snippets to the clipboard", 2)? // TODO
+            } else if config.print {
+                println!("{}", interpolated_snippet);
+            } else {
+                Command::new("bash")
+                    .arg("-c")
+                    .arg(&interpolated_snippet[..])
+                    .spawn()?;
+            }
+
+            Ok(())
         }
-
-        Ok(())
-    } else {
-        let err = String::from_utf8(output.stderr)?;
-        panic!("External command failed:\n {}", err)
+        Some(130) => process::exit(130),
+        _ => {
+            let err = String::from_utf8(output.stderr)?;
+            panic!("External command failed:\n {}", err)
+        }
     }
 }

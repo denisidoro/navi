@@ -11,11 +11,12 @@ pub struct Opts<'a> {
     pub prompt: Option<String>,
     pub preview: bool,
     pub autoselect: bool,
-    pub overrides: Option<&'a String>,
+    pub overrides: Option<&'a String>, // TODO
     pub header_lines: u8,
     pub multi: bool,
     pub copyable: bool,
     pub suggestions: bool,
+    pub nth: Option<u8>,
 }
 
 impl Default for Opts<'_> {
@@ -31,6 +32,7 @@ impl Default for Opts<'_> {
             multi: false,
             copyable: false,
             suggestions: true,
+            nth: None,
         }
     }
 }
@@ -85,6 +87,10 @@ where
         c.args(&["--prompt", &p]);
     }
 
+    if let Some(n) = opts.nth {
+        c.args(&["--nth", &n.to_string()]);
+    }
+
     if opts.header_lines > 0 {
         c.args(&["--header-lines", format!("{}", opts.header_lines).as_str()]);
     }
@@ -98,6 +104,7 @@ where
                 c.arg(s);
             });
     }
+
     if !opts.suggestions {
         c.args(&["--print-query", "--no-select-1", "--height", "1"]);
     }
@@ -107,15 +114,15 @@ where
         .stdout(Stdio::piped())
         .stderr(Stdio::inherit())
         .spawn()
-        .unwrap();
+        .expect("error a"); // TODO
 
     let stdin = child
         .stdin
         .as_mut()
         .ok_or("Child process stdin has not been captured!")
-        .unwrap();
+        .expect("error b"); // TODO
 
     let result = stdin_fn(stdin);
 
-    (child.wait_with_output().unwrap(), result)
+    (child.wait_with_output().expect("error c"), result) // TODO
 }
