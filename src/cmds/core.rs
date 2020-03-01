@@ -19,6 +19,7 @@ fn gen_core_fzf_opts(variant: Variant, config: &Config) -> fzf::Opts {
         preview: !config.no_preview,
         autoselect: !config.no_autoselect,
         overrides: config.fzf_overrides.as_ref(),
+        copyable: true,
         ..Default::default()
     };
 
@@ -31,15 +32,17 @@ fn gen_core_fzf_opts(variant: Variant, config: &Config) -> fzf::Opts {
     opts
 }
 
-fn extract(raw_output: &str) -> (&str, &str) {
-    let mut parts = raw_output.split('\n').next().unwrap().split('\t');
+fn extract(raw_output: &str) -> (&str, &str, &str) {
+    let mut lines = raw_output.split('\n');
+    let key = lines.next().unwrap();
+    let mut parts = lines.next().unwrap().split('\t');
     parts.next();
     parts.next();
     parts.next();
     let tags = parts.next().unwrap();
     parts.next();
     let snippet = parts.next().unwrap();
-    (tags, snippet)
+    (key, tags, snippet)
 }
 
 pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
@@ -49,7 +52,7 @@ pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
 
     if output.status.success() {
         let raw_output = String::from_utf8(output.stdout)?;
-        let (tags, snippet) = extract(&raw_output[..]);
+        let (_key, tags, snippet) = extract(&raw_output[..]);
         let mut full_snippet = String::from(snippet);
 
         let re = Regex::new(r"<(\w[\w\d\-_]*)>").unwrap();

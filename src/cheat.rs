@@ -1,11 +1,12 @@
+use crate::display;
 use crate::filesystem;
 use crate::option::Config;
 
-use ansi_term::Colour;
 use regex::Regex;
 use std::collections::HashMap;
 use std::fs;
 use std::io::Write;
+use termion::color;
 
 pub struct SuggestionOpts {
     pub header_lines: u8,
@@ -76,36 +77,51 @@ fn read_file(
     let mut comment = String::from("");
     let mut snippet = String::from("");
 
+    let (tag_width, comment_width) = display::widths();
+
     if let Ok(lines) = filesystem::read_lines(path) {
         for l in lines {
             let line = l.unwrap();
+
+            // tag
             if line.starts_with('%') {
                 tags = String::from(&line[2..]);
-            } else if line.starts_with('#') {
+            }
+            // comment
+            else if line.starts_with('#') {
                 comment = String::from(&line[2..]);
-            } else if line.starts_with('$') {
+            }
+            // variable
+            else if line.starts_with('$') {
                 let (variable, command, opts) = parse_variable_line(&line[..]);
                 variables.insert(
                     format!("{};{}", tags, variable),
                     (String::from(command), opts),
                 );
             }
-            // TODO
+            // snippet with line break
             else if line.ends_with('\\') {
                 snippet = if !snippet.is_empty() {
                     format!("{}{}", &snippet[..snippet.len() - 2], line)
                 } else {
                     line
                 }
-            } else if line.is_empty() {
-            } else {
+            }
+            // blank
+            else if line.is_empty() {
+            }
+            // snippet
+            else {
                 let full_snippet = gen_snippet(&snippet, &line);
                 match stdin.write(
                     format!(
-                        "{col0}\t{col1}\t{col2}\t{tags}\t{comment}\t{snippet}\t\n",
-                        col0 = Colour::Red.paint(limit_str(&tags[..], 16)),
-                        col1 = Colour::Blue.paint(limit_str(&comment[..], 26)),
-                        col2 = &full_snippet,
+                        "{tag_color}{tags_short}\t{comment_color}{comment_short}\t{snippet_color}{snippet_short}\t{tags}\t{comment}\t{snippet}\t\n",
+                        tags_short = limit_str(&tags[..], tag_width),
+                        comment_short = limit_str(&comment[..], comment_width),
+                        snippet_short = &full_snippet,
+        comment_color = color::Fg(display::COMMENT_COLOR),
+        tag_color = color::Fg(display::TAG_COLOR),
+        snippet_color = color::Fg(display::SNIPPET_COLOR),
                         tags = tags,
                         comment = comment,
                         snippet = &full_snippet

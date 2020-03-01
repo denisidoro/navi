@@ -3,6 +3,7 @@ use std::error::Error;
 
 mod cheat;
 mod cmds;
+mod display;
 mod filesystem;
 mod fzf;
 mod option;

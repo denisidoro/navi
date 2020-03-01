@@ -13,6 +13,7 @@ pub struct Opts<'a> {
     pub overrides: Option<&'a String>,
     pub header_lines: u8,
     pub multi: bool,
+    pub copyable: bool,
 }
 
 impl Default for Opts<'_> {
@@ -23,8 +24,9 @@ impl Default for Opts<'_> {
             preview: true,
             autoselect: true,
             overrides: None,
-            header_lines: 1,
+            header_lines: 0,
             multi: false,
+            copyable: false,
         }
     }
 }
@@ -45,8 +47,6 @@ where
         "--ansi",
         "--bind",
         "ctrl-j:down,ctrl-k:up",
-        "--expect",
-        "ctrl-y",
     ]);
 
     if opts.autoselect {
@@ -55,6 +55,13 @@ where
 
     if opts.multi {
         c.arg("--multi");
+    }
+
+    if opts.copyable {
+        c.args(&[
+            "--expect",
+            "ctrl-y,enter"
+        ]);
     }
 
     if opts.preview {

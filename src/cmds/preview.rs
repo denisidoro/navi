@@ -1,6 +1,8 @@
-use ansi_term::Colour;
 use std::error::Error;
 use std::process;
+
+use crate::display;
+use termion::color;
 
 fn extract_elements(argstr: &str) -> (&str, &str, &str) {
     let mut parts = argstr.split('\t').skip(3);
@@ -12,11 +14,15 @@ fn extract_elements(argstr: &str) -> (&str, &str, &str) {
 
 pub fn main(line: String) -> Result<(), Box<dyn Error>> {
     let (tags, comment, snippet) = extract_elements(&line[..]);
+
     println!(
-        "{comment} {tags} \n{snippet}",
-        comment = Colour::Blue.paint(comment),
-        tags = Colour::Red.paint(format!("[{}]", tags)),
-        snippet = snippet
+        "{comment_color}{comment} {tag_color}{tags} \n{snippet_color}{snippet}",
+        comment = format!("# {}", comment),
+        tags = format!("[{}]", tags),
+        snippet = snippet,
+        comment_color = color::Fg(display::COMMENT_COLOR),
+        tag_color = color::Fg(display::TAG_COLOR),
+        snippet_color = color::Fg(display::SNIPPET_COLOR),
     );
 
     process::exit(0)
