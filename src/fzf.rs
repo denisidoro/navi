@@ -1,5 +1,5 @@
-use crate::filesystem;
 use crate::cheat;
+use crate::filesystem;
 
 use std::collections::HashMap;
 use std::process;
@@ -8,25 +8,25 @@ use std::process::{Command, Stdio};
 pub struct Opts<'a> {
     pub query: Option<String>,
     pub filter: Option<String>,
-    pub preview: bool, 
+    pub preview: bool,
     pub autoselect: bool,
     pub overrides: Option<&'a String>,
     pub header_lines: u8,
-    pub multi: bool
+    pub multi: bool,
 }
 
 impl Default for Opts<'_> {
-    fn default() -> Self { 
+    fn default() -> Self {
         Self {
             query: None,
-        filter: None,
-        preview: true,
-        autoselect: true,
-        overrides: None,
-        header_lines: 1,
-        multi: false
+            filter: None,
+            preview: true,
+            autoselect: true,
+            overrides: None,
+            header_lines: 1,
+            multi: false,
+        }
     }
-}
 }
 
 pub fn call<F>(opts: Opts, stdin_fn: F) -> (process::Output, HashMap<String, cheat::Value>)
@@ -46,7 +46,7 @@ where
         "--bind",
         "ctrl-j:down,ctrl-k:up",
         "--expect",
-        "ctrl-y"
+        "ctrl-y",
     ]);
 
     if opts.autoselect {
@@ -58,9 +58,12 @@ where
     }
 
     if opts.preview {
-        c.args(&["--preview", format!("{} preview {{}}", filesystem::exe_string()).as_str()]);
+        c.args(&[
+            "--preview",
+            format!("{} preview {{}}", filesystem::exe_string()).as_str(),
+        ]);
     }
-        
+
     if let Some(q) = opts.query {
         c.args(&["--query", &q]);
     }
@@ -75,12 +78,12 @@ where
 
     if let Some(o) = opts.overrides {
         o.as_str()
-        .split(' ')
-        .map(|s| s.to_string())
-        .filter(|s| s.len() > 0)
-        .for_each(|s| {
-            c.arg(s);
-        });
+            .split(' ')
+            .map(|s| s.to_string())
+            .filter(|s| s.len() > 0)
+            .for_each(|s| {
+                c.arg(s);
+            });
     }
 
     let mut child = c

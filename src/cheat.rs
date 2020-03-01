@@ -7,11 +7,10 @@ use std::collections::HashMap;
 use std::fs;
 use std::io::Write;
 
-#[derive(Default)]
 pub struct SuggestionOpts {
     pub header_lines: u8,
     pub column: Option<u8>,
-    pub multi: bool
+    pub multi: bool,
 }
 
 pub type Value = (String, Option<SuggestionOpts>);
@@ -33,9 +32,25 @@ fn limit_str(text: &str, length: usize) -> String {
 }
 
 fn parse_opts(text: &str) -> SuggestionOpts {
+    let mut header_lines: u8 = 0;
+    let mut column: Option<u8> = None;
+    let mut multi = false;
+
+    let mut parts = text.split(' ');
+
+    while let Some(p) = parts.next() {
+        match p {
+            "--multi" => multi = true,
+            "--header" => header_lines = parts.next().unwrap().parse::<u8>().unwrap(),
+            "--column" => column = Some(parts.next().unwrap().parse::<u8>().unwrap()),
+            _ => (),
+        }
+    }
+
     SuggestionOpts {
-        header_lines: 0,
-        column: None,
+        header_lines: header_lines,
+        column: column,
+        multi: multi,
     }
 }
 
@@ -70,7 +85,10 @@ fn read_file(
                 comment = String::from(&line[2..]);
             } else if line.starts_with('$') {
                 let (variable, command, opts) = parse_variable_line(&line[..]);
-                variables.insert(format!("{};{}", tags, variable), (String::from(command), opts));
+                variables.insert(
+                    format!("{};{}", tags, variable),
+                    (String::from(command), opts),
+                );
             }
             // TODO
             else if line.ends_with('\\') {
