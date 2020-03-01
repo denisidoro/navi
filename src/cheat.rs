@@ -6,7 +6,6 @@ use regex::Regex;
 use std::collections::HashMap;
 use std::fs;
 use std::io::Write;
-use termion::color;
 
 pub struct SuggestionOpts {
     pub header_lines: u8,
@@ -21,14 +20,6 @@ fn gen_snippet(snippet: &str, line: &str) -> String {
         line.to_string()
     } else {
         format!("{}{}", &snippet[..snippet.len() - 2], line)
-    }
-}
-
-fn limit_str(text: &str, length: usize) -> String {
-    if text.len() > length {
-        format!("{}…", &text[..length - 1])
-    } else {
-        format!("{:width$}", text, width = length)
     }
 }
 
@@ -114,17 +105,12 @@ fn read_file(
             else {
                 let full_snippet = gen_snippet(&snippet, &line);
                 match stdin.write(
-                    format!(
-                        "{tag_color}{tags_short}\t{comment_color}{comment_short}\t{snippet_color}{snippet_short}\t{tags}\t{comment}\t{snippet}\t\n",
-                        tags_short = limit_str(&tags[..], tag_width),
-                        comment_short = limit_str(&comment[..], comment_width),
-                        snippet_short = &full_snippet,
-        comment_color = color::Fg(display::COMMENT_COLOR),
-        tag_color = color::Fg(display::TAG_COLOR),
-        snippet_color = color::Fg(display::SNIPPET_COLOR),
-                        tags = tags,
-                        comment = comment,
-                        snippet = &full_snippet
+                    display::format_line(
+                        &tags[..],
+                        &comment[..],
+                        &full_snippet[..],
+                        tag_width,
+                        comment_width,
                     )
                     .as_bytes(),
                 ) {

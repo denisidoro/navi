@@ -1,7 +1,9 @@
 use crate::cheat;
 use crate::cmds;
+use crate::display;
 use crate::fzf;
 use crate::option::Config;
+
 use regex::Regex;
 use std::collections::HashMap;
 use std::error::Error;
@@ -78,7 +80,7 @@ fn prompt_without_suggestions(varname: &str) -> String {
         preview: false,
         autoselect: false,
         suggestions: false,
-        prompt: Some(format!("{}: ", varname)),
+        prompt: Some(display::variable_prompt(varname)),
         ..Default::default()
     };
 
