@@ -1,6 +1,7 @@
-use ansi_term::Colour;
 use std::error::Error;
 use std::process;
+
+use crate::display;
 
 fn extract_elements(argstr: &str) -> (&str, &str, &str) {
     let mut parts = argstr.split('\t').skip(3);
@@ -12,12 +13,6 @@ fn extract_elements(argstr: &str) -> (&str, &str, &str) {
 
 pub fn main(line: String) -> Result<(), Box<dyn Error>> {
     let (tags, comment, snippet) = extract_elements(&line[..]);
-    println!(
-        "{comment} {tags} \n{snippet}",
-        comment = Colour::Blue.paint(comment),
-        tags = Colour::Red.paint(format!("[{}]", tags)),
-        snippet = snippet
-    );
-
+    display::preview(comment, tags, snippet);
     process::exit(0)
 }

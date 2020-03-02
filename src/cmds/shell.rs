@@ -9,7 +9,7 @@ pub fn main(shell: &str) -> Result<(), Box<dyn Error>> {
         _ => "navi.plugin.bash",
     };
 
-    println!("{}/{}", filesystem::exe_path_string(), file);
+    println!("{}/shell/{}", filesystem::exe_path_string(), file);
 
     Ok(())
 }

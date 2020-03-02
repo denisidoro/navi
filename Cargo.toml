@@ -1,6 +1,6 @@
 [package]
 name = "navi"
-version = "0.1.0"
+version = "2.0.0"
 authors = ["Denis Isidoro <denis_isidoro@live.com>"]
 edition = "2018"
 
@@ -8,5 +8,6 @@ edition = "2018"
 
 [dependencies]
 regex = "1.3.4"
-ansi_term = "0.12"
 structopt = "0.3"
+termion = "1.5.5"
+# lazy_static = "1.4.0"
