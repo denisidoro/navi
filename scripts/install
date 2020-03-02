@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DEFAULT_INSTALL_DIR="/opt/navi"
+
+echoerr() {
+   echo "$@" 1>&2
+}
+
+command_exists() {
+   type "$1" &>/dev/null
+}
+
+sha256() {
+   if command_exists sha256sum; then
+      sha256sum
+   elif command_exists shasum; then
+      shasum -a 256
+   elif command_exists openssl; then
+      openssl dgst -sha256
+   else
+      echoerr "Unable to calculate sha256!"
+      exit 43
+   fi
+}
+
+header() {
+   echoerr "$*"
+   echoerr
+}
+
+latest_version_released() {
+   curl -s 'https://api.github.com/repos/denisidoro/navi/releases/latest' \
+      | grep -Eo 'releases/tag/v([0-9\.]+)' \
+      | sed 's|releases/tag/v||'
+}
+
+asset_url() {
+    local -r version="$1"
+    local -r variant="$2"
+   
+    echo "https://github.com/denisidoro/navi/releases/download/v${version}/navi-${variant}.tar.gz"
+}
+
+download_asset() {
+   local -r url="$(asset_url "$@")"
+   mkdir -p "$DEFAULT_INSTALL_DIR"
+   cd "$DEFAULT_INSTALL_DIR"
+   rm -f navi.tar.gz
+   echoerr "Downloading $url"
+   curl -L "$url" -o navi.tar.gz
+   tar xvzf navi.tar.gz
+   rm -f navi.tar.gz
+   ln -s "${DEFAULT_INSTALL_DIR}/navi" "/usr/bin/navi" \
+      || ln -s "${DEFAULT_INSTALL_DIR}/navi" "/usr/local/bin/navi"
+}
+
+sha_for_asset_on_github() {
+    local -r url="$(asset_url "$@")"
+    curl -sL "$url" | sha256 | awk '{print $1}'
+}
+
+get_target() {
+   local -r archi="$(uname -sm)"
+   local target
+   case "$archi" in
+      Darwin*) target="x86_64-osx" ;;
+      Linux\ *64) target="aarch64-unknown-linux-musl" ;;
+      *arm*) target="armv7-unknown-linux-musl1eabihf" ;;
+      *) target="" ;;
+   esac
+   echo "$target"
+}
+
+no_binary_warning() {
+   echoerr "There's no precompiled binary for your platform: $(uname -a)"
+}
+
+main() {
+   local -r target="$(get_target)"
+   if [[ -n "$target" ]]; then
+      local -r version="$(latest_version_released)"
+      download_asset "$version" "$target"
+   elif command_exists cargo; then
+      no_binary_warning
+      echoerr "Building sources..."
+      git clone https://github.com/denisidoro/navi "$DEFAULT_INSTALL_DIR"
+      cd "$DEFAULT_INSTALL_DIR"
+      make install
+   else
+      no_binary_warning 
+      echoerr "You don't have the necessary tools to build it"
+      echoerr "Please open an issue at https://github.com/denisidoro/navi"
+      echoerr "Aborting..."
+      exit 33
+   fi
+}
+
+(return 0 2>/dev/null) || main "$@"

@@ -13,16 +13,13 @@ jobs:
       matrix:
         # This should work with only the `include`s but it currently doesn't because of this bug:
         # https://github.community/t5/How-to-use-Git-and-GitHub/GitHub-Actions-Matrix-options-dont-work-as-documented/td-p/29558
-        os: [ubuntu-latest, macos-latest]
+        target: [x86_64-osx, aarch64-unknown-linux-musl, armv7-unknown-linux-musl1eabihf, armv7-linux-androideabi, x86_64-pc-windows-gnu]
         include:
-          - os: ubuntu-latest
-            artifact_name: navi.tar.gz
-            asset_name: navi-linux-amd64.tar.gz
-            target: aarch64-unknown-linux-musl
           - os: macos-latest
-            artifact_name: navi.tar.gz
-            asset_name: navi-osx-amd64.tar.gz
-            target: 
+          - os: ubuntu-latest
+          - os: ubuntu-latest
+          - os: ubuntu-latest
+          - os: ubuntu-latest
 
     steps:
     - uses: hecrj/setup-rust-action@v1.3.1
@@ -30,11 +27,11 @@ jobs:
         rust-version: stable
     - uses: actions/checkout@v1
     - name: Build
-      run: scripts/release ${{ matrix.target }}
+      run: scripts/action release ${{ matrix.target }}
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v1-release
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: target/tar/${{ matrix.artifact_name }}
-        asset_name: ${{ matrix.asset_name }}
+        file: target/tar/navi.tar.gz
+        asset_name: navi-${{ matrix.asset_name }}.tar.gz
         tag: ${{ github.ref }}

@@ -33,6 +33,7 @@ pub enum Command {
     Home,
     Search { query: String },
     Best { query: String, args: Vec<String> },
+    Func { func: String, args: Vec<String> },
     Widget { shell: String },
 }
 

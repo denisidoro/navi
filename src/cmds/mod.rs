@@ -1,6 +1,7 @@
 pub mod aux;
 pub mod best;
 pub mod core;
+pub mod func;
 pub mod home;
 pub mod preview;
 pub mod query;

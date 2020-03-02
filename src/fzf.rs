@@ -11,7 +11,7 @@ pub struct Opts<'a> {
     pub prompt: Option<String>,
     pub preview: bool,
     pub autoselect: bool,
-    pub overrides: Option<&'a String>, // TODO
+    pub overrides: Option<&'a String>, // TODO: remove &'a
     pub header_lines: u8,
     pub multi: bool,
     pub copyable: bool,
@@ -109,20 +109,27 @@ where
         c.args(&["--print-query", "--no-select-1", "--height", "1"]);
     }
 
-    let mut child = c
+    let child = c
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::inherit())
-        .spawn()
-        .expect("error a"); // TODO
+        .spawn();
+
+    let mut child = match child {
+        Ok(x) => x,
+        Err(_) => {
+            eprintln!( "navi was unable to call fzf.\nPlease make sure it's correctly installed\nRefer to https://github.com/junegunn/fzf for more info.");
+            process::exit(33)
+        }
+    };
 
     let stdin = child
         .stdin
         .as_mut()
         .ok_or("Child process stdin has not been captured!")
-        .expect("error b"); // TODO
+        .unwrap();
 
     let result = stdin_fn(stdin);
 
-    (child.wait_with_output().expect("error c"), result) // TODO
+    (child.wait_with_output().unwrap(), result)
 }

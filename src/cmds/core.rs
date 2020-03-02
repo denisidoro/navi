@@ -111,8 +111,10 @@ fn replace_variables_from_snippet(
             None => prompt_without_suggestions(varname),
         };
 
-        interpolated_snippet =
-            interpolated_snippet.replace(bracketed_varname, &value[..value.len() - 1]);
+        interpolated_snippet = interpolated_snippet.replace(
+            bracketed_varname,
+            format!("\"{}\"", &value[..value.len() - 1]).as_str(),
+        );
     }
 
     interpolated_snippet
@@ -131,7 +133,7 @@ pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
                 replace_variables_from_snippet(snippet, tags, variables.unwrap(), &config);
 
             if key == "ctrl-y" {
-                cmds::aux::abort("copying snippets to the clipboard", 2)? // TODO
+                cmds::aux::abort("copying snippets to the clipboard", 201)?
             } else if config.print {
                 println!("{}", interpolated_snippet);
             } else {
