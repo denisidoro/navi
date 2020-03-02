@@ -65,7 +65,7 @@ get_target() {
    local target
    case "$archi" in
       Darwin*) target="x86_64-osx" ;;
-      Linux\ *64) target="aarch64-unknown-linux-musl" ;;
+      Linux\ *64) target="x86_64-unknown-linux-musl" ;;
       *arm*) target="armv7-unknown-linux-musleabihf" ;;
       *) target="" ;;
    esac
