@@ -40,9 +40,9 @@ fn parse_opts(text: &str) -> SuggestionOpts {
     }
 
     SuggestionOpts {
-        header_lines: header_lines,
-        column: column,
-        multi: multi,
+        header_lines,
+        column,
+        multi,
     }
 }
 

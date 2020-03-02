@@ -15,7 +15,7 @@ pub fn variable_prompt(varname: &str) -> String {
     format!("{}: ", varname)
 }
 
-pub fn preview(comment: &str, tags: &str, snippet: &str) -> () {
+pub fn preview(comment: &str, tags: &str, snippet: &str) {
     println!(
         "{comment_color}{comment} {tag_color}{tags} \n{snippet_color}{snippet}",
         comment = format!("# {}", comment),

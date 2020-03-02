@@ -99,7 +99,7 @@ where
         o.as_str()
             .split(' ')
             .map(|s| s.to_string())
-            .filter(|s| s.len() > 0)
+            .filter(|s| !s.is_empty())
             .for_each(|s| {
                 c.arg(s);
             });
