@@ -16,10 +16,15 @@ jobs:
         target: [x86_64-osx, aarch64-unknown-linux-musl, armv7-unknown-linux-musl1eabihf, armv7-linux-androideabi, x86_64-pc-windows-gnu]
         include:
           - os: macos-latest
+            target: x86_64-osx
           - os: ubuntu-latest
+            target: aarch64-unknown-linux-musl
           - os: ubuntu-latest
+            target: armv7-unknown-linux-musl1eabihf
           - os: ubuntu-latest
+            target: armv7-linux-androideabi
           - os: ubuntu-latest
+            target: x86_64-pc-windows-gnu
 
     steps:
     - uses: hecrj/setup-rust-action@v1.3.1
