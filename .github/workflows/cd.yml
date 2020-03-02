@@ -36,5 +36,5 @@ jobs:
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: target/tar/navi.tar.gz
-        asset_name: navi-${{ matrix.asset_name }}.tar.gz
+        asset_name: navi-${{ matrix.target }}.tar.gz
         tag: ${{ github.ref }}
