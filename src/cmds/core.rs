@@ -92,6 +92,14 @@ fn prompt_without_suggestions(varname: &str) -> String {
     String::from_utf8(output.stdout).unwrap()
 }
 
+fn gen_replacement(value: &str) -> String {
+    if value.contains(" ") {
+        format!("\"{}\"", &value[..value.len() - 1])
+    } else {
+        format!("{}", &value[..value.len() - 1])
+    }
+}
+
 fn replace_variables_from_snippet(
     snippet: &str,
     tags: &str,
@@ -111,10 +119,8 @@ fn replace_variables_from_snippet(
             None => prompt_without_suggestions(varname),
         };
 
-        interpolated_snippet = interpolated_snippet.replace(
-            bracketed_varname,
-            format!("\"{}\"", &value[..value.len() - 1]).as_str(),
-        );
+        interpolated_snippet =
+            interpolated_snippet.replace(bracketed_varname, gen_replacement(&value[..]).as_str());
     }
 
     interpolated_snippet

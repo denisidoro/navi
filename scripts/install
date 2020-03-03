@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DEFAULT_INSTALL_DIR="/opt/navi"
+FIRST_INSTALL_DIR="/opt/navi"
+SECOND_INSTALL_DIR="${HOME}/.navi"
+
+get_install_dir() {
+   local -r useless_folder="${FIRST_INSTALL_DIR}/useless"
+   local folder
+   mkdir -p "$useless_folder" && folder="$FIRST_INSTALL_DIR" || folder="$SECOND_INSTALL_DIR"
+   rm -r "$useless_folder" 2> /dev/null
+   echo "$folder"
+}
 
 echoerr() {
    echo "$@" 1>&2
@@ -61,7 +70,12 @@ sha_for_asset_on_github() {
 }
 
 get_target() {
+   local -r unamea="$(uname -a)"
    local -r archi="$(uname -sm)"
+   local is_android
+
+   [[ $uname = *Android* ]] && is_android=true || is_android=false
+
    local target
    case "$archi" in
       Darwin*) target="x86_64-osx" ;;
@@ -69,6 +83,7 @@ get_target() {
       *arm*) target="armv7-unknown-linux-musleabihf" ;;
       *) target="" ;;
    esac
+
    echo "$target"
 }
 
@@ -76,7 +91,8 @@ no_binary_warning() {
    echoerr "There's no precompiled binary for your platform: $(uname -a)"
 }
 
-main() {
+install_navi() {
+   export DEFAULT_INSTALL_DIR="$(get_install_dir)"
    local -r target="$(get_target)"
    if [[ -n "$target" ]]; then
       local -r version="$(latest_version_released)"
@@ -96,4 +112,4 @@ main() {
    fi
 }
 
-(return 0 2>/dev/null) || main "$@"
+(return 0 2>/dev/null) || install_navi "$@"
