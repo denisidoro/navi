@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
-
-cd "$NAVI_HOME"
-
-git pull
-"${NAVI_HOME}/scripts/install" || true

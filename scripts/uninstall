@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-BIN="/usr/local/bin/navi"
-rm -rf "$BIN" || true

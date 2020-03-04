@@ -1,4 +1,6 @@
 # navi <img src="https://user-images.githubusercontent.com/3226564/65362934-b4432500-dbdf-11e9-8f75-815fbc5cbf8f.png" alt="icon" height="28px"/> [![CircleCI](https://circleci.com/gh/denisidoro/navi.svg?style=svg)](https://circleci.com/gh/denisidoro/navi) ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/denisidoro/navi?include_prereleases)
+  
+> :information_source: This project has recently been rewritten from bash to Rust. If you're facing any issue after updating, please check [this thread](https://github.com/denisidoro/navi/issues/201).
 
 > :information_source: This whole codebase is being rewritten in [Rust](https://www.rust-lang.org/). If you want to contribute, please refer to [this issue](https://github.com/denisidoro/navi/issues/154). :+1:
 

@@ -1,18 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-debian="${1:-false}"
+export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 
-if $debian; then
-   image="debian"
-   setup_cmd="apt update; apt install -y git curl;"
-else
-   image="ellerbrock/alpine-bash-git"
-fi
+cd "$NAVI_HOME"
 
 docker run \
-   -it \
-   --entrypoint /bin/bash \
-   -v "$(pwd):/navi" \
-   "$image" \
-   -c "${setup_cmd:-}git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && yes | ~/.fzf/install; export PATH=$PATH:/navi; bash"
+    -e HOMEBREW_NO_AUTO_UPDATE=1 \
+    -it linuxbrew/alpine \
+    bash -c 'brew install denisidoro/tools/navirs; bash'

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
+
+cargo +nightly fix --clippy -Z unstable-options 2> /dev/null || true
+cargo fix 2> /dev/null || true
+cargo fmt 2> /dev/null || true

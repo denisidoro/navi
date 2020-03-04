@@ -2,10 +2,15 @@
 set -euo pipefail
 
 export NAVI_HOME="$(cd "$(dirname "$0")" && pwd)"
-source "${NAVI_HOME}/src/main.sh"
+cd "$NAVI_HOME"
 
-VERSION="0.18.3"
-NAVI_ENV="${NAVI_ENV:-prod}"
+release_bin="${NAVI_HOME}/target/release/navi"
+debug_bin="${NAVI_HOME}/target/debug/navi"
 
-opts::eval "$@"
-main "$@"
+if [ -f "$release_bin" ]; then
+    "$release_bin" "$@"
+elif [ -f "$debug_bin" ]; then
+    "$debug_bin" "$@"
+else
+    cargo run -- "$@"
+fi

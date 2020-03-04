@@ -1,14 +1,8 @@
 install:
 	scripts/install
 
+install:
+	scripts/make install
+
 uninstall:
-	scripts/uninstall
-
-release:
-	scripts/release
-
-update:
-	scripts/update
-
-lint:
-	scripts/lint
+	scripts/make uninstall
