@@ -94,10 +94,10 @@ fn prompt_without_suggestions(varname: &str) -> String {
 }
 
 fn gen_replacement(value: &str) -> String {
-    if value.contains(" ") {
+    if value.contains(' ') {
         format!("\"{}\"", &value[..value.len() - 1])
     } else {
-        format!("{}", &value[..value.len() - 1])
+        &value[..value.len() - 1].to_string()
     }
 }
 
@@ -144,7 +144,7 @@ pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
             } else if config.print {
                 println!("{}", interpolated_snippet);
             } else if let Some(s) = config.save {
-                fs::write(s, format!("{}", interpolated_snippet))?;
+                fs::write(s, interpolated_snippet.to_string())?;
             } else {
                 Command::new("bash")
                     .arg("-c")
