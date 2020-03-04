@@ -97,7 +97,7 @@ fn gen_replacement(value: &str) -> String {
     if value.contains(' ') {
         format!("\"{}\"", &value[..value.len() - 1])
     } else {
-        &value[..value.len() - 1].to_string()
+        value[..value.len() - 1].to_string()
     }
 }
 
