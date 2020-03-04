@@ -1,4 +1,4 @@
-# navi <img src="https://user-images.githubusercontent.com/3226564/65362934-b4432500-dbdf-11e9-8f75-815fbc5cbf8f.png" alt="icon" height="28px"/> [![CircleCI](https://circleci.com/gh/denisidoro/navi.svg?style=svg)](https://circleci.com/gh/denisidoro/navi) ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/denisidoro/navi?include_prereleases)
+# navi <img src="https://user-images.githubusercontent.com/3226564/65362934-b4432500-dbdf-11e9-8f75-815fbc5cbf8f.png" alt="icon" height="28px"/> ![GitHub release](https://img.shields.io/github/v/release/denisidoro/navi?include_prereleases)
   
 > :information_source: This project has recently been rewritten in Rust. The old implementation was written in bash. If you're facing any issue after updating, please check [this thread](https://github.com/denisidoro/navi/issues/201).
 
@@ -17,8 +17,8 @@ Table of contents
 
    * [Installation](#installation)
       * [Using Homebrew or Linuxbrew](#using-homebrew-or-linuxbrew)
-      * [Using git](#using-git)
-      * [Using oh-my-zsh](#using-oh-my-zsh)
+      * [Downloading pre-compiled binaries](#downloading-pre-compiled-binaries)
+      * [Building from source](#building-from-source)
    * [Upgrading](#upgrading)
    * [Usage](#usage)
       * [Preventing execution](#preventing-execution)
@@ -52,69 +52,20 @@ to install **navi**:
 brew install navi
 ```
 
-### Using git
+### Downloading pre-compiled binaries
 
-Alternatively, you can `git clone` this repository:
-
-```sh
-git clone --depth 1 https://github.com/denisidoro/navi /opt/navi
-cd /opt/navi
-
-# to install in your $PATH
-sudo make install 
-
-# to install in an arbitrary folder
-./scripts/install /some/path
-
-# install fzf
-# refer to https://github.com/junegunn/fzf
+```bash
+bash <(curl -sL https://github.com/denisidoro/navi/blob/master/scripts/install)
 ```
 
-### Using oh-my-zsh
+Alternatively, you can download the binaries manually [here](https://github.com/denisidoro/navi/releases/latest).
 
-Make sure that your oh-my-zsh `$ZSH_CUSTOM` directory is configured, then clone navi into the plugins directory.
-```sh
-plugins_dir="$ZSH_CUSTOM/plugins"
-mkdir -p "$plugins_dir"
-cd "$plugins_dir"
-git clone https://github.com/denisidoro/navi
-```
+### Building from source
 
-Then, add it to the oh-my-zsh plugin array to automatically enable the zsh widget:
-```sh
-plugins=(docker tmux fzf navi)
-```
-
-Lastly, reload your `zshrc` or spawn a new terminal to load navi. Once this is done, you should be able to use it 
-as a [shell widget](#shell-widget) with no additional setup.
-
-> Please note that when installing as an oh-my-zsh plugin, `navi` will not be available as a command. If you also want 
-> to be able to run the command interactively, you will need to do one of the following: 
-
-- Install it to /usr/bin/local (via `sudo make install`)
-- Manually set `$PATH` so that navi can be found.
-
-You can manually update your path by adding a line like this in your `.zshrc`:
-
-```sh
-export PATH=$PATH:"$ZSH_CUSTOM/plugins/navi"
-```
-
-And verify that it works by running `which navi` after reloading your configuration.
-
-
-Upgrading
----------
-
-**navi** is being actively developed and you might want to upgrade it once in a while. Please follow the instruction below depending on the installation method used:
-
-```sh
-# brew
-brew upgrade navi
-
-# git or oh-my-zsh
-cd "$(navi home)"
-git pull
+```bash
+git clone https://github.com/denisidoro/navi ~/.navi
+cd ~/.navi
+make install
 ```
 
 Usage
