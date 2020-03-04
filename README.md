@@ -1,8 +1,6 @@
 # navi <img src="https://user-images.githubusercontent.com/3226564/65362934-b4432500-dbdf-11e9-8f75-815fbc5cbf8f.png" alt="icon" height="28px"/> [![CircleCI](https://circleci.com/gh/denisidoro/navi.svg?style=svg)](https://circleci.com/gh/denisidoro/navi) ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/denisidoro/navi?include_prereleases)
   
-:warning: The rust implementation is still in very early stages and isn't recommended!
-
-:information_source: Please use the [master branch](https://github.com/denisidoro/navi) until then.
+> :information_source: This project has recently been rewritten from bash to Rust. If you're facing any issue after updating, please check [this thread](https://github.com/denisidoro/navi/issues/201).
 
 An interactive cheatsheet tool for the command-line so that you won't say the following anymore:
 

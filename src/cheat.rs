@@ -33,7 +33,9 @@ fn parse_opts(text: &str) -> SuggestionOpts {
     while let Some(p) = parts.next() {
         match p {
             "--multi" => multi = true,
-            "--header"|"--header-lines" => header_lines = parts.next().unwrap().parse::<u8>().unwrap(),
+            "--header" | "--header-lines" => {
+                header_lines = parts.next().unwrap().parse::<u8>().unwrap()
+            }
             "--column" => column = Some(parts.next().unwrap().parse::<u8>().unwrap()),
             _ => (),
         }
