@@ -1,16 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export NAVI_HOME="$(cd "$(dirname "$0")" && pwd)"
-cd "$NAVI_HOME"
+echo "navi has been rewritten from scratch. The previous way of calling the program isn't supported anymore."
+echo "Please check https://github.com/denisidoro/navi/issues/201 for more details."
+echo "I'm sorry for the inconvenience."
 
-release_bin="${NAVI_HOME}/target/release/navi"
-debug_bin="${NAVI_HOME}/target/debug/navi"
-
-if [ -f "$release_bin" ]; then
-    "$release_bin" "$@"
-elif [ -f "$debug_bin" ]; then
-    "$debug_bin" "$@"
-else
-    cargo run -- "$@"
-fi
+exit 42
