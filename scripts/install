@@ -76,7 +76,7 @@ get_target() {
    local -r archi="$(uname -sm)"
    local is_android
 
-   [[ $uname = *Android* ]] && is_android=true || is_android=false
+   [[ $unamea = *Android* ]] && is_android=true || is_android=false
 
    local target
    case "$archi" in
