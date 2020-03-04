@@ -144,7 +144,7 @@ pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
             } else if config.print {
                 println!("{}", interpolated_snippet);
             } else if let Some(s) = config.save {
-                fs::write(s, interpolated_snippet.to_string())?;
+                fs::write(s, interpolated_snippet)?;
             } else {
                 Command::new("bash")
                     .arg("-c")
