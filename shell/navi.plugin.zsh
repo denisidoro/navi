@@ -1,10 +1,13 @@
-_navi_path=$(dirname $0:A)
+#!/usr/bin/env zsh
 
 _call_navi() {
-   local buff="$BUFFER"
+   local -r buff="$BUFFER"
+   local -r f="$(mktemp || echo "${HOME}/.naviresult")" 2>/dev/null
+   navi --save "$f" </dev/tty >/dev/tty
+   local -r r="$(cat "$f")" 2>/dev/null
+   rm "$f" 2> /dev/null || true
    zle kill-whole-line
-   local cmd="$(NAVI_USE_FZF_ALL_INPUTS=true "${_navi_path}/navi" --print <> /dev/tty)"
-   zle -U "${buff}${cmd}"
+   zle -U "${buff}${r}"
 }
 
 zle -N _call_navi

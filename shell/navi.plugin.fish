@@ -1,7 +1,17 @@
+#!/usr/bin/env fish
+
+function __call_navi
+    set -l f (mktemp || echo "${HOME}/.naviresult")
+    navi --save "$f" </dev/tty >/dev/tty
+    set -l r (cat "$f")
+    rm "$f" 2> /dev/null || true
+    echo "$r"
+end 
+
 function navi-widget -d "Show cheat sheets"
   begin
     stty sane
-    env NAVI_USE_FZF_ALL_INPUTS=true navi --print (commandline) | perl -pe 'chomp if eof' | read -lz result
+    __call_navi | perl -pe 'chomp if eof' | read -lz result
     and commandline -- $result
   end
   commandline -f repaint

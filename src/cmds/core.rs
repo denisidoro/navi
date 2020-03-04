@@ -7,6 +7,7 @@ use crate::option::Config;
 use regex::Regex;
 use std::collections::HashMap;
 use std::error::Error;
+use std::fs;
 use std::io::Write;
 use std::process;
 use std::process::{Command, Stdio};
@@ -142,6 +143,8 @@ pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
                 cmds::aux::abort("copying snippets to the clipboard", 201)?
             } else if config.print {
                 println!("{}", interpolated_snippet);
+            } else if let Some(s) = config.save {
+                fs::write(s, format!("{}", interpolated_snippet))?;
             } else {
                 Command::new("bash")
                     .arg("-c")
