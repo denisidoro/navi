@@ -36,9 +36,13 @@ fn gen_core_fzf_opts(variant: Variant, config: &Config) -> fzf::Opts {
     opts
 }
 
-fn extract_from_selections(raw_output: &str) -> (&str, &str, &str) {
+fn extract_from_selections(raw_output: &str, contains_key: bool) -> (&str, &str, &str) {
     let mut lines = raw_output.split('\n');
-    let key = lines.next().unwrap();
+    let key = if contains_key {
+        lines.next().unwrap()
+    } else {
+        "enter"
+    };
     let mut parts = lines.next().unwrap().split('\t');
     parts.next();
     parts.next();
@@ -127,7 +131,7 @@ fn replace_variables_from_snippet(
     interpolated_snippet
 }
 
-pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
+pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Box<dyn Error>> {
     let (output, variables) = fzf::call(gen_core_fzf_opts(variant, &config), |stdin| {
         Some(cheat::read_all(&config, stdin))
     });
@@ -135,7 +139,7 @@ pub fn main(variant: Variant, config: Config) -> Result<(), Box<dyn Error>> {
     match output.status.code() {
         Some(0) => {
             let raw_output = String::from_utf8(output.stdout)?;
-            let (key, tags, snippet) = extract_from_selections(&raw_output[..]);
+            let (key, tags, snippet) = extract_from_selections(&raw_output[..], contains_key);
             let interpolated_snippet =
                 replace_variables_from_snippet(snippet, tags, variables.unwrap(), &config);
 
