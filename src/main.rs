@@ -19,7 +19,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         _ => {
             let mut config = option::parse();
             match config.cmd.as_mut() {
-                None => cmds::core::main(Variant::Core, config),
+                None => cmds::core::main(Variant::Core, config, true),
                 Some(c) => match c {
                     Command::Query { query } => cmds::query::main(query.clone(), config),
                     Command::Best { query, args } => {

@@ -8,6 +8,6 @@ pub fn main(query: String, args: Vec<String>, config: Config) -> Result<(), Box<
     if !args.is_empty() {
         cmds::aux::abort("passing arguments to 'navi best'", 201)
     } else {
-        cmds::core::main(Variant::Filter(query), config)
+        cmds::core::main(Variant::Filter(query), config, false)
     }
 }
