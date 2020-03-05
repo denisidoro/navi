@@ -10,11 +10,11 @@ gen_formula() {
     version="$(latest_version_released)"
     header "version: ${version}"
 
-    header "sha_for linux-amd64..."
-    sha_linux="$(sha_for_asset_on_github "$version" "linux-amd64")"
+    header "sha_for x86_64-unknown-linux-musl..."
+    sha_linux="$(sha_for_asset_on_github "$version" "x86_64-unknown-linux-musl")"
 
-    header "sha_for macos-amd64..."
-    sha_osx="$(sha_for_asset_on_github "$version" "macos-amd64")"
+    header "sha_for x86_64-osx..."
+    sha_osx="$(sha_for_asset_on_github "$version" "x86_64-osx")"
 
     header "rb..."
     curl -s https://raw.githubusercontent.com/denisidoro/homebrew-tools/master/navirs.rb \
