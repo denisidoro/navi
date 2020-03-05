@@ -1,6 +1,7 @@
+use std::fs;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, Lines};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub fn read_lines<P>(filename: P) -> io::Result<Lines<BufReader<File>>>
 where
@@ -10,24 +11,29 @@ where
     Ok(io::BufReader::new(file).lines())
 }
 
+fn follow_symlink(pathbuf: PathBuf) -> PathBuf {
+    let other = fs::read_link(pathbuf.clone());
+    match other {
+        Ok(o) => follow_symlink(o),
+        Err(_) => pathbuf,
+    }
+}
+
+fn exe_pathbuf() -> PathBuf {
+    let pathbuf = std::env::current_exe().unwrap().to_path_buf();
+    follow_symlink(pathbuf)
+}
+
 pub fn exe_string() -> String {
-    String::from(
-        std::env::current_exe()
-            .unwrap()
-            .as_os_str()
-            .to_str()
-            .unwrap(),
-    )
+    exe_pathbuf().as_os_str().to_str().unwrap().to_string()
 }
 
 pub fn exe_path_string() -> String {
-    String::from(
-        std::env::current_exe()
-            .unwrap()
-            .parent()
-            .unwrap()
-            .as_os_str()
-            .to_str()
-            .unwrap(),
-    )
+    exe_pathbuf()
+        .parent()
+        .unwrap()
+        .as_os_str()
+        .to_str()
+        .unwrap()
+        .to_string()
 }
