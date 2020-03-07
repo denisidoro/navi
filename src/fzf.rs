@@ -37,7 +37,7 @@ impl Default for Opts<'_> {
     }
 }
 
-pub fn call<F>(opts: Opts, stdin_fn: F) -> (process::Output, Option<HashMap<String, cheat::Value>>)
+pub fn call<F>(opts: Opts, stdin_fn: F) -> (String, Option<HashMap<String, cheat::Value>>)
 where
     F: Fn(&mut process::ChildStdin) -> Option<HashMap<String, cheat::Value>>,
 {
@@ -118,18 +118,14 @@ where
     let mut child = match child {
         Ok(x) => x,
         Err(_) => {
-            eprintln!( "navi was unable to call fzf.\nPlease make sure it's correctly installed\nRefer to https://github.com/junegunn/fzf for more info.");
+            eprintln!("navi was unable to call fzf.\nPlease make sure it's correctly installed\nRefer to https://github.com/junegunn/fzf for more info.");
             process::exit(33)
         }
     };
 
-    let stdin = child
-        .stdin
-        .as_mut()
-        .ok_or("Child process stdin has not been captured!")
-        .unwrap();
-
+    let stdin = child.stdin.as_mut().unwrap();
     let result = stdin_fn(stdin);
 
-    (child.wait_with_output().unwrap(), result)
+    let out = child.wait_with_output().unwrap();
+    (String::from_utf8(out.stdout).unwrap(), result)
 }

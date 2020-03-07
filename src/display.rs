@@ -1,13 +1,18 @@
-use termion::{color, terminal_size};
+use crate::terminal;
+use termion::color;
 
 static COMMENT_COLOR: color::LightCyan = color::LightCyan;
 static TAG_COLOR: color::LightGreen = color::LightGreen;
 static SNIPPET_COLOR: color::White = color::White;
 
-pub fn widths() -> (usize, usize) {
-    let full_width = terminal_size().unwrap().0;
-    let tag_width = full_width * 10 / 100;
-    let comment_width = full_width * 50 / 100;
+lazy_static! {
+    pub static ref WIDTHS: (usize, usize) = get_widths();
+}
+
+fn get_widths() -> (usize, usize) {
+    let width = terminal::width();
+    let tag_width = width * 10 / 100;
+    let comment_width = width * 50 / 100;
     (usize::from(tag_width), usize::from(comment_width))
 }
 

@@ -1,11 +1,7 @@
 #!/usr/bin/env fish
 
 function __call_navi
-    set -l f (mktemp || echo "${HOME}/.naviresult")
-    navi --save "$f" </dev/tty >/dev/tty
-    set -l r (cat "$f")
-    rm "$f" 2> /dev/null || true
-    echo "$r"
+    navi --print
 end 
 
 function navi-widget -d "Show cheat sheets"

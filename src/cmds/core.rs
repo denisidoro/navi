@@ -9,7 +9,6 @@ use std::collections::HashMap;
 use std::error::Error;
 use std::fs;
 use std::io::Write;
-use std::process;
 use std::process::{Command, Stdio};
 
 pub enum Variant {
@@ -80,15 +79,7 @@ fn prompt_with_suggestions(config: &Config, suggestion: &cheat::Value) -> String
         None
     });
 
-    match output.status.code() {
-        Some(0) | Some(1) => String::from_utf8(output.stdout).unwrap(),
-        Some(130) => process::exit(130),
-        _ => {
-            let err = String::from_utf8(output.stderr)
-                .unwrap_or_else(|_| "<stderr contains invalid UTF-8>".to_owned());
-            panic!("External command failed:\n {}", err)
-        }
-    }
+    output
 }
 
 fn prompt_without_suggestions(varname: &str) -> String {
@@ -102,15 +93,7 @@ fn prompt_without_suggestions(varname: &str) -> String {
 
     let (output, _) = fzf::call(opts, |_stdin| None);
 
-    match output.status.code() {
-        Some(0) | Some(1) => String::from_utf8(output.stdout).unwrap(),
-        Some(130) => process::exit(130),
-        _ => {
-            let err = String::from_utf8(output.stderr)
-                .unwrap_or_else(|_| "<stderr contains invalid UTF-8>".to_owned());
-            panic!("External command failed:\n {}", err)
-        }
-    }
+    output
 }
 
 fn gen_replacement(value: &str) -> String {
@@ -148,36 +131,28 @@ fn replace_variables_from_snippet(
 }
 
 pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Box<dyn Error>> {
-    let (output, variables) = fzf::call(gen_core_fzf_opts(variant, &config), |stdin| {
+    let _ = display::WIDTHS;
+
+    let (raw_output, variables) = fzf::call(gen_core_fzf_opts(variant, &config), |stdin| {
         Some(cheat::read_all(&config, stdin))
     });
 
-    match output.status.code() {
-        Some(0) => {
-            let raw_output = String::from_utf8(output.stdout)?;
-            let (key, tags, snippet) = extract_from_selections(&raw_output[..], contains_key);
-            let interpolated_snippet =
-                replace_variables_from_snippet(snippet, tags, variables.unwrap(), &config);
+    let (key, tags, snippet) = extract_from_selections(&raw_output[..], contains_key);
+    let interpolated_snippet =
+        replace_variables_from_snippet(snippet, tags, variables.unwrap(), &config);
 
-            if key == "ctrl-y" {
-                cmds::aux::abort("copying snippets to the clipboard", 201)?
-            } else if config.print {
-                println!("{}", interpolated_snippet);
-            } else if let Some(s) = config.save {
-                fs::write(s, interpolated_snippet)?;
-            } else {
-                Command::new("bash")
-                    .arg("-c")
-                    .arg(&interpolated_snippet[..])
-                    .spawn()?;
-            }
-
-            Ok(())
-        }
-        Some(130) => process::exit(130),
-        _ => {
-            let err = String::from_utf8(output.stderr)?;
-            panic!("External command failed:\n {}", err)
-        }
+    if key == "ctrl-y" {
+        cmds::aux::abort("copying snippets to the clipboard", 201)?
+    } else if config.print {
+        println!("{}", interpolated_snippet);
+    } else if let Some(s) = config.save {
+        fs::write(s, interpolated_snippet)?;
+    } else {
+        Command::new("bash")
+            .arg("-c")
+            .arg(&interpolated_snippet[..])
+            .spawn()?;
     }
+
+    Ok(())
 }
