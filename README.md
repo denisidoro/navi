@@ -65,7 +65,7 @@ Alternatively, you can download the binaries manually [here](https://github.com/
 ```bash
 git clone https://github.com/denisidoro/navi ~/.navi
 cd ~/.navi
-make install
+make install # or INSTALL_DIR=/opt/navi BIN_DIR=/usr/local/bin make install
 ```
 
 Usage
