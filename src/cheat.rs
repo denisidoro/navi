@@ -70,7 +70,7 @@ fn read_file(
     let mut comment = String::from("");
     let mut snippet = String::from("");
 
-    let (tag_width, comment_width) = display::widths();
+    let (tag_width, comment_width) = *display::WIDTHS;
 
     if let Ok(lines) = filesystem::read_lines(path) {
         for l in lines {
@@ -106,7 +106,7 @@ fn read_file(
             // snippet
             else {
                 let full_snippet = gen_snippet(&snippet, &line);
-                match stdin.write(
+                match stdin.write_all(
                     display::format_line(
                         &tags[..],
                         &comment[..],

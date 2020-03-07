@@ -1,5 +1,5 @@
-// #[macro_use]
-// extern crate lazy_static;
+#[macro_use]
+extern crate lazy_static;
 
 use std::error::Error;
 
@@ -9,6 +9,7 @@ mod display;
 mod filesystem;
 mod fzf;
 mod option;
+mod terminal;
 
 use crate::cmds::core::Variant;
 use option::{Command, InternalCommand};
