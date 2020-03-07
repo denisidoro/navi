@@ -2,7 +2,10 @@ use crate::cheat;
 use crate::filesystem;
 
 use std::collections::HashMap;
+use std::fs;
 use std::process;
+use std::io::{Read,Write};
+use std::fs::OpenOptions;
 use std::process::{Command, Stdio};
 
 pub struct Opts<'a> {
@@ -37,7 +40,7 @@ impl Default for Opts<'_> {
     }
 }
 
-pub fn call<F>(opts: Opts, stdin_fn: F) -> (process::Output, Option<HashMap<String, cheat::Value>>)
+pub fn call<F>(opts: Opts, stdin_fn: F) -> (String, Option<HashMap<String, cheat::Value>>)
 where
     F: Fn(&mut process::ChildStdin) -> Option<HashMap<String, cheat::Value>>,
 {
@@ -109,9 +112,16 @@ where
         c.args(&["--print-query", "--no-select-1", "--height", "1"]);
     }
 
+   let mut tty = OpenOptions::new()
+   .read(true)
+                .write(true)
+                .append(true)
+                .open("/dev/tty")
+                .unwrap();
+
     let child = c
         .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
+        .stdout(tty.try_clone().unwrap())
         .stderr(Stdio::inherit())
         .spawn();
 
@@ -123,13 +133,32 @@ where
         }
     };
 
-    let stdin = child
+    /*let stdin = child
         .stdin
         .as_mut()
         .ok_or("Child process stdin has not been captured!")
-        .unwrap();
+        .unwrap();*/
 
-    let result = stdin_fn(stdin);
+        //child.stdin.as_mut().unwrap().write_all(b"foo\nbar\nbaz").unwrap();
+        let stdin = child.stdin.as_mut().unwrap();
 
-    (child.wait_with_output().unwrap(), result)
+    // let inc = child.stdin.as_mut().unwrap();
+    stdin.write_all(b"foo\nbar\nbaz\n").unwrap();
+    // let result = stdin_fn(stdin);
+    
+    // fs::write("/dev/tty", "foo\nbar\nbaz").unwrap();
+
+   /* match child.stdout.unwrap().read_to_string(&mut s) {
+        Err(why) => panic!("couldn't read wc stdout:"),
+        Ok(_) => print!("wc responded with:\n{}", s),
+    }*/
+
+/*    match tty.read_to_string(&mut s) {
+        Err(why) => panic!("couldn't read wc stdout:"),
+        Ok(_) => print!("wc responded with:\n{}", s),
+    }*/
+
+    let result = Some(HashMap::new());
+
+    (String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap(), result)
 }

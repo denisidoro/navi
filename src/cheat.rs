@@ -106,7 +106,7 @@ fn read_file(
             // snippet
             else {
                 let full_snippet = gen_snippet(&snippet, &line);
-                match stdin.write(
+                match stdin.write_all(
                     display::format_line(
                         &tags[..],
                         &comment[..],
