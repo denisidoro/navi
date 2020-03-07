@@ -138,5 +138,5 @@ where
         }
     };
 
-    (text, result)   
+    (text, result)
 }
