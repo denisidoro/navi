@@ -9,7 +9,6 @@ use std::collections::HashMap;
 use std::error::Error;
 use std::fs;
 use std::io::Write;
-use std::process;
 use std::process::{Command, Stdio};
 
 pub enum Variant {
@@ -134,28 +133,26 @@ fn replace_variables_from_snippet(
 pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Box<dyn Error>> {
     let _ = display::WIDTHS;
 
-    let (output, variables) = fzf::call(gen_core_fzf_opts(variant, &config), |stdin| {
+    let (raw_output, variables) = fzf::call(gen_core_fzf_opts(variant, &config), |stdin| {
         Some(cheat::read_all(&config, stdin))
     });
 
-            let raw_output = output.clone();
-            // println!("raw_output: {}", raw_output);
-            let (key, tags, snippet) = extract_from_selections(&raw_output[..], contains_key);
-            let interpolated_snippet =
-                replace_variables_from_snippet(snippet, tags, variables.unwrap(), &config);
+    let (key, tags, snippet) = extract_from_selections(&raw_output[..], contains_key);
+    let interpolated_snippet =
+        replace_variables_from_snippet(snippet, tags, variables.unwrap(), &config);
 
-            if key == "ctrl-y" {
-                cmds::aux::abort("copying snippets to the clipboard", 201)?
-            } else if config.print {
-                println!("{}", interpolated_snippet);
-            } else if let Some(s) = config.save {
-                fs::write(s, interpolated_snippet)?;
-            } else {
-                Command::new("bash")
-                    .arg("-c")
-                    .arg(&interpolated_snippet[..])
-                    .spawn()?;
-            }
+    if key == "ctrl-y" {
+        cmds::aux::abort("copying snippets to the clipboard", 201)?
+    } else if config.print {
+        println!("{}", interpolated_snippet);
+    } else if let Some(s) = config.save {
+        fs::write(s, interpolated_snippet)?;
+    } else {
+        Command::new("bash")
+            .arg("-c")
+            .arg(&interpolated_snippet[..])
+            .spawn()?;
+    }
 
-            Ok(())
+    Ok(())
 }

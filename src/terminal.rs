@@ -1,4 +1,4 @@
-use terminal_size::{Width, Height, terminal_size, terminal_size_using_fd};
+use terminal_size::{terminal_size, terminal_size_using_fd, Height, Width};
 
 fn width_with_shell_out() -> u16 {
     use std::process::Command;
@@ -29,8 +29,8 @@ fn width_with_shell_out() -> u16 {
 }
 
 fn width_with_fd() -> u16 {
-    use std::os::unix::io::AsRawFd; 
     use std::fs;
+    use std::os::unix::io::AsRawFd;
 
     let file = fs::File::open("/dev/tty").unwrap();
     let size = terminal_size_using_fd(file.as_raw_fd());

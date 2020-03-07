@@ -2,10 +2,7 @@ use crate::cheat;
 use crate::filesystem;
 
 use std::collections::HashMap;
-use std::fs;
 use std::process;
-use std::io::{Read,Write};
-use std::fs::OpenOptions;
 use std::process::{Command, Stdio};
 
 pub struct Opts<'a> {
@@ -111,19 +108,6 @@ where
     if !opts.suggestions {
         c.args(&["--print-query", "--no-select-1", "--height", "1"]);
     }
-
-   /*let tty = OpenOptions::new()
-                .read(true)
-                .write(true)
-                .append(true)
-                .open("/dev/tty")
-                .unwrap();*/
-
-    /*let child = c
-        .stdin(Stdio::piped())
-        .stdout(tty.try_clone().unwrap())
-        .stderr(tty.try_clone().unwrap())
-        .spawn();*/
 
     let child = c
         .stdin(Stdio::piped())
