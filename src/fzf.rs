@@ -112,53 +112,36 @@ where
         c.args(&["--print-query", "--no-select-1", "--height", "1"]);
     }
 
-   let mut tty = OpenOptions::new()
-   .read(true)
+   /*let tty = OpenOptions::new()
+                .read(true)
                 .write(true)
                 .append(true)
                 .open("/dev/tty")
-                .unwrap();
+                .unwrap();*/
+
+    /*let child = c
+        .stdin(Stdio::piped())
+        .stdout(tty.try_clone().unwrap())
+        .stderr(tty.try_clone().unwrap())
+        .spawn();*/
 
     let child = c
         .stdin(Stdio::piped())
-        .stdout(tty.try_clone().unwrap())
+        .stdout(Stdio::piped())
         .stderr(Stdio::inherit())
         .spawn();
 
     let mut child = match child {
         Ok(x) => x,
         Err(_) => {
-            eprintln!( "navi was unable to call fzf.\nPlease make sure it's correctly installed\nRefer to https://github.com/junegunn/fzf for more info.");
+            eprintln!("navi was unable to call fzf.\nPlease make sure it's correctly installed\nRefer to https://github.com/junegunn/fzf for more info.");
             process::exit(33)
         }
     };
 
-    /*let stdin = child
-        .stdin
-        .as_mut()
-        .ok_or("Child process stdin has not been captured!")
-        .unwrap();*/
+    let stdin = child.stdin.as_mut().unwrap();
+    let result = stdin_fn(stdin);
 
-        //child.stdin.as_mut().unwrap().write_all(b"foo\nbar\nbaz").unwrap();
-        let stdin = child.stdin.as_mut().unwrap();
-
-    // let inc = child.stdin.as_mut().unwrap();
-    stdin.write_all(b"foo\nbar\nbaz\n").unwrap();
-    // let result = stdin_fn(stdin);
-    
-    // fs::write("/dev/tty", "foo\nbar\nbaz").unwrap();
-
-   /* match child.stdout.unwrap().read_to_string(&mut s) {
-        Err(why) => panic!("couldn't read wc stdout:"),
-        Ok(_) => print!("wc responded with:\n{}", s),
-    }*/
-
-/*    match tty.read_to_string(&mut s) {
-        Err(why) => panic!("couldn't read wc stdout:"),
-        Ok(_) => print!("wc responded with:\n{}", s),
-    }*/
-
-    let result = Some(HashMap::new());
-
-    (String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap(), result)
+    let out = child.wait_with_output().unwrap();
+    (String::from_utf8(out.stdout).unwrap(), result)
 }

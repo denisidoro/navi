@@ -2,10 +2,7 @@
 
 _call_navi() {
    local -r buff="$BUFFER"
-   local -r f="$(mktemp || echo "${HOME}/.naviresult")" 2>/dev/null
-   navi --save "$f" </dev/tty >/dev/tty
-   local -r r="$(cat "$f")" 2>/dev/null
-   rm "$f" 2> /dev/null || true
+   local -r r="$(navi --print)"
    zle kill-whole-line
    zle -U "${buff}${r}"
 }
