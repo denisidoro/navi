@@ -25,9 +25,18 @@ gen_formula() {
         | sed -E "s/sha_linux.*/sha256 \"${sha_linux}\"/"
 }
 
+gen_sha() {
+    version="$(latest_version_released)"
+    header "version: ${version}"
+
+    header "sha_for source..."
+    sha_for_asset_on_github "$version"
+}
+
 cmd="$1"
 shift
 
 case "$cmd" in
     "formula") gen_formula "$@" ;;
+    "sha") gen_sha "$@" ;;
 esac

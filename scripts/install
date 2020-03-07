@@ -48,9 +48,13 @@ latest_version_released() {
 
 asset_url() {
     local -r version="$1"
-    local -r variant="$2"
+    local -r variant="${2:-}"
    
-    echo "https://github.com/denisidoro/navi/releases/download/v${version}/navi-${variant}.tar.gz"
+    if [[ -n "$variant" ]]; then
+       echo "https://github.com/denisidoro/navi/releases/download/v${version}/navi-${variant}.tar.gz"
+    else
+       echo "https://github.com/denisidoro/navi/archive/v${version}.tar.gz"
+    fi
 }
 
 download_asset() {
