@@ -80,7 +80,15 @@ fn prompt_with_suggestions(config: &Config, suggestion: &cheat::Value) -> String
         None
     });
 
-    String::from_utf8(output.stdout).unwrap()
+    match output.status.code() {
+        Some(0) | Some(1) => String::from_utf8(output.stdout).unwrap(),
+        Some(130) => process::exit(130),
+        _ => {
+            let err = String::from_utf8(output.stderr)
+                .unwrap_or_else(|_| "<stderr contains invalid UTF-8>".to_owned());
+            panic!("External command failed:\n {}", err)
+        }
+    }
 }
 
 fn prompt_without_suggestions(varname: &str) -> String {
@@ -94,7 +102,15 @@ fn prompt_without_suggestions(varname: &str) -> String {
 
     let (output, _) = fzf::call(opts, |_stdin| None);
 
-    String::from_utf8(output.stdout).unwrap()
+    match output.status.code() {
+        Some(0) | Some(1) => String::from_utf8(output.stdout).unwrap(),
+        Some(130) => process::exit(130),
+        _ => {
+            let err = String::from_utf8(output.stderr)
+                .unwrap_or_else(|_| "<stderr contains invalid UTF-8>".to_owned());
+            panic!("External command failed:\n {}", err)
+        }
+    }
 }
 
 fn gen_replacement(value: &str) -> String {
