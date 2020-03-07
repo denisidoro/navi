@@ -127,5 +127,16 @@ where
     let result = stdin_fn(stdin);
 
     let out = child.wait_with_output().unwrap();
-    (String::from_utf8(out.stdout).unwrap(), result)
+
+    let text = match out.status.code() {
+        Some(0) | Some(1) => String::from_utf8(out.stdout).unwrap(),
+        Some(130) => process::exit(130),
+        _ => {
+            let err = String::from_utf8(out.stderr)
+                .unwrap_or_else(|_| "<stderr contains invalid UTF-8>".to_owned());
+            panic!("External command failed:\n {}", err)
+        }
+    };
+
+    (text, result)   
 }
