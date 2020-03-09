@@ -1,17 +1,30 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-FIRST_INSTALL_DIR="/opt/navi"
-SECOND_INSTALL_DIR="${HOME}/.navi"
+FIRST_SOURCE_DIR="/opt/navi"
+SECOND_SOURCE_DIR="${HOME}/.navi"
 
-get_install_dir() {
-   local -r useless_folder="${FIRST_INSTALL_DIR}/useless"
+FIRST_BIN_DIR="/usr/bin"
+SECOND_BIN_DIR="/usr/local/bin"
+
+get_dir() {
+   local -r first_dir="$1"
+   local -r second_dir="$1"
+   local -r useless_folder="${first_dir}/useless"
    local folder
    mkdir -p "$useless_folder" 2>/dev/null \
-      && folder="$FIRST_INSTALL_DIR" \
-      || folder="$SECOND_INSTALL_DIR"
+      && folder="$first_dir" \
+      || folder="$second_dir"
    rm -r "$useless_folder" 2>/dev/null
    echo "$folder"
+}
+
+get_source_dir() {
+   get_dir "$FIRST_SOURCE_DIR" "$SECOND_SOURCE_DIR"
+}
+
+get_bin_dir() {
+   get_dir "$FIRST_BIN_DIR" "$SECOND_BIN_DIR"
 }
 
 echoerr() {
@@ -59,15 +72,14 @@ asset_url() {
 
 download_asset() {
    local -r url="$(asset_url "$@")"
-   mkdir -p "$DEFAULT_INSTALL_DIR"
-   cd "$DEFAULT_INSTALL_DIR"
+   mkdir -p "$SOURCE_DIR"
+   cd "$SOURCE_DIR"
    rm -f navi.tar.gz
-   echoerr "Downloading $url"
+   echoerr "Downloading ${url}..."
    curl -L "$url" -o navi.tar.gz
    tar xvzf navi.tar.gz
    rm -f navi.tar.gz
-   ln -s "${DEFAULT_INSTALL_DIR}/navi" "/usr/bin/navi" \
-      || ln -s "${DEFAULT_INSTALL_DIR}/navi" "/usr/local/bin/navi"
+   ln -s "${SOURCE_DIR}/navi" "${BIN_DIR}/navi"
 }
 
 sha_for_asset_on_github() {
@@ -102,17 +114,23 @@ get_shell() {
 }
 
 install_navi() {
-   export DEFAULT_INSTALL_DIR="$(get_install_dir)"
+   export SOURCE_DIR="${SOURCE_DIR:-"$(get_source_dir)"}"
+   export BIN_DIR="${BIN_DIR:-"$(get_bin_dir)"}"
+   echoerr "Sources will be downloaded to ${SOURCE_DIR}..."
+
    local -r target="$(get_target)"
+
    if [[ -n "$target" ]]; then
       local -r version="$(latest_version_released)"
       download_asset "$version" "$target"
+
    elif command_exists cargo; then
       no_binary_warning
       echoerr "Building sources..."
-      git clone https://github.com/denisidoro/navi "$DEFAULT_INSTALL_DIR"
-      cd "$DEFAULT_INSTALL_DIR"
+      git clone https://github.com/denisidoro/navi "$SOURCE_DIR"
+      cd "$SOURCE_DIR"
       make install
+
    else
       no_binary_warning 
       echoerr "You don't have the necessary tools to build it"
