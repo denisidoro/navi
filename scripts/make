@@ -8,7 +8,7 @@ export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 source "${NAVI_HOME}/scripts/install"
 
 install() {
-    export INSTALL_DIR="${INSTALL_DIR:-"$(get_install_dir)"}"
+    export SOURCE_DIR="${SOURCE_DIR:-"$(get_source_dir)"}"
     export BIN_DIR="${BIN_DIR:-"$(get_bin_dir)"}"
     echoerr "The final binary will be available at ${BIN_DIR}/navi..."
     "${NAVI_HOME}/scripts/action" release
@@ -16,9 +16,9 @@ install() {
 }
 
 uninstall() {
-    export INSTALL_DIR="${INSTALL_DIR:-"$(get_install_dir)"}"
+    export SOURCE_DIR="${SOURCE_DIR:-"$(get_source_dir)"}"
     rm -rf "${NAVI_HOME}/target"
-    rm "$INSTALL_DIR"
+    rm "$SOURCE_DIR"
 }
 
 cmd="$1"

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-FIRST_INSTALL_DIR="/opt/navi"
-SECOND_INSTALL_DIR="${HOME}/.navi"
+FIRST_SOURCE_DIR="/opt/navi"
+SECOND_SOURCE_DIR="${HOME}/.navi"
 
 FIRST_BIN_DIR="/usr/bin"
 SECOND_BIN_DIR="/usr/local/bin"
@@ -19,8 +19,8 @@ get_dir() {
    echo "$folder"
 }
 
-get_install_dir() {
-   get_dir "$FIRST_INSTALL_DIR" "$SECOND_INSTALL_DIR"
+get_source_dir() {
+   get_dir "$FIRST_SOURCE_DIR" "$SECOND_SOURCE_DIR"
 }
 
 get_bin_dir() {
@@ -68,14 +68,14 @@ asset_url() {
 
 download_asset() {
    local -r url="$(asset_url "$@")"
-   mkdir -p "$INSTALL_DIR"
-   cd "$INSTALL_DIR"
+   mkdir -p "$SOURCE_DIR"
+   cd "$SOURCE_DIR"
    rm -f navi.tar.gz
    echoerr "Downloading ${url}..."
    curl -L "$url" -o navi.tar.gz
    tar xvzf navi.tar.gz
    rm -f navi.tar.gz
-   ln -s "${INSTALL_DIR}/navi" "${BIN_DIR}/navi"
+   ln -s "${SOURCE_DIR}/navi" "${BIN_DIR}/navi"
 }
 
 sha_for_asset_on_github() {
@@ -110,9 +110,9 @@ get_shell() {
 }
 
 install_navi() {
-   export INSTALL_DIR="${INSTALL_DIR:-"$(get_install_dir)"}"
+   export SOURCE_DIR="${SOURCE_DIR:-"$(get_source_dir)"}"
    export BIN_DIR="${BIN_DIR:-"$(get_bin_dir)"}"
-   echoerr "Sources will be downloaded to ${INSTALL_DIR}..."
+   echoerr "Sources will be downloaded to ${SOURCE_DIR}..."
 
    local -r target="$(get_target)"
 
@@ -123,8 +123,8 @@ install_navi() {
    elif command_exists cargo; then
       no_binary_warning
       echoerr "Building sources..."
-      git clone https://github.com/denisidoro/navi "$INSTALL_DIR"
-      cd "$INSTALL_DIR"
+      git clone https://github.com/denisidoro/navi "$SOURCE_DIR"
+      cd "$SOURCE_DIR"
       make install
 
    else
