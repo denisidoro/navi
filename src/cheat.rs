@@ -80,6 +80,9 @@ fn read_file(
             if line.starts_with('%') {
                 tags = String::from(&line[2..]);
             }
+            // metacomment
+            else if line.starts_with(';') {
+            }
             // comment
             else if line.starts_with('#') {
                 comment = String::from(&line[2..]);
