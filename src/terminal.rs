@@ -22,10 +22,15 @@ fn width_with_shell_out() -> u16 {
             .unwrap()
     };
 
-    let stdout = String::from_utf8(output.stdout).unwrap();
-    let mut data = stdout.split_whitespace();
-    data.next();
-    u16::from_str_radix(data.next().unwrap(), 10).unwrap()
+    match output.status.code() {
+        Some(0) => {
+            let stdout = String::from_utf8(output.stdout).unwrap();
+            let mut data = stdout.split_whitespace();
+            data.next();
+            u16::from_str_radix(data.next().unwrap(), 10).unwrap()
+        }
+        _ => 40,
+    }
 }
 
 fn width_with_fd() -> u16 {
