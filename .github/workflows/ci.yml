@@ -6,7 +6,7 @@
 
 on: [push]
 
-name: Quickstart
+name: Tests
 
 jobs:
   check:
