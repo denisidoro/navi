@@ -1,12 +1,8 @@
 # navi <img src="https://user-images.githubusercontent.com/3226564/65362934-b4432500-dbdf-11e9-8f75-815fbc5cbf8f.png" alt="icon" height="28px"/> [![Actions Status](https://github.com/denisidoro/navi/workflows/Quickstart/badge.svg)](https://github.com/denisidoro/navi/actions) ![GitHub release](https://img.shields.io/github/v/release/denisidoro/navi?include_prereleases)
   
-> :information_source: This project has recently been rewritten in Rust. The old implementation was written in bash. If you're facing any issue after updating, please check [this thread](https://github.com/denisidoro/navi/issues/201).
+> :information_source: If you're here because you upgraded **navi** and are having some issues, please check [this thread](https://github.com/denisidoro/navi/issues/201).
 
-An interactive cheatsheet tool for the command-line so that you won't say the following anymore:
-
->— *How to run that command again?*<br>
-— *Oh, it's not in my shell history*<br>
-— *Geez, it's almost what I wanted but I need to change some args*
+An interactive cheatsheet tool for the command-line.
 
 ![Demo](https://user-images.githubusercontent.com/3226564/67864139-ebbcbf80-fb03-11e9-9abb-8e6664f77915.gif)
 
@@ -17,9 +13,9 @@ Table of contents
 
    * [Installation](#installation)
       * [Using Homebrew or Linuxbrew](#using-homebrew-or-linuxbrew)
+      * [Using one-liner script](#using-one-liner-script)
       * [Downloading pre-compiled binaries](#downloading-pre-compiled-binaries)
       * [Building from source](#building-from-source)
-   * [Upgrading](#upgrading)
    * [Usage](#usage)
       * [Preventing execution](#preventing-execution)
       * [Pre-filtering](#pre-filtering)
@@ -44,21 +40,21 @@ Table of contents
 Installation
 ------------
 
-### Using Homebrew or Linuxbrew
+### Using [Homebrew](http://brew.sh/) or [Linuxbrew](http://linuxbrew.sh/)
 
-You can use [Homebrew](http://brew.sh/) or [Linuxbrew](http://linuxbrew.sh/)
-to install **navi**:
 ```sh
 brew install navi
 ```
 
-### Downloading pre-compiled binaries
+### Using one-liner script
 
 ```bash
-bash <(curl -sL https://github.com/denisidoro/navi/blob/master/scripts/install)
+bash <(curl -sL https://raw.githubusercontent.com/denisidoro/navi/master/scripts/install)
 ```
 
-Alternatively, you can download the binaries manually [here](https://github.com/denisidoro/navi/releases/latest).
+### Downloading pre-compiled binaries
+
+You can download binaries [here](https://github.com/denisidoro/navi/releases/latest).
 
 ### Building from source
 
@@ -81,12 +77,6 @@ If you run `navi --print`, the selected snippet won't be executed. It will be pr
 
 If you run `navi query <cmd>`, the results will be pre-filtered.
 
-### Searching online repositories
-
-If you run `navi search <cmd>`, **navi** will try to download cheatsheets from online repositories as well.
-
-Please note that these cheatsheets aren't curated by **navi**'s maintainers and should be taken with a grain of salt. If you're not sure about executing these snippets, make sure to check the preview window or use the `--print` option.
-
 ### Shell widget
 
 You can use **navi** as a widget to your shell. This way, your history is correctly populated and you can edit the command as you wish before executing it.
@@ -106,7 +96,6 @@ source (navi widget fish)
 By default, `Ctrl+G` is assigned to launching **navi**. If you want to change the keybinding, replace the argument of `bind` or `bindkey` in [the widget file](https://github.com/denisidoro/navi/search?q=filename%3Anavi.plugin.*&unscoped_q=filename%3Anavi.plugin.*).
 
 If you want a widget for other shells, please upvote [this issue](https://github.com/denisidoro/navi/issues/37).
-
 
 ### More options
 
@@ -158,8 +147,9 @@ Cheatsheets are described in `.cheat` files.
 
 ### Syntax overview
 
-- lines starting with `%` should contain tags which will be added to any command in a given file;
+- lines starting with `%` determine the start of a new cheatsheet. They should contain tags which will be added to any command in a given file;
 - lines starting with `#` should be descriptions of commands;
+- lines starting with `;` are ignored. You can use them for metacomments;
 - lines starting with `$` should contain commands that generate a list of possible values for a given argument;
 - all the other non-empty lines are considered as executable commands.
 
@@ -173,20 +163,13 @@ git checkout <branch>
 $ branch: git branch | awk '{print $NF}'
 ```
 
+It's irrelevant how many files are used to store cheatsheets. They can be all in a single file if you wish, as long as you split them accordingly with lines starting with `%`.
+
 ### Variables
 
 The interface prompts for variable names inside brackets (eg `<branch>`).
 
 Variable names should only include alphanumeric characters and `_`.
-
-The command for generating possible inputs can refer other variables:
-```sh
-# If you select 2 for x, the possible values of y will be 12 and 22
-echo <x> <y>
-
-$ x: echo -e '1\n2\n3'
-$ y: echo -e "$((x+10))\n$((x+20))"
-```
 
 ### Variable options
 
@@ -194,13 +177,13 @@ For lines starting with `$` you can add extra options using `---`.
 
 #### Table formatting
 
-You can pick a specific column of a selection and set the number of lines considered as headers via `--column` and `--headers`:
+You can pick a specific column of a selection and set the number of lines considered as headers via `--column` and `--header-lines`:
 
 ```sh
 # This will pick the 3rd column and use the first line as header
 docker rmi <image_id>
 
-$ image_id: docker images --- --column 3 --headers 1
+$ image_id: docker images --- --column 3 --header-lines 1
 ```
 
 #### Multiple choice
@@ -211,19 +194,13 @@ You can select multiple values via `--multi` and hitting `<TAB>`:
 # The resulting command will be something like: cat "a.txt" "b.txt"
 cat <files>
 
-$ files: ls --- --multi true
+$ files: ls --- --multi
 ```
 
 List customization
 ------------------
 
-Lists can be stylized with the [$FZF_DEFAULT_OPTS](https://github.com/junegunn/fzf) environment variable. This way, you can change the [color scheme](https://github.com/junegunn/fzf/wiki/Color-schemes), for example.
-
-In addition:
-- the `--fzf-overrides` option allows you to hide columns, for example
-- the `--col-widths` option allows you to limit column widths
-
-Please refer to `navi --help` for more details.
+Lists can be stylized with the [$FZF_DEFAULT_OPTS](https://github.com/junegunn/fzf) environment variable or `--fzf-overrides`. This way, you can change the [color scheme](https://github.com/junegunn/fzf/wiki/Color-schemes), for example.
 
 Related projects
 ----------------
@@ -231,8 +208,6 @@ Related projects
 There are many similar projects out there ([bro](https://github.com/hubsmoke/bro), [eg](https://github.com/srsudar/eg), [cheat.sh](https://github.com/chubin/cheat.sh), [tldr](https://github.com/tldr-pages/tldr), [cmdmenu](https://github.com/amacfie/cmdmenu), [cheat](https://github.com/cheat/cheat), [beavr](https://github.com/denisidoro/beavr), [how2](https://github.com/santinic/how2) and [howdoi](https://github.com/gleitz/howdoi), to name a few).
 
 Most of them provide excellent cheatsheet repositories, but lack a nice UI and argument suggestions.
-
-In any case, **navi** has the option to [search for some of these repositories](#searching-online-repositories).
 
 Etymology
 ---------
