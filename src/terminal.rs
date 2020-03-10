@@ -37,11 +37,16 @@ fn width_with_fd() -> u16 {
     use std::fs;
     use std::os::unix::io::AsRawFd;
 
-    let file = fs::File::open("/dev/tty").unwrap();
-    let size = terminal_size_using_fd(file.as_raw_fd());
+    let file = fs::File::open("/dev/tty");
 
-    if let Some((Width(w), Height(_))) = size {
-        w
+    if let Ok(f) = file {
+        let size = terminal_size_using_fd(f.as_raw_fd());
+
+        if let Some((Width(w), Height(_))) = size {
+            w
+        } else {
+            width_with_shell_out()
+        }
     } else {
         width_with_shell_out()
     }
