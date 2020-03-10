@@ -26,7 +26,7 @@ gen_formula() {
 }
 
 gen_sha() {
-    version="$(latest_version_released)"
+    version="${1:-$(latest_version_released)}"
     header "version: ${version}"
 
     header "sha_for source..."
