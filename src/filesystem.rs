@@ -20,7 +20,7 @@ fn follow_symlink(pathbuf: PathBuf) -> PathBuf {
 }
 
 fn exe_pathbuf() -> PathBuf {
-    let pathbuf = std::env::current_exe().unwrap().to_path_buf();
+    let pathbuf = std::env::current_exe().unwrap();
     follow_symlink(pathbuf)
 }
 

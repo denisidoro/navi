@@ -131,7 +131,10 @@ pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMa
     let mut variables: HashMap<String, Value> = HashMap::new();
 
     let current_exe = filesystem::exe_path_string();
-    let fallback = format!("{}/cheats:{}/../cheats:{}/../libexec/cheats", current_exe, current_exe, current_exe);
+    let fallback = format!(
+        "{}/cheats:{}/../cheats:{}/../libexec/cheats",
+        current_exe, current_exe, current_exe
+    );
     let folders_str = config.path.as_ref().unwrap_or(&fallback);
     let folders = folders_str.split(':');
 
