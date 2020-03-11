@@ -16,7 +16,7 @@ fn follow_symlink(pathbuf: PathBuf) -> PathBuf {
     match other {
         Ok(o) => {
             let o_str = o.as_os_str().to_str().unwrap();
-            if o_str.starts_with(".") {
+            if o_str.starts_with('.') {
                 let parent_str = pathbuf.parent().unwrap().as_os_str().to_str().unwrap();
                 let path_str = format!("{}/{}", parent_str, o_str);
                 let p = PathBuf::from(path_str);
