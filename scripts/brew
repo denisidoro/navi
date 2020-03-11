@@ -12,12 +12,14 @@ gen_formula() {
 
    header "sha_for x86_64-unknown-linux-musl..."
    sha_linux="$(sha_for_asset_on_github "$version" "x86_64-unknown-linux-musl")"
+   header "$sha_linux"
 
    header "sha_for x86_64-osx..."
    sha_osx="$(sha_for_asset_on_github "$version" "x86_64-osx")"
+   header "$sha_osx"
 
    header "rb..."
-   curl -s https://raw.githubusercontent.com/denisidoro/homebrew-tools/master/navirs.rb \
+   curl -s https://raw.githubusercontent.com/denisidoro/homebrew-tools/master/navi.rb \
       | sed -E "s/version ['\"].*/version '${version}'/" \
       | awk '!x{x=sub("sha256","sha_osx")}7' \
       | awk '!x{x=sub("sha256","sha_linux")}7' \
