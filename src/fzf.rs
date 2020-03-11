@@ -1,5 +1,6 @@
 use crate::cheat;
 use crate::filesystem;
+use crate::display;
 
 use std::collections::HashMap;
 use std::process;
@@ -16,7 +17,6 @@ pub struct Opts<'a> {
     pub multi: bool,
     pub copyable: bool,
     pub suggestions: bool,
-    pub nth: Option<u8>,
 }
 
 impl Default for Opts<'_> {
@@ -32,7 +32,6 @@ impl Default for Opts<'_> {
             multi: false,
             copyable: false,
             suggestions: true,
-            nth: None,
         }
     }
 }
@@ -49,7 +48,7 @@ where
         "--with-nth",
         "1,2,3",
         "--delimiter",
-        "\t",
+        display::DELIMITER.to_string().as_str(),
         "--ansi",
         "--bind",
         "ctrl-j:down,ctrl-k:up",
@@ -85,10 +84,6 @@ where
 
     if let Some(p) = opts.prompt {
         c.args(&["--prompt", &p]);
-    }
-
-    if let Some(n) = opts.nth {
-        c.args(&["--nth", &n.to_string()]);
     }
 
     if opts.header_lines > 0 {

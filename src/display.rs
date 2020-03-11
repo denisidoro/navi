@@ -5,6 +5,8 @@ static COMMENT_COLOR: color::LightCyan = color::LightCyan;
 static TAG_COLOR: color::LightGreen = color::LightGreen;
 static SNIPPET_COLOR: color::White = color::White;
 
+pub static DELIMITER: char = '\t';
+
 lazy_static! {
     pub static ref WIDTHS: (usize, usize) = get_widths();
 }
@@ -48,7 +50,7 @@ pub fn format_line(
     comment_width: usize,
 ) -> String {
     format!(
-       "{tag_color}{tags_short}\t{comment_color}{comment_short}\t{snippet_color}{snippet_short}\t{tags}\t{comment}\t{snippet}\t\n",
+       "{tag_color}{tags_short}{delimiter}{comment_color}{comment_short}{delimiter}{snippet_color}{snippet_short}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}\n",
        tags_short = limit_str(tags, tag_width),
        comment_short = limit_str(comment, comment_width),
        snippet_short = full_snippet,
@@ -57,5 +59,6 @@ pub fn format_line(
        snippet_color = color::Fg(SNIPPET_COLOR),
        tags = tags,
        comment = comment,
+       delimiter = DELIMITER,
        snippet = &full_snippet)
 }
