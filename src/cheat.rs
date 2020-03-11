@@ -11,6 +11,7 @@ pub struct SuggestionOpts {
     pub header_lines: u8,
     pub column: Option<u8>,
     pub multi: bool,
+    pub delimiter: Option<String>,
 }
 
 pub type Value = (String, Option<SuggestionOpts>);
@@ -27,16 +28,18 @@ fn parse_opts(text: &str) -> SuggestionOpts {
     let mut header_lines: u8 = 0;
     let mut column: Option<u8> = None;
     let mut multi = false;
+    let mut delimiter: Option<String> = None;
 
     let mut parts = text.split(' ');
 
     while let Some(p) = parts.next() {
         match p {
             "--multi" => multi = true,
-            "--header" | "--header-lines" => {
+            "--header" | "--headers" | "--header-lines" => {
                 header_lines = parts.next().unwrap().parse::<u8>().unwrap()
             }
             "--column" => column = Some(parts.next().unwrap().parse::<u8>().unwrap()),
+            "--delimiter" => delimiter = Some(parts.next().unwrap().to_string()),
             _ => (),
         }
     }
@@ -45,6 +48,7 @@ fn parse_opts(text: &str) -> SuggestionOpts {
         header_lines,
         column,
         multi,
+        delimiter,
     }
 }
 
@@ -132,8 +136,8 @@ pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMa
 
     let current_exe = filesystem::exe_path_string();
     let fallback = format!(
-        "{}/cheats:{}/../cheats:{}/../libexec/cheats",
-        current_exe, current_exe, current_exe
+        "{path}/cheats:{path}/../cheats:{path}/../libexec/cheats",
+        path = current_exe
     );
     let folders_str = config.path.as_ref().unwrap_or(&fallback);
     let folders = folders_str.split(':');

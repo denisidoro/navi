@@ -42,7 +42,7 @@ fn extract_from_selections(raw_output: &str, contains_key: bool) -> (&str, &str,
     } else {
         "enter"
     };
-    let mut parts = lines.next().unwrap().split('\t');
+    let mut parts = lines.next().unwrap().split(display::DELIMITER);
     parts.next();
     parts.next();
     parts.next();
@@ -68,10 +68,16 @@ fn prompt_with_suggestions(config: &Config, suggestion: &cheat::Value) -> String
         ..Default::default()
     };
 
+    let mut column: Option<u8> = None;
+    let mut delimiter = r"\s\s+";
+
     if let Some(o) = &suggestion.1 {
         opts.multi = o.multi;
         opts.header_lines = o.header_lines;
-        opts.nth = o.column;
+        column = o.column;
+        if let Some(d) = o.delimiter.as_ref() {
+            delimiter = d.as_str();
+        }
     };
 
     let (output, _) = fzf::call(opts, |stdin| {
@@ -79,7 +85,16 @@ fn prompt_with_suggestions(config: &Config, suggestion: &cheat::Value) -> String
         None
     });
 
-    output
+    if let Some(c) = column {
+        let re = regex::Regex::new(delimiter).unwrap();
+        let mut parts = re.split(output.as_str());
+        for _ in 0..(c - 1) {
+            parts.next().unwrap();
+        }
+        parts.next().unwrap().to_string()
+    } else {
+        output
+    }
 }
 
 fn prompt_without_suggestions(varname: &str) -> String {

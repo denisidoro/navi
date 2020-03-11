@@ -60,14 +60,14 @@ latest_version_released() {
 }
 
 asset_url() {
-    local -r version="$1"
-    local -r variant="${2:-}"
-   
-    if [[ -n "$variant" ]]; then
-       echo "https://github.com/denisidoro/navi/releases/download/v${version}/navi-${variant}.tar.gz"
-    else
-       echo "https://github.com/denisidoro/navi/archive/v${version}.tar.gz"
-    fi
+   local -r version="$1"
+   local -r variant="${2:-}"
+
+   if [[ -n "$variant" ]]; then
+      echo "https://github.com/denisidoro/navi/releases/download/v${version}/navi-${variant}.tar.gz"
+   else
+      echo "https://github.com/denisidoro/navi/archive/v${version}.tar.gz"
+   fi
 }
 
 download_asset() {
@@ -83,8 +83,8 @@ download_asset() {
 }
 
 sha_for_asset_on_github() {
-    local -r url="$(asset_url "$@")"
-    curl -sL "$url" | sha256 | awk '{print $1}'
+   local -r url="$(asset_url "$@")"
+   curl -sL "$url" | sha256 | awk '{print $1}'
 }
 
 get_target() {
@@ -132,7 +132,7 @@ install_navi() {
       make install
 
    else
-      no_binary_warning 
+      no_binary_warning
       echoerr "You don't have the necessary tools to build it"
       echoerr "Please open an issue at https://github.com/denisidoro/navi"
       echoerr "Aborting..."
