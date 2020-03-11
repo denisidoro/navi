@@ -14,7 +14,17 @@ where
 fn follow_symlink(pathbuf: PathBuf) -> PathBuf {
     let other = fs::read_link(pathbuf.clone());
     match other {
-        Ok(o) => follow_symlink(o),
+        Ok(o) => {
+            let o_str = o.as_os_str().to_str().unwrap();
+            if o_str.starts_with('.') {
+                let parent_str = pathbuf.parent().unwrap().as_os_str().to_str().unwrap();
+                let path_str = format!("{}/{}", parent_str, o_str);
+                let p = PathBuf::from(path_str);
+                follow_symlink(p)
+            } else {
+                follow_symlink(o)
+            }
+        }
         Err(_) => pathbuf,
     }
 }
