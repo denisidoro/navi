@@ -8,37 +8,37 @@ source "${NAVI_HOME}/scripts/install"
 
 release() {
 
-    TAR_DIR="${NAVI_HOME}/target/tar"
+   TAR_DIR="${NAVI_HOME}/target/tar"
 
-    target="${1:-}"
-    if [[ $target == *"osx"* ]]; then
-        echoerr "OSX cross-compile is impossible. Fallbacking to cargo..."
-        target=""
-    fi
+   target="${1:-}"
+   if [[ $target == *"osx"* ]]; then
+      echoerr "OSX cross-compile is impossible. Fallbacking to cargo..."
+      target=""
+   fi
 
-    cd "$NAVI_HOME"
+   cd "$NAVI_HOME"
 
-    rm -rf "${NAVI_HOME}/target" 2> /dev/null || true
+   rm -rf "${NAVI_HOME}/target" 2> /dev/null || true
 
-    if [ -n "$target" ]; then
-        cargo install cross 2> /dev/null || true
-        cross build --release --locked --target "$target"
-        bin_folder="${target}/release"
-    else 
-        cargo build --release --locked
-        bin_folder="release"
-    fi
+   if [ -n "$target" ]; then
+      cargo install cross 2> /dev/null || true
+      cross build --release --locked --target "$target"
+      bin_folder="${target}/release"
+   else
+      cargo build --release --locked
+      bin_folder="release"
+   fi
 
-    bin_path="${NAVI_HOME}/target/${bin_folder}/navi"
-    chmod +x "$bin_path"
-    mkdir -p "$TAR_DIR" 2> /dev/null || true
+   bin_path="${NAVI_HOME}/target/${bin_folder}/navi"
+   chmod +x "$bin_path"
+   mkdir -p "$TAR_DIR" 2> /dev/null || true
 
-    cp -r "${NAVI_HOME}/cheats" "$TAR_DIR"
-    cp -r "${NAVI_HOME}/shell" "$TAR_DIR"
-    cp "$bin_path" "$TAR_DIR"
+   cp -r "${NAVI_HOME}/cheats" "$TAR_DIR"
+   cp -r "${NAVI_HOME}/shell" "$TAR_DIR"
+   cp "$bin_path" "$TAR_DIR"
 
-    cd "${NAVI_HOME}/target/tar"
-    tar -czf navi.tar.gz *
+   cd "${NAVI_HOME}/target/tar"
+   tar -czf navi.tar.gz *
 
 }
 
@@ -46,5 +46,5 @@ cmd="$1"
 shift
 
 case "$cmd" in
-    "release") release "$@" ;;
+   "release") release "$@" ;;
 esac

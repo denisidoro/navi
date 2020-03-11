@@ -11,7 +11,7 @@ pub struct SuggestionOpts {
     pub header_lines: u8,
     pub column: Option<u8>,
     pub multi: bool,
-    pub delimiter: Option<String>
+    pub delimiter: Option<String>,
 }
 
 pub type Value = (String, Option<SuggestionOpts>);

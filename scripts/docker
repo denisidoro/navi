@@ -6,6 +6,6 @@ export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$NAVI_HOME"
 
 docker run \
-    -e HOMEBREW_NO_AUTO_UPDATE=1 \
-    -it linuxbrew/alpine \
-    bash -c 'brew install denisidoro/tools/navirs; bash'
+   -e HOMEBREW_NO_AUTO_UPDATE=1 \
+   -it linuxbrew/alpine \
+   bash -c 'brew install denisidoro/tools/navirs; bash'

@@ -1,6 +1,6 @@
 use crate::cheat;
-use crate::filesystem;
 use crate::display;
+use crate::filesystem;
 
 use std::collections::HashMap;
 use std::process;
