@@ -136,7 +136,7 @@ pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMa
 
     let current_exe = filesystem::exe_path_string();
     let fallback = format!(
-        "{path}/cheats:{path}/../cheats:{path}/../libexec/cheats",
+        "{path}/cheats:{path}/../cheats:{path}/../../cheats:{path}/../libexec/cheats",
         path = current_exe
     );
     let folders_str = config.path.as_ref().unwrap_or(&fallback);
