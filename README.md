@@ -4,7 +4,7 @@
 
 An interactive cheatsheet tool for the command-line.
 
-![Demo](https://user-images.githubusercontent.com/3226564/67864139-ebbcbf80-fb03-11e9-9abb-8e6664f77915.gif)
+![Demo](https://user-images.githubusercontent.com/3226564/76437136-ddc35900-6397-11ea-823c-d2da7615fe60.gif)
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands, with argument values prompted to you.
 
@@ -19,11 +19,9 @@ Table of contents
    * [Usage](#usage)
       * [Preventing execution](#preventing-execution)
       * [Pre-filtering](#pre-filtering)
-      * [Searching online repositories](#searching-online-repositories)
       * [Shell widget](#shell-widget)
       * [More options](#more-options)
    * [Trying out online](#trying-out-online)
-   * [Motivation](#motivation)
    * [Cheatsheets](#cheatsheets)
       * [Using your own custom cheatsheets](#using-your-own-custom-cheatsheets)
       * [Submitting cheatsheets](#submitting-cheatsheets)
@@ -34,6 +32,7 @@ Table of contents
          * [Table formatting](#table-formatting)
          * [Multiple choice](#multiple-choice)
    * [List customization](#list-customization)
+   * [Motivation](#motivation)
    * [Related projects](#related-projects)
    * [Etymology](#etymology)
 
@@ -111,21 +110,6 @@ Trying out online
 
 If you don't have access to bash at the moment and you want to live preview **navi**, head to [this playground](https://www.katacoda.com/denisidoro/scenarios/navi). It'll start a docker container with instructions for you to install and use the tool. Note: login required.
 
-Motivation
-----------
-
-The main objectives are:
-- to increase discoverability, by finding snippets given keywords or descriptions;
-- to prevent you from running auxiliar commands, copying the result into the clipboard and then pasting into the original command;
-- to easily share one-liners with others so that they don't need to figure out how to write the commands;
-- to improve terminal usage as a whole.
-
-Sure, you can find autocompleters out there for all your favorite commands. However, they are very specific and each one may offer a different learning curve.
-
-Or you can launch a browser and search for instructions on Google, but that takes some time.
-
-**navi**, on the other hand, intends to be a general purpose platform for bookmarking any snippet at a very low cost.
-
 Cheatsheets
 -----------
 
@@ -182,13 +166,13 @@ For lines starting with `$` you can add extra options using `---`.
 
 #### Table formatting
 
-You can pick a specific column of a selection and set the number of lines considered as headers via `--column` and `--header-lines`:
+You can pick a specific column of a selection and set the number of lines considered as headers via `--column`, `--delimiter` and `--header-lines`:
 
 ```sh
 # This will pick the 3rd column and use the first line as header
 docker rmi <image_id>
 
-$ image_id: docker images --- --column 3 --header-lines 1
+$ image_id: docker images --- --column 3 --header-lines 1 --delimiter '\s\s+'
 ```
 
 #### Multiple choice
@@ -206,6 +190,21 @@ List customization
 ------------------
 
 Lists can be stylized with the [$FZF_DEFAULT_OPTS](https://github.com/junegunn/fzf) environment variable or `--fzf-overrides`. This way, you can change the [color scheme](https://github.com/junegunn/fzf/wiki/Color-schemes), for example.
+
+Motivation
+----------
+
+The main objectives are:
+- to increase discoverability, by finding snippets given keywords or descriptions;
+- to prevent you from running auxiliar commands, copying the result into the clipboard and then pasting into the original command;
+- to easily share one-liners with others so that they don't need to figure out how to write the commands;
+- to improve terminal usage as a whole.
+
+Sure, you can find autocompleters out there for all your favorite commands. However, they are very specific and each one may offer a different learning curve.
+
+Or you can launch a browser and search for instructions on Google, but that takes some time.
+
+**navi**, on the other hand, intends to be a general purpose platform for bookmarking any snippet at a very low cost.
 
 Related projects
 ----------------
