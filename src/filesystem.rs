@@ -1,8 +1,11 @@
+use dirs;
 use std::fs;
-use std::fs::metadata;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, Lines};
 use std::path::{Path, PathBuf};
+
+pub const BUNDLED_CHEAT_DIR: &'static str = "/usr/share/navi/cheats";
+pub const SHELL_PLUGIN_DIR: &'static str = "/usr/share/navi/shell";
 
 pub fn read_lines<P>(filename: P) -> io::Result<Lines<BufReader<File>>>
 where
@@ -34,31 +37,19 @@ fn follow_symlink(pathbuf: PathBuf) -> PathBuf {
     }
 }
 
+pub fn cheat_pathbuf() -> Option<PathBuf> {
+    match dirs::config_dir() {
+        Some(mut d) => {
+            d.push("navi");
+            Some(d)
+        }
+        None => None,
+    }
+}
+
 fn exe_pathbuf() -> PathBuf {
     let pathbuf = std::env::current_exe().unwrap();
     follow_symlink(pathbuf)
-}
-
-pub fn cheat_pathbuf() -> Option<PathBuf> {
-    let exe_parent_str = exe_parent_string();
-
-    let array = ["cheats", "../libexec/cheats", "../cheats", "../../cheats"];
-    for elem in &array {
-        let p = format!("{}/{}", exe_parent_str, elem);
-        let meta = metadata(&p);
-        if let Ok(m) = meta {
-            if m.is_dir() {
-                return Some(PathBuf::from(p));
-            }
-        }
-    }
-
-    None
-}
-
-pub fn shell_pathbuf() -> PathBuf {
-    let cheat_path_str = pathbuf_to_string(cheat_pathbuf().unwrap());
-    PathBuf::from(format!("{}/../shell", cheat_path_str))
 }
 
 pub fn exe_string() -> String {

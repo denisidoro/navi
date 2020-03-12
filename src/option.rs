@@ -30,6 +30,10 @@ pub struct Config {
     #[structopt(long)]
     pub no_autoselect: bool,
 
+    /// Prevents the bundled cheats from being loaded
+    #[structopt(long)]
+    pub no_bundled_cheats: bool,
+
     /// Hides preview window
     #[structopt(long)]
     pub no_preview: bool,

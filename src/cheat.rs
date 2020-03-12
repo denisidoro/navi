@@ -134,9 +134,12 @@ fn read_file(
 pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMap<String, Value> {
     let mut variables: HashMap<String, Value> = HashMap::new();
 
-    let fallback = filesystem::pathbuf_to_string(filesystem::cheat_pathbuf().unwrap());
+    let fallback = filesystem::pathbuf_to_string(filesystem::cheat_pathbuf().unwrap_or("".into()));
     let folders_str = config.path.as_ref().unwrap_or(&fallback);
-    let folders = folders_str.split(':');
+    let mut folders: Vec<&str> = folders_str.split(':').collect();
+    if !config.no_bundled_cheats {
+        folders.push(filesystem::BUNDLED_CHEAT_DIR);
+    }
 
     for folder in folders {
         if let Ok(paths) = fs::read_dir(folder) {
