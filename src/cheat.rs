@@ -24,6 +24,10 @@ fn gen_snippet(snippet: &str, line: &str) -> String {
     }
 }
 
+fn remove_quote(txt: &str) -> String {
+    txt.replace('"', "").replace('\'', "")
+}
+
 fn parse_opts(text: &str) -> SuggestionOpts {
     let mut header_lines: u8 = 0;
     let mut column: Option<u8> = None;
@@ -36,10 +40,10 @@ fn parse_opts(text: &str) -> SuggestionOpts {
         match p {
             "--multi" => multi = true,
             "--header" | "--headers" | "--header-lines" => {
-                header_lines = parts.next().unwrap().parse::<u8>().unwrap()
+                header_lines = remove_quote(parts.next().unwrap()).parse::<u8>().unwrap()
             }
-            "--column" => column = Some(parts.next().unwrap().parse::<u8>().unwrap()),
-            "--delimiter" => delimiter = Some(parts.next().unwrap().to_string()),
+            "--column" => column = Some(remove_quote(parts.next().unwrap()).parse::<u8>().unwrap()),
+            "--delimiter" => delimiter = Some(remove_quote(parts.next().unwrap()).to_string()),
             _ => (),
         }
     }
@@ -134,8 +138,11 @@ fn read_file(
 pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMap<String, Value> {
     let mut variables: HashMap<String, Value> = HashMap::new();
 
-    let fallback = filesystem::pathbuf_to_string(filesystem::cheat_pathbuf().unwrap());
-    let folders_str = config.path.as_ref().unwrap_or(&fallback);
+    let mut fallback: String = String::from("");
+    let folders_str = config.path.as_ref().unwrap_or_else(|| {
+        fallback = filesystem::pathbuf_to_string(filesystem::cheat_pathbuf().unwrap());
+        &fallback
+    });
     let folders = folders_str.split(':');
 
     for folder in folders {
