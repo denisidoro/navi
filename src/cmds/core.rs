@@ -92,8 +92,9 @@ fn prompt_with_suggestions(config: &Config, suggestion: &cheat::Value) -> String
     if let Some(c) = column {
         let re = regex::Regex::new(delimiter).unwrap();
         let mut parts = re.split(output.as_str());
-        for _ in 0..(c - 1) {
-            parts.next().unwrap();
+        format!("re {:#?}", re);
+        for i in 0..(c - 1) {
+            format!("part {}: {}", i, parts.next().unwrap());
         }
         parts.next().unwrap().to_string()
     } else {
