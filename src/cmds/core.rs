@@ -42,13 +42,16 @@ fn extract_from_selections(raw_output: &str, contains_key: bool) -> (&str, &str,
     } else {
         "enter"
     };
+
     let mut parts = lines.next().unwrap().split(display::DELIMITER);
     parts.next();
     parts.next();
     parts.next();
-    let tags = parts.next().unwrap();
+
+    let tags = parts.next().unwrap_or("");
     parts.next();
-    let snippet = parts.next().unwrap();
+
+    let snippet = parts.next().unwrap_or("");
     (key, tags, snippet)
 }
 
