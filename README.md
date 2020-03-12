@@ -6,7 +6,7 @@ An interactive cheatsheet tool for the command-line.
 
 ![Demo](https://user-images.githubusercontent.com/3226564/76437136-ddc35900-6397-11ea-823c-d2da7615fe60.gif)
 
-**navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands, with argument values prompted to you.
+**navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands, with argument values prompted to you. It uses [fzf](https://github.com/junegunn/fzf) under the hood.
 
 It can be either used as a command or as a shell widget (*à la* Ctrl-R).
 
