@@ -43,9 +43,7 @@ fn extract_from_selections(raw_output: &str, contains_key: bool) -> (&str, &str,
         "enter"
     };
 
-    let mut parts = lines.next()
-        .unwrap()
-        .split(display::DELIMITER);
+    let mut parts = lines.next().unwrap().split(display::DELIMITER);
     parts.next();
     parts.next();
     parts.next();
