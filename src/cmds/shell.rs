@@ -9,7 +9,11 @@ pub fn main(shell: &str) -> Result<(), Box<dyn Error>> {
         _ => "navi.plugin.bash",
     };
 
-    println!("{}/{}", filesystem::pathbuf_to_string(filesystem::shell_pathbuf()), file);
+    println!(
+        "{}/{}",
+        filesystem::pathbuf_to_string(filesystem::shell_pathbuf()),
+        file
+    );
 
     Ok(())
 }

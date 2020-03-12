@@ -144,11 +144,7 @@ pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMa
                 let path_os_str = path.unwrap().path().into_os_string();
                 let path_str = path_os_str.to_str().unwrap();
                 if path_str.clone().ends_with(".cheat") {
-                    read_file(
-                        path_str,
-                        &mut variables,
-                        stdin,
-                    );
+                    read_file(path_str, &mut variables, stdin);
                 }
             }
         }

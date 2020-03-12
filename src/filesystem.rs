@@ -1,8 +1,8 @@
 use std::fs;
+use std::fs::metadata;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, Lines};
 use std::path::{Path, PathBuf};
-use std::fs::metadata;
 
 pub fn read_lines<P>(filename: P) -> io::Result<Lines<BufReader<File>>>
 where
@@ -13,11 +13,7 @@ where
 }
 
 pub fn pathbuf_to_string(pathbuf: PathBuf) -> String {
-    pathbuf
-    .as_os_str()
-    .to_str()
-    .unwrap()
-    .to_string()
+    pathbuf.as_os_str().to_str().unwrap().to_string()
 }
 
 fn follow_symlink(pathbuf: PathBuf) -> PathBuf {
@@ -51,10 +47,10 @@ pub fn cheat_pathbuf() -> Option<PathBuf> {
         let p = format!("{}/{}", exe_parent_str, elem);
         let meta = metadata(&p);
         if let Ok(m) = meta {
-        if m.is_dir() {
-            return Some(PathBuf::from(p));
-        } 
-    }
+            if m.is_dir() {
+                return Some(PathBuf::from(p));
+            }
+        }
     }
 
     None
@@ -62,7 +58,7 @@ pub fn cheat_pathbuf() -> Option<PathBuf> {
 
 pub fn shell_pathbuf() -> PathBuf {
     let cheat_path_str = pathbuf_to_string(cheat_pathbuf().unwrap());
-    PathBuf::from(format!("{}/../shell", cheat_path_str)) 
+    PathBuf::from(format!("{}/../shell", cheat_path_str))
 }
 
 pub fn exe_string() -> String {
