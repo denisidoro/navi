@@ -134,22 +134,18 @@ fn read_file(
 pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMap<String, Value> {
     let mut variables: HashMap<String, Value> = HashMap::new();
 
-    let current_exe = filesystem::exe_path_string();
-    let fallback = format!(
-        "{path}/cheats:{path}/../cheats:{path}/../../cheats:{path}/../libexec/cheats",
-        path = current_exe
-    );
+    let fallback = filesystem::pathbuf_to_string(filesystem::cheat_pathbuf().unwrap());
     let folders_str = config.path.as_ref().unwrap_or(&fallback);
     let folders = folders_str.split(':');
 
     for folder in folders {
         if let Ok(paths) = fs::read_dir(folder) {
             for path in paths {
-                read_file(
-                    path.unwrap().path().into_os_string().to_str().unwrap(),
-                    &mut variables,
-                    stdin,
-                );
+                let path_os_str = path.unwrap().path().into_os_string();
+                let path_str = path_os_str.to_str().unwrap();
+                if path_str.ends_with(".cheat") {
+                    read_file(path_str, &mut variables, stdin);
+                }
             }
         }
     }
