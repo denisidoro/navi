@@ -68,6 +68,7 @@ fn prompt_with_suggestions(config: &Config, suggestion: &cheat::Value) -> String
     let mut opts = fzf::Opts {
         preview: false,
         autoselect: !config.no_autoselect,
+        overrides: config.fzf_overrides_var.as_ref(),
         ..Default::default()
     };
 
