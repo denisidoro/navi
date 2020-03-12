@@ -8,7 +8,7 @@ An interactive cheatsheet tool for the command-line.
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands, with argument values prompted to you.
 
-It can be either used as a command or a as shell widget (*à la* Ctrl-R).
+It can be either used as a command or as a shell widget (*à la* Ctrl-R).
 
 Table of contents
 -----------------
