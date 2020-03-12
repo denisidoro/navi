@@ -4,14 +4,19 @@ set -euo pipefail
 export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 source "${NAVI_HOME}/scripts/install"
 
+cd "$NAVI_HOME"
+
 header "Cargo nighly fix..."
-cargo +nightly fix --clippy -Z unstable-options 2> /dev/null || true
+cargo +nightly fix --clippy -Z unstable-options || true
 
 header "Cargo fix..."
-cargo fix 2> /dev/null || true
+cargo fix || true
 
 header "Cargo fmt..."
-cargo fmt 2> /dev/null || true
+cargo fmt || true
 
 header "dot code beautify..."
-find scripts -type f | xargs -I% dot code beautify 2> /dev/null || true
+find scripts -type f | xargs -I% dot code beautify % || true
+
+header "clippy..."
+cargo clippy || true

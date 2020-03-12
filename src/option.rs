@@ -34,12 +34,13 @@ pub struct Config {
     #[structopt(long)]
     pub no_preview: bool,
 
-    // #[structopt(long)]
-    // pub col_widths: Option<String>,
-    /// Overrides for fzf commands (must start with an empty space)
-    #[structopt(long)]
-    #[structopt(long)]
+    /// FZF overrides for cheat selection  (must start with an empty space)
+    #[structopt(long, env = "NAVI_FZF_OVERRIDES")]
     pub fzf_overrides: Option<String>,
+
+    /// FZF overrides for variable selection  (must start with an empty space)
+    #[structopt(long, env = "NAVI_FZF_OVERRIDES_VAR")]
+    pub fzf_overrides_var: Option<String>,
 
     #[structopt(subcommand)]
     pub cmd: Option<Command>,
