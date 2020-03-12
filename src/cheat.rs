@@ -138,7 +138,7 @@ fn read_file(
 pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMap<String, Value> {
     let mut variables: HashMap<String, Value> = HashMap::new();
 
-    let mut fallback: String = String::from(""); 
+    let mut fallback: String = String::from("");
     let folders_str = config.path.as_ref().unwrap_or_else(|| {
         fallback = filesystem::pathbuf_to_string(filesystem::cheat_pathbuf().unwrap());
         &fallback
