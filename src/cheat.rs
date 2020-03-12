@@ -136,9 +136,11 @@ pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMa
 
     let fallback = filesystem::pathbuf_to_string(filesystem::cheat_pathbuf().unwrap_or("".into()));
     let folders_str = config.path.as_ref().unwrap_or(&fallback);
-    let mut folders: Vec<&str> = folders_str.split(':').collect();
+    let mut folders: Vec<String> = folders_str.split(':').map(|s| s.into()).collect();
     if !config.no_bundled_cheats {
-        folders.push(filesystem::BUNDLED_CHEAT_DIR);
+        if let Some(bundled_dir) = filesystem::bundled_cheat_pathbuf() {
+            folders.push(filesystem::pathbuf_to_string(bundled_dir));
+        }
     }
 
     for folder in folders {

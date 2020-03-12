@@ -4,9 +4,6 @@ use std::fs::File;
 use std::io::{self, BufRead, BufReader, Lines};
 use std::path::{Path, PathBuf};
 
-pub const BUNDLED_CHEAT_DIR: &'static str = "/usr/share/navi/cheats";
-pub const SHELL_PLUGIN_DIR: &'static str = "/usr/share/navi/shell";
-
 pub fn read_lines<P>(filename: P) -> io::Result<Lines<BufReader<File>>>
 where
     P: AsRef<Path>,
@@ -41,6 +38,28 @@ pub fn cheat_pathbuf() -> Option<PathBuf> {
     match dirs::config_dir() {
         Some(mut d) => {
             d.push("navi");
+            Some(d)
+        }
+        None => None,
+    }
+}
+
+pub fn bundled_cheat_pathbuf() -> Option<PathBuf> {
+    match dirs::data_dir() {
+        Some(mut d) => {
+            d.push("navi");
+            d.push("cheats");
+            Some(d)
+        }
+        None => None,
+    }
+}
+
+pub fn shell_pathbuf() -> Option<PathBuf> {
+    match dirs::data_dir() {
+        Some(mut d) => {
+            d.push("navi");
+            d.push("shell");
             Some(d)
         }
         None => None,
