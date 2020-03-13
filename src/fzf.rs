@@ -123,7 +123,7 @@ where
 
     let out = child.wait_with_output().unwrap();
 
-    let text = match out.status.code() {
+    let mut text = match out.status.code() {
         Some(0) | Some(1) => String::from_utf8(out.stdout).unwrap(),
         Some(130) => process::exit(130),
         _ => {
@@ -132,6 +132,7 @@ where
             panic!("External command failed:\n {}", err)
         }
     };
+    text.truncate(text.len() - 1);
 
     (text, result)
 }
