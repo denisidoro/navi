@@ -140,7 +140,9 @@ pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMa
 
     let mut fallback: String = String::from("");
     let folders_str = config.path.as_ref().unwrap_or_else(|| {
-        fallback = filesystem::pathbuf_to_string(filesystem::cheat_pathbuf().unwrap());
+        if let Some(f) = filesystem::cheat_pathbuf() {
+            fallback = filesystem::pathbuf_to_string(f);
+        }
         &fallback
     });
     let folders = folders_str.split(':');
