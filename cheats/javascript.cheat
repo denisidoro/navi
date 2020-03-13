@@ -24,7 +24,7 @@ npm install <package_name> -g
 # run a script
 npm run <script>
 
-$ script: cat package.json | python -c "import sys, json; print('\n'.join(json.load(sys.stdin)['scripts'].keys()))"
+$ script: cat package.json | node -p "Object.keys(require('./package.json').scripts).join('\n')"
 
 
 
@@ -51,7 +51,7 @@ yarn global add <package_name>
 # run a script
 yarn run <script>
 
-$ script: cat package.json | python -c "import sys, json; print('\n'.join(json.load(sys.stdin)['scripts'].keys()))"
+$ script: cat package.json | node -p "Object.keys(require('./package.json').scripts).join('\n')"
 
 
 
