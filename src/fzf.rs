@@ -133,6 +133,6 @@ where
         }
     };
     text.truncate(text.len() - 1);
-    
+
     (text, result)
 }

@@ -55,10 +55,14 @@ fn extract_from_selections(raw_output: &str, contains_key: bool) -> (&str, &str,
     (key, tags, snippet)
 }
 
-fn prompt_with_suggestions(config: &Config, suggestion: &cheat::Value, values: &HashMap<String, String>) -> String {
+fn prompt_with_suggestions(
+    config: &Config,
+    suggestion: &cheat::Value,
+    values: &HashMap<String, String>,
+) -> String {
     let mut vars_cmd = String::from("");
     for (k, v) in values.iter() {
-        vars_cmd.push_str(format!("{}=\"{}\"; ", k , v).as_str());
+        vars_cmd.push_str(format!("{}=\"{}\"; ", k, v).as_str());
     }
 
     let cmd = format!("{vars} {cmd}", vars = vars_cmd, cmd = &suggestion.0);
@@ -152,7 +156,8 @@ fn replace_variables_from_snippet(
 
         values.insert(varname.to_string(), value.clone());
 
-        interpolated_snippet = interpolated_snippet.replace(bracketed_varname, gen_replacement(&value[..]).as_str());
+        interpolated_snippet =
+            interpolated_snippet.replace(bracketed_varname, gen_replacement(&value[..]).as_str());
     }
 
     interpolated_snippet
