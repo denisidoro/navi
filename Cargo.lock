@@ -89,7 +89,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "navi"
-version = "2.0.10"
+version = "2.0.9"
 dependencies = [
  "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "raw_tty 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
