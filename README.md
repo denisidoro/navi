@@ -30,6 +30,7 @@ Table of contents
    * [Cheatsheet syntax](#cheatsheet-syntax)
       * [Syntax overview](#syntax-overview)
       * [Variables](#variables)
+      * [Variable dependency](#variable-dependency)
       * [Variable options](#variable-options)
          * [Table formatting](#table-formatting)
          * [Multiple choice](#multiple-choice)
@@ -161,6 +162,17 @@ It's irrelevant how many files are used to store cheatsheets. They can be all in
 The interface prompts for variable names inside brackets (eg `<branch>`).
 
 Variable names should only include alphanumeric characters and `_`.
+
+### Variable dependency
+
+The command for generating possible inputs can refer other variables:
+```sh
+# If you select 2 for x, the possible values of y will be 12 and 22
+echo <x> <y>
+
+$ x: echo -e '1\n2\n3'
+$ y: echo -e "$((x+10))\n$((x+20))"
+```
 
 ### Variable options
 

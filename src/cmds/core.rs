@@ -55,11 +55,18 @@ fn extract_from_selections(raw_output: &str, contains_key: bool) -> (&str, &str,
     (key, tags, snippet)
 }
 
-fn prompt_with_suggestions(config: &Config, suggestion: &cheat::Value) -> String {
+fn prompt_with_suggestions(config: &Config, suggestion: &cheat::Value, values: &HashMap<String, String>) -> String {
+    let mut vars_cmd = String::from("");
+    for (k, v) in values.iter() {
+        vars_cmd.push_str(format!("{}=\"{}\"; ", k , v).as_str());
+    }
+
+    let cmd = format!("{vars} {cmd}", vars = vars_cmd, cmd = &suggestion.0);
+
     let child = Command::new("bash")
         .stdout(Stdio::piped())
         .arg("-c")
-        .arg(&suggestion.0)
+        .arg(cmd)
         .spawn()
         .unwrap();
 
@@ -117,9 +124,9 @@ fn prompt_without_suggestions(varname: &str) -> String {
 
 fn gen_replacement(value: &str) -> String {
     if value.contains(' ') {
-        format!("\"{}\"", &value[..value.len() - 1])
+        format!("\"{}\"", value)
     } else {
-        value[..value.len() - 1].to_string()
+        value.to_string()
     }
 }
 
@@ -130,6 +137,7 @@ fn replace_variables_from_snippet(
     config: &Config,
 ) -> String {
     let mut interpolated_snippet = String::from(snippet);
+    let mut values: HashMap<String, String> = HashMap::new();
 
     let re = Regex::new(r"<(\w[\w\d\-_]*)>").unwrap();
     for cap in re.captures_iter(snippet) {
@@ -138,12 +146,13 @@ fn replace_variables_from_snippet(
         let k = format!("{};{}", tags, varname);
 
         let value = match variables.get(&k[..]) {
-            Some(suggestion) => prompt_with_suggestions(&config, suggestion),
+            Some(suggestion) => prompt_with_suggestions(&config, suggestion, &values),
             None => prompt_without_suggestions(varname),
         };
 
-        interpolated_snippet =
-            interpolated_snippet.replace(bracketed_varname, gen_replacement(&value[..]).as_str());
+        values.insert(varname.to_string(), value.clone());
+
+        interpolated_snippet = interpolated_snippet.replace(bracketed_varname, gen_replacement(&value[..]).as_str());
     }
 
     interpolated_snippet
