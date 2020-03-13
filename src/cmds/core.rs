@@ -56,6 +56,7 @@ fn extract_from_selections(raw_output: &str, contains_key: bool) -> (&str, &str,
 }
 
 fn prompt_with_suggestions(
+    varname: &str,
     config: &Config,
     suggestion: &cheat::Value,
     values: &HashMap<String, String>,
@@ -80,6 +81,7 @@ fn prompt_with_suggestions(
         preview: false,
         autoselect: !config.no_autoselect,
         overrides: config.fzf_overrides_var.as_ref(),
+        prompt: Some(display::variable_prompt(varname)),
         ..Default::default()
     };
 
@@ -152,7 +154,7 @@ fn replace_variables_from_snippet(
             let k = format!("{};{}", tags, varname);
 
             let value = match variables.get(&k[..]) {
-                Some(suggestion) => prompt_with_suggestions(&config, suggestion, &values),
+                Some(suggestion) => prompt_with_suggestions(varname, &config, suggestion, &values),
                 None => prompt_without_suggestions(varname),
             };
 
