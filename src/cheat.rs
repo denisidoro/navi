@@ -73,7 +73,7 @@ fn read_file(
     path: &str,
     variables: &mut HashMap<String, Value>,
     stdin: &mut std::process::ChildStdin,
-) {
+) -> bool {
     let mut tags = String::from("");
     let mut comment = String::from("");
     let mut snippet = String::from("");
@@ -132,11 +132,25 @@ fn read_file(
                 }
             }
         }
+
+        return true;
     }
+
+    false
+}
+
+fn add_msg(
+    tag: &str,
+    comment: &str,
+    snippet: &str,
+    stdin: &mut std::process::ChildStdin,
+) {
+   stdin.write_all(display::format_line(tag, comment, snippet, 25, 60).as_bytes() ).unwrap();
 }
 
 pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMap<String, Value> {
     let mut variables: HashMap<String, Value> = HashMap::new();
+    let mut found_something = false;
 
     let mut fallback: String = String::from("");
     let folders_str = config.path.as_ref().unwrap_or_else(|| {
@@ -152,11 +166,17 @@ pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMa
             for path in paths {
                 let path_os_str = path.unwrap().path().into_os_string();
                 let path_str = path_os_str.to_str().unwrap();
-                if path_str.ends_with(".cheat") {
-                    read_file(path_str, &mut variables, stdin);
+                if path_str.ends_with(".cheat") && read_file(path_str, &mut variables, stdin) {
+                    found_something = true;
                 }
             }
         }
+    }
+
+    if !found_something {
+        add_msg("Cheatsheets", "Download default cheatsheets", "navi repo add default", stdin);
+        add_msg("Cheatsheets", "Browse for cheatsheets to install", "navi repo browse", stdin);
+        add_msg("Shell", "Install shell widget", "navi shell install", stdin);
     }
 
     variables
