@@ -139,13 +139,10 @@ fn read_file(
     false
 }
 
-fn add_msg(
-    tag: &str,
-    comment: &str,
-    snippet: &str,
-    stdin: &mut std::process::ChildStdin,
-) {
-   stdin.write_all(display::format_line(tag, comment, snippet, 25, 60).as_bytes() ).unwrap();
+fn add_msg(tag: &str, comment: &str, snippet: &str, stdin: &mut std::process::ChildStdin) {
+    stdin
+        .write_all(display::format_line(tag, comment, snippet, 25, 60).as_bytes())
+        .unwrap();
 }
 
 pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMap<String, Value> {
@@ -174,8 +171,18 @@ pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMa
     }
 
     if !found_something {
-        add_msg("Cheatsheets", "Download default cheatsheets", "navi repo add default", stdin);
-        add_msg("Cheatsheets", "Browse for cheatsheets to install", "navi repo browse", stdin);
+        add_msg(
+            "Cheatsheets",
+            "Download default cheatsheets",
+            "navi repo add default",
+            stdin,
+        );
+        add_msg(
+            "Cheatsheets",
+            "Browse for cheatsheets to install",
+            "navi repo browse",
+            stdin,
+        );
         add_msg("Shell", "Install shell widget", "navi shell install", stdin);
     }
 
