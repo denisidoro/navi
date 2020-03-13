@@ -21,6 +21,38 @@ npm install <package_name> --save-dev
 # install globally a specified package
 npm install <package_name> -g
 
+# run a script
+npm run <script>
+
+$ script: cat package.json | python -c "import sys, json; print('\n'.join(json.load(sys.stdin)['scripts'].keys()))"
+
+
+
+% yarn, node, js
+
+# initial new package
+yarn init
+
+# install all dependencies packages
+yarn install
+
+# install all dev dependencies packages
+yarn install --save-dev
+
+# install a specified package
+yarn add <package_name>
+
+# install a specified dev package
+yarn add <package_name> --dev
+
+# install globally a specified package
+yarn global add <package_name>
+
+# run a script
+yarn run <script>
+
+$ script: cat package.json | python -c "import sys, json; print('\n'.join(json.load(sys.stdin)['scripts'].keys()))"
+
 
 
 % nvm, node, js
