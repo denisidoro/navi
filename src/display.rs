@@ -1,11 +1,13 @@
 use crate::terminal;
+
 use termion::color;
+use std::cmp::max;
 
 static COMMENT_COLOR: color::LightCyan = color::LightCyan;
-static TAG_COLOR: color::LightGreen = color::LightGreen;
+static TAG_COLOR: color::Blue = color::Blue;
 static SNIPPET_COLOR: color::White = color::White;
 
-pub static DELIMITER: char = '\t';
+pub static DELIMITER: &str = r"  ⠀";
 
 lazy_static! {
     pub static ref WIDTHS: (usize, usize) = get_widths();
@@ -13,8 +15,8 @@ lazy_static! {
 
 fn get_widths() -> (usize, usize) {
     let width = terminal::width();
-    let tag_width = width * 10 / 100;
-    let comment_width = width * 50 / 100;
+    let tag_width = max(4, width * 20 / 100);
+    let comment_width = max(4, width * 40 / 100);
     (usize::from(tag_width), usize::from(comment_width))
 }
 
