@@ -1,7 +1,7 @@
 use crate::terminal;
 
-use termion::color;
 use std::cmp::max;
+use termion::color;
 
 static COMMENT_COLOR: color::LightCyan = color::LightCyan;
 static TAG_COLOR: color::Blue = color::Blue;
