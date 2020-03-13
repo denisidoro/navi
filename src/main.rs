@@ -28,7 +28,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     }
                     Command::Search { query } => cmds::search::main(query.clone(), config),
                     Command::Widget { shell } => cmds::shell::main(&shell[..]),
-                    Command::Func { func, args } => cmds::func::main(func.clone(), args.to_vec()),
+                    Command::Fn { func, args } => cmds::func::main(func.clone(), args.to_vec()),
                     Command::Home => cmds::home::main(),
                 },
             }

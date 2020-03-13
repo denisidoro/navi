@@ -57,7 +57,7 @@ pub enum Command {
     /// Autoselects the snippet that best matches the query
     Best { query: String, args: Vec<String> },
     /// Performs ad-hoc functions provided by navi
-    Func { func: String, args: Vec<String> },
+    Fn { func: String, args: Vec<String> },
     /// Shows the path for shell widget files
     Widget { shell: String },
 }
