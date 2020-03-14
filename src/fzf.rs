@@ -14,6 +14,7 @@ pub struct Opts<'a> {
     pub autoselect: bool,
     pub overrides: Option<&'a String>, // TODO: remove &'a
     pub header_lines: u8,
+    pub header: Option<String>,
     pub multi: bool,
     pub copyable: bool,
     pub suggestions: bool,
@@ -28,6 +29,7 @@ impl Default for Opts<'_> {
             autoselect: true,
             overrides: None,
             header_lines: 0,
+            header: None,
             prompt: None,
             multi: false,
             copyable: false,
@@ -80,6 +82,10 @@ where
 
     if let Some(f) = opts.filter {
         c.args(&["--filter", &f]);
+    }
+    
+    if let Some(h) = opts.header {
+        c.args(&["--header", &h]);
     }
 
     if let Some(p) = opts.prompt {
