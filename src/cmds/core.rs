@@ -176,11 +176,11 @@ fn replace_variables_from_snippet(
 pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Box<dyn Error>> {
     let _ = display::WIDTHS;
 
-    let (raw_snippet, variables) = fzf::call(gen_core_fzf_opts(variant, &config), |stdin| {
+    let (raw_selection, variables) = fzf::call(gen_core_fzf_opts(variant, &config), |stdin| {
         Some(cheat::read_all(&config, stdin))
     });
 
-    let (key, tags, snippet) = extract_from_selections(&raw_snippet[..], contains_key);
+    let (key, tags, snippet) = extract_from_selections(&raw_selection[..], contains_key);
     let interpolated_snippet =
         replace_variables_from_snippet(snippet, tags, variables.unwrap(), &config);
 

@@ -1,5 +1,2 @@
 /target
 **/*.rs.bk
-
-# intellij
-.idea

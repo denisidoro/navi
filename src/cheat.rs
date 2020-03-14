@@ -82,9 +82,8 @@ fn parse_variable_line(line: &str) -> (&str, &str, Option<SuggestionOpts>) {
     let caps = re.captures(line).unwrap();
     let variable = caps.get(1).unwrap().as_str().trim();
     let mut command_plus_opts = caps.get(2).unwrap().as_str().split("---");
-    let command: &str = command_plus_opts.next().unwrap();
-    let command_option_string: Option<&str> = command_plus_opts.next();
-    let command_options = command_option_string.map(parse_opts);
+    let command = command_plus_opts.next().unwrap();
+    let command_options = command_plus_opts.next().map(parse_opts);
     (variable, command, command_options)
 }
 
@@ -217,7 +216,7 @@ mod tests {
         result.insert(
             "ssh;user".to_string(),
             (
-                " echo -e \"$(whoami)\\nroot\" ".to_string(),
+                r#" echo -e "$(whoami)\nroot" "#.to_string(),
                 Some(SuggestionOpts {
                     header_lines: 0,
                     column: None,

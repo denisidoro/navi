@@ -177,10 +177,10 @@ $ y: echo -e "$((x+10))\n$((x+20))"
 ### Variable options
 
 For lines starting with `$` you can add use`---` to parse parameters to `fzf`.
-* `--allow-extra` : handles `fzf` option `--print-query`. `enter` will prefer a selection,
-    `tab` will prefer the query typed.
+* `--allow-extra` *(experimental)*: handles `fzf` option `--print-query`. `enter` will prefer a selection,
+    `tab` will prefer the query typed. 
 * `--multi` : forwarded option to `fzf`.
-* `--header` | `--headers` | `--header-lines` : forwarded option to `fzf`
+* `--header-lines` : forwarded option to `fzf`
 * `--column` : forwarded option to `fzf`.
 * `--delimiter` : forwarded option to `fzf`.
 
