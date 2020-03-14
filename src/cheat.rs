@@ -88,23 +88,20 @@ fn write_cmd(
     stdin: &mut std::process::ChildStdin,
 ) -> bool {
     if snippet.is_empty() {
-        return true
+        true
+    } else if let Ok(_) = stdin.write_all(
+        display::format_line(
+            &tags[..],
+            &comment[..],
+            &snippet[3..],
+            tag_width,
+            comment_width,
+        )
+        .as_bytes(),
+    ) {
+        true
     } else {
-        if let Ok(_) = stdin
-            .write_all(
-                display::format_line(
-                    &tags[..],
-                    &comment[..],
-                    &snippet[3..],
-                    tag_width,
-                    comment_width,
-                )
-                .as_bytes(),
-            ) {
-                return true;
-            } else {
-                return false;
-            }
+        false
     }
 }
 
@@ -125,7 +122,9 @@ fn read_file(
 
             // tag
             if line.starts_with('%') {
-                if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) { break; }
+                if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
+                    break;
+                }
                 snippet = String::from("");
                 tags = String::from(&line[2..]);
             }
@@ -134,13 +133,17 @@ fn read_file(
             }
             // comment
             else if line.starts_with('#') {
-                if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) { break; }
+                if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
+                    break;
+                }
                 snippet = String::from("");
                 comment = String::from(&line[2..]);
             }
             // variable
             else if line.starts_with('$') {
-                if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) { break; }
+                if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
+                    break;
+                }
                 snippet = String::from("");
                 let (variable, command, opts) = parse_variable_line(&line);
                 variables.insert(
