@@ -10,11 +10,20 @@ use std::io::Write;
 pub struct SuggestionOpts {
     pub header_lines: u8,
     pub column: Option<u8>,
-    pub multi: bool,
     pub delimiter: Option<String>,
+    pub suggestion_type : SuggestionType,
 }
 
-pub type Value = (String, Option<SuggestionOpts>);
+#[derive(PartialEq)]
+pub enum SuggestionType {
+    Disabled,
+    SingleSelection,
+    MultipleSelections,
+    SingleRecommendation,
+    SnippetSelection,
+}
+
+pub type Suggestion = (String, Option<SuggestionOpts>);
 
 fn gen_snippet(snippet: &str, line: &str) -> String {
     if snippet.is_empty() {
@@ -51,8 +60,8 @@ fn parse_opts(text: &str) -> SuggestionOpts {
     SuggestionOpts {
         header_lines,
         column,
-        multi,
         delimiter,
+        suggestion_type: if multi { SuggestionType::MultipleSelections } else { SuggestionType::SingleSelection},
     }
 }
 
@@ -71,7 +80,7 @@ fn parse_variable_line(line: &str) -> (&str, &str, Option<SuggestionOpts>) {
 
 fn read_file(
     path: &str,
-    variables: &mut HashMap<String, Value>,
+    variables: &mut HashMap<String, Suggestion>,
     stdin: &mut std::process::ChildStdin,
 ) {
     let mut tags = String::from("");
@@ -135,8 +144,8 @@ fn read_file(
     }
 }
 
-pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMap<String, Value> {
-    let mut variables: HashMap<String, Value> = HashMap::new();
+pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMap<String, Suggestion> {
+    let mut variables: HashMap<String, Suggestion> = HashMap::new();
 
     let mut fallback: String = String::from("");
     let folders_str = config.path.as_ref().unwrap_or_else(|| {

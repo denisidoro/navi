@@ -10,6 +10,7 @@ use std::error::Error;
 use std::fs;
 use std::io::Write;
 use std::process::{Command, Stdio};
+use crate::cheat::SuggestionType;
 
 pub enum Variant {
     Core,
@@ -22,7 +23,7 @@ fn gen_core_fzf_opts(variant: Variant, config: &Config) -> fzf::Opts {
         preview: !config.no_preview,
         autoselect: !config.no_autoselect,
         overrides: config.fzf_overrides.as_ref(),
-        copyable: true,
+        suggestion_type: SuggestionType::SnippetSelection,
         ..Default::default()
     };
 
@@ -58,15 +59,15 @@ fn extract_from_selections(raw_snippet: &str, contains_key: bool) -> (&str, &str
 fn prompt_with_suggestions(
     varname: &str,
     config: &Config,
-    suggestion: &cheat::Value,
+    suggestion: &cheat::Suggestion,
     values: &HashMap<String, String>,
 ) -> String {
     let mut vars_cmd = String::from("");
     for (key, value) in values.iter() {
         vars_cmd.push_str(format!("{}=\"{}\"; ", key, value).as_str());
     }
-
-    let command = format!("{vars} {cmd}", vars = vars_cmd, cmd = &suggestion.0);
+    let(suggestion_command, suggestion_options) = &suggestion;
+    let command = format!("{} {}", vars_cmd, suggestion_command);
 
     let child = Command::new("bash")
         .stdout(Stdio::piped())
@@ -88,8 +89,8 @@ fn prompt_with_suggestions(
     let mut column: Option<u8> = None;
     let mut delimiter = r"\s\s+";
 
-    if let Some(o) = &suggestion.1 {
-        opts.multi = o.multi;
+    if let Some(o) = &suggestion_options {
+        opts.suggestion_type = if o.suggestion_type == SuggestionType::Disabled { SuggestionType::SingleSelection} else { SuggestionType::SingleSelection};
         opts.header_lines = o.header_lines;
         column = o.column;
         if let Some(d) = o.delimiter.as_ref() {
@@ -114,12 +115,12 @@ fn prompt_with_suggestions(
     }
 }
 
-fn prompt_without_suggestions(varname: &str) -> String {
+fn prompt_without_suggestions(variable_name: &str) -> String {
     let opts = fzf::Opts {
         preview: false,
         autoselect: false,
-        suggestions: false,
-        prompt: Some(display::variable_prompt(varname)),
+        prompt: Some(display::variable_prompt(variable_name)),
+        suggestion_type : SuggestionType::Disabled,
         ..Default::default()
     };
 
@@ -139,7 +140,7 @@ fn gen_replacement(value: &str) -> String {
 fn replace_variables_from_snippet(
     snippet: &str,
     tags: &str,
-    variables: HashMap<String, cheat::Value>,
+    variables: HashMap<String, cheat::Suggestion>,
     config: &Config,
 ) -> String {
     let mut interpolated_snippet = String::from(snippet);
