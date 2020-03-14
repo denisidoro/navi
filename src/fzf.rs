@@ -35,6 +35,9 @@ impl Default for Opts<'_> {
             header: None,
             prompt: None,
             suggestion_type: SingleSelection,
+            copyable: false,
+            multi: false,
+            suggestions: false
         }
     }
 }
@@ -94,7 +97,7 @@ where
     }
     
     if let Some(h) = opts.header {
-        c.args(&["--header", &h]);
+        fzf_command.args(&["--header", &h]);
     }
 
     if let Some(p) = opts.prompt {
