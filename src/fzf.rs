@@ -139,18 +139,12 @@ where
 
 fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> String {
     match suggestion_type {
-        SuggestionType::SingleSelection => {
-            return text.lines().next().unwrap().to_string();
-        }
-        SuggestionType::MultipleSelections => {
-            return text.clone();
-        }
-        SuggestionType::Disabled => {
-            return "".to_string();
-        }
-        SuggestionType::SnippetSelection => {
+        SuggestionType::SingleSelection => text.lines().next().unwrap().to_string(),
+        SuggestionType::MultipleSelections
+        | SuggestionType::Disabled
+        | SuggestionType::SnippetSelection => {
             text.truncate(text.len() - 1);
-            return text;
+            text
         }
         SuggestionType::SingleRecommendation => {
             let lines: Vec<&str> = text.lines().collect();

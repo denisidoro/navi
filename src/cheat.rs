@@ -17,10 +17,15 @@ pub struct SuggestionOpts {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum SuggestionType {
+    /// fzf will not print any suggestions.
     Disabled,
+    /// fzf will only select one of the suggestions
     SingleSelection,
+    /// fzf will select multiple ones of the suggestions
     MultipleSelections,
+    /// fzf will select one of the suggestions or use the Query
     SingleRecommendation,
+    /// initial snippet selection
     SnippetSelection,
 }
 
@@ -60,7 +65,7 @@ fn parse_opts(text: &str) -> SuggestionOpts {
         }
     }
 
-    let result = SuggestionOpts {
+    SuggestionOpts {
         header_lines,
         column,
         delimiter,
@@ -69,8 +74,7 @@ fn parse_opts(text: &str) -> SuggestionOpts {
             (false, true) => SuggestionType::SingleRecommendation,
             (false, false) => SuggestionType::SingleSelection,
         },
-    };
-    result
+    }
 }
 
 fn parse_variable_line(line: &str) -> (&str, &str, Option<SuggestionOpts>) {
