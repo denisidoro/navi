@@ -8,3 +8,13 @@ echo "8.8.8.8 via 172.17.0.1 dev eth0  src 172.17.0.2" | sed -E 's/.*src ([0-9.]
 
 # simple echo
 echo "foo"
+
+# multiline command without backslash
+echo "foo"
+echo "bar"
+
+# multiline command with backslash
+echo "foo" \
+    | grep -q "bar" \
+    && echo "match" \
+    || echo "no match"

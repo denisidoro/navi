@@ -157,6 +157,15 @@ $ branch: git branch | awk '{print $NF}'
 
 It's irrelevant how many files are used to store cheatsheets. They can be all in a single file if you wish, as long as you split them accordingly with lines starting with `%`.
 
+Commands may be multiline:
+```sh
+# This will output foo\nyes
+echo foo
+echo bar | grep q -b \
+   && echo yes \
+   || echo no
+```
+
 ### Variables
 
 The interface prompts for variable names inside brackets (eg `<branch>`).

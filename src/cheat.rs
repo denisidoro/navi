@@ -31,14 +31,6 @@ pub enum SuggestionType {
 
 pub type Suggestion = (String, Option<SuggestionOpts>);
 
-fn gen_snippet(snippet: &str, line: &str) -> String {
-    if snippet.is_empty() {
-        line.to_string()
-    } else {
-        format!("{}{}", &snippet[..snippet.len() - 2], line)
-    }
-}
-
 fn remove_quote(txt: &str) -> String {
     txt.replace('"', "").replace('\'', "")
 }
@@ -87,6 +79,32 @@ fn parse_variable_line(line: &str) -> (&str, &str, Option<SuggestionOpts>) {
     (variable, command, command_options)
 }
 
+fn write_cmd(
+    tags: &str,
+    comment: &str,
+    snippet: &str,
+    tag_width: usize,
+    comment_width: usize,
+    stdin: &mut std::process::ChildStdin,
+) -> bool {
+    if snippet.is_empty() {
+        true
+    } else {
+        stdin
+            .write_all(
+                display::format_line(
+                    &tags[..],
+                    &comment[..],
+                    &snippet[3..],
+                    tag_width,
+                    comment_width,
+                )
+                .as_bytes(),
+            )
+            .is_ok()
+    }
+}
+
 fn read_file(
     path: &str,
     variables: &mut HashMap<String, Suggestion>,
@@ -104,6 +122,10 @@ fn read_file(
 
             // tag
             if line.starts_with('%') {
+                if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
+                    break;
+                }
+                snippet = String::from("");
                 tags = String::from(&line[2..]);
             }
             // metacomment
@@ -111,46 +133,36 @@ fn read_file(
             }
             // comment
             else if line.starts_with('#') {
+                if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
+                    break;
+                }
+                snippet = String::from("");
                 comment = String::from(&line[2..]);
             }
             // variable
             else if line.starts_with('$') {
+                if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
+                    break;
+                }
+                snippet = String::from("");
                 let (variable, command, opts) = parse_variable_line(&line);
                 variables.insert(
                     format!("{};{}", tags, variable),
                     (String::from(command), opts),
                 );
             }
-            // snippet with line break
-            else if line.ends_with('\\') {
-                snippet = if !snippet.is_empty() {
-                    format!("{}{}", &snippet[..snippet.len() - 2], line)
-                } else {
-                    line
-                }
-            }
             // blank
             else if line.is_empty() {
             }
             // snippet
             else {
-                let full_snippet = gen_snippet(&snippet, &line);
-                match stdin.write_all(
-                    display::format_line(
-                        &tags[..],
-                        &comment[..],
-                        &full_snippet[..],
-                        tag_width,
-                        comment_width,
-                    )
-                    .as_bytes(),
-                ) {
-                    Ok(_) => snippet = String::from(""),
-                    Err(_) => break,
-                }
+                snippet.push_str(display::LINE_SEPARATOR);
+                snippet.push_str(&line);
             }
         }
     }
+
+    write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin);
 }
 
 pub fn read_all(
