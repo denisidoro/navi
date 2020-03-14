@@ -120,8 +120,11 @@ fn read_file(
         for l in lines {
             let line = l.unwrap();
 
+            // blank
+            if line.is_empty() {
+            }
             // tag
-            if line.starts_with('%') {
+            else if line.starts_with('%') {
                 if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
                     break;
                 }
@@ -150,9 +153,6 @@ fn read_file(
                     format!("{};{}", tags, variable),
                     (String::from(command), opts),
                 );
-            }
-            // blank
-            else if line.is_empty() {
             }
             // snippet
             else {
