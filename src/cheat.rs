@@ -89,7 +89,7 @@ fn write_cmd(
 ) -> bool {
     if snippet.is_empty() {
         true
-    } else if let Ok(_) = stdin.write_all(
+    } else if stdin.write_all(
         display::format_line(
             &tags[..],
             &comment[..],
@@ -97,8 +97,7 @@ fn write_cmd(
             tag_width,
             comment_width,
         )
-        .as_bytes(),
-    ) {
+        .as_bytes()).is_ok() {
         true
     } else {
         false
