@@ -89,18 +89,19 @@ fn write_cmd(
 ) -> bool {
     if snippet.is_empty() {
         true
-    } else if stdin.write_all(
-        display::format_line(
-            &tags[..],
-            &comment[..],
-            &snippet[3..],
-            tag_width,
-            comment_width,
-        )
-        .as_bytes()).is_ok() {
-        true
     } else {
-        false
+        stdin
+            .write_all(
+                display::format_line(
+                    &tags[..],
+                    &comment[..],
+                    &snippet[3..],
+                    tag_width,
+                    comment_width,
+                )
+                .as_bytes(),
+            )
+            .is_ok()
     }
 }
 
