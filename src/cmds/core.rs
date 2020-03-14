@@ -90,7 +90,7 @@ fn prompt_with_suggestions(
     let mut delimiter = r"\s\s+";
 
     if let Some(o) = &suggestion_options {
-        opts.suggestion_type = if o.suggestion_type == SuggestionType::Disabled { SuggestionType::SingleSelection} else { SuggestionType::SingleSelection};
+        opts.suggestion_type = o.suggestion_type;
         opts.header_lines = o.header_lines;
         column = o.column;
         if let Some(d) = o.delimiter.as_ref() {

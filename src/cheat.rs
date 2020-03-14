@@ -7,6 +7,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::io::Write;
 
+#[derive(Debug, PartialEq)]
 pub struct SuggestionOpts {
     pub header_lines: u8,
     pub column: Option<u8>,
@@ -14,7 +15,7 @@ pub struct SuggestionOpts {
     pub suggestion_type : SuggestionType,
 }
 
-#[derive(PartialEq)]
+#[derive(Clone,Copy,Debug,PartialEq)]
 pub enum SuggestionType {
     Disabled,
     SingleSelection,
@@ -41,6 +42,7 @@ fn parse_opts(text: &str) -> SuggestionOpts {
     let mut header_lines: u8 = 0;
     let mut column: Option<u8> = None;
     let mut multi = false;
+    let mut allow_extra = false;
     let mut delimiter: Option<String> = None;
 
     let mut parts = text.split(' ');
@@ -48,6 +50,7 @@ fn parse_opts(text: &str) -> SuggestionOpts {
     while let Some(p) = parts.next() {
         match p {
             "--multi" => multi = true,
+            "--allow-extra" => allow_extra = true,
             "--header" | "--headers" | "--header-lines" => {
                 header_lines = remove_quote(parts.next().unwrap()).parse::<u8>().unwrap()
             }
@@ -57,12 +60,18 @@ fn parse_opts(text: &str) -> SuggestionOpts {
         }
     }
 
-    SuggestionOpts {
+    let result = SuggestionOpts {
         header_lines,
         column,
         delimiter,
-        suggestion_type: if multi { SuggestionType::MultipleSelections } else { SuggestionType::SingleSelection},
-    }
+        suggestion_type: match (multi, allow_extra) {
+            (true,_) =>  SuggestionType::MultipleSelections , // multi wins over allow-extra
+            (false,true) => SuggestionType::SingleRecommendation,
+            (false,false) => SuggestionType::SingleSelection
+        },
+    };
+    result
+
 }
 
 fn parse_variable_line(line: &str) -> (&str, &str, Option<SuggestionOpts>) {
@@ -70,12 +79,10 @@ fn parse_variable_line(line: &str) -> (&str, &str, Option<SuggestionOpts>) {
     let caps = re.captures(line).unwrap();
     let variable = caps.get(1).unwrap().as_str().trim();
     let mut command_plus_opts = caps.get(2).unwrap().as_str().split("---");
-    let command = command_plus_opts.next().unwrap();
-    let opts = match command_plus_opts.next() {
-        Some(o) => Some(parse_opts(o)),
-        None => None,
-    };
-    (variable, command, opts)
+    let command : &str = command_plus_opts.next().unwrap();
+    let command_option_string : Option<&str>= command_plus_opts.next();
+    let command_options = command_option_string.map(parse_opts);
+    (variable, command, command_options)
 }
 
 fn read_file(
@@ -106,7 +113,7 @@ fn read_file(
             }
             // variable
             else if line.starts_with('$') {
-                let (variable, command, opts) = parse_variable_line(&line[..]);
+                let (variable, command, opts) = parse_variable_line(&line);
                 variables.insert(
                     format!("{};{}", tags, variable),
                     (String::from(command), opts),
@@ -169,4 +176,47 @@ pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMa
     }
 
     variables
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_variable_line() {
+        let( variable, command, command_options ) = parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --allow-extra" );
+        assert_eq!(command, " echo -e \"$(whoami)\\nroot\" ");
+        assert_eq!(variable, "user");
+        assert_eq!(command_options, Some(SuggestionOpts{
+            header_lines: 0,
+            column: None,
+            delimiter: None,
+            suggestion_type: SuggestionType::SingleRecommendation
+        }));
+
+    }
+    use std::process::{Command, Stdio};
+
+    #[test]
+    fn test_read_file() {
+
+        let path = "tests/cheats/ssh.cheat";
+        let mut variables: HashMap<String, Suggestion> = HashMap::new();
+        let mut child = Command::new("cat")
+            .stdin(Stdio::piped())
+            .spawn().unwrap();
+        let child_stdin = child.stdin.as_mut().unwrap();
+        read_file(
+            path,
+            &mut variables,
+            child_stdin
+        );
+        let mut result : HashMap<String, (String, std::option::Option<_>)> = HashMap::new();
+        result.insert("ssh;user".to_string(),
+                      (" echo -e \"$(whoami)\\nroot\" ".to_string(), Some(SuggestionOpts { header_lines: 0, column: None, delimiter: None, suggestion_type: SuggestionType::SingleRecommendation }))
+        );
+        assert_eq!(variables, result);
+    }
+
+
 }

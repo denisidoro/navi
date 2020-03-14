@@ -16,7 +16,6 @@ pub struct Opts<'a> {
     pub autoselect: bool,
     pub overrides: Option<&'a String>, // TODO: remove &'a
     pub header_lines: u8,
-    pub copyable: bool,
     pub suggestion_type : SuggestionType,
 }
 
@@ -31,7 +30,6 @@ impl Default for Opts<'_> {
             overrides: None,
             header_lines: 0,
             prompt: None,
-            copyable: false,
             suggestion_type: SingleSelection,
         }
     }
@@ -68,9 +66,11 @@ where
         SuggestionType::SnippetSelection =>{
                 fzf_command.args(&["--expect", "ctrl-y,enter"]);
         }
+        SuggestionType::SingleRecommendation =>{
+            fzf_command.args(&["--print-query", "--expect", "tab,enter"]);
+        }
         _ => {}
     }
-
 
     if opts.preview {
         fzf_command.args(&[
@@ -125,7 +125,7 @@ where
 
     let out = child.wait_with_output().unwrap();
 
-    let mut text = match out.status.code() {
+    let text = match out.status.code() {
         Some(0) | Some(1) => String::from_utf8(out.stdout).unwrap(),
         Some(130) => process::exit(130),
         _ => {
@@ -153,13 +153,19 @@ fn parse_output_single(mut text:  String, suggestion_type: SuggestionType) -> St
             return text;
         }
         SuggestionType::SingleRecommendation => {
-            let lines : Vec<&str>= text.lines().collect();
-            match *(lines.get(1).unwrap()) {
-                    input_string if input_string == "enter" =>
-                        return lines.get(2).unwrap().to_string(),
-                    _ =>
-                        return lines.get(0).unwrap().to_string(),
-                }
+            let lines: Vec<&str> = text.lines().collect();
+
+            match (lines.get(0), lines.get(1), lines.get(2)) {
+                (Some(one), Some(termination), Some(two)) if *termination == "enter" =>
+                    if two.is_empty() {
+                        one.to_string()
+                    } else {
+                        two.to_string()
+                    },
+                (Some(one), Some(termination), None)if *termination == "enter" => one.to_string(),
+                (Some(one), Some(termination), _)if *termination == "tab" => one.to_string(),
+                _ => "".to_string(),
+            }
         }
     }
 }
@@ -170,28 +176,49 @@ mod tests {
 
     #[test]
     fn test_parse_output1() {
-        let mut text = "palo\n".to_string();
+        let text = "palo\n".to_string();
         let output = parse_output_single(text, SuggestionType::SingleSelection);
         assert_eq!(output, "palo");
     }
 
     #[test]
     fn test_parse_output2() {
-        let mut text = "\nenter\npalo".to_string();
+        let text = "\nenter\npalo".to_string();
         let output = parse_output_single(text, SuggestionType::SingleRecommendation);
         assert_eq!(output, "palo");
     }
 
     #[test]
+    fn test_parse_recommendation_output_1() {
+        let text = "\nenter\npalo".to_string();
+        let output = parse_output_single(text, SuggestionType::SingleRecommendation);
+        assert_eq!(output, "palo");
+    }
+
+    #[test]
+    fn test_parse_recommendation_output_2() {
+        let text = "p\nenter\npalo".to_string();
+        let output = parse_output_single(text, SuggestionType::SingleRecommendation);
+        assert_eq!(output, "palo");
+    }
+
+    #[test]
+    fn test_parse_recommendation_output_3() {
+        let text = "peter\nenter\n".to_string();
+        let output = parse_output_single(text, SuggestionType::SingleRecommendation);
+        assert_eq!(output, "peter");
+    }
+
+    #[test]
     fn test_parse_output3() {
-        let mut text = "p\ntab\npalo".to_string();
+        let text = "p\ntab\npalo".to_string();
         let output = parse_output_single(text, SuggestionType::SingleRecommendation);
         assert_eq!(output, "p");
     }
 
     #[test]
     fn test_parse_snippet_request() {
-        let mut text = "enter\nssh                     ⠀login to a server and forward to ssh key (d…  ⠀ssh -A <user>@<server>  ⠀ssh  ⠀login to a server and forward to ssh key (dangerous but usefull for bastion hosts)  ⠀ssh -A <user>@<server>  ⠀\n".to_string();
+        let text = "enter\nssh                     ⠀login to a server and forward to ssh key (d…  ⠀ssh -A <user>@<server>  ⠀ssh  ⠀login to a server and forward to ssh key (dangerous but usefull for bastion hosts)  ⠀ssh -A <user>@<server>  ⠀\n".to_string();
         let output = parse_output_single(text, SuggestionType::SnippetSelection);
         assert_eq!(output,     "enter\nssh                     ⠀login to a server and forward to ssh key (d…  ⠀ssh -A <user>@<server>  ⠀ssh  ⠀login to a server and forward to ssh key (dangerous but usefull for bastion hosts)  ⠀ssh -A <user>@<server>  ⠀");
     }
