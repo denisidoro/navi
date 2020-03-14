@@ -14,6 +14,7 @@ pub static DELIMITER: &str = r"  ⠀";
 
 lazy_static! {
     pub static ref WIDTHS: (usize, usize) = get_widths();
+    pub static ref NEWLINE_REGEX: Regex = Regex::new(r"\\\s+").unwrap();
 }
 
 fn get_widths() -> (usize, usize) {
@@ -29,8 +30,8 @@ pub fn variable_prompt(varname: &str) -> String {
 
 fn fix_newlines(txt: &str) -> String {
     if txt.contains(NEWLINE_ESCAPE_CHAR) {
-        let re = Regex::new(r"\\\s+").unwrap();
-        re.replace_all(txt.replace(LINE_SEPARATOR, "  ").as_str(), "")
+        (*NEWLINE_REGEX)
+            .replace_all(txt.replace(LINE_SEPARATOR, "  ").as_str(), "")
             .to_string()
     } else {
         txt.to_string()
