@@ -86,9 +86,11 @@ fn write_cmd(
     tag_width: usize,
     comment_width: usize,
     stdin: &mut std::process::ChildStdin,
-) {
-    if !snippet.is_empty() {
-        stdin
+) -> bool {
+    if snippet.is_empty() {
+        return true
+    } else {
+        if let Ok(_) = stdin
             .write_all(
                 display::format_line(
                     &tags[..],
@@ -98,8 +100,11 @@ fn write_cmd(
                     comment_width,
                 )
                 .as_bytes(),
-            )
-            .unwrap_or_default();
+            ) {
+                return true;
+            } else {
+                return false;
+            }
     }
 }
 
@@ -120,7 +125,7 @@ fn read_file(
 
             // tag
             if line.starts_with('%') {
-                write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin);
+                if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) { break; }
                 snippet = String::from("");
                 tags = String::from(&line[2..]);
             }
@@ -129,13 +134,13 @@ fn read_file(
             }
             // comment
             else if line.starts_with('#') {
-                write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin);
+                if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) { break; }
                 snippet = String::from("");
                 comment = String::from(&line[2..]);
             }
             // variable
             else if line.starts_with('$') {
-                write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin);
+                if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) { break; }
                 snippet = String::from("");
                 let (variable, command, opts) = parse_variable_line(&line);
                 variables.insert(
