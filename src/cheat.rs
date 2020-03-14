@@ -80,9 +80,9 @@ fn parse_variable_line(line: &str) -> (&str, &str, Option<SuggestionOpts>) {
 }
 
 fn write_cmd(
-    tags: &String,
-    comment: &String,
-    snippet: &String,
+    tags: &str,
+    comment: &str,
+    snippet: &str,
     tag_width: usize,
     comment_width: usize,
     stdin: &mut std::process::ChildStdin,
