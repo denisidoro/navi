@@ -1,15 +1,15 @@
 use crate::terminal;
 
+use regex::Regex;
 use std::cmp::max;
 use termion::color;
-use regex::Regex; 
 
 static COMMENT_COLOR: color::LightCyan = color::LightCyan;
 static TAG_COLOR: color::Blue = color::Blue;
 static SNIPPET_COLOR: color::White = color::White;
 
 static NEWLINE_ESCAPE_CHAR: char = '\x15';
-    pub static LINE_SEPARATOR: &'static str = " \x15 ";
+pub static LINE_SEPARATOR: &str = " \x15 ";
 pub static DELIMITER: &str = r"  ⠀";
 
 lazy_static! {
@@ -29,8 +29,9 @@ pub fn variable_prompt(varname: &str) -> String {
 
 fn fix_newlines(txt: &str) -> String {
     if txt.contains(NEWLINE_ESCAPE_CHAR) {
-let re = Regex::new(r"\\\s+").unwrap();
-        re.replace_all(txt.replace(LINE_SEPARATOR, "  ").as_str(), "").to_string()
+        let re = Regex::new(r"\\\s+").unwrap();
+        re.replace_all(txt.replace(LINE_SEPARATOR, "  ").as_str(), "")
+            .to_string()
     } else {
         txt.to_string()
     }

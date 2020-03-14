@@ -174,7 +174,7 @@ fn replace_variables_from_snippet(
 }
 
 fn with_new_lines(txt: String) -> String {
-txt.replace(display::LINE_SEPARATOR, "\n")
+    txt.replace(display::LINE_SEPARATOR, "\n")
 }
 
 pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Box<dyn Error>> {
@@ -185,8 +185,12 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
     });
 
     let (key, tags, snippet) = extract_from_selections(&raw_selection[..], contains_key);
-    let interpolated_snippet =
-        with_new_lines(replace_variables_from_snippet(snippet, tags, variables.unwrap(), &config));
+    let interpolated_snippet = with_new_lines(replace_variables_from_snippet(
+        snippet,
+        tags,
+        variables.unwrap(),
+        &config,
+    ));
 
     if key == "ctrl-y" {
         cmds::aux::abort("copying snippets to the clipboard", 201)?

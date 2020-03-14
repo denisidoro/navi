@@ -87,19 +87,21 @@ fn write_cmd(
     comment_width: usize,
     stdin: &mut std::process::ChildStdin,
 ) {
-        if snippet.len() > 0 {
-                stdin.write_all(
-                    display::format_line(
-                        &tags[..],
-                        &comment[..],
-                        &snippet[3..],
-                        tag_width,
-                        comment_width,
-                    )
-                    .as_bytes(),
-                ).unwrap_or_default();
-            }
-        }
+    if !snippet.is_empty() {
+        stdin
+            .write_all(
+                display::format_line(
+                    &tags[..],
+                    &comment[..],
+                    &snippet[3..],
+                    tag_width,
+                    comment_width,
+                )
+                .as_bytes(),
+            )
+            .unwrap_or_default();
+    }
+}
 
 fn read_file(
     path: &str,
@@ -152,7 +154,7 @@ fn read_file(
         }
     }
 
-                write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin);
+    write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin);
 }
 
 pub fn read_all(
