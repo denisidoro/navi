@@ -30,6 +30,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     Command::Widget { shell } => cmds::shell::main(&shell[..]),
                     Command::Fn { func, args } => cmds::func::main(func.clone(), args.to_vec()),
                     Command::Home => cmds::home::main(),
+                    Command::Repo => cmds::repo::main(),
                 },
             }
         }

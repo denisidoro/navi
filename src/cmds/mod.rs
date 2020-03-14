@@ -7,3 +7,4 @@ pub mod preview;
 pub mod query;
 pub mod search;
 pub mod shell;
+pub mod repo;

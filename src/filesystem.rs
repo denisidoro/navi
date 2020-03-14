@@ -1,8 +1,9 @@
 use std::fs;
-use std::fs::metadata;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, Lines};
 use std::path::{Path, PathBuf};
+
+use dirs;
 
 pub fn read_lines<P>(filename: P) -> io::Result<Lines<BufReader<File>>>
 where
@@ -40,20 +41,14 @@ fn exe_pathbuf() -> PathBuf {
 }
 
 pub fn cheat_pathbuf() -> Option<PathBuf> {
-    let exe_parent_str = exe_parent_string();
-
-    let array = ["cheats", "../libexec/cheats", "../cheats", "../../cheats"];
-    for elem in &array {
-        let p = format!("{}/{}", exe_parent_str, elem);
-        let meta = metadata(&p);
-        if let Ok(m) = meta {
-            if m.is_dir() {
-                return Some(PathBuf::from(p));
-            }
+    match dirs::config_dir() {
+        Some(mut d) => {
+            d.push("navi");
+            d.push("cheats");
+            Some(d)
         }
+        None => None,
     }
-
-    None
 }
 
 pub fn shell_pathbuf() -> PathBuf {
