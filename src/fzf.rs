@@ -40,9 +40,9 @@ pub fn call<F>(opts: Opts, stdin_fn: F) -> (String, Option<HashMap<String, cheat
 where
     F: Fn(&mut process::ChildStdin) -> Option<HashMap<String, cheat::Value>>,
 {
-    let mut c = Command::new("fzf");
+    let mut fzf_command = Command::new("fzf");
 
-    c.args(&[
+    fzf_command.args(&[
         "--preview-window",
         "up:2",
         "--with-nth",
@@ -56,38 +56,38 @@ where
     ]);
 
     if opts.autoselect {
-        c.arg("--select-1");
+        fzf_command.arg("--select-1");
     }
 
     if opts.multi {
-        c.arg("--multi");
+        fzf_command.arg("--multi");
     }
 
     if opts.copyable {
-        c.args(&["--expect", "ctrl-y,enter"]);
+        fzf_command.args(&["--expect", "ctrl-y,enter"]);
     }
 
     if opts.preview {
-        c.args(&[
+        fzf_command.args(&[
             "--preview",
             format!("{} preview {{}}", filesystem::exe_string()).as_str(),
         ]);
     }
 
     if let Some(q) = opts.query {
-        c.args(&["--query", &q]);
+        fzf_command.args(&["--query", &q]);
     }
 
     if let Some(f) = opts.filter {
-        c.args(&["--filter", &f]);
+        fzf_command.args(&["--filter", &f]);
     }
 
     if let Some(p) = opts.prompt {
-        c.args(&["--prompt", &p]);
+        fzf_command.args(&["--prompt", &p]);
     }
 
     if opts.header_lines > 0 {
-        c.args(&["--header-lines", format!("{}", opts.header_lines).as_str()]);
+        fzf_command.args(&["--header-lines", format!("{}", opts.header_lines).as_str()]);
     }
 
     if let Some(o) = opts.overrides {
@@ -96,15 +96,15 @@ where
             .map(|s| s.to_string())
             .filter(|s| !s.is_empty())
             .for_each(|s| {
-                c.arg(s);
+                fzf_command.arg(s);
             });
     }
 
     if !opts.suggestions {
-        c.args(&["--print-query", "--no-select-1", "--height", "1"]);
+        fzf_command.args(&["--print-query", "--no-select-1", "--height", "1"]);
     }
 
-    let child = c
+    let child = fzf_command
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::inherit())

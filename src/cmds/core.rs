@@ -35,8 +35,8 @@ fn gen_core_fzf_opts(variant: Variant, config: &Config) -> fzf::Opts {
     opts
 }
 
-fn extract_from_selections(raw_output: &str, contains_key: bool) -> (&str, &str, &str) {
-    let mut lines = raw_output.split('\n');
+fn extract_from_selections(raw_snippet: &str, contains_key: bool) -> (&str, &str, &str) {
+    let mut lines = raw_snippet.split('\n');
     let key = if contains_key {
         lines.next().unwrap()
     } else {
@@ -62,16 +62,16 @@ fn prompt_with_suggestions(
     values: &HashMap<String, String>,
 ) -> String {
     let mut vars_cmd = String::from("");
-    for (k, v) in values.iter() {
-        vars_cmd.push_str(format!("{}=\"{}\"; ", k, v).as_str());
+    for (key, value) in values.iter() {
+        vars_cmd.push_str(format!("{}=\"{}\"; ", key, value).as_str());
     }
 
-    let cmd = format!("{vars} {cmd}", vars = vars_cmd, cmd = &suggestion.0);
+    let command = format!("{vars} {cmd}", vars = vars_cmd, cmd = &suggestion.0);
 
     let child = Command::new("bash")
         .stdout(Stdio::piped())
         .arg("-c")
-        .arg(cmd)
+        .arg(command)
         .spawn()
         .unwrap();
 
@@ -146,22 +146,22 @@ fn replace_variables_from_snippet(
     let mut values: HashMap<String, String> = HashMap::new();
 
     let re = Regex::new(r"<(\w[\w\d\-_]*)>").unwrap();
-    for cap in re.captures_iter(snippet) {
-        let bracketed_varname = &cap[0];
-        let varname = &bracketed_varname[1..bracketed_varname.len() - 1];
+    for captures in re.captures_iter(snippet) {
+        let bracketed_variable_name = &captures[0];
+        let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
 
-        if values.get(varname).is_none() {
-            let k = format!("{};{}", tags, varname);
+        if values.get(variable_name).is_none() {
+            let key = format!("{};{}", tags, variable_name);
 
-            let value = match variables.get(&k[..]) {
-                Some(suggestion) => prompt_with_suggestions(varname, &config, suggestion, &values),
-                None => prompt_without_suggestions(varname),
+            let value = match variables.get(&key[..]) {
+                Some(suggestion) => prompt_with_suggestions(variable_name, &config, suggestion, &values),
+                None => prompt_without_suggestions(variable_name),
             };
 
-            values.insert(varname.to_string(), value.clone());
+            values.insert(variable_name.to_string(), value.clone());
 
             interpolated_snippet = interpolated_snippet
-                .replace(bracketed_varname, gen_replacement(&value[..]).as_str());
+                .replace(bracketed_variable_name, gen_replacement(&value[..]).as_str());
         }
     }
 
@@ -171,11 +171,11 @@ fn replace_variables_from_snippet(
 pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Box<dyn Error>> {
     let _ = display::WIDTHS;
 
-    let (raw_output, variables) = fzf::call(gen_core_fzf_opts(variant, &config), |stdin| {
+    let (raw_snippet, variables) = fzf::call(gen_core_fzf_opts(variant, &config), |stdin| {
         Some(cheat::read_all(&config, stdin))
     });
 
-    let (key, tags, snippet) = extract_from_selections(&raw_output[..], contains_key);
+    let (key, tags, snippet) = extract_from_selections(&raw_snippet[..], contains_key);
     let interpolated_snippet =
         replace_variables_from_snippet(snippet, tags, variables.unwrap(), &config);
 
