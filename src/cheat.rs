@@ -31,14 +31,6 @@ pub enum SuggestionType {
 
 pub type Suggestion = (String, Option<SuggestionOpts>);
 
-fn gen_snippet(snippet: &str, line: &str) -> String {
-    if snippet.is_empty() {
-        line.to_string()
-    } else {
-        format!("{}{}", &snippet[..snippet.len() - 2], line)
-    }
-}
-
 fn remove_quote(txt: &str) -> String {
     txt.replace('"', "").replace('\'', "")
 }
