@@ -30,7 +30,8 @@ pub fn variable_prompt(varname: &str) -> String {
 
 fn fix_newlines(txt: &str) -> String {
     if txt.contains(NEWLINE_ESCAPE_CHAR) {
-        (*NEWLINE_REGEX).replace_all(txt.replace(LINE_SEPARATOR, "  ").as_str(), "")
+        (*NEWLINE_REGEX)
+            .replace_all(txt.replace(LINE_SEPARATOR, "  ").as_str(), "")
             .to_string()
     } else {
         txt.to_string()
