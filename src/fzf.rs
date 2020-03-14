@@ -2,11 +2,11 @@ use crate::cheat;
 use crate::display;
 use crate::filesystem;
 
+use crate::cheat::SuggestionType;
+use crate::cheat::SuggestionType::SingleSelection;
 use std::collections::HashMap;
 use std::process;
 use std::process::{Command, Stdio};
-use crate::cheat::SuggestionType;
-use crate::cheat::SuggestionType::SingleSelection;
 
 pub struct Opts<'a> {
     pub query: Option<String>,
@@ -16,9 +16,8 @@ pub struct Opts<'a> {
     pub autoselect: bool,
     pub overrides: Option<&'a String>, // TODO: remove &'a
     pub header_lines: u8,
-    pub suggestion_type : SuggestionType,
+    pub suggestion_type: SuggestionType,
 }
-
 
 impl Default for Opts<'_> {
     fn default() -> Self {
@@ -59,14 +58,16 @@ where
     }
 
     match opts.suggestion_type {
-        SuggestionType::MultipleSelections => { fzf_command.arg("--multi"); },
+        SuggestionType::MultipleSelections => {
+            fzf_command.arg("--multi");
+        }
         SuggestionType::Disabled => {
             fzf_command.args(&["--print-query", "--no-select-1", "--height", "1"]);
-        },
-        SuggestionType::SnippetSelection =>{
-                fzf_command.args(&["--expect", "ctrl-y,enter"]);
         }
-        SuggestionType::SingleRecommendation =>{
+        SuggestionType::SnippetSelection => {
+            fzf_command.args(&["--expect", "ctrl-y,enter"]);
+        }
+        SuggestionType::SingleRecommendation => {
             fzf_command.args(&["--print-query", "--expect", "tab,enter"]);
         }
         _ => {}
@@ -105,7 +106,6 @@ where
             });
     }
 
-
     let child = fzf_command
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -134,21 +134,21 @@ where
             panic!("External command failed:\n {}", err)
         }
     };
-    (parse_output_single(text,opts.suggestion_type), result)
+    (parse_output_single(text, opts.suggestion_type), result)
 }
 
-fn parse_output_single(mut text:  String, suggestion_type: SuggestionType) -> String {
+fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> String {
     match suggestion_type {
-        SuggestionType::SingleSelection =>  {
+        SuggestionType::SingleSelection => {
             return text.lines().next().unwrap().to_string();
-        },
+        }
         SuggestionType::MultipleSelections => {
             return text.clone();
-        },
+        }
         SuggestionType::Disabled => {
             return "".to_string();
-        },
-        SuggestionType:: SnippetSelection => {
+        }
+        SuggestionType::SnippetSelection => {
             text.truncate(text.len() - 1);
             return text;
         }
@@ -156,14 +156,15 @@ fn parse_output_single(mut text:  String, suggestion_type: SuggestionType) -> St
             let lines: Vec<&str> = text.lines().collect();
 
             match (lines.get(0), lines.get(1), lines.get(2)) {
-                (Some(one), Some(termination), Some(two)) if *termination == "enter" =>
+                (Some(one), Some(termination), Some(two)) if *termination == "enter" => {
                     if two.is_empty() {
                         one.to_string()
                     } else {
                         two.to_string()
-                    },
-                (Some(one), Some(termination), None)if *termination == "enter" => one.to_string(),
-                (Some(one), Some(termination), _)if *termination == "tab" => one.to_string(),
+                    }
+                }
+                (Some(one), Some(termination), None) if *termination == "enter" => one.to_string(),
+                (Some(one), Some(termination), _) if *termination == "tab" => one.to_string(),
                 _ => "".to_string(),
             }
         }

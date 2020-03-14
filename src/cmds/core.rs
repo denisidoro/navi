@@ -4,13 +4,13 @@ use crate::display;
 use crate::fzf;
 use crate::option::Config;
 
+use crate::cheat::SuggestionType;
 use regex::Regex;
 use std::collections::HashMap;
 use std::error::Error;
 use std::fs;
 use std::io::Write;
 use std::process::{Command, Stdio};
-use crate::cheat::SuggestionType;
 
 pub enum Variant {
     Core,
@@ -66,7 +66,7 @@ fn prompt_with_suggestions(
     for (key, value) in values.iter() {
         vars_cmd.push_str(format!("{}=\"{}\"; ", key, value).as_str());
     }
-    let(suggestion_command, suggestion_options) = &suggestion;
+    let (suggestion_command, suggestion_options) = &suggestion;
     let command = format!("{} {}", vars_cmd, suggestion_command);
 
     let child = Command::new("bash")
@@ -120,7 +120,7 @@ fn prompt_without_suggestions(variable_name: &str) -> String {
         preview: false,
         autoselect: false,
         prompt: Some(display::variable_prompt(variable_name)),
-        suggestion_type : SuggestionType::Disabled,
+        suggestion_type: SuggestionType::Disabled,
         ..Default::default()
     };
 
@@ -155,14 +155,18 @@ fn replace_variables_from_snippet(
             let key = format!("{};{}", tags, variable_name);
 
             let value = match variables.get(&key[..]) {
-                Some(suggestion) => prompt_with_suggestions(variable_name, &config, suggestion, &values),
+                Some(suggestion) => {
+                    prompt_with_suggestions(variable_name, &config, suggestion, &values)
+                }
                 None => prompt_without_suggestions(variable_name),
             };
 
             values.insert(variable_name.to_string(), value.clone());
 
-            interpolated_snippet = interpolated_snippet
-                .replace(bracketed_variable_name, gen_replacement(&value[..]).as_str());
+            interpolated_snippet = interpolated_snippet.replace(
+                bracketed_variable_name,
+                gen_replacement(&value[..]).as_str(),
+            );
         }
     }
 
