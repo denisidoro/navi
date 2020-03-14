@@ -7,14 +7,29 @@ use std::collections::HashMap;
 use std::fs;
 use std::io::Write;
 
+#[derive(Debug, PartialEq)]
 pub struct SuggestionOpts {
     pub header_lines: u8,
     pub column: Option<u8>,
-    pub multi: bool,
     pub delimiter: Option<String>,
+    pub suggestion_type: SuggestionType,
 }
 
-pub type Value = (String, Option<SuggestionOpts>);
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum SuggestionType {
+    /// fzf will not print any suggestions.
+    Disabled,
+    /// fzf will only select one of the suggestions
+    SingleSelection,
+    /// fzf will select multiple ones of the suggestions
+    MultipleSelections,
+    /// fzf will select one of the suggestions or use the Query
+    SingleRecommendation,
+    /// initial snippet selection
+    SnippetSelection,
+}
+
+pub type Suggestion = (String, Option<SuggestionOpts>);
 
 fn gen_snippet(snippet: &str, line: &str) -> String {
     if snippet.is_empty() {
@@ -32,6 +47,7 @@ fn parse_opts(text: &str) -> SuggestionOpts {
     let mut header_lines: u8 = 0;
     let mut column: Option<u8> = None;
     let mut multi = false;
+    let mut allow_extra = false;
     let mut delimiter: Option<String> = None;
 
     let mut parts = text.split(' ');
@@ -39,6 +55,7 @@ fn parse_opts(text: &str) -> SuggestionOpts {
     while let Some(p) = parts.next() {
         match p {
             "--multi" => multi = true,
+            "--allow-extra" => allow_extra = true,
             "--header" | "--headers" | "--header-lines" => {
                 header_lines = remove_quote(parts.next().unwrap()).parse::<u8>().unwrap()
             }
@@ -51,8 +68,12 @@ fn parse_opts(text: &str) -> SuggestionOpts {
     SuggestionOpts {
         header_lines,
         column,
-        multi,
         delimiter,
+        suggestion_type: match (multi, allow_extra) {
+            (true, _) => SuggestionType::MultipleSelections, // multi wins over allow-extra
+            (false, true) => SuggestionType::SingleRecommendation,
+            (false, false) => SuggestionType::SingleSelection,
+        },
     }
 }
 
@@ -62,16 +83,13 @@ fn parse_variable_line(line: &str) -> (&str, &str, Option<SuggestionOpts>) {
     let variable = caps.get(1).unwrap().as_str().trim();
     let mut command_plus_opts = caps.get(2).unwrap().as_str().split("---");
     let command = command_plus_opts.next().unwrap();
-    let opts = match command_plus_opts.next() {
-        Some(o) => Some(parse_opts(o)),
-        None => None,
-    };
-    (variable, command, opts)
+    let command_options = command_plus_opts.next().map(parse_opts);
+    (variable, command, command_options)
 }
 
 fn read_file(
     path: &str,
-    variables: &mut HashMap<String, Value>,
+    variables: &mut HashMap<String, Suggestion>,
     stdin: &mut std::process::ChildStdin,
 ) {
     let mut tags = String::from("");
@@ -97,7 +115,7 @@ fn read_file(
             }
             // variable
             else if line.starts_with('$') {
-                let (variable, command, opts) = parse_variable_line(&line[..]);
+                let (variable, command, opts) = parse_variable_line(&line);
                 variables.insert(
                     format!("{};{}", tags, variable),
                     (String::from(command), opts),
@@ -135,8 +153,11 @@ fn read_file(
     }
 }
 
-pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMap<String, Value> {
-    let mut variables: HashMap<String, Value> = HashMap::new();
+pub fn read_all(
+    config: &Config,
+    stdin: &mut std::process::ChildStdin,
+) -> HashMap<String, Suggestion> {
+    let mut variables: HashMap<String, Suggestion> = HashMap::new();
 
     let mut fallback: String = String::from("");
     let folders_str = config.path.as_ref().unwrap_or_else(|| {
@@ -160,4 +181,50 @@ pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> HashMa
     }
 
     variables
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_variable_line() {
+        let (variable, command, command_options) =
+            parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --allow-extra");
+        assert_eq!(command, " echo -e \"$(whoami)\\nroot\" ");
+        assert_eq!(variable, "user");
+        assert_eq!(
+            command_options,
+            Some(SuggestionOpts {
+                header_lines: 0,
+                column: None,
+                delimiter: None,
+                suggestion_type: SuggestionType::SingleRecommendation
+            })
+        );
+    }
+    use std::process::{Command, Stdio};
+
+    #[test]
+    fn test_read_file() {
+        let path = "tests/cheats/ssh.cheat";
+        let mut variables: HashMap<String, Suggestion> = HashMap::new();
+        let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().unwrap();
+        let child_stdin = child.stdin.as_mut().unwrap();
+        read_file(path, &mut variables, child_stdin);
+        let mut result: HashMap<String, (String, std::option::Option<_>)> = HashMap::new();
+        result.insert(
+            "ssh;user".to_string(),
+            (
+                r#" echo -e "$(whoami)\nroot" "#.to_string(),
+                Some(SuggestionOpts {
+                    header_lines: 0,
+                    column: None,
+                    delimiter: None,
+                    suggestion_type: SuggestionType::SingleRecommendation,
+                }),
+            ),
+        );
+        assert_eq!(variables, result);
+    }
 }
