@@ -2,10 +2,13 @@ use crate::terminal;
 
 use std::cmp::max;
 use termion::color;
+use regex::Regex; 
 
 static COMMENT_COLOR: color::LightCyan = color::LightCyan;
 static TAG_COLOR: color::Blue = color::Blue;
 static SNIPPET_COLOR: color::White = color::White;
+
+    pub static LINE_SEPARATOR: &'static str = " \x15 ";
 
 pub static DELIMITER: &str = r"  ⠀";
 
@@ -25,11 +28,12 @@ pub fn variable_prompt(varname: &str) -> String {
 }
 
 pub fn preview(comment: &str, tags: &str, snippet: &str) {
+let re = Regex::new(r"\\\s+").unwrap();
     println!(
         "{comment_color}{comment} {tag_color}{tags} \n{snippet_color}{snippet}",
         comment = format!("# {}", comment),
         tags = format!("[{}]", tags),
-        snippet = snippet,
+        snippet = re.replace_all(snippet.replace(LINE_SEPARATOR, "  ").as_str(), ""),
         comment_color = color::Fg(COMMENT_COLOR),
         tag_color = color::Fg(TAG_COLOR),
         snippet_color = color::Fg(SNIPPET_COLOR),
