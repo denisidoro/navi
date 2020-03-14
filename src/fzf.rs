@@ -2,6 +2,8 @@ use crate::cheat;
 use crate::display;
 use crate::filesystem;
 
+use crate::cheat::SuggestionType;
+use crate::cheat::SuggestionType::SingleSelection;
 use std::collections::HashMap;
 use std::process;
 use std::process::{Command, Stdio};
@@ -18,6 +20,7 @@ pub struct Opts<'a> {
     pub multi: bool,
     pub copyable: bool,
     pub suggestions: bool,
+    pub suggestion_type: SuggestionType,
 }
 
 impl Default for Opts<'_> {
@@ -31,20 +34,18 @@ impl Default for Opts<'_> {
             header_lines: 0,
             header: None,
             prompt: None,
-            multi: false,
-            copyable: false,
-            suggestions: true,
+            suggestion_type: SingleSelection,
         }
     }
 }
 
-pub fn call<F>(opts: Opts, stdin_fn: F) -> (String, Option<HashMap<String, cheat::Value>>)
+pub fn call<F>(opts: Opts, stdin_fn: F) -> (String, Option<HashMap<String, cheat::Suggestion>>)
 where
-    F: Fn(&mut process::ChildStdin) -> Option<HashMap<String, cheat::Value>>,
+    F: Fn(&mut process::ChildStdin) -> Option<HashMap<String, cheat::Suggestion>>,
 {
-    let mut c = Command::new("fzf");
+    let mut fzf_command = Command::new("fzf");
 
-    c.args(&[
+    fzf_command.args(&[
         "--preview-window",
         "up:2",
         "--with-nth",
@@ -58,30 +59,38 @@ where
     ]);
 
     if opts.autoselect {
-        c.arg("--select-1");
+        fzf_command.arg("--select-1");
     }
 
-    if opts.multi {
-        c.arg("--multi");
-    }
-
-    if opts.copyable {
-        c.args(&["--expect", "ctrl-y,enter"]);
+    match opts.suggestion_type {
+        SuggestionType::MultipleSelections => {
+            fzf_command.arg("--multi");
+        }
+        SuggestionType::Disabled => {
+            fzf_command.args(&["--print-query", "--no-select-1", "--height", "1"]);
+        }
+        SuggestionType::SnippetSelection => {
+            fzf_command.args(&["--expect", "ctrl-y,enter"]);
+        }
+        SuggestionType::SingleRecommendation => {
+            fzf_command.args(&["--print-query", "--expect", "tab,enter"]);
+        }
+        _ => {}
     }
 
     if opts.preview {
-        c.args(&[
+        fzf_command.args(&[
             "--preview",
             format!("{} preview {{}}", filesystem::exe_string()).as_str(),
         ]);
     }
 
     if let Some(q) = opts.query {
-        c.args(&["--query", &q]);
+        fzf_command.args(&["--query", &q]);
     }
 
     if let Some(f) = opts.filter {
-        c.args(&["--filter", &f]);
+        fzf_command.args(&["--filter", &f]);
     }
     
     if let Some(h) = opts.header {
@@ -89,11 +98,11 @@ where
     }
 
     if let Some(p) = opts.prompt {
-        c.args(&["--prompt", &p]);
+        fzf_command.args(&["--prompt", &p]);
     }
 
     if opts.header_lines > 0 {
-        c.args(&["--header-lines", format!("{}", opts.header_lines).as_str()]);
+        fzf_command.args(&["--header-lines", format!("{}", opts.header_lines).as_str()]);
     }
 
     if let Some(o) = opts.overrides {
@@ -102,15 +111,11 @@ where
             .map(|s| s.to_string())
             .filter(|s| !s.is_empty())
             .for_each(|s| {
-                c.arg(s);
+                fzf_command.arg(s);
             });
     }
 
-    if !opts.suggestions {
-        c.args(&["--print-query", "--no-select-1", "--height", "1"]);
-    }
-
-    let child = c
+    let child = fzf_command
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::inherit())
@@ -129,7 +134,7 @@ where
 
     let out = child.wait_with_output().unwrap();
 
-    let mut text = match out.status.code() {
+    let text = match out.status.code() {
         Some(0) | Some(1) => String::from_utf8(out.stdout).unwrap(),
         Some(130) => process::exit(130),
         _ => {
@@ -138,7 +143,89 @@ where
             panic!("External command failed:\n {}", err)
         }
     };
-    text.truncate(text.len() - 1);
+    (parse_output_single(text, opts.suggestion_type), result)
+}
 
-    (text, result)
+fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> String {
+    match suggestion_type {
+        SuggestionType::SingleSelection => text.lines().next().unwrap().to_string(),
+        SuggestionType::MultipleSelections
+        | SuggestionType::Disabled
+        | SuggestionType::SnippetSelection => {
+            text.truncate(text.len() - 1);
+            text
+        }
+        SuggestionType::SingleRecommendation => {
+            let lines: Vec<&str> = text.lines().collect();
+
+            match (lines.get(0), lines.get(1), lines.get(2)) {
+                (Some(one), Some(termination), Some(two)) if *termination == "enter" => {
+                    if two.is_empty() {
+                        (*one).to_string()
+                    } else {
+                        (*two).to_string()
+                    }
+                }
+                (Some(one), Some(termination), None) if *termination == "enter" => {
+                    (*one).to_string()
+                }
+                (Some(one), Some(termination), _) if *termination == "tab" => (*one).to_string(),
+                _ => "".to_string(),
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_output1() {
+        let text = "palo\n".to_string();
+        let output = parse_output_single(text, SuggestionType::SingleSelection);
+        assert_eq!(output, "palo");
+    }
+
+    #[test]
+    fn test_parse_output2() {
+        let text = "\nenter\npalo".to_string();
+        let output = parse_output_single(text, SuggestionType::SingleRecommendation);
+        assert_eq!(output, "palo");
+    }
+
+    #[test]
+    fn test_parse_recommendation_output_1() {
+        let text = "\nenter\npalo".to_string();
+        let output = parse_output_single(text, SuggestionType::SingleRecommendation);
+        assert_eq!(output, "palo");
+    }
+
+    #[test]
+    fn test_parse_recommendation_output_2() {
+        let text = "p\nenter\npalo".to_string();
+        let output = parse_output_single(text, SuggestionType::SingleRecommendation);
+        assert_eq!(output, "palo");
+    }
+
+    #[test]
+    fn test_parse_recommendation_output_3() {
+        let text = "peter\nenter\n".to_string();
+        let output = parse_output_single(text, SuggestionType::SingleRecommendation);
+        assert_eq!(output, "peter");
+    }
+
+    #[test]
+    fn test_parse_output3() {
+        let text = "p\ntab\npalo".to_string();
+        let output = parse_output_single(text, SuggestionType::SingleRecommendation);
+        assert_eq!(output, "p");
+    }
+
+    #[test]
+    fn test_parse_snippet_request() {
+        let text = "enter\nssh                     ⠀login to a server and forward to ssh key (d…  ⠀ssh -A <user>@<server>  ⠀ssh  ⠀login to a server and forward to ssh key (dangerous but usefull for bastion hosts)  ⠀ssh -A <user>@<server>  ⠀\n".to_string();
+        let output = parse_output_single(text, SuggestionType::SnippetSelection);
+        assert_eq!(output,     "enter\nssh                     ⠀login to a server and forward to ssh key (d…  ⠀ssh -A <user>@<server>  ⠀ssh  ⠀login to a server and forward to ssh key (dangerous but usefull for bastion hosts)  ⠀ssh -A <user>@<server>  ⠀");
+    }
 }

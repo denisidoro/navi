@@ -157,6 +157,15 @@ $ branch: git branch | awk '{print $NF}'
 
 It's irrelevant how many files are used to store cheatsheets. They can be all in a single file if you wish, as long as you split them accordingly with lines starting with `%`.
 
+Commands may be multiline:
+```sh
+# This will output foo\nyes
+echo foo
+echo bar | grep q -b \
+   && echo yes \
+   || echo no
+```
+
 ### Variables
 
 The interface prompts for variable names inside brackets (eg `<branch>`).
@@ -176,7 +185,13 @@ $ y: echo -e "$((x+10))\n$((x+20))"
 
 ### Variable options
 
-For lines starting with `$` you can add extra options using `---`.
+For lines starting with `$` you can add use`---` to parse parameters to `fzf`.
+* `--allow-extra` *(experimental)*: handles `fzf` option `--print-query`. `enter` will prefer a selection,
+    `tab` will prefer the query typed. 
+* `--multi` : forwarded option to `fzf`.
+* `--header-lines` : forwarded option to `fzf`
+* `--column` : forwarded option to `fzf`.
+* `--delimiter` : forwarded option to `fzf`.
 
 #### Table formatting
 
