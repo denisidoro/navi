@@ -2,9 +2,11 @@ use std::error::Error;
 use std::process::{Command, Stdio};
 use std::io::Write;
 use std::fs;
+use std::vec::Vec;
 
 use crate::fzf;
 use crate::filesystem;
+use crate::cheat::SuggestionType;
 
 pub fn main() -> Result<(), Box<dyn Error>> {
     let user = "denisidoro";
@@ -31,7 +33,7 @@ pub fn main() -> Result<(), Box<dyn Error>> {
     let all_files = String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap();
 
         let opts = fzf::Opts {
-            multi: true,
+            suggestion_type: SuggestionType::MultipleSelections,
             preview: false,
             header: Some("Select the cheatsheets you want to import with <TAB> then hit <Enter>".to_string()),
         ..Default::default()
@@ -47,8 +49,9 @@ pub fn main() -> Result<(), Box<dyn Error>> {
     for f in files.split('\n') {
         let from = format!("{}/{}/{}", tmp_path_str, repo_folder_str, f).replace("./", "");
         let to_folder = format!("{}/{}/{}", cheat_path_str, user, repo).replace("./", "");
-        let to = format!("{}/{}", to_folder, f).replace("./", "");
-        println!("{} -> {}", from, to);
+        let parts: Vec<&str> = f.split('/').collect();
+        let filename = parts.last().unwrap();
+        let to = format!("{}/{}", to_folder, filename);
         fs::create_dir_all(to_folder).unwrap_or(());
         fs::copy(from, to)?;
     }

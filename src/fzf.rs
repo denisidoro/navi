@@ -17,9 +17,6 @@ pub struct Opts<'a> {
     pub overrides: Option<&'a String>, // TODO: remove &'a
     pub header_lines: u8,
     pub header: Option<String>,
-    pub multi: bool,
-    pub copyable: bool,
-    pub suggestions: bool,
     pub suggestion_type: SuggestionType,
 }
 
@@ -35,9 +32,6 @@ impl Default for Opts<'_> {
             header: None,
             prompt: None,
             suggestion_type: SingleSelection,
-            copyable: false,
-            multi: false,
-            suggestions: false
         }
     }
 }
