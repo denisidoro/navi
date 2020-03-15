@@ -12,7 +12,22 @@ where
 }
 
 pub fn pathbuf_to_string(pathbuf: PathBuf) -> String {
-    pathbuf.as_os_str().to_str().unwrap().to_string()
+    pathbuf
+    .as_os_str()
+    .to_str()
+    .unwrap()
+    .to_string()
+}
+
+pub fn cheat_pathbuf() -> Option<PathBuf> {
+    match dirs::config_dir() {
+        Some(mut d) => {
+            d.push("navi");
+            d.push("cheats");
+            Some(d)
+        }
+        None => None,
+    }
 }
 
 fn follow_symlink(pathbuf: PathBuf) -> PathBuf {
@@ -36,22 +51,6 @@ fn follow_symlink(pathbuf: PathBuf) -> PathBuf {
 fn exe_pathbuf() -> PathBuf {
     let pathbuf = std::env::current_exe().unwrap();
     follow_symlink(pathbuf)
-}
-
-pub fn cheat_pathbuf() -> Option<PathBuf> {
-    match dirs::config_dir() {
-        Some(mut d) => {
-            d.push("navi");
-            d.push("cheats");
-            Some(d)
-        }
-        None => None,
-    }
-}
-
-pub fn shell_pathbuf() -> PathBuf {
-    let cheat_path_str = pathbuf_to_string(cheat_pathbuf().unwrap());
-    PathBuf::from(format!("{}/../shell", cheat_path_str))
 }
 
 pub fn exe_string() -> String {

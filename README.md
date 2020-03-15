@@ -91,13 +91,13 @@ You can use **navi** as a widget to your shell. This way, your history is correc
 In order to use it, add this line to your `.bashrc`-like file:
 ```sh
 # bash
-source "$(navi widget bash)"
+source <(navi widget bash)
 
 # zsh
-source "$(navi widget zsh)"
+source <(navi widget zsh)
 
 # fish
-source (navi widget fish)
+navi widget fish | source
 ```
 
 By default, `Ctrl+G` is assigned to launching **navi**. If you want to change the keybinding, replace the argument of `bind` or `bindkey` in [the widget file](https://github.com/denisidoro/navi/search?q=filename%3Anavi.plugin.*&unscoped_q=filename%3Anavi.plugin.*).
