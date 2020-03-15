@@ -91,13 +91,13 @@ You can use **navi** as a widget to your shell. This way, your history is correc
 In order to use it, add this line to your `.bashrc`-like file:
 ```sh
 # bash
-source "$(navi widget bash)"
+source <(navi widget bash)
 
 # zsh
-source "$(navi widget zsh)"
+source <(navi widget zsh)
 
 # fish
-source (navi widget fish)
+navi widget fish | source
 ```
 
 By default, `Ctrl+G` is assigned to launching **navi**. If you want to change the keybinding, replace the argument of `bind` or `bindkey` in [the widget file](https://github.com/denisidoro/navi/search?q=filename%3Anavi.plugin.*&unscoped_q=filename%3Anavi.plugin.*).
@@ -157,6 +157,15 @@ $ branch: git branch | awk '{print $NF}'
 
 It's irrelevant how many files are used to store cheatsheets. They can be all in a single file if you wish, as long as you split them accordingly with lines starting with `%`.
 
+Commands may be multiline:
+```sh
+# This will output foo\nyes
+echo foo
+echo bar | grep q -b \
+   && echo yes \
+   || echo no
+```
+
 ### Variables
 
 The interface prompts for variable names inside brackets (eg `<branch>`).
@@ -176,7 +185,13 @@ $ y: echo -e "$((x+10))\n$((x+20))"
 
 ### Variable options
 
-For lines starting with `$` you can add extra options using `---`.
+For lines starting with `$` you can add use`---` to parse parameters to `fzf`.
+* `--allow-extra` *(experimental)*: handles `fzf` option `--print-query`. `enter` will prefer a selection,
+    `tab` will prefer the query typed. 
+* `--multi` : forwarded option to `fzf`.
+* `--header-lines` : forwarded option to `fzf`
+* `--column` : forwarded option to `fzf`.
+* `--delimiter` : forwarded option to `fzf`.
 
 #### Table formatting
 

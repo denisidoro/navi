@@ -50,16 +50,25 @@ pub struct Config {
 pub enum Command {
     /// Filters results
     Query { query: String },
-    /// Shows navi's home directory
-    Home,
     /// Uses online repositories for cheatsheets
     Search { query: String },
     /// Autoselects the snippet that best matches the query
     Best { query: String, args: Vec<String> },
     /// Performs ad-hoc functions provided by navi
     Fn { func: String, args: Vec<String> },
+    /// Repo
+    Repo {
+        #[structopt(subcommand)]
+        cmd: RepoCommand,
+    },
     /// Shows the path for shell widget files
     Widget { shell: String },
+}
+
+#[derive(Debug, StructOpt)]
+pub enum RepoCommand {
+    /// Adds a repo (user/repo will download cheats from github.com/user/repo)
+    Add { uri: String },
 }
 
 pub enum InternalCommand {
