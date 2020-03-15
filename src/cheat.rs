@@ -174,34 +174,35 @@ fn add_msg(tag: &str, comment: &str, snippet: &str, stdin: &mut std::process::Ch
 }
 
 fn welcome_cheatsheet(stdin: &mut std::process::ChildStdin) {
-        add_msg(
-            "cheatsheets",
-            "Download default cheatsheets",
-            "navi repo add denisidoro/navi",
-            stdin,
-        );
-        add_msg("more info", "Read --help message", "navi --help", stdin);
+    add_msg(
+        "cheatsheets",
+        "Download default cheatsheets",
+        "navi repo add denisidoro/navi",
+        stdin,
+    );
+    add_msg("more info", "Read --help message", "navi --help", stdin);
 }
 
 fn get_paths_from_config_dir() -> String {
     let mut paths_str = String::from("");
 
-        if let Some(f) = filesystem::cheat_pathbuf() {
-            if let Ok(paths) = fs::read_dir(filesystem::pathbuf_to_string(f)) {
-                for path in paths {
+    if let Some(f) = filesystem::cheat_pathbuf() {
+        if let Ok(paths) = fs::read_dir(filesystem::pathbuf_to_string(f)) {
+            for path in paths {
                 paths_str.push_str(path.unwrap().path().into_os_string().to_str().unwrap());
                 paths_str.push_str(":");
             }
         }
-        }
-
-        paths_str
     }
 
-    fn get_paths(config: &Config) -> String {
-    config.path.clone().unwrap_or_else(|| {
-        get_paths_from_config_dir()
-    })
+    paths_str
+}
+
+fn get_paths(config: &Config) -> String {
+    config
+        .path
+        .clone()
+        .unwrap_or_else(|| get_paths_from_config_dir())
 }
 
 pub fn read_all(
@@ -218,7 +219,10 @@ pub fn read_all(
             for path in paths {
                 let path_os_str = path.unwrap().path().into_os_string();
                 let path_str = path_os_str.to_str().unwrap();
-                if path_str.ends_with(".cheat") && read_file(path_str, &mut variables, stdin) && !found_something {
+                if path_str.ends_with(".cheat")
+                    && read_file(path_str, &mut variables, stdin)
+                    && !found_something
+                {
                     found_something = true;
                 }
             }
