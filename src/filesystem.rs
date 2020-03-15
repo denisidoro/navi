@@ -52,13 +52,3 @@ fn exe_pathbuf() -> PathBuf {
 pub fn exe_string() -> String {
     pathbuf_to_string(exe_pathbuf())
 }
-
-pub fn exe_parent_string() -> String {
-    exe_pathbuf()
-        .parent()
-        .unwrap()
-        .as_os_str()
-        .to_str()
-        .unwrap()
-        .to_string()
-}

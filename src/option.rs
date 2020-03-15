@@ -56,7 +56,7 @@ pub enum Command {
     Best { query: String, args: Vec<String> },
     /// Performs ad-hoc functions provided by navi
     Fn { func: String, args: Vec<String> },
-    /// Repo
+    /// Manages cheatsheet repositories
     Repo {
         #[structopt(subcommand)]
         cmd: RepoCommand,
