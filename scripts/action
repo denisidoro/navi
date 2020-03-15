@@ -21,11 +21,8 @@ release() {
    rm -rf "${NAVI_HOME}/target" 2> /dev/null || true
 
    if [ -n "$target" ]; then
-      if ! command_exists openssl; then
-         apt-get install libssl-dev || sudo apt-get install libssl-dev || true
-      fi
       cargo install cross 2> /dev/null || true
-      cross build --release --locked --target "$target"
+      cross build --release --locked --target "$target" --features vendored-openssl
       bin_folder="${target}/release"
    else
       cargo build --release --locked
