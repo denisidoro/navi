@@ -11,7 +11,7 @@ pub fn cheatsheet(stdin: &mut std::process::ChildStdin) {
     add_msg(
         "cheatsheets",
         "Download default cheatsheets",
-        "navi repo add denisidoro/navi",
+        "navi repo add denisidoro/cheats",
         stdin,
     );
     add_msg("more info", "Read --help message", "navi --help", stdin);
