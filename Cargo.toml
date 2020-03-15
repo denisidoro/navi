@@ -7,7 +7,7 @@ description = "An interactive cheatsheet tool for the command-line"
 homepage = "https://github.com/denisidoro/navi"
 documentation = "https://github.com/denisidoro/navi"
 repository = "https://github.com/denisidoro/navi"
-keywords = ["cheatsheets", "terminal", "cli", "tui", "shell", "snippets"]
+keywords = ["cheatsheets", "terminal", "cli", "tui", "shell"]
 categories = ["command-line-utilities"]
 license = "Apache-2.0"
 
