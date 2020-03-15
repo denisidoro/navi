@@ -1,8 +1,8 @@
 use crate::cheat;
-use crate::display;
-use crate::filesystem;
 use crate::cheat::SuggestionType;
 use crate::cheat::SuggestionType::SingleSelection;
+use crate::display;
+use crate::filesystem;
 use std::collections::HashMap;
 use std::process;
 use std::process::{Command, Stdio};

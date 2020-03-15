@@ -1,10 +1,10 @@
+use crate::cheat::SuggestionType;
+use crate::filesystem;
+use crate::fzf;
 use std::error::Error;
 use std::fs;
 use std::io::Write;
 use std::process::{Command, Stdio};
-use crate::cheat::SuggestionType;
-use crate::filesystem;
-use crate::fzf;
 
 pub fn add(uri: String) -> Result<(), Box<dyn Error>> {
     let mut parts = uri.split('/');

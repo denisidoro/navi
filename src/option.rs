@@ -51,26 +51,26 @@ pub enum Command {
     /// Filters results
     Query {
         /// String used as filter (example: "git")
-        query: String 
+        query: String,
     },
     /// Uses online repositories for cheatsheets
-    Search { 
+    Search {
         /// String used as filter (example: "git")
-        query: String 
+        query: String,
     },
     /// Autoselects the snippet that best matches the query
-    Best { 
+    Best {
         /// String used as filter (example: "git remove branch")
         query: String,
         /// List of arguments (example: "mybranch" "remote")
-        args: Vec<String> 
+        args: Vec<String>,
     },
     /// Performs ad-hoc functions provided by navi
-    Fn { 
+    Fn {
         /// Function name (example: "url::open")
-        func: String, 
+        func: String,
         /// List of arguments (example: "https://google.com")
-        args: Vec<String> 
+        args: Vec<String>,
     },
     /// Manages cheatsheet repositories
     Repo {
@@ -79,18 +79,18 @@ pub enum Command {
     },
     /// Shows the path for shell widget files
     Widget {
-        /// bash, zsh or fish 
-        shell: String 
+        /// bash, zsh or fish
+        shell: String,
     },
 }
 
 #[derive(Debug, StructOpt)]
 pub enum RepoCommand {
-    /// Imports cheatsheets from a repo 
-    Add { 
+    /// Imports cheatsheets from a repo
+    Add {
         /// A URI to a .tar.gz containing .cheat files
         /// ("user/repo" will download cheats from github.com/user/repo)
-        uri: String 
+        uri: String,
     },
 }
 
