@@ -1,6 +1,5 @@
 use std::error::Error;
 use std::process;
-
 use crate::display;
 
 fn extract_elements(argstr: &str) -> (&str, &str, &str) {

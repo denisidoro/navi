@@ -1,7 +1,6 @@
 use crate::cheat;
 use crate::display;
 use crate::filesystem;
-
 use crate::cheat::SuggestionType;
 use crate::cheat::SuggestionType::SingleSelection;
 use std::collections::HashMap;

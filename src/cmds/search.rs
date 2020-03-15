@@ -1,5 +1,4 @@
 use std::error::Error;
-
 use super::aux;
 use crate::option::Config;
 

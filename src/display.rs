@@ -1,5 +1,4 @@
 use crate::terminal;
-
 use regex::Regex;
 use std::cmp::max;
 use termion::color;

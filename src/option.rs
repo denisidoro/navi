@@ -18,7 +18,7 @@ pub struct Config {
     #[structopt(short, long, env = "NAVI_PATH")]
     pub path: Option<String>,
 
-    /// [alpha] Instead of executing a snippet, saves it to a file
+    /// [Experimental] Instead of executing a snippet, saves it to a file
     #[structopt(short, long)]
     pub save: Option<String>,
 
@@ -34,11 +34,11 @@ pub struct Config {
     #[structopt(long)]
     pub no_preview: bool,
 
-    /// FZF overrides for cheat selection  (must start with an empty space)
+    /// FZF overrides for cheat selection (must start with an empty space)
     #[structopt(long, env = "NAVI_FZF_OVERRIDES")]
     pub fzf_overrides: Option<String>,
 
-    /// FZF overrides for variable selection  (must start with an empty space)
+    /// FZF overrides for variable selection (must start with an empty space)
     #[structopt(long, env = "NAVI_FZF_OVERRIDES_VAR")]
     pub fzf_overrides_var: Option<String>,
 
@@ -49,26 +49,49 @@ pub struct Config {
 #[derive(Debug, StructOpt)]
 pub enum Command {
     /// Filters results
-    Query { query: String },
+    Query {
+        /// String used as filter (example: "git")
+        query: String 
+    },
     /// Uses online repositories for cheatsheets
-    Search { query: String },
+    Search { 
+        /// String used as filter (example: "git")
+        query: String 
+    },
     /// Autoselects the snippet that best matches the query
-    Best { query: String, args: Vec<String> },
+    Best { 
+        /// String used as filter (example: "git remove branch")
+        query: String,
+        /// List of arguments (example: "mybranch" "remote")
+        args: Vec<String> 
+    },
     /// Performs ad-hoc functions provided by navi
-    Fn { func: String, args: Vec<String> },
+    Fn { 
+        /// Function name (example: "url::open")
+        func: String, 
+        /// List of arguments (example: "https://google.com")
+        args: Vec<String> 
+    },
     /// Manages cheatsheet repositories
     Repo {
         #[structopt(subcommand)]
         cmd: RepoCommand,
     },
     /// Shows the path for shell widget files
-    Widget { shell: String },
+    Widget {
+        /// bash, zsh or fish 
+        shell: String 
+    },
 }
 
 #[derive(Debug, StructOpt)]
 pub enum RepoCommand {
-    /// Adds a repo (user/repo will download cheats from github.com/user/repo)
-    Add { uri: String },
+    /// Imports cheatsheets from a repo 
+    Add { 
+        /// A URI to a .tar.gz containing .cheat files
+        /// ("user/repo" will download cheats from github.com/user/repo)
+        uri: String 
+    },
 }
 
 pub enum InternalCommand {

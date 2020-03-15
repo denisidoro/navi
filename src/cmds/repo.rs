@@ -2,7 +2,6 @@ use std::error::Error;
 use std::fs;
 use std::io::Write;
 use std::process::{Command, Stdio};
-
 use crate::cheat::SuggestionType;
 use crate::filesystem;
 use crate::fzf;
