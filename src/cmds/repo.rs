@@ -67,5 +67,7 @@ pub fn add(uri: String) -> Result<(), Box<dyn Error>> {
 
     fs::remove_dir_all(tmp_path_str).unwrap_or(());
 
+    eprintln!(".cheat files imported successfully!\n\nPlease run navi again to check the results.");
+
     Ok(())
 }
