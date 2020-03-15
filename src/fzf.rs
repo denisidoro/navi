@@ -1,9 +1,7 @@
 use crate::cheat;
-use crate::display;
-use crate::filesystem;
-
 use crate::cheat::SuggestionType;
 use crate::cheat::SuggestionType::SingleSelection;
+use crate::display;
 use std::collections::HashMap;
 use std::process;
 use std::process::{Command, Stdio};
@@ -12,10 +10,11 @@ pub struct Opts<'a> {
     pub query: Option<String>,
     pub filter: Option<String>,
     pub prompt: Option<String>,
-    pub preview: bool,
+    pub preview: Option<String>,
     pub autoselect: bool,
     pub overrides: Option<&'a String>, // TODO: remove &'a
     pub header_lines: u8,
+    pub header: Option<String>,
     pub suggestion_type: SuggestionType,
 }
 
@@ -24,10 +23,11 @@ impl Default for Opts<'_> {
         Self {
             query: None,
             filter: None,
-            preview: true,
             autoselect: true,
+            preview: None,
             overrides: None,
             header_lines: 0,
+            header: None,
             prompt: None,
             suggestion_type: SingleSelection,
         }
@@ -73,11 +73,8 @@ where
         _ => {}
     }
 
-    if opts.preview {
-        fzf_command.args(&[
-            "--preview",
-            format!("{} preview {{}}", filesystem::exe_string()).as_str(),
-        ]);
+    if let Some(p) = opts.preview {
+        fzf_command.args(&["--preview", &p]);
     }
 
     if let Some(q) = opts.query {
@@ -86,6 +83,10 @@ where
 
     if let Some(f) = opts.filter {
         fzf_command.args(&["--filter", &f]);
+    }
+
+    if let Some(h) = opts.header {
+        fzf_command.args(&["--header", &h]);
     }
 
     if let Some(p) = opts.prompt {
@@ -109,7 +110,6 @@ where
     let child = fzf_command
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
-        .stderr(Stdio::inherit())
         .spawn();
 
     let mut child = match child {

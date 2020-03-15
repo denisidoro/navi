@@ -1,6 +1,6 @@
 [package]
 name = "navi"
-version = "2.0.11"
+version = "2.1.0"
 authors = ["Denis Isidoro <denis_isidoro@live.com>"]
 edition = "2018"
 
@@ -12,4 +12,7 @@ structopt = "0.3"
 termion = "1.5.5"
 raw_tty = "0.1.0"
 lazy_static = "1.4.0"
+dirs = "2.0.0"
 terminal_size = "0.1.10"
+git2 = "0.10.0"
+walkdir = "2"

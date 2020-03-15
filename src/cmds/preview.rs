@@ -1,7 +1,6 @@
+use crate::display;
 use std::error::Error;
 use std::process;
-
-use crate::display;
 
 fn extract_elements(argstr: &str) -> (&str, &str, &str) {
     let mut parts = argstr.split(display::DELIMITER).skip(3);

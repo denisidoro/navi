@@ -1,7 +1,7 @@
 use crate::display;
 use crate::filesystem;
 use crate::option::Config;
-
+use crate::welcome;
 use regex::Regex;
 use std::collections::HashMap;
 use std::fs;
@@ -31,7 +31,7 @@ pub enum SuggestionType {
 
 pub type Suggestion = (String, Option<SuggestionOpts>);
 
-fn remove_quote(txt: &str) -> String {
+fn remove_quotes(txt: &str) -> String {
     txt.replace('"', "").replace('\'', "")
 }
 
@@ -49,10 +49,12 @@ fn parse_opts(text: &str) -> SuggestionOpts {
             "--multi" => multi = true,
             "--allow-extra" => allow_extra = true,
             "--header" | "--headers" | "--header-lines" => {
-                header_lines = remove_quote(parts.next().unwrap()).parse::<u8>().unwrap()
+                header_lines = remove_quotes(parts.next().unwrap()).parse::<u8>().unwrap()
             }
-            "--column" => column = Some(remove_quote(parts.next().unwrap()).parse::<u8>().unwrap()),
-            "--delimiter" => delimiter = Some(remove_quote(parts.next().unwrap()).to_string()),
+            "--column" => {
+                column = Some(remove_quotes(parts.next().unwrap()).parse::<u8>().unwrap())
+            }
+            "--delimiter" => delimiter = Some(remove_quotes(parts.next().unwrap()).to_string()),
             _ => (),
         }
     }
@@ -109,7 +111,7 @@ fn read_file(
     path: &str,
     variables: &mut HashMap<String, Suggestion>,
     stdin: &mut std::process::ChildStdin,
-) {
+) -> bool {
     let mut tags = String::from("");
     let mut comment = String::from("");
     let mut snippet = String::from("");
@@ -160,9 +162,11 @@ fn read_file(
                 snippet.push_str(&line);
             }
         }
+
+        return true;
     }
 
-    write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin);
+    false
 }
 
 pub fn read_all(
@@ -170,26 +174,27 @@ pub fn read_all(
     stdin: &mut std::process::ChildStdin,
 ) -> HashMap<String, Suggestion> {
     let mut variables: HashMap<String, Suggestion> = HashMap::new();
-
-    let mut fallback: String = String::from("");
-    let folders_str = config.path.as_ref().unwrap_or_else(|| {
-        if let Some(f) = filesystem::cheat_pathbuf() {
-            fallback = filesystem::pathbuf_to_string(f);
-        }
-        &fallback
-    });
-    let folders = folders_str.split(':');
+    let mut found_something = false;
+    let paths = filesystem::cheat_paths(config);
+    let folders = paths.split(':');
 
     for folder in folders {
         if let Ok(paths) = fs::read_dir(folder) {
             for path in paths {
                 let path_os_str = path.unwrap().path().into_os_string();
                 let path_str = path_os_str.to_str().unwrap();
-                if path_str.ends_with(".cheat") {
-                    read_file(path_str, &mut variables, stdin);
+                if path_str.ends_with(".cheat")
+                    && read_file(path_str, &mut variables, stdin)
+                    && !found_something
+                {
+                    found_something = true;
                 }
             }
         }
+    }
+
+    if !found_something {
+        welcome::cheatsheet(stdin);
     }
 
     variables

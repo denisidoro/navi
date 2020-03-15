@@ -1,10 +1,12 @@
 use crate::cheat;
+use crate::cheat::SuggestionType;
 use crate::cmds;
 use crate::display;
+use crate::filesystem;
 use crate::fzf;
+use crate::handler;
+use crate::option;
 use crate::option::Config;
-
-use crate::cheat::SuggestionType;
 use regex::Regex;
 use std::collections::HashMap;
 use std::error::Error;
@@ -20,7 +22,11 @@ pub enum Variant {
 
 fn gen_core_fzf_opts(variant: Variant, config: &Config) -> fzf::Opts {
     let mut opts = fzf::Opts {
-        preview: !config.no_preview,
+        preview: if config.no_preview {
+            None
+        } else {
+            Some(format!("{} preview {{}}", filesystem::exe_string()))
+        },
         autoselect: !config.no_autoselect,
         overrides: config.fzf_overrides.as_ref(),
         suggestion_type: SuggestionType::SnippetSelection,
@@ -79,7 +85,6 @@ fn prompt_with_suggestions(
     let suggestions = String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap();
 
     let mut opts = fzf::Opts {
-        preview: false,
         autoselect: !config.no_autoselect,
         overrides: config.fzf_overrides_var.as_ref(),
         prompt: Some(display::variable_prompt(varname)),
@@ -117,7 +122,6 @@ fn prompt_with_suggestions(
 
 fn prompt_without_suggestions(variable_name: &str) -> String {
     let opts = fzf::Opts {
-        preview: false,
         autoselect: false,
         prompt: Some(display::variable_prompt(variable_name)),
         suggestion_type: SuggestionType::Disabled,
@@ -185,6 +189,7 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
     });
 
     let (key, tags, snippet) = extract_from_selections(&raw_selection[..], contains_key);
+
     let interpolated_snippet = with_new_lines(replace_variables_from_snippet(
         snippet,
         tags,
@@ -192,12 +197,20 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
         &config,
     ));
 
+    // copy to clipboard
     if key == "ctrl-y" {
         cmds::aux::abort("copying snippets to the clipboard", 201)?
+    // print to stdout
     } else if config.print {
         println!("{}", interpolated_snippet);
+    // save to file
     } else if let Some(s) = config.save {
         fs::write(s, interpolated_snippet)?;
+    // call navi (this prevents "failed to read /dev/tty" from fzf)
+    } else if interpolated_snippet.starts_with("navi") {
+        let new_config = option::config_from_iter(interpolated_snippet.split(' ').collect());
+        handler::handle_config(new_config)?;
+    // shell out and execute snippet
     } else {
         Command::new("bash")
             .arg("-c")
