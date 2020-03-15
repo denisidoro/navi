@@ -6,6 +6,7 @@ use std::fs;
 use std::io::Write;
 use std::process::{Command, Stdio};
 
+// TODO: support https://*.tar.gz as uri
 pub fn add(uri: String) -> Result<(), Box<dyn Error>> {
     let mut parts = uri.split('/');
     let user = parts.next().unwrap();
