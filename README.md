@@ -130,7 +130,7 @@ export NAVI_PATH="/folder/with/cheats:/another/folder"
 
 ### Submitting cheatsheets
 
-Feel free to fork this project and open a PR for me to include your contributions.
+Feel free to open a PR on https://github.com/denisidoro/cheats for me to include your contributions.
 
 Cheatsheet syntax
 -----------------
