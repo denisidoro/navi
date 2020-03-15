@@ -2,6 +2,7 @@ use std::fs;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, Lines};
 use std::path::{Path, PathBuf};
+use crate::option::Config;
 
 pub fn read_lines<P>(filename: P) -> io::Result<Lines<BufReader<File>>>
 where
@@ -51,4 +52,26 @@ fn exe_pathbuf() -> PathBuf {
 
 pub fn exe_string() -> String {
     pathbuf_to_string(exe_pathbuf())
+}
+
+fn cheat_paths_from_config_dir() -> String {
+    let mut paths_str = String::from("");
+
+    if let Some(f) = cheat_pathbuf() {
+        if let Ok(paths) = fs::read_dir(pathbuf_to_string(f)) {
+            for path in paths {
+                paths_str.push_str(path.unwrap().path().into_os_string().to_str().unwrap());
+                paths_str.push_str(":");
+            }
+        }
+    }
+
+    paths_str
+}
+
+pub fn cheat_paths(config: &Config) -> String {
+    config
+        .path
+        .clone()
+        .unwrap_or_else(cheat_paths_from_config_dir)
 }

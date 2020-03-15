@@ -115,7 +115,6 @@ where
     let child = fzf_command
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
-        .stderr(Stdio::inherit())
         .spawn();
 
     let mut child = match child {

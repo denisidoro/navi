@@ -1,7 +1,7 @@
 use crate::display;
 use crate::filesystem;
 use crate::option::Config;
-
+use crate::welcome;
 use regex::Regex;
 use std::collections::HashMap;
 use std::fs;
@@ -31,7 +31,7 @@ pub enum SuggestionType {
 
 pub type Suggestion = (String, Option<SuggestionOpts>);
 
-fn remove_quote(txt: &str) -> String {
+fn remove_quotes(txt: &str) -> String {
     txt.replace('"', "").replace('\'', "")
 }
 
@@ -49,10 +49,10 @@ fn parse_opts(text: &str) -> SuggestionOpts {
             "--multi" => multi = true,
             "--allow-extra" => allow_extra = true,
             "--header" | "--headers" | "--header-lines" => {
-                header_lines = remove_quote(parts.next().unwrap()).parse::<u8>().unwrap()
+                header_lines = remove_quotes(parts.next().unwrap()).parse::<u8>().unwrap()
             }
-            "--column" => column = Some(remove_quote(parts.next().unwrap()).parse::<u8>().unwrap()),
-            "--delimiter" => delimiter = Some(remove_quote(parts.next().unwrap()).to_string()),
+            "--column" => column = Some(remove_quotes(parts.next().unwrap()).parse::<u8>().unwrap()),
+            "--delimiter" => delimiter = Some(remove_quotes(parts.next().unwrap()).to_string()),
             _ => (),
         }
     }
@@ -167,51 +167,13 @@ fn read_file(
     false
 }
 
-fn add_msg(tag: &str, comment: &str, snippet: &str, stdin: &mut std::process::ChildStdin) {
-    stdin
-        .write_all(display::format_line(tag, comment, snippet, 10, 60).as_bytes())
-        .unwrap();
-}
-
-fn welcome_cheatsheet(stdin: &mut std::process::ChildStdin) {
-    add_msg(
-        "cheatsheets",
-        "Download default cheatsheets",
-        "navi repo add denisidoro/navi",
-        stdin,
-    );
-    add_msg("more info", "Read --help message", "navi --help", stdin);
-}
-
-fn get_paths_from_config_dir() -> String {
-    let mut paths_str = String::from("");
-
-    if let Some(f) = filesystem::cheat_pathbuf() {
-        if let Ok(paths) = fs::read_dir(filesystem::pathbuf_to_string(f)) {
-            for path in paths {
-                paths_str.push_str(path.unwrap().path().into_os_string().to_str().unwrap());
-                paths_str.push_str(":");
-            }
-        }
-    }
-
-    paths_str
-}
-
-fn get_paths(config: &Config) -> String {
-    config
-        .path
-        .clone()
-        .unwrap_or_else(|| get_paths_from_config_dir())
-}
-
 pub fn read_all(
     config: &Config,
     stdin: &mut std::process::ChildStdin,
 ) -> HashMap<String, Suggestion> {
     let mut variables: HashMap<String, Suggestion> = HashMap::new();
     let mut found_something = false;
-    let paths = get_paths(config);
+    let paths = filesystem::cheat_paths(config);
     let folders = paths.split(':');
 
     for folder in folders {
@@ -230,7 +192,7 @@ pub fn read_all(
     }
 
     if !found_something {
-        welcome_cheatsheet(stdin);
+        welcome::cheatsheet(stdin);
     }
 
     variables
