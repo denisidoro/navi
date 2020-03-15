@@ -17,7 +17,7 @@ pub fn pathbuf_to_string(pathbuf: PathBuf) -> String {
 }
 
 pub fn cheat_pathbuf() -> Option<PathBuf> {
-    match dirs::config_dir() {
+    match dirs::data_dir() {
         Some(mut d) => {
             d.push("navi");
             d.push("cheats");
