@@ -33,8 +33,6 @@ release() {
    chmod +x "$bin_path"
    mkdir -p "$TAR_DIR" 2> /dev/null || true
 
-   cp -r "${NAVI_HOME}/cheats" "$TAR_DIR"
-   cp -r "${NAVI_HOME}/shell" "$TAR_DIR"
    cp "$bin_path" "$TAR_DIR"
 
    cd "${NAVI_HOME}/target/tar"
