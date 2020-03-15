@@ -1,23 +1,23 @@
 use crate::cheat::SuggestionType;
 use crate::filesystem;
 use crate::fzf;
+use git2::Repository;
 use std::error::Error;
 use std::fs;
 use std::io::Write;
 use walkdir::WalkDir;
-use git2::Repository;
 
 fn create_dir(path: &str) {
     fs::create_dir_all(path).unwrap_or(());
 }
 
 fn remove_dir(path: &str) {
-        fs::remove_dir_all(path).unwrap_or(());
+    fs::remove_dir_all(path).unwrap_or(());
 }
 
 pub fn add(uri: String) -> Result<(), Box<dyn Error>> {
     let actual_uri = if uri.contains("://") {
-        uri 
+        uri
     } else {
         format!("https://github.com/{}", uri)
     };
@@ -28,27 +28,28 @@ pub fn add(uri: String) -> Result<(), Box<dyn Error>> {
 
     let cheat_path_str = filesystem::pathbuf_to_string(filesystem::cheat_pathbuf().unwrap());
     let tmp_path_str = format!("{}/tmp", cheat_path_str);
-let tmp_path_str_with_trailing_slash = format!("{}/", &tmp_path_str);
+    let tmp_path_str_with_trailing_slash = format!("{}/", &tmp_path_str);
 
     remove_dir(&tmp_path_str);
     create_dir(&tmp_path_str);
 
     eprintln!("Cloning {} into {}...\n", &actual_uri, &tmp_path_str);
 
-match Repository::clone(actual_uri.as_str(), &tmp_path_str) {
-    Ok(r) => r,
-    Err(e) => panic!("failed to clone: {}", e),
-};
-    
-    let all_files = WalkDir::new(&tmp_path_str)
-    .into_iter()
-    .filter_map(|e| e.ok())
-    .map(|e| e.path().to_str().unwrap_or("").to_string())
-    .filter(|e| e.ends_with(".cheat"))
-    .map(|e| e.replace(&tmp_path_str_with_trailing_slash, ""))
-.collect::<Vec<String>>().join("\n");
+    match Repository::clone(actual_uri.as_str(), &tmp_path_str) {
+        Ok(r) => r,
+        Err(e) => panic!("failed to clone: {}", e),
+    };
 
-let overrides = "--preview-window right:30%".to_string();
+    let all_files = WalkDir::new(&tmp_path_str)
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .map(|e| e.path().to_str().unwrap_or("").to_string())
+        .filter(|e| e.ends_with(".cheat"))
+        .map(|e| e.replace(&tmp_path_str_with_trailing_slash, ""))
+        .collect::<Vec<String>>()
+        .join("\n");
+
+    let overrides = "--preview-window right:30%".to_string();
     let opts = fzf::Opts {
         suggestion_type: SuggestionType::MultipleSelections,
         preview: Some(format!("cat {}/{{}}", tmp_path_str_with_trailing_slash)),
