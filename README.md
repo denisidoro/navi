@@ -102,8 +102,6 @@ navi widget fish | source
 
 By default, `Ctrl+G` is assigned to launching **navi**. If you want to change the keybinding, replace the argument of `bind` or `bindkey` in [the widget file](https://github.com/denisidoro/navi/search?q=filename%3Anavi.plugin.*&unscoped_q=filename%3Anavi.plugin.*).
 
-If you want a widget for other shells, please upvote [this issue](https://github.com/denisidoro/navi/issues/37).
-
 ### More options
 
 Please refer to `navi --help` for more details.
@@ -139,7 +137,7 @@ Cheatsheets are described in `.cheat` files.
 
 ### Syntax overview
 
-- lines starting with `%` determine the start of a new cheatsheet. They should contain tags which will be added to any command in a given file;
+- lines starting with `%` determine the start of a new cheatsheet and should contain tags;
 - lines starting with `#` should be descriptions of commands;
 - lines starting with `;` are ignored. You can use them for metacomments;
 - lines starting with `$` should contain commands that generate a list of possible values for a given argument;
@@ -159,7 +157,7 @@ It's irrelevant how many files are used to store cheatsheets. They can be all in
 
 Commands may be multiline:
 ```sh
-# This will output foo\nyes
+# This will output "foo\nyes"
 echo foo
 true \
    && echo yes \
