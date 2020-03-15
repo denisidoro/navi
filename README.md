@@ -161,7 +161,7 @@ Commands may be multiline:
 ```sh
 # This will output foo\nyes
 echo foo
-echo bar | grep q -b \
+true \
    && echo yes \
    || echo no
 ```
