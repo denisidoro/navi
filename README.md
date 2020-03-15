@@ -6,15 +6,16 @@ An interactive cheatsheet tool for the command-line.
 
 ![Demo](https://user-images.githubusercontent.com/3226564/76437136-ddc35900-6397-11ea-823c-d2da7615fe60.gif)
 
-**navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands, with argument values prompted to you. It uses [fzf](https://github.com/junegunn/fzf) under the hood.
+**navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands. Argument suggestions are prompted to you. 
 
-It can be either used as a command or as a shell widget (*à la* Ctrl-R).
+It uses [fzf](https://github.com/junegunn/fzf) under the hood and it can be either used as a command or as a shell widget (*à la* Ctrl-R).
 
 Table of contents
 -----------------
 
    * [Installation](#installation)
       * [Using Homebrew or Linuxbrew](#using-homebrew-or-linuxbrew)
+      * [Using cargo](#using-cargo)
       * [Using one-liner script](#using-one-liner-script)
       * [Downloading pre-compiled binaries](#downloading-pre-compiled-binaries)
       * [Building from source](#building-from-source)
@@ -48,15 +49,23 @@ Installation
 brew install denisidoro/tools/navi
 ```
 
-Alternatively, you can use the official formula (but it will install a very old version of **navi**):
+Alternatively, you can use the official formula (but it will install a very old version):
 ```sh
 brew install navi
+```
+
+### Using [cargo](https://github.com/rust-lang/cargo)
+
+```bash
+cargo install navi
 ```
 
 ### Using one-liner script
 
 ```bash
 bash <(curl -sL https://raw.githubusercontent.com/denisidoro/navi/master/scripts/install)
+# (optional) to set directories:
+# SOURCE_DIR=/opt/navi BIN_DIR=/usr/local/bin bash <(curl -sL https://raw.githubusercontent.com/denisidoro/navi/master/scripts/install)l
 ```
 
 ### Downloading pre-compiled binaries
@@ -68,7 +77,9 @@ You can download binaries [here](https://github.com/denisidoro/navi/releases/lat
 ```bash
 git clone https://github.com/denisidoro/navi ~/.navi
 cd ~/.navi
-make install # or make SOURCE_DIR=/opt/navi BIN_DIR=/usr/local/bin install
+make install 
+# (optional) to set install directory:
+# make BIN_DIR=/usr/local/bin install
 ```
 
 Usage
@@ -76,19 +87,7 @@ Usage
 
 By simply running `navi` you will be prompted with the default cheatsheets.
 
-### Preventing execution
-
-If you run `navi --print`, the selected snippet won't be executed. It will be printed to stdout instead.
-
-### Pre-filtering
-
-If you run `navi query <cmd>`, the results will be pre-filtered.
-
-### Shell widget
-
-You can use **navi** as a widget to your shell. This way, your history is correctly populated and you can edit the command as you wish before executing it.
-
-In order to use it, add this line to your `.bashrc`-like file:
+You can use **navi** as a widget to your shell. This way, your history is correctly populated and you can edit the command as you wish before executing it. To set it up, add this line to your `.bashrc`-like file:
 ```sh
 # bash
 source <(navi widget bash)
@@ -100,7 +99,7 @@ source <(navi widget zsh)
 navi widget fish | source
 ```
 
-By default, `Ctrl+G` is assigned to launching **navi**. If you want to change the keybinding, replace the argument of `bind` or `bindkey` in [the widget file](https://github.com/denisidoro/navi/search?q=filename%3Anavi.plugin.*&unscoped_q=filename%3Anavi.plugin.*).
+By default, `Ctrl+G` is assigned to launching **navi**.
 
 ### More options
 
@@ -109,12 +108,18 @@ Please refer to `navi --help` for more details.
 Trying out online
 --------------------
 
-If you don't have access to bash at the moment and you want to live preview **navi**, head to [this playground](https://www.katacoda.com/denisidoro/scenarios/navi). It'll start a docker container with instructions for you to install and use the tool. Note: login required.
+If you don't have access to a Unix shell at the moment and you want to live preview **navi**, head to [this playground](https://www.katacoda.com/denisidoro/scenarios/navi). It'll start a docker container with instructions for you to install and use the tool. Note: login required.
 
 Cheatsheets
 -----------
 
-### Using your own custom cheatsheets
+### Adding cheatsheets
+
+```
+navi repo add <path-to-a-git-repo-with-cheats>
+# example: navi repo add
+```
+`/Users/denis.isidoro/Library/Preferences/navi/`
 
 In this case, you need to pass a `:`-separated list of separated directories which contain `.cheat` files:
 ```sh
@@ -133,17 +138,8 @@ Feel free to open a PR on https://github.com/denisidoro/cheats for me to include
 Cheatsheet syntax
 -----------------
 
-Cheatsheets are described in `.cheat` files.
+Cheatsheets are described in `.cheat` files that look like this:
 
-### Syntax overview
-
-- lines starting with `%` determine the start of a new cheatsheet and should contain tags;
-- lines starting with `#` should be descriptions of commands;
-- lines starting with `;` are ignored. You can use them for metacomments;
-- lines starting with `$` should contain commands that generate a list of possible values for a given argument;
-- all the other non-empty lines are considered as executable commands.
-
-For example, this is a valid `.cheat` file:
 ```sh
 % git, code
 
@@ -153,7 +149,38 @@ git checkout <branch>
 $ branch: git branch | awk '{print $NF}'
 ```
 
+### Syntax overview
+
+- lines starting with `%` determine the start of a new cheatsheet and should contain tags;
+- lines starting with `#` should be descriptions of commands;
+- lines starting with `;` are ignored. You can use them for metacomments;
+- lines starting with `$` should contain commands that generate a list of possible values for a given argument;
+- all the other non-empty lines are considered as executable commands.
+
+The interface prompts for variable names inside brackets (eg `<branch>`). Variable names should only include alphanumeric characters and `_`.
+
 It's irrelevant how many files are used to store cheatsheets. They can be all in a single file if you wish, as long as you split them accordingly with lines starting with `%`.
+
+### Variable options
+
+For lines starting with `$` you can add use `---` to customize the behavior of `fzf` or how the value is going to be used:
+
+```sh
+# This will pick the 3rd column and use the first line as header
+docker rmi <image_id>
+
+$ image_id: docker images --- --column 3 --header-lines 1 --delimiter '\s\s+'
+```
+
+The supported parameters are:
+- `--allow-extra` *(experimental)*: handles `fzf` option `--print-query`. `enter` will prefer a selection,
+    `tab` will prefer the query typed. 
+- `--multi` : forwarded option to `fzf`.
+- `--header-lines` : forwarded option to `fzf`
+- `--column` : forwarded option to `fzf`.
+- `--delimiter` : forwarded option to `fzf`.
+
+### Multiline snippets
 
 Commands may be multiline:
 ```sh
@@ -163,12 +190,6 @@ true \
    && echo yes \
    || echo no
 ```
-
-### Variables
-
-The interface prompts for variable names inside brackets (eg `<branch>`).
-
-Variable names should only include alphanumeric characters and `_`.
 
 ### Variable dependency
 
@@ -181,37 +202,6 @@ $ x: echo -e '1\n2\n3'
 $ y: echo -e "$((x+10))\n$((x+20))"
 ```
 
-### Variable options
-
-For lines starting with `$` you can add use`---` to parse parameters to `fzf`.
-* `--allow-extra` *(experimental)*: handles `fzf` option `--print-query`. `enter` will prefer a selection,
-    `tab` will prefer the query typed. 
-* `--multi` : forwarded option to `fzf`.
-* `--header-lines` : forwarded option to `fzf`
-* `--column` : forwarded option to `fzf`.
-* `--delimiter` : forwarded option to `fzf`.
-
-#### Table formatting
-
-You can pick a specific column of a selection and set the number of lines considered as headers via `--column`, `--delimiter` and `--header-lines`:
-
-```sh
-# This will pick the 3rd column and use the first line as header
-docker rmi <image_id>
-
-$ image_id: docker images --- --column 3 --header-lines 1 --delimiter '\s\s+'
-```
-
-#### Multiple choice
-
-You can select multiple values via `--multi` and hitting `<TAB>`:
-
-```sh
-# The resulting command will be something like: cat "a.txt" "b.txt"
-cat <files>
-
-$ files: ls --- --multi
-```
 
 List customization
 ------------------
