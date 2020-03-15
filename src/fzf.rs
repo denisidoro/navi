@@ -89,7 +89,7 @@ where
     if let Some(f) = opts.filter {
         fzf_command.args(&["--filter", &f]);
     }
-    
+
     if let Some(h) = opts.header {
         fzf_command.args(&["--header", &h]);
     }

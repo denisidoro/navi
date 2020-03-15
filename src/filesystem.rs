@@ -12,11 +12,7 @@ where
 }
 
 pub fn pathbuf_to_string(pathbuf: PathBuf) -> String {
-    pathbuf
-    .as_os_str()
-    .to_str()
-    .unwrap()
-    .to_string()
+    pathbuf.as_os_str().to_str().unwrap().to_string()
 }
 
 pub fn cheat_pathbuf() -> Option<PathBuf> {

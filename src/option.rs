@@ -57,9 +57,9 @@ pub enum Command {
     /// Performs ad-hoc functions provided by navi
     Fn { func: String, args: Vec<String> },
     /// Repo
-    Repo { 
-    #[structopt(subcommand)]
-    cmd: RepoCommand,
+    Repo {
+        #[structopt(subcommand)]
+        cmd: RepoCommand,
     },
     /// Shows the path for shell widget files
     Widget { shell: String },
