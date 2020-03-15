@@ -51,7 +51,9 @@ fn parse_opts(text: &str) -> SuggestionOpts {
             "--header" | "--headers" | "--header-lines" => {
                 header_lines = remove_quotes(parts.next().unwrap()).parse::<u8>().unwrap()
             }
-            "--column" => column = Some(remove_quotes(parts.next().unwrap()).parse::<u8>().unwrap()),
+            "--column" => {
+                column = Some(remove_quotes(parts.next().unwrap()).parse::<u8>().unwrap())
+            }
             "--delimiter" => delimiter = Some(remove_quotes(parts.next().unwrap()).to_string()),
             _ => (),
         }

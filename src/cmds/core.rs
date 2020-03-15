@@ -1,11 +1,11 @@
 use crate::cheat;
+use crate::cheat::SuggestionType;
 use crate::cmds;
 use crate::display;
 use crate::fzf;
+use crate::handler;
 use crate::option;
 use crate::option::Config;
-use crate::handler;
-use crate::cheat::SuggestionType;
 use regex::Regex;
 use std::collections::HashMap;
 use std::error::Error;
@@ -196,17 +196,17 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
     // copy to clipboard
     if key == "ctrl-y" {
         cmds::aux::abort("copying snippets to the clipboard", 201)?
-        // print to stdout
+    // print to stdout
     } else if config.print {
         println!("{}", interpolated_snippet);
-        // save to file
+    // save to file
     } else if let Some(s) = config.save {
         fs::write(s, interpolated_snippet)?;
-        // call navi (this prevents "failed to read /dev/tty" from fzf)
+    // call navi (this prevents "failed to read /dev/tty" from fzf)
     } else if interpolated_snippet.starts_with("navi") {
-        let new_config = option::config_from_iter(interpolated_snippet.split(" ").collect());
+        let new_config = option::config_from_iter(interpolated_snippet.split(' ').collect());
         handler::handle_config(new_config)?;
-        // shell out and execute snippet
+    // shell out and execute snippet
     } else {
         Command::new("bash")
             .arg("-c")

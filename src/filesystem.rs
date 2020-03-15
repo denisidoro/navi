@@ -1,8 +1,8 @@
+use crate::option::Config;
 use std::fs;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, Lines};
 use std::path::{Path, PathBuf};
-use crate::option::Config;
 
 pub fn read_lines<P>(filename: P) -> io::Result<Lines<BufReader<File>>>
 where

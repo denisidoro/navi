@@ -6,9 +6,9 @@ mod cmds;
 mod display;
 mod filesystem;
 mod fzf;
+mod handler;
 mod option;
 mod terminal;
-mod handler;
 mod welcome;
 
 use std::error::Error;
