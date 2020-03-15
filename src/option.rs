@@ -89,8 +89,7 @@ pub enum Command {
 pub enum RepoCommand {
     /// Imports cheatsheets from a repo
     Add {
-        /// A URI to a .tar.gz containing .cheat file\n
-        /// ("user/repo" will download cheats from github.com/user/repo)
+        /// A URI to a git repository containing .cheat files ("user/repo" will download cheats from github.com/user/repo)
         uri: String,
     },
 }
