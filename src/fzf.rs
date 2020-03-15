@@ -2,7 +2,6 @@ use crate::cheat;
 use crate::cheat::SuggestionType;
 use crate::cheat::SuggestionType::SingleSelection;
 use crate::display;
-use crate::filesystem;
 use std::collections::HashMap;
 use std::process;
 use std::process::{Command, Stdio};
@@ -11,7 +10,7 @@ pub struct Opts<'a> {
     pub query: Option<String>,
     pub filter: Option<String>,
     pub prompt: Option<String>,
-    pub preview: bool,
+    pub preview: Option<String>,
     pub autoselect: bool,
     pub overrides: Option<&'a String>, // TODO: remove &'a
     pub header_lines: u8,
@@ -24,8 +23,8 @@ impl Default for Opts<'_> {
         Self {
             query: None,
             filter: None,
-            preview: true,
             autoselect: true,
+            preview: None,
             overrides: None,
             header_lines: 0,
             header: None,
@@ -74,11 +73,8 @@ where
         _ => {}
     }
 
-    if opts.preview {
-        fzf_command.args(&[
-            "--preview",
-            format!("{} preview {{}}", filesystem::exe_string()).as_str(),
-        ]);
+    if let Some(p) = opts.preview {
+        fzf_command.args(&["--preview", &p]);
     }
 
     if let Some(q) = opts.query {

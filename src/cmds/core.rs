@@ -2,6 +2,7 @@ use crate::cheat;
 use crate::cheat::SuggestionType;
 use crate::cmds;
 use crate::display;
+use crate::filesystem;
 use crate::fzf;
 use crate::handler;
 use crate::option;
@@ -21,7 +22,11 @@ pub enum Variant {
 
 fn gen_core_fzf_opts(variant: Variant, config: &Config) -> fzf::Opts {
     let mut opts = fzf::Opts {
-        preview: !config.no_preview,
+        preview: if config.no_preview {
+            None
+        } else {
+            Some(format!("{} preview {{}}", filesystem::exe_string()))
+        },
         autoselect: !config.no_autoselect,
         overrides: config.fzf_overrides.as_ref(),
         suggestion_type: SuggestionType::SnippetSelection,
@@ -80,7 +85,6 @@ fn prompt_with_suggestions(
     let suggestions = String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap();
 
     let mut opts = fzf::Opts {
-        preview: false,
         autoselect: !config.no_autoselect,
         overrides: config.fzf_overrides_var.as_ref(),
         prompt: Some(display::variable_prompt(varname)),
@@ -118,7 +122,6 @@ fn prompt_with_suggestions(
 
 fn prompt_without_suggestions(variable_name: &str) -> String {
     let opts = fzf::Opts {
-        preview: false,
         autoselect: false,
         prompt: Some(display::variable_prompt(variable_name)),
         suggestion_type: SuggestionType::Disabled,
