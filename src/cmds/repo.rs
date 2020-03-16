@@ -1,6 +1,7 @@
 use crate::cheat::SuggestionType;
 use crate::filesystem;
 use crate::fzf;
+use crate::git;
 use git2::Repository;
 use std::error::Error;
 use std::fs;
@@ -8,15 +9,7 @@ use std::io::Write;
 use walkdir::WalkDir;
 
 pub fn add(uri: String) -> Result<(), Box<dyn Error>> {
-    let actual_uri = if uri.contains("://") || uri.contains('@') {
-        uri
-    } else {
-        format!("https://github.com/{}", uri)
-    };
-
-    let parts: Vec<&str> = actual_uri.split('/').collect();
-    let user = parts[parts.len() - 2];
-    let repo = parts[parts.len() - 1].replace(".git", "");
+    let (actual_uri, user, repo) = git::meta(uri.as_str());
 
     let cheat_path_str = filesystem::pathbuf_to_string(filesystem::cheat_pathbuf().unwrap());
     let tmp_path_str = format!("{}/tmp", cheat_path_str);

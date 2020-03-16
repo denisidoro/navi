@@ -19,13 +19,12 @@ raw_tty = "0.1.0"
 lazy_static = "1.4.0"
 dirs = "2.0.0"
 terminal_size = "0.1.10"
-git2 = "0.10.0"
 walkdir = "2"
-openssl = { version = '0.10', optional = true }
 
-[features]
-default = []
-vendored-openssl = ["openssl/vendored"]
+[dependencies.git2]
+version = "0.10.0"
+default-features = false
+features = ["https"]
 
 [[bin]]
 bench = false

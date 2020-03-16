@@ -10,6 +10,7 @@ mod handler;
 mod option;
 mod terminal;
 mod welcome;
+mod git;
 
 use std::error::Error;
 
