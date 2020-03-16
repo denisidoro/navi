@@ -64,7 +64,7 @@ asset_url() {
    local -r variant="${2:-}"
 
    if [[ -n "$variant" ]]; then
-      echo "https://github.com/denisidoro/navi/releases/download/v${version}/navi-${variant}.tar.gz"
+      echo "https://github.com/denisidoro/navi/releases/download/v${version}/navi-v${version}-${variant}.tar.gz"
    else
       echo "https://github.com/denisidoro/navi/archive/v${version}.tar.gz"
    fi
@@ -97,8 +97,8 @@ get_target() {
    local target
    case "$archi" in
       Darwin*) target="x86_64-osx" ;;
-      Linux\ *x86*) is_android && target="aarch64-linux-android" || target="x86_64-unknown-linux-musl" ;;
-      *arm*) is_android && target="armv7-linux-androideabi" || target="armv7-unknown-linux-musleabihf" ;;
+      Linux\ *x86*) $is_android && target="aarch64-linux-android" || target="x86_64-unknown-linux-musl" ;;
+      *arm*) $is_android && target="armv7-linux-androideabi" || target="armv7-unknown-linux-musleabihf" ;;
       *) target="" ;;
    esac
 
@@ -111,6 +111,18 @@ no_binary_warning() {
 
 get_shell() {
    echo $SHELL | xargs basename
+}
+
+installation_finish_instructions() {
+   local -r shell="$(get_shell)"
+   echoerr -e "Finished. To call navi, restart your shell or reload the config file:\n   source ~/.${shell}rc"
+   local code
+   if [[ $shell = "zsh" ]]; then
+      code="navi widget ${shell} | source"
+   else
+      code="source <(navi widget ${shell})"
+   fi
+   echoerr -e "\nTo add the Ctrl-G keybinding, add the following to ~/.${shell}rc:\n   ${code}"
 }
 
 install_navi() {
