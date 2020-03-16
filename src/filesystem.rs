@@ -75,3 +75,11 @@ pub fn cheat_paths(config: &Config) -> String {
         .clone()
         .unwrap_or_else(cheat_paths_from_config_dir)
 }
+
+pub fn create_dir(path: &str) {
+    fs::create_dir_all(path).unwrap_or(());
+}
+
+pub fn remove_dir(path: &str) {
+    fs::remove_dir_all(path).unwrap_or(());
+}
