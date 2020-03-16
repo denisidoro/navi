@@ -1,4 +1,4 @@
-# navi <img src="https://user-images.githubusercontent.com/3226564/65362934-b4432500-dbdf-11e9-8f75-815fbc5cbf8f.png" alt="icon" height="28px"/> [![Actions Status](https://github.com/denisidoro/navi/workflows/Tests/badge.svg)](https://github.com/denisidoro/navi/actions) ![GitHub release](https://img.shields.io/github/v/release/denisidoro/navi?include_prereleases)
+# navi <img src="https://user-images.githubusercontent.com/3226564/65362934-b4432500-dbdf-11e9-8f75-815fbc5cbf8f.png" alt="icon" height="28px"/> [![Actions Status](https://github.com/denisidoro/navi/workflows/Tests/badge.svg)](https://github.com/denisidoro/navi/actions) [![Build Status](https://travis-ci.org/denisidoro/navi.svg?branch=master)](https://travis-ci.org/denisidoro/navi) ![GitHub release](https://img.shields.io/github/v/release/denisidoro/navi?include_prereleases)
   
 > :information_source: If you're here because you upgraded **navi** and are having some issues, please check [this thread](https://github.com/denisidoro/navi/issues/201).
 
