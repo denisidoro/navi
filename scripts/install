@@ -59,6 +59,15 @@ latest_version_released() {
       | sed 's|releases/tag/v||'
 }
 
+version_from_toml() {
+   cat "${NAVI_HOME}/Cargo.toml" \
+      | grep version \
+      | head -n1 \
+      | awk '{print $NF}' \
+      | tr -d '"' \
+      | tr -d "'"
+}
+
 asset_url() {
    local -r version="$1"
    local -r variant="${2:-}"
