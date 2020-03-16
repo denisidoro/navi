@@ -1,7 +1,7 @@
 pub fn meta(uri: &str) -> (String, String, String) {
     let actual_uri = if uri.contains("://") {
         uri.to_string()
-    }   else if uri.contains('@') {
+    } else if uri.contains('@') {
         uri.replace("git@", "https://").replace(':', "/")
     } else {
         format!("https://github.com/{}", uri)

@@ -6,11 +6,11 @@ mod cmds;
 mod display;
 mod filesystem;
 mod fzf;
+mod git;
 mod handler;
 mod option;
 mod terminal;
 mod welcome;
-mod git;
 
 use std::error::Error;
 
