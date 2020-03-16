@@ -37,7 +37,7 @@ pub fn add(uri: String) -> Result<(), Box<dyn Error>> {
     let overrides = "--preview-window right:30%".to_string();
     let opts = fzf::Opts {
         suggestion_type: SuggestionType::MultipleSelections,
-        preview: Some(format!("cat {}/{{}}", tmp_path_str_with_trailing_slash)),
+        preview: Some(format!("cat '{}/{{}}'", tmp_path_str)),
         header: Some(
             "Select the cheatsheets you want to import with <TAB> then hit <Enter>".to_string(),
         ),
