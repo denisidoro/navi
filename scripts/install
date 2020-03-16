@@ -129,7 +129,7 @@ installation_finish_instructions() {
    if [[ $shell = "zsh" ]]; then
       code="navi widget ${shell} | source"
    else
-      code="source <(navi widget ${shell})"
+      code='source <(navi widget '"$shell"')'
    fi
    echoerr -e "\nTo add the Ctrl-G keybinding, add the following to ~/.${shell}rc:\n   ${code}"
 }
