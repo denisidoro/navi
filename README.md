@@ -121,7 +121,7 @@ Cheatsheets
 
 **navi** is able to import cheatsheets from git repositories:
 ```
-navi repo add <path-to-a-git-repo-with-cheats> # example: navi repo add https://github.com/denisidoro/navi
+navi repo add https://github.com/denisidoro/navi
 ```
 
 ### Adding your own cheatsheets
