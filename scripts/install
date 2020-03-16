@@ -113,6 +113,18 @@ get_shell() {
    echo $SHELL | xargs basename
 }
 
+installation_finish_instructions() {
+   local -r shell="$(get_shell)"
+   echoerr -e "Finished. To call navi, restart your shell or reload the config file:\n   source ~/.${shell}rc"
+   local code
+   if [[ $shell = "zsh" ]]; then
+      code="navi widget ${shell} | source"
+      else 
+      code="source <(navi widget ${shell})"
+      fi
+   echoerr -e "\nTo add the Ctrl-G keybinding, add the following to ~/.${shell}rc:\n   ${code}"
+}
+
 install_navi() {
    export SOURCE_DIR="${SOURCE_DIR:-"$(get_source_dir)"}"
    export BIN_DIR="${BIN_DIR:-"$(get_bin_dir)"}"
