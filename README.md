@@ -138,6 +138,7 @@ You can either start a git repo with cheatsheets and import it as described abov
 
 The main repository for cheatsheets is [denisidoro/cheats](https://github.com/denisidoro/cheats). Feel free to open a PR there for me to include your contributions.
 
+[*alpha*] In order to add your own repository as a featured cheatsheet repo, please [edit this file](https://github.com/denisidoro/cheats/edit/master/featured_repos.txt). This list will be displayed when `navi repo browse` is run.
 
 Cheatsheet syntax
 -----------------
