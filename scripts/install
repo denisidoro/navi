@@ -64,7 +64,7 @@ asset_url() {
    local -r variant="${2:-}"
 
    if [[ -n "$variant" ]]; then
-      echo "https://github.com/denisidoro/navi/releases/download/v${version}/navi-${variant}.tar.gz"
+      echo "https://github.com/denisidoro/navi/releases/download/v${version}/navi-v${version}-${variant}.tar.gz"
    else
       echo "https://github.com/denisidoro/navi/archive/v${version}.tar.gz"
    fi
