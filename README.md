@@ -8,15 +8,10 @@ An interactive cheatsheet tool for the command-line.
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands. Argument suggestions are prompted to you.
 
-It will:
-- make you type less;
-- spare you from knowing CLIs by heart;
-- teach you new one-liners.
-
-It will:
-- make you type less;
-- spare you from knowing CLIs by heart;
-- teach you new one-liners.
+#### Pros
+- it will make you type less;
+- it will spare you from knowing CLIs by heart;
+- it will teach you new one-liners.
 
 It uses [fzf](https://github.com/junegunn/fzf) under the hood and it can be either used as a command or as a shell widget (*à la* Ctrl-R).
 
