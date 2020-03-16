@@ -126,7 +126,7 @@ navi repo add https://github.com/denisidoro/navi
 
 ### Adding your own cheatsheets
 
-You can either start a git repo with cheatsheets and import it as described above or you can add them directly to [data_dir](https://github.com/soc/dirs-rs)`/navi`.
+You can either start a git repo with cheatsheets and import it as described above or you can add them directly to [data_dir](https://github.com/soc/dirs-rs#Features)`/navi`.
 
 
 ### Submitting cheatsheets
