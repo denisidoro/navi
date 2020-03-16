@@ -6,7 +6,12 @@ An interactive cheatsheet tool for the command-line.
 
 ![Demo](https://user-images.githubusercontent.com/3226564/76437136-ddc35900-6397-11ea-823c-d2da7615fe60.gif)
 
-**navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands. Argument suggestions are prompted to you. 
+**navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands. Argument suggestions are prompted to you.
+
+It will:
+- make you type less;
+- spare you from knowing CLIs by heart;
+- teach you new one-liners.
 
 It will:
 - make you type less;
