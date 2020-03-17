@@ -16,6 +16,8 @@ pub struct Opts<'a> {
     pub header_lines: u8,
     pub header: Option<String>,
     pub suggestion_type: SuggestionType,
+    pub delimiter: Option<&'a str>,
+    pub column: Option<u8>,
 }
 
 impl Default for Opts<'_> {
@@ -30,7 +32,22 @@ impl Default for Opts<'_> {
             header: None,
             prompt: None,
             suggestion_type: SingleSelection,
+            column: None,
+            delimiter: None,
         }
+    }
+}
+
+fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> String {
+    if let Some(c) = column {
+        let re = regex::Regex::new(delimiter.unwrap_or(r"\s\s+")).unwrap();
+        let mut parts = re.split(text.as_str());
+        for _ in 0..(c - 1) {
+            parts.next().unwrap();
+        }
+        parts.next().unwrap().to_string()
+    } else {
+        text
     }
 }
 
@@ -134,7 +151,15 @@ where
             panic!("External command failed:\n {}", err)
         }
     };
-    (parse_output_single(text, opts.suggestion_type), result)
+
+    (
+        get_column(
+            parse_output_single(text, opts.suggestion_type),
+            opts.column,
+            opts.delimiter,
+        ),
+        result,
+    )
 }
 
 fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> String {

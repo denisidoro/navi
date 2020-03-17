@@ -1,3 +1,5 @@
+use crate::handler;
+use crate::option;
 use std::error::Error;
 use std::process::Command;
 
@@ -13,6 +15,11 @@ pub fn main(func: String, args: Vec<String>) -> Result<(), Box<dyn Error>> {
                 .unwrap();
             Ok(())
         }
+
+        "welcome" => handler::handle_config(option::config_from_iter(
+            "navi --path /tmp/irrelevant".split(' ').collect(),
+        )),
+
         _ => unreachable!(""),
     }
 }

@@ -92,6 +92,8 @@ pub enum RepoCommand {
         /// A URI to a git repository containing .cheat files ("user/repo" will download cheats from github.com/user/repo)
         uri: String,
     },
+    /// Browses for featured cheatsheet repos
+    Browse,
 }
 
 pub enum InternalCommand {
