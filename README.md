@@ -181,7 +181,7 @@ If you hit `<tab>` the query typed will be prefered. If you hit `<enter>` the se
 
 ### Advanced variable options
 
-For lines starting with `$` you can add use `---` to customize the behavior of `fzf` or how the value is going to be used:
+For lines starting with `$` you can use `---` to customize the behavior of `fzf` or how the value is going to be used:
 
 ```sh
 # This will pick the 3rd column and use the first line as header
