@@ -172,6 +172,8 @@ Variable names should only include alphanumeric characters and `_`.
 
 If there's a corresponding line starting with `$` for a variable, suggestions will be displayed. Otherwise, the user will be able to type any value for it.
 
+If you hit `<tab>` the query typed will be prefered. If you hit `<enter>` the selection will be prefered.
+
 ### Advanced variable options
 
 For lines starting with `$` you can add use `---` to customize the behavior of `fzf` or how the value is going to be used:
@@ -184,10 +186,10 @@ $ image_id: docker images --- --column 3 --header-lines 1 --delimiter '\s\s+'
 ```
 
 The supported parameters are:
-- `--allow-extra` *(experimental)*: handles `fzf` option `--print-query`. `enter` will prefer a selection and `tab` will prefer the query typed. 
-- `--multi` : forwarded option to `fzf`.
-- `--header-lines` : forwarded option to `fzf`
-- `--column` : forwarded option to `fzf`.
+- `--prevent-extra` *(experimental)*: limits the user to select one the suggestions;
+- `--multi` : forwarded option to `fzf`;
+- `--header-lines` : forwarded option to `fzf`;
+- `--column` : forwarded option to `fzf`;
 - `--delimiter` : forwarded option to `fzf`.
 
 ### Variable dependency
