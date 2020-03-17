@@ -1,12 +1,12 @@
 % test
 
-# reset terminal title
+# escape code + subshell
 echo -ne "\033]0;$(hostname)\007"
 
-# Find primary, local IP address
+# sed with replacement
 echo "8.8.8.8 via 172.17.0.1 dev eth0  src 172.17.0.2" | sed -E 's/.*src ([0-9.]+).*/\1/p' | head -n1
 
-# simple echo
+# happy path
 echo "foo"
 
 # multiline command without backslash
@@ -18,3 +18,10 @@ echo "foo" \
     | grep -q "bar" \
     && echo "match" \
     || echo "no match"
+
+# multiple replacements
+echo "<x> <y> <x> <z>"
+
+$ x: echo '1 2 3' | tr ' ' '\n'
+$ y: echo 'a b c' | tr ' ' '\n'
+$ z: echo 'foo bar' | tr ' ' '\n'
