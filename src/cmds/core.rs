@@ -91,16 +91,11 @@ fn prompt_with_suggestions(
         ..Default::default()
     };
 
-    let mut column: Option<u8> = None;
-    let mut delimiter = r"\s\s+";
-
     if let Some(o) = &suggestion_options {
         opts.suggestion_type = o.suggestion_type;
         opts.header_lines = o.header_lines;
-        column = o.column;
-        if let Some(d) = o.delimiter.as_ref() {
-            delimiter = d.as_str();
-        }
+        opts.column = o.column;
+        opts.delimiter = o.delimiter.as_deref();
     };
 
     let (output, _) = fzf::call(opts, |stdin| {
@@ -108,16 +103,7 @@ fn prompt_with_suggestions(
         None
     });
 
-    if let Some(c) = column {
-        let re = regex::Regex::new(delimiter).unwrap();
-        let mut parts = re.split(output.as_str());
-        for _ in 0..(c - 1) {
-            parts.next().unwrap();
-        }
-        parts.next().unwrap().to_string()
-    } else {
-        output
-    }
+    output
 }
 
 fn prompt_without_suggestions(variable_name: &str) -> String {

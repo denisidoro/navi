@@ -11,6 +11,9 @@ use walkdir::WalkDir;
 pub fn browse() -> Result<(), Box<dyn Error>> {
     let repo_path_str = format!("{}/featured", filesystem::tmp_path_str());
 
+    filesystem::remove_dir(&repo_path_str);
+    filesystem::create_dir(&repo_path_str);
+
     match Repository::clone("https://github.com/denisidoro/cheats", &repo_path_str) {
         Ok(r) => r,
         Err(e) => panic!("failed to clone: {}", e),
@@ -20,6 +23,7 @@ pub fn browse() -> Result<(), Box<dyn Error>> {
         .expect("Unable to fetch featured repos");
 
     let opts = fzf::Opts {
+        column: Some(1),
         ..Default::default()
     };
 
@@ -29,6 +33,8 @@ pub fn browse() -> Result<(), Box<dyn Error>> {
             .expect("Unable to prompt featured repos");
         None
     });
+
+    filesystem::remove_dir(&repo_path_str);
 
     add(repo)
 }
