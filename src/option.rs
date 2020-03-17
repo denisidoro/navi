@@ -1,5 +1,5 @@
 use std::env;
-use structopt::StructOpt;
+use structopt::{clap::AppSettings, StructOpt};
 
 #[derive(Debug, StructOpt)]
 #[structopt(after_help = r#"EXAMPLES:
@@ -14,6 +14,7 @@ use structopt::StructOpt;
     navi --fzf-overrides ' --with-nth 1,2' # shows only the comment and tag columns
     navi --fzf-overrides ' --nth 1,2'      # search will consider only the first two columns
     navi --fzf-overrides ' --no-exact'     # looser search algorithm"#)]
+#[structopt(setting = AppSettings::AllowLeadingHyphen)]
 pub struct Config {
     /// List of :-separated paths containing .cheat files
     #[structopt(short, long, env = "NAVI_PATH")]
