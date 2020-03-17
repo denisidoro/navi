@@ -1,4 +1,6 @@
-% test
+; author: CI/CD
+
+% test, ci/cd
 
 # escape code + subshell
 echo -ne "\033]0;$(hostname)\007"
@@ -6,22 +8,49 @@ echo -ne "\033]0;$(hostname)\007"
 # sed with replacement
 echo "8.8.8.8 via 172.17.0.1 dev eth0  src 172.17.0.2" | sed -E 's/.*src ([0-9.]+).*/\1/p' | head -n1
 
-# happy path
+# trivial case
 echo "foo"
 
-# multiline command without backslash
+# multiline command: without backslash
 echo "foo"
 echo "bar"
 
-# multiline command with backslash
+# env var
+echo "$HOME"
+
+# multiline command: with backslash
+echo 'lorem ipsum'
 echo "foo" \
     | grep -q "bar" \
     && echo "match" \
     || echo "no match"
 
+# second column: default delimiter
+echo "<table_elem> is cool"
+
+# second column: custom delimiter
+echo "<table_elem2> is cool"
+
+# return multiple results: single words
+echo "I like these languages: "$(printf '%s' "<langs>" | tr '\n' ',' | sed 's/,/, /g')""
+
+# return multiple results: multiple words
+echo "I like these examples: "$(printf '%s' "<examples>" | sed 's/^..*$/"&"/' | awk 1 ORS=', ' | sed 's/, $//')""
+
 # multiple replacements
 echo "<x> <y> <x> <z>"
+
+# multi-word
+echo "<multiword>"
 
 $ x: echo '1 2 3' | tr ' ' '\n'
 $ y: echo 'a b c' | tr ' ' '\n'
 $ z: echo 'foo bar' | tr ' ' '\n'
+$ table_elem: echo -e '0  rust      rust-lang.org\n1  clojure   clojure.org' --- --column 2
+$ table_elem2: echo -e '0;rust;rust-lang.org\n1;clojure;clojure.org' --- --column 2 --delimiter ';'
+$ langs: echo 'clojure rust javascript' | tr ' ' '\n' --- --multi
+$ examples: echo -e 'foo bar\nlorem ipsum\ndolor sit' --- --multi
+$ multiword: echo -e 'foo bar\nlorem ipsum\ndolor sit\nbaz'
+
+# this should be displayed
+echo hi

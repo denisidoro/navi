@@ -95,9 +95,9 @@ fn write_cmd(
         stdin
             .write_all(
                 display::format_line(
-                    &tags[..],
-                    &comment[..],
-                    &snippet[3..],
+                    &tags,
+                    &comment,
+                    &snippet,
                     tag_width,
                     comment_width,
                 )
@@ -140,11 +140,16 @@ fn read_file(
     let mut tags = String::from("");
     let mut comment = String::from("");
     let mut snippet = String::from("");
+    let mut should_break = false;
 
     let (tag_width, comment_width) = *display::WIDTHS;
 
     if let Ok(lines) = filesystem::read_lines(path) {
         for l in lines {
+            if should_break {
+                break;
+            }
+
             let line = l.unwrap();
 
             // blank
@@ -153,7 +158,7 @@ fn read_file(
             // tag
             else if line.starts_with('%') {
                 if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
-                    break;
+                    should_break = true
                 }
                 snippet = String::from("");
                 tags = String::from(&line[2..]);
@@ -164,7 +169,7 @@ fn read_file(
             // comment
             else if line.starts_with('#') {
                 if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
-                    break;
+                    should_break = true
                 }
                 snippet = String::from("");
                 comment = String::from(&line[2..]);
@@ -172,18 +177,26 @@ fn read_file(
             // variable
             else if line.starts_with('$') {
                 if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
-                    break;
+                    should_break = true
                 }
                 snippet = String::from("");
                 let (variable, command, opts) = parse_variable_line(&line);
                 variables_map_insert(variables, &tags, &variable, (String::from(command), opts));
             }
-            // snippet
+            // first snippet line
+            else if (&snippet).is_empty() {
+                snippet.push_str(&line);
+            }
+            // other snippet lines
             else {
                 snippet.push_str(display::LINE_SEPARATOR);
                 snippet.push_str(&line);
             }
         }
+
+if !should_break {
+    write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin);
+}
 
         return true;
     }

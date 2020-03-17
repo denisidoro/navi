@@ -119,14 +119,6 @@ fn prompt_without_suggestions(variable_name: &str) -> String {
     output
 }
 
-fn gen_replacement(value: &str) -> String {
-    if value.contains(' ') {
-        format!("\"{}\"", value)
-    } else {
-        value.to_string()
-    }
-}
-
 fn replace_variables_from_snippet(
     snippet: &str,
     tags: &str,
@@ -156,7 +148,7 @@ fn replace_variables_from_snippet(
 
         interpolated_snippet = interpolated_snippet.replacen(
             bracketed_variable_name,
-            gen_replacement(&value[..]).as_str(),
+            value.as_str(),
             1,
         );
     }
