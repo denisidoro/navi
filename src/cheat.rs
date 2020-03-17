@@ -108,17 +108,26 @@ fn write_cmd(
 }
 
 fn variables_map_key(tags: &str, variable: &str) -> String {
-                    format!("{};{}", tags, variable)
+    format!("{};{}", tags, variable)
 }
 
 // TODO: OO-programming
-fn variables_map_insert(variables: &mut HashMap<String, Suggestion>, tags: &str, variable: &str, value: Suggestion) {
+fn variables_map_insert(
+    variables: &mut HashMap<String, Suggestion>,
+    tags: &str,
+    variable: &str,
+    value: Suggestion,
+) {
     let key = variables_map_key(tags, variable);
     variables.insert(key, value);
 }
 
 // TODO: OO-programming
-pub fn variables_map_get<'a>(variables: &'a HashMap<String, Suggestion>, tags: &str, variable: &str) -> Option<&'a Suggestion> {
+pub fn variables_map_get<'a>(
+    variables: &'a HashMap<String, Suggestion>,
+    tags: &str,
+    variable: &str,
+) -> Option<&'a Suggestion> {
     let key = variables_map_key(tags, variable);
     variables.get(key.as_str())
 }
@@ -167,12 +176,7 @@ fn read_file(
                 }
                 snippet = String::from("");
                 let (variable, command, opts) = parse_variable_line(&line);
-                variables_map_insert(
-variables,
-&tags, 
-&variable,
-                    (String::from(command), opts),
-                );
+                variables_map_insert(variables, &tags, &variable, (String::from(command), opts));
             }
             // snippet
             else {
