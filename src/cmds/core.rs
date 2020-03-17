@@ -141,28 +141,26 @@ fn replace_variables_from_snippet(
         let bracketed_variable_name = &captures[0];
         let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
 
-            let key = format!("{};{}", tags, variable_name);
+        let key = format!("{};{}", tags, variable_name);
 
-            let value = match values.get(variable_name) {
-                Some(v) => v.to_string(),
-                None => {
-                match variables.get(&key[..]) {
+        let value = match values.get(variable_name) {
+            Some(v) => v.to_string(),
+            None => match variables.get(&key[..]) {
                 Some(suggestion) => {
                     prompt_with_suggestions(variable_name, &config, suggestion, &values)
                 }
                 None => prompt_without_suggestions(variable_name),
-            }
-        }
-    };
+            },
+        };
 
-            values.insert(variable_name.to_string(), value.clone());
+        values.insert(variable_name.to_string(), value.clone());
 
-            interpolated_snippet = interpolated_snippet.replacen(
-                bracketed_variable_name,
-                gen_replacement(&value[..]).as_str(),
-                1,
-            );
-        }
+        interpolated_snippet = interpolated_snippet.replacen(
+            bracketed_variable_name,
+            gen_replacement(&value[..]).as_str(),
+            1,
+        );
+    }
 
     interpolated_snippet
 }
