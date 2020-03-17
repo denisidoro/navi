@@ -186,7 +186,7 @@ $ image_id: docker images --- --column 3 --header-lines 1 --delimiter '\s\s+'
 ```
 
 The supported parameters are:
-- `--prevent-extra` *(experimental)*: limits the user to select one the suggestions;
+- `--prevent-extra` *(experimental)*: limits the user to select one of the suggestions;
 - `--multi` : forwarded option to `fzf`;
 - `--header-lines` : forwarded option to `fzf`;
 - `--column` : forwarded option to `fzf`;
