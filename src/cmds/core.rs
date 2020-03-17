@@ -141,14 +141,11 @@ fn replace_variables_from_snippet(
         let bracketed_variable_name = &captures[0];
         let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
 
-        let key = format!("{};{}", tags, variable_name);
-
         let value = values
             .get(variable_name)
             .map(|s| s.to_string())
             .unwrap_or_else(|| {
-                variables
-                    .get(&key[..])
+                cheat::variables_map_get(&variables, &tags, &variable_name)
                     .map(|suggestion| {
                         prompt_with_suggestions(variable_name, &config, suggestion, &values)
                     })
