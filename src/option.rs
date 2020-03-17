@@ -93,7 +93,7 @@ pub enum RepoCommand {
         uri: String,
     },
     /// Browses for featured cheatsheet repos
-    Browse
+    Browse,
 }
 
 pub enum InternalCommand {

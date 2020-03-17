@@ -9,7 +9,6 @@ use std::io::Write;
 use walkdir::WalkDir;
 
 pub fn browse() -> Result<(), Box<dyn Error>> {
-
     let repo_path_str = format!("{}/featured", filesystem::tmp_path_str());
 
     match Repository::clone("https://github.com/denisidoro/cheats", &repo_path_str) {
@@ -17,9 +16,10 @@ pub fn browse() -> Result<(), Box<dyn Error>> {
         Err(e) => panic!("failed to clone: {}", e),
     };
 
-    let repos = fs::read_to_string(format!("{}/featured_repos.txt", &repo_path_str)).expect("Unable to fetch featured repos");
-    
-        let opts = fzf::Opts {
+    let repos = fs::read_to_string(format!("{}/featured_repos.txt", &repo_path_str))
+        .expect("Unable to fetch featured repos");
+
+    let opts = fzf::Opts {
         ..Default::default()
     };
 
@@ -31,7 +31,6 @@ pub fn browse() -> Result<(), Box<dyn Error>> {
     });
 
     add(repo)
-
 }
 
 pub fn add(uri: String) -> Result<(), Box<dyn Error>> {
