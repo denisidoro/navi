@@ -143,14 +143,14 @@ fn replace_variables_from_snippet(
 
         let key = format!("{};{}", tags, variable_name);
 
-        let value = values
-        .get(variable_name)
-        .map(|s| s.to_string())
-        .unwrap_or(
+        let value = values.get(variable_name).map(|s| s.to_string()).unwrap_or(
             variables
-            .get(&key[..])
-            .map(|suggestion| prompt_with_suggestions(variable_name, &config, suggestion, &values))
-            .unwrap_or(prompt_without_suggestions(variable_name)));
+                .get(&key[..])
+                .map(|suggestion| {
+                    prompt_with_suggestions(variable_name, &config, suggestion, &values)
+                })
+                .unwrap_or(prompt_without_suggestions(variable_name)),
+        );
 
         values.insert(variable_name.to_string(), value.clone());
 
