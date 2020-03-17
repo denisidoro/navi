@@ -146,11 +146,8 @@ fn replace_variables_from_snippet(
 
         values.insert(variable_name.to_string(), value.clone());
 
-        interpolated_snippet = interpolated_snippet.replacen(
-            bracketed_variable_name,
-            value.as_str(),
-            1,
-        );
+        interpolated_snippet =
+            interpolated_snippet.replacen(bracketed_variable_name, value.as_str(), 1);
     }
 
     interpolated_snippet

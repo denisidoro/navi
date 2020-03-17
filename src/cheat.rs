@@ -94,14 +94,8 @@ fn write_cmd(
     } else {
         stdin
             .write_all(
-                display::format_line(
-                    &tags,
-                    &comment,
-                    &snippet,
-                    tag_width,
-                    comment_width,
-                )
-                .as_bytes(),
+                display::format_line(&tags, &comment, &snippet, tag_width, comment_width)
+                    .as_bytes(),
             )
             .is_ok()
     }
@@ -194,9 +188,9 @@ fn read_file(
             }
         }
 
-if !should_break {
-    write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin);
-}
+        if !should_break {
+            write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin);
+        }
 
         return true;
     }
