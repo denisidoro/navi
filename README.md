@@ -124,8 +124,13 @@ Cheatsheets
 
 ### Importing cheatsheets
 
-**navi** is able to import cheatsheets from git repositories:
+You can find cheatsheet repositories with:
+```sh
+navi repo browse
 ```
+
+In addition, you can import cheatsheets from any git repository:
+```sh
 navi repo add https://github.com/denisidoro/navi
 ```
 
