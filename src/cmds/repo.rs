@@ -8,11 +8,37 @@ use std::fs;
 use std::io::Write;
 use walkdir::WalkDir;
 
+pub fn browse() -> Result<(), Box<dyn Error>> {
+
+    let repo_path_str = format!("{}/featured", filesystem::tmp_path_str());
+
+    match Repository::clone("https://github.com/denisidoro/cheats", &repo_path_str) {
+        Ok(r) => r,
+        Err(e) => panic!("failed to clone: {}", e),
+    };
+
+    let repos = fs::read_to_string(format!("{}/featured_repos.txt", &repo_path_str)).expect("Unable to fetch featured repos");
+    
+        let opts = fzf::Opts {
+        ..Default::default()
+    };
+
+    let (repo, _) = fzf::call(opts, |stdin| {
+        stdin
+            .write_all(repos.as_bytes())
+            .expect("Unable to prompt featured repos");
+        None
+    });
+
+    add(repo)
+
+}
+
 pub fn add(uri: String) -> Result<(), Box<dyn Error>> {
     let (actual_uri, user, repo) = git::meta(uri.as_str());
 
     let cheat_path_str = filesystem::pathbuf_to_string(filesystem::cheat_pathbuf().unwrap());
-    let tmp_path_str = format!("{}/tmp", cheat_path_str);
+    let tmp_path_str = filesystem::tmp_path_str();
     let tmp_path_str_with_trailing_slash = format!("{}/", &tmp_path_str);
 
     filesystem::remove_dir(&tmp_path_str);

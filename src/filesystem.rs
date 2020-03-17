@@ -83,3 +83,8 @@ pub fn create_dir(path: &str) {
 pub fn remove_dir(path: &str) {
     fs::remove_dir_all(path).unwrap_or(());
 }
+
+pub fn tmp_path_str() -> String {
+    let cheat_path_str = pathbuf_to_string(cheat_pathbuf().unwrap());
+    format!("{}/tmp", cheat_path_str)
+}

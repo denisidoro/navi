@@ -15,6 +15,7 @@ pub fn handle_config(mut config: Config) -> Result<(), Box<dyn Error>> {
             Fn { func, args } => cmds::func::main(func.clone(), args.to_vec()),
             Repo { cmd } => match cmd {
                 RepoCommand::Add { uri } => cmds::repo::add(uri.clone()),
+                RepoCommand::Browse => cmds::repo::browse(),
             },
         },
     }
