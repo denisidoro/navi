@@ -143,7 +143,7 @@ You can either start a git repo with cheatsheets and import it as described abov
 
 The main repository for cheatsheets is [denisidoro/cheats](https://github.com/denisidoro/cheats). Feel free to open a PR there for me to include your contributions.
 
-[*alpha*] In order to add your own repository as a featured cheatsheet repo, please [edit this file](https://github.com/denisidoro/cheats/edit/master/featured_repos.txt). This list will be displayed when `navi repo browse` is run.
+In order to add your own repository as a featured cheatsheet repo, please [edit this file](https://github.com/denisidoro/cheats/edit/master/featured_repos.txt). This list will be displayed when `navi repo browse` is run.
 
 Cheatsheet syntax
 -----------------
@@ -192,10 +192,10 @@ $ image_id: docker images --- --column 3 --header-lines 1 --delimiter '\s\s+'
 
 The supported parameters are:
 - `--prevent-extra` *(experimental)*: limits the user to select one of the suggestions;
-- `--multi` : forwarded option to `fzf`;
-- `--header-lines` : forwarded option to `fzf`;
-- `--column` : forwarded option to `fzf`;
-- `--delimiter` : forwarded option to `fzf`.
+- `--column <number>`: extracts a single column from the selected result;
+- `--delimiter <regex>`: delimits columns;
+- `--multi`: forwarded option to `fzf`;
+- `--header-lines <number>`: forwarded option to `fzf`;
 
 ### Variable dependency
 
