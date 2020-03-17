@@ -39,7 +39,7 @@ fn parse_opts(text: &str) -> SuggestionOpts {
     let mut header_lines: u8 = 0;
     let mut column: Option<u8> = None;
     let mut multi = false;
-    let mut allow_extra = false;
+    let mut prevent_extra = false;
     let mut delimiter: Option<String> = None;
 
     let mut parts = text.split(' ');
@@ -47,7 +47,7 @@ fn parse_opts(text: &str) -> SuggestionOpts {
     while let Some(p) = parts.next() {
         match p {
             "--multi" => multi = true,
-            "--allow-extra" => allow_extra = true,
+            "--prevent-extra" => prevent_extra = true,
             "--header" | "--headers" | "--header-lines" => {
                 header_lines = remove_quotes(parts.next().unwrap()).parse::<u8>().unwrap()
             }
@@ -63,10 +63,10 @@ fn parse_opts(text: &str) -> SuggestionOpts {
         header_lines,
         column,
         delimiter,
-        suggestion_type: match (multi, allow_extra) {
+        suggestion_type: match (multi, prevent_extra) {
             (true, _) => SuggestionType::MultipleSelections, // multi wins over allow-extra
-            (false, true) => SuggestionType::SingleRecommendation,
-            (false, false) => SuggestionType::SingleSelection,
+            (false, false) => SuggestionType::SingleRecommendation,
+            (false, true) => SuggestionType::SingleSelection,
         },
     }
 }
