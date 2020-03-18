@@ -1,8 +1,8 @@
 use crate::display;
 use crate::filesystem;
-use crate::structures::option::Config;
 use crate::structures::cheat::{SuggestionOpts, SuggestionType, VariableMap};
 use crate::structures::fnv::HashLine;
+use crate::structures::option::Config;
 use crate::welcome;
 use regex::Regex;
 use std::collections::HashSet;
