@@ -1,41 +1,8 @@
-use crate::cheat;
-use crate::cheat::SuggestionType;
-use crate::cheat::SuggestionType::SingleSelection;
 use crate::display;
+use crate::structures::cheat::{SuggestionType, VariableMap};
+use crate::structures::fzf::Opts;
 use std::process;
 use std::process::{Command, Stdio};
-
-pub struct Opts<'a> {
-    pub query: Option<String>,
-    pub filter: Option<String>,
-    pub prompt: Option<String>,
-    pub preview: Option<String>,
-    pub autoselect: bool,
-    pub overrides: Option<&'a String>, // TODO: remove &'a
-    pub header_lines: u8,
-    pub header: Option<String>,
-    pub suggestion_type: SuggestionType,
-    pub delimiter: Option<&'a str>,
-    pub column: Option<u8>,
-}
-
-impl Default for Opts<'_> {
-    fn default() -> Self {
-        Self {
-            query: None,
-            filter: None,
-            autoselect: true,
-            preview: None,
-            overrides: None,
-            header_lines: 0,
-            header: None,
-            prompt: None,
-            suggestion_type: SingleSelection,
-            column: None,
-            delimiter: None,
-        }
-    }
-}
 
 fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> String {
     if let Some(c) = column {
@@ -50,9 +17,9 @@ fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> Stri
     }
 }
 
-pub fn call<F>(opts: Opts, stdin_fn: F) -> (String, Option<cheat::VariableMap>)
+pub fn call<F>(opts: Opts, stdin_fn: F) -> (String, Option<VariableMap>)
 where
-    F: Fn(&mut process::ChildStdin) -> Option<cheat::VariableMap>,
+    F: Fn(&mut process::ChildStdin) -> Option<VariableMap>,
 {
     let mut fzf_command = Command::new("fzf");
 

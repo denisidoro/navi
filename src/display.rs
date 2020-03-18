@@ -3,13 +3,13 @@ use regex::Regex;
 use std::cmp::max;
 use termion::color;
 
-static COMMENT_COLOR: color::LightCyan = color::LightCyan;
-static TAG_COLOR: color::Blue = color::Blue;
-static SNIPPET_COLOR: color::White = color::White;
+const COMMENT_COLOR: color::LightCyan = color::LightCyan;
+const TAG_COLOR: color::Blue = color::Blue;
+const SNIPPET_COLOR: color::White = color::White;
 
-static NEWLINE_ESCAPE_CHAR: char = '\x15';
-pub static LINE_SEPARATOR: &str = " \x15 ";
-pub static DELIMITER: &str = r"  ⠀";
+const NEWLINE_ESCAPE_CHAR: char = '\x15';
+pub const LINE_SEPARATOR: &str = " \x15 ";
+pub const DELIMITER: &str = r"  ⠀";
 
 lazy_static! {
     pub static ref WIDTHS: (usize, usize) = get_widths();
