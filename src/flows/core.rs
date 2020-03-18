@@ -1,9 +1,9 @@
-use crate::parser;
 use crate::display;
 use crate::filesystem;
 use crate::flows;
 use crate::fzf;
 use crate::handler;
+use crate::parser;
 use crate::structures::cheat::{Suggestion, SuggestionType, VariableMap};
 use crate::structures::fzf::Opts as FzfOpts;
 use crate::structures::option;

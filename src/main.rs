@@ -1,13 +1,13 @@
 #[macro_use]
 extern crate lazy_static;
 
-mod parser;
 mod display;
 mod filesystem;
 mod flows;
 mod fzf;
 mod git;
 mod handler;
+mod parser;
 mod structures;
 mod terminal;
 mod welcome;
