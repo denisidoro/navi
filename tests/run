@@ -6,7 +6,7 @@ source "${NAVI_HOME}/tests/core.bash"
 TEST_CHEAT_PATH="${NAVI_HOME}/tests/cheats"
 
 _navi() {
-   local -r navi="target/debug/navi"
+   local -r navi="./target/debug/navi"
    NAVI_PATH="$TEST_CHEAT_PATH" "$navi" --fzf-overrides '--no-reverse' best "$1" 2> /dev/null \
       | test::equals "$2"
 }
