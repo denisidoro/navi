@@ -101,8 +101,7 @@ fn read_file(
             let line = l.unwrap();
 
             // duplicate
-            if !tags.is_empty() && !comment.is_empty() {
-            }
+            if !tags.is_empty() && !comment.is_empty() {}
 
             // blank
             if line.is_empty() {

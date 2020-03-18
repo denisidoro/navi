@@ -80,7 +80,7 @@ log::ansi() {
 _log() {
    local template="$1"
    shift
-      echoerr -e "$(printf "$template" "$@")"
+   echoerr -e "$(printf "$template" "$@")"
 }
 
 _header() {

@@ -151,14 +151,18 @@ fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> Str
             let lines: Vec<&str> = text.lines().collect();
 
             match (lines.get(0), lines.get(1), lines.get(2)) {
-                (Some(one), Some(termination), Some(two)) if *termination == "enter" || termination.is_empty() => {
+                (Some(one), Some(termination), Some(two))
+                    if *termination == "enter" || termination.is_empty() =>
+                {
                     if two.is_empty() {
                         (*one).to_string()
                     } else {
                         (*two).to_string()
                     }
                 }
-                (Some(one), Some(termination), None) if *termination == "enter" || termination.is_empty() => {
+                (Some(one), Some(termination), None)
+                    if *termination == "enter" || termination.is_empty() =>
+                {
                     (*one).to_string()
                 }
                 (Some(one), Some(termination), _) if *termination == "tab" => (*one).to_string(),
