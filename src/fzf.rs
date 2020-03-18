@@ -1,5 +1,5 @@
-use crate::structures::cheat::{SuggestionType, VariableMap};
 use crate::display;
+use crate::structures::cheat::{SuggestionType, VariableMap};
 use crate::structures::fzf::Opts;
 use std::process;
 use std::process::{Command, Stdio};

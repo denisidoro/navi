@@ -1,13 +1,13 @@
 use crate::cheat;
-use crate::flows;
 use crate::display;
 use crate::filesystem;
-use crate::structures::cheat::{SuggestionType, Suggestion, VariableMap};
-use crate::structures::fzf::Opts as FzfOpts;
+use crate::flows;
 use crate::fzf;
 use crate::handler;
 use crate::option;
 use crate::option::Config;
+use crate::structures::cheat::{Suggestion, SuggestionType, VariableMap};
+use crate::structures::fzf::Opts as FzfOpts;
 use regex::Regex;
 use std::collections::HashMap;
 use std::error::Error;

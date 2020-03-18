@@ -1,5 +1,5 @@
 use crate::structures::fnv::HashLine;
-use std::collections::{HashMap};
+use std::collections::HashMap;
 
 #[derive(Debug, PartialEq)]
 pub struct SuggestionOpts {

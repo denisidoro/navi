@@ -1,8 +1,8 @@
-use crate::structures::cheat::SuggestionType;
 use crate::filesystem;
-use crate::structures::fzf::Opts as FzfOpts;
 use crate::fzf;
 use crate::git;
+use crate::structures::cheat::SuggestionType;
+use crate::structures::fzf::Opts as FzfOpts;
 use git2::Repository;
 use std::error::Error;
 use std::fs;
