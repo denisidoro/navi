@@ -2,7 +2,6 @@ use crate::cheat;
 use crate::cheat::SuggestionType;
 use crate::cheat::SuggestionType::SingleSelection;
 use crate::display;
-use std::collections::HashMap;
 use std::process;
 use std::process::{Command, Stdio};
 
@@ -51,9 +50,9 @@ fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> Stri
     }
 }
 
-pub fn call<F>(opts: Opts, stdin_fn: F) -> (String, Option<HashMap<String, cheat::Suggestion>>)
+pub fn call<F>(opts: Opts, stdin_fn: F) -> (String, Option<cheat::VariableMap>)
 where
-    F: Fn(&mut process::ChildStdin) -> Option<HashMap<String, cheat::Suggestion>>,
+    F: Fn(&mut process::ChildStdin) -> Option<cheat::VariableMap>,
 {
     let mut fzf_command = Command::new("fzf");
 

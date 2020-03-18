@@ -122,7 +122,7 @@ fn prompt_without_suggestions(variable_name: &str) -> String {
 fn replace_variables_from_snippet(
     snippet: &str,
     tags: &str,
-    variables: HashMap<String, cheat::Suggestion>,
+    variables: cheat::VariableMap,
     config: &Config,
 ) -> String {
     let mut interpolated_snippet = String::from(snippet);
@@ -137,7 +137,7 @@ fn replace_variables_from_snippet(
             .get(variable_name)
             .map(|s| s.to_string())
             .unwrap_or_else(|| {
-                cheat::variables_map_get(&variables, &tags, &variable_name)
+                variables.get(&tags, &variable_name)
                     .map(|suggestion| {
                         prompt_with_suggestions(variable_name, &config, suggestion, &values)
                     })

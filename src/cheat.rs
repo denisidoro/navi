@@ -32,6 +32,22 @@ pub enum SuggestionType {
 
 pub type Suggestion = (String, Option<SuggestionOpts>);
 
+pub struct VariableMap (HashMap<u64, Suggestion>);
+
+impl VariableMap {
+    pub fn new() -> Self {
+        Self(HashMap::new())
+    }
+
+    pub fn insert(&mut self, tags: &str, variable: &str, value: Suggestion) -> Option<Suggestion> {
+        self.0.insert(gen_key(tags, variable), value)
+    }
+
+    pub fn get(&self, tags: &str, variable: &str) -> Option<&Suggestion> {
+        self.0.get(&gen_key(tags, variable))
+    }
+}
+
 fn remove_quotes(txt: &str) -> String {
     txt.replace('"', "").replace('\'', "")
 }
@@ -102,34 +118,13 @@ fn write_cmd(
     }
 }
 
-fn variables_map_key(tags: &str, variable: &str) -> String {
-    format!("{};{}", tags, variable)
-}
-
-// TODO: OO-programming
-fn variables_map_insert(
-    variables: &mut HashMap<String, Suggestion>,
-    tags: &str,
-    variable: &str,
-    value: Suggestion,
-) {
-    let key = variables_map_key(tags, variable);
-    variables.insert(key, value);
-}
-
-// TODO: OO-programming
-pub fn variables_map_get<'a>(
-    variables: &'a HashMap<String, Suggestion>,
-    tags: &str,
-    variable: &str,
-) -> Option<&'a Suggestion> {
-    let key = variables_map_key(tags, variable);
-    variables.get(key.as_str())
+fn gen_key(tags: &str, variable: &str) -> u64 {
+    format!("{};{}", tags, variable).hash_line()
 }
 
 fn read_file(
     path: &str,
-    variables: &mut HashMap<String, Suggestion>,
+    variables: &mut VariableMap,
     stdin: &mut std::process::ChildStdin,
     set: &mut HashSet<u64>,
 ) -> bool {
@@ -182,7 +177,7 @@ fn read_file(
                 }
                 snippet = String::from("");
                 let (variable, command, opts) = parse_variable_line(&line);
-                variables_map_insert(variables, &tags, &variable, (String::from(command), opts));
+                variables.insert(&tags, &variable, (String::from(command), opts));
             }
             // first snippet line
             else if (&snippet).is_empty() {
@@ -208,8 +203,8 @@ fn read_file(
 pub fn read_all(
     config: &Config,
     stdin: &mut std::process::ChildStdin,
-) -> HashMap<String, Suggestion> {
-    let mut variables: HashMap<String, Suggestion> = HashMap::new();
+) -> VariableMap {
+    let mut variables = VariableMap::new();
     let mut found_something = false;
     let paths = filesystem::cheat_paths(config);
     let folders = paths.split(':');
@@ -262,13 +257,13 @@ mod tests {
     #[test]
     fn test_read_file() {
         let path = "tests/cheats/ssh.cheat";
-        let mut variables: HashMap<String, Suggestion> = HashMap::new();
+        let mut variables = VariableMap::new();
         let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().unwrap();
         let child_stdin = child.stdin.as_mut().unwrap();
-        read_file(path, &mut variables, child_stdin);
-        let mut result: HashMap<String, (String, std::option::Option<_>)> = HashMap::new();
-        result.insert(
-            "ssh;user".to_string(),
+        let mut set: HashSet<u64> = HashSet::new();
+        read_file(path, &mut variables, child_stdin, &mut set);
+        let mut result = VariableMap::new();
+        let suggestion = 
             (
                 r#" echo -e "$(whoami)\nroot" "#.to_string(),
                 Some(SuggestionOpts {
@@ -277,8 +272,17 @@ mod tests {
                     delimiter: None,
                     suggestion_type: SuggestionType::SingleRecommendation,
                 }),
-            ),
-        );
-        assert_eq!(variables, result);
+            );
+        result.insert("ssh", "user", suggestion);
+        let actual_suggestion = result.get("ssh", "user");
+        assert_eq!(Some(&(
+                r#" echo -e "$(whoami)\nroot" "#.to_string(),
+                Some(SuggestionOpts {
+                    header_lines: 0,
+                    column: None,
+                    delimiter: None,
+                    suggestion_type: SuggestionType::SingleRecommendation,
+                }),
+            )), actual_suggestion);
     }
 }
