@@ -1,5 +1,6 @@
-use crate::cheat::SuggestionType;
+use crate::structures::cheat::SuggestionType;
 use crate::filesystem;
+use crate::structures::fzf::Opts as FzfOpts;
 use crate::fzf;
 use crate::git;
 use git2::Repository;
@@ -22,7 +23,7 @@ pub fn browse() -> Result<(), Box<dyn Error>> {
     let repos = fs::read_to_string(format!("{}/featured_repos.txt", &repo_path_str))
         .expect("Unable to fetch featured repos");
 
-    let opts = fzf::Opts {
+    let opts = FzfOpts {
         column: Some(1),
         ..Default::default()
     };
@@ -66,7 +67,7 @@ pub fn add(uri: String) -> Result<(), Box<dyn Error>> {
         .join("\n");
 
     let overrides = "--preview-window right:30%".to_string();
-    let opts = fzf::Opts {
+    let opts = FzfOpts {
         suggestion_type: SuggestionType::MultipleSelections,
         preview: Some(format!("cat '{}/{{}}'", tmp_path_str)),
         header: Some(

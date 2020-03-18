@@ -2,10 +2,10 @@
 extern crate lazy_static;
 
 mod cheat;
-mod cmds;
+mod flows;
 mod display;
 mod filesystem;
-mod fnv;
+mod structures;
 mod fzf;
 mod git;
 mod handler;

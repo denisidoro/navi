@@ -1,52 +1,13 @@
 use crate::display;
 use crate::filesystem;
-use crate::fnv::HashLine;
+use crate::structures::fnv::HashLine;
+use crate::structures::cheat::{VariableMap, SuggestionOpts, SuggestionType};
 use crate::option::Config;
 use crate::welcome;
 use regex::Regex;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::fs;
 use std::io::Write;
-
-#[derive(Debug, PartialEq)]
-pub struct SuggestionOpts {
-    pub header_lines: u8,
-    pub column: Option<u8>,
-    pub delimiter: Option<String>,
-    pub suggestion_type: SuggestionType,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub enum SuggestionType {
-    /// fzf will not print any suggestions
-    Disabled,
-    /// fzf will only select one of the suggestions
-    SingleSelection,
-    /// fzf will select multiple suggestions
-    MultipleSelections,
-    /// fzf will select one of the suggestions or use the query
-    SingleRecommendation,
-    /// initial snippet selection
-    SnippetSelection,
-}
-
-pub type Suggestion = (String, Option<SuggestionOpts>);
-
-pub struct VariableMap(HashMap<u64, Suggestion>);
-
-impl VariableMap {
-    pub fn new() -> Self {
-        Self(HashMap::new())
-    }
-
-    pub fn insert(&mut self, tags: &str, variable: &str, value: Suggestion) -> Option<Suggestion> {
-        self.0.insert(gen_key(tags, variable), value)
-    }
-
-    pub fn get(&self, tags: &str, variable: &str) -> Option<&Suggestion> {
-        self.0.get(&gen_key(tags, variable))
-    }
-}
 
 fn remove_quotes(txt: &str) -> String {
     txt.replace('"', "").replace('\'', "")
@@ -116,10 +77,6 @@ fn write_cmd(
             )
             .is_ok()
     }
-}
-
-fn gen_key(tags: &str, variable: &str) -> u64 {
-    format!("{};{}", tags, variable).hash_line()
 }
 
 fn read_file(
@@ -260,7 +217,7 @@ mod tests {
         let mut set: HashSet<u64> = HashSet::new();
         read_file(path, &mut variables, child_stdin, &mut set);
         let mut result = VariableMap::new();
-        let suggestion = (
+        let expected_suggestion = (
             r#" echo -e "$(whoami)\nroot" "#.to_string(),
             Some(SuggestionOpts {
                 header_lines: 0,
@@ -269,19 +226,7 @@ mod tests {
                 suggestion_type: SuggestionType::SingleRecommendation,
             }),
         );
-        result.insert("ssh", "user", suggestion);
-        let actual_suggestion = result.get("ssh", "user");
-        assert_eq!(
-            Some(&(
-                r#" echo -e "$(whoami)\nroot" "#.to_string(),
-                Some(SuggestionOpts {
-                    header_lines: 0,
-                    column: None,
-                    delimiter: None,
-                    suggestion_type: SuggestionType::SingleRecommendation,
-                }),
-            )),
-            actual_suggestion
-        );
+        let actual_suggestion = variables.get("ssh", "user");
+        assert_eq!(expected_suggestion, actual_suggestion);
     }
 }

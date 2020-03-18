@@ -1,8 +1,9 @@
 use crate::cheat;
-use crate::cheat::SuggestionType;
-use crate::cmds;
+use crate::flows;
 use crate::display;
 use crate::filesystem;
+use crate::structures::cheat::{SuggestionType, Suggestion, VariableMap};
+use crate::structures::fzf::Opts as FzfOpts;
 use crate::fzf;
 use crate::handler;
 use crate::option;
@@ -20,8 +21,8 @@ pub enum Variant {
     Query(String),
 }
 
-fn gen_core_fzf_opts(variant: Variant, config: &Config) -> fzf::Opts {
-    let mut opts = fzf::Opts {
+fn gen_core_fzf_opts(variant: Variant, config: &Config) -> FzfOpts {
+    let mut opts = FzfOpts {
         preview: if config.no_preview {
             None
         } else {
@@ -65,7 +66,7 @@ fn extract_from_selections(raw_snippet: &str, contains_key: bool) -> (&str, &str
 fn prompt_with_suggestions(
     varname: &str,
     config: &Config,
-    suggestion: &cheat::Suggestion,
+    suggestion: &Suggestion,
     values: &HashMap<String, String>,
 ) -> String {
     let mut vars_cmd = String::from("");
@@ -84,7 +85,7 @@ fn prompt_with_suggestions(
 
     let suggestions = String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap();
 
-    let mut opts = fzf::Opts {
+    let mut opts = FzfOpts {
         autoselect: !config.no_autoselect,
         overrides: config.fzf_overrides_var.as_ref(),
         prompt: Some(display::variable_prompt(varname)),
@@ -107,7 +108,7 @@ fn prompt_with_suggestions(
 }
 
 fn prompt_without_suggestions(variable_name: &str) -> String {
-    let opts = fzf::Opts {
+    let opts = FzfOpts {
         autoselect: false,
         prompt: Some(display::variable_prompt(variable_name)),
         suggestion_type: SuggestionType::Disabled,
@@ -122,7 +123,7 @@ fn prompt_without_suggestions(variable_name: &str) -> String {
 fn replace_variables_from_snippet(
     snippet: &str,
     tags: &str,
-    variables: cheat::VariableMap,
+    variables: VariableMap,
     config: &Config,
 ) -> String {
     let mut interpolated_snippet = String::from(snippet);
@@ -176,7 +177,7 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
 
     // copy to clipboard
     if key == "ctrl-y" {
-        cmds::aux::abort("copying snippets to the clipboard", 201)?
+        flows::aux::abort("copying snippets to the clipboard", 201)?
     // print to stdout
     } else if config.print {
         println!("{}", interpolated_snippet);
