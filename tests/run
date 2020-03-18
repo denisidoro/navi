@@ -19,7 +19,8 @@ _get_tests() {
       | sed -E 's/# (.*) -> "(.*)"/\1|\2/g'
 }
 
-find "${NAVI_HOME}/target"
+cd "$NAVI_HOME"
+find "./target"
 
 test::set_suite "cases"
 IFS=$'\n'
