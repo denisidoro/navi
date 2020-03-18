@@ -1,4 +1,3 @@
-use std::env;
 use structopt::{clap::AppSettings, StructOpt};
 
 #[derive(Debug, StructOpt)]
@@ -79,6 +78,12 @@ pub enum Command {
         #[structopt(subcommand)]
         cmd: RepoCommand,
     },
+    /// Used for fzf's preview window
+    #[structopt(setting = AppSettings::Hidden)]
+    Preview {
+        /// Selection line
+        line: String,
+    },
     /// Shows the path for shell widget files
     Widget {
         /// bash, zsh or fish
@@ -97,26 +102,10 @@ pub enum RepoCommand {
     Browse,
 }
 
-pub enum InternalCommand {
-    Preview { line: String },
-}
-
 pub fn config_from_env() -> Config {
     Config::from_args()
 }
 
 pub fn config_from_iter(args: Vec<&str>) -> Config {
     Config::from_iter(args)
-}
-
-pub fn internal_command_from_env() -> Option<InternalCommand> {
-    let mut args = env::args();
-    args.next();
-    if args.next() == Some(String::from("preview")) {
-        Some(InternalCommand::Preview {
-            line: args.next().unwrap(),
-        })
-    } else {
-        None
-    }
 }
