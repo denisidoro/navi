@@ -18,13 +18,13 @@ pub struct SuggestionOpts {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum SuggestionType {
-    /// fzf will not print any suggestions.
+    /// fzf will not print any suggestions
     Disabled,
     /// fzf will only select one of the suggestions
     SingleSelection,
-    /// fzf will select multiple ones of the suggestions
+    /// fzf will select multiple suggestions
     MultipleSelections,
-    /// fzf will select one of the suggestions or use the Query
+    /// fzf will select one of the suggestions or use the query
     SingleRecommendation,
     /// initial snippet selection
     SnippetSelection,
