@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate lazy_static;
 
-mod cheat;
+mod parser;
 mod display;
 mod filesystem;
 mod flows;

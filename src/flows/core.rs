@@ -1,4 +1,4 @@
-use crate::cheat;
+use crate::parser;
 use crate::display;
 use crate::filesystem;
 use crate::flows;
@@ -163,7 +163,7 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
     let _ = display::WIDTHS;
 
     let (raw_selection, variables) = fzf::call(gen_core_fzf_opts(variant, &config), |stdin| {
-        Some(cheat::read_all(&config, stdin))
+        Some(parser::read_all(&config, stdin))
     });
 
     let (key, tags, snippet) = extract_from_selections(&raw_selection[..], contains_key);
