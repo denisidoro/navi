@@ -1,9 +1,10 @@
 use crate::display;
 use crate::filesystem;
+use crate::fnv::HashLine;
 use crate::option::Config;
 use crate::welcome;
 use regex::Regex;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::io::Write;
 
@@ -130,6 +131,7 @@ fn read_file(
     path: &str,
     variables: &mut HashMap<String, Suggestion>,
     stdin: &mut std::process::ChildStdin,
+    set: &mut HashSet<u64>,
 ) -> bool {
     let mut tags = String::from("");
     let mut comment = String::from("");
@@ -145,6 +147,11 @@ fn read_file(
             }
 
             let line = l.unwrap();
+            let hash = line.hash_line();
+            if set.contains(&hash) {
+                continue;
+            }
+            set.insert(hash);
 
             // blank
             if line.is_empty() {
@@ -206,14 +213,15 @@ pub fn read_all(
     let mut found_something = false;
     let paths = filesystem::cheat_paths(config);
     let folders = paths.split(':');
+    let mut set = HashSet::new();
 
     for folder in folders {
         if let Ok(paths) = fs::read_dir(folder) {
             for path in paths {
-                let path_os_str = path.unwrap().path().into_os_string();
-                let path_str = path_os_str.to_str().unwrap();
+                let path = path.unwrap().path();
+                let path_str = path.to_str().unwrap();
                 if path_str.ends_with(".cheat")
-                    && read_file(path_str, &mut variables, stdin)
+                    && read_file(path_str, &mut variables, stdin, &mut set)
                     && !found_something
                 {
                     found_something = true;
