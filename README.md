@@ -24,6 +24,7 @@ Table of contents
       * [Using install script](#using-install-script)
       * [Downloading pre-compiled binaries](#downloading-pre-compiled-binaries)
       * [Building from source](#building-from-source)
+      * [Other package managers](#other-package-managers)
    * [Usage](#usage)
       * [Shell widget](#shell-widget)
       * [More options](#more-options)
@@ -86,6 +87,13 @@ make install
 # make BIN_DIR=/usr/local/bin install
 ```
 
+### Other package managers
+
+You can find **navi** for more package managers by clicking on the image below: 
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/navi.svg)](https://repology.org/project/navi/versions)
+
+Feel free to be the maintainer of **navi** for any package manager you'd like!
 
 Usage
 -----
