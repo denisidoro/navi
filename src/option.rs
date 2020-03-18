@@ -1,5 +1,4 @@
-use std::env;
-use structopt::StructOpt;
+use structopt::{clap::AppSettings, StructOpt};
 
 #[derive(Debug, StructOpt)]
 #[structopt(after_help = r#"EXAMPLES:
@@ -14,6 +13,7 @@ use structopt::StructOpt;
     navi --fzf-overrides ' --with-nth 1,2' # shows only the comment and tag columns
     navi --fzf-overrides ' --nth 1,2'      # search will consider only the first two columns
     navi --fzf-overrides ' --no-exact'     # looser search algorithm"#)]
+#[structopt(setting = AppSettings::AllowLeadingHyphen)]
 pub struct Config {
     /// List of :-separated paths containing .cheat files
     #[structopt(short, long, env = "NAVI_PATH")]
@@ -78,6 +78,12 @@ pub enum Command {
         #[structopt(subcommand)]
         cmd: RepoCommand,
     },
+    /// Used for fzf's preview window
+    #[structopt(setting = AppSettings::Hidden)]
+    Preview {
+        /// Selection line
+        line: String,
+    },
     /// Shows the path for shell widget files
     Widget {
         /// bash, zsh or fish
@@ -96,26 +102,10 @@ pub enum RepoCommand {
     Browse,
 }
 
-pub enum InternalCommand {
-    Preview { line: String },
-}
-
 pub fn config_from_env() -> Config {
     Config::from_args()
 }
 
 pub fn config_from_iter(args: Vec<&str>) -> Config {
     Config::from_iter(args)
-}
-
-pub fn internal_command_from_env() -> Option<InternalCommand> {
-    let mut args = env::args();
-    args.next();
-    if args.next() == Some(String::from("preview")) {
-        Some(InternalCommand::Preview {
-            line: args.next().unwrap(),
-        })
-    } else {
-        None
-    }
 }

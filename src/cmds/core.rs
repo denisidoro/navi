@@ -119,18 +119,10 @@ fn prompt_without_suggestions(variable_name: &str) -> String {
     output
 }
 
-fn gen_replacement(value: &str) -> String {
-    if value.contains(' ') {
-        format!("\"{}\"", value)
-    } else {
-        value.to_string()
-    }
-}
-
 fn replace_variables_from_snippet(
     snippet: &str,
     tags: &str,
-    variables: HashMap<String, cheat::Suggestion>,
+    variables: cheat::VariableMap,
     config: &Config,
 ) -> String {
     let mut interpolated_snippet = String::from(snippet);
@@ -141,23 +133,22 @@ fn replace_variables_from_snippet(
         let bracketed_variable_name = &captures[0];
         let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
 
-        if values.get(variable_name).is_none() {
-            let key = format!("{};{}", tags, variable_name);
+        let value = values
+            .get(variable_name)
+            .map(|s| s.to_string())
+            .unwrap_or_else(|| {
+                variables
+                    .get(&tags, &variable_name)
+                    .map(|suggestion| {
+                        prompt_with_suggestions(variable_name, &config, suggestion, &values)
+                    })
+                    .unwrap_or_else(|| prompt_without_suggestions(variable_name))
+            });
 
-            let value = match variables.get(&key[..]) {
-                Some(suggestion) => {
-                    prompt_with_suggestions(variable_name, &config, suggestion, &values)
-                }
-                None => prompt_without_suggestions(variable_name),
-            };
+        values.insert(variable_name.to_string(), value.clone());
 
-            values.insert(variable_name.to_string(), value.clone());
-
-            interpolated_snippet = interpolated_snippet.replace(
-                bracketed_variable_name,
-                gen_replacement(&value[..]).as_str(),
-            );
-        }
+        interpolated_snippet =
+            interpolated_snippet.replacen(bracketed_variable_name, value.as_str(), 1);
     }
 
     interpolated_snippet

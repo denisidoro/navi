@@ -18,19 +18,35 @@ pub struct SuggestionOpts {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum SuggestionType {
-    /// fzf will not print any suggestions.
+    /// fzf will not print any suggestions
     Disabled,
     /// fzf will only select one of the suggestions
     SingleSelection,
-    /// fzf will select multiple ones of the suggestions
+    /// fzf will select multiple suggestions
     MultipleSelections,
-    /// fzf will select one of the suggestions or use the Query
+    /// fzf will select one of the suggestions or use the query
     SingleRecommendation,
     /// initial snippet selection
     SnippetSelection,
 }
 
 pub type Suggestion = (String, Option<SuggestionOpts>);
+
+pub struct VariableMap(HashMap<u64, Suggestion>);
+
+impl VariableMap {
+    pub fn new() -> Self {
+        Self(HashMap::new())
+    }
+
+    pub fn insert(&mut self, tags: &str, variable: &str, value: Suggestion) -> Option<Suggestion> {
+        self.0.insert(gen_key(tags, variable), value)
+    }
+
+    pub fn get(&self, tags: &str, variable: &str) -> Option<&Suggestion> {
+        self.0.get(&gen_key(tags, variable))
+    }
+}
 
 fn remove_quotes(txt: &str) -> String {
     txt.replace('"', "").replace('\'', "")
@@ -95,33 +111,36 @@ fn write_cmd(
     } else {
         stdin
             .write_all(
-                display::format_line(
-                    &tags[..],
-                    &comment[..],
-                    &snippet[3..],
-                    tag_width,
-                    comment_width,
-                )
-                .as_bytes(),
+                display::format_line(&tags, &comment, &snippet, tag_width, comment_width)
+                    .as_bytes(),
             )
             .is_ok()
     }
 }
 
+fn gen_key(tags: &str, variable: &str) -> u64 {
+    format!("{};{}", tags, variable).hash_line()
+}
+
 fn read_file(
     path: &str,
-    variables: &mut HashMap<String, Suggestion>,
+    variables: &mut VariableMap,
     stdin: &mut std::process::ChildStdin,
     set: &mut HashSet<u64>,
 ) -> bool {
     let mut tags = String::from("");
     let mut comment = String::from("");
     let mut snippet = String::from("");
+    let mut should_break = false;
 
     let (tag_width, comment_width) = *display::WIDTHS;
 
     if let Ok(lines) = filesystem::read_lines(path) {
         for l in lines {
+            if should_break {
+                break;
+            }
+
             let line = l.unwrap();
             let hash = line.hash_line();
             if set.contains(&hash) {
@@ -135,7 +154,7 @@ fn read_file(
             // tag
             else if line.starts_with('%') {
                 if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
-                    break;
+                    should_break = true
                 }
                 snippet = String::from("");
                 tags = String::from(&line[2..]);
@@ -146,7 +165,7 @@ fn read_file(
             // comment
             else if line.starts_with('#') {
                 if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
-                    break;
+                    should_break = true
                 }
                 snippet = String::from("");
                 comment = String::from(&line[2..]);
@@ -154,20 +173,25 @@ fn read_file(
             // variable
             else if line.starts_with('$') {
                 if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
-                    break;
+                    should_break = true
                 }
                 snippet = String::from("");
                 let (variable, command, opts) = parse_variable_line(&line);
-                variables.insert(
-                    format!("{};{}", tags, variable),
-                    (String::from(command), opts),
-                );
+                variables.insert(&tags, &variable, (String::from(command), opts));
             }
-            // snippet
+            // first snippet line
+            else if (&snippet).is_empty() {
+                snippet.push_str(&line);
+            }
+            // other snippet lines
             else {
                 snippet.push_str(display::LINE_SEPARATOR);
                 snippet.push_str(&line);
             }
+        }
+
+        if !should_break {
+            write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin);
         }
 
         return true;
@@ -176,11 +200,8 @@ fn read_file(
     false
 }
 
-pub fn read_all(
-    config: &Config,
-    stdin: &mut std::process::ChildStdin,
-) -> HashMap<String, Suggestion> {
-    let mut variables: HashMap<String, Suggestion> = HashMap::new();
+pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> VariableMap {
+    let mut variables = VariableMap::new();
     let mut found_something = false;
     let paths = filesystem::cheat_paths(config);
     let folders = paths.split(':');
@@ -233,14 +254,25 @@ mod tests {
     #[test]
     fn test_read_file() {
         let path = "tests/cheats/ssh.cheat";
-        let mut variables: HashMap<String, Suggestion> = HashMap::new();
+        let mut variables = VariableMap::new();
         let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().unwrap();
         let child_stdin = child.stdin.as_mut().unwrap();
-        read_file(path, &mut variables, child_stdin);
-        let mut result: HashMap<String, (String, std::option::Option<_>)> = HashMap::new();
-        result.insert(
-            "ssh;user".to_string(),
-            (
+        let mut set: HashSet<u64> = HashSet::new();
+        read_file(path, &mut variables, child_stdin, &mut set);
+        let mut result = VariableMap::new();
+        let suggestion = (
+            r#" echo -e "$(whoami)\nroot" "#.to_string(),
+            Some(SuggestionOpts {
+                header_lines: 0,
+                column: None,
+                delimiter: None,
+                suggestion_type: SuggestionType::SingleRecommendation,
+            }),
+        );
+        result.insert("ssh", "user", suggestion);
+        let actual_suggestion = result.get("ssh", "user");
+        assert_eq!(
+            Some(&(
                 r#" echo -e "$(whoami)\nroot" "#.to_string(),
                 Some(SuggestionOpts {
                     header_lines: 0,
@@ -248,8 +280,8 @@ mod tests {
                     delimiter: None,
                     suggestion_type: SuggestionType::SingleRecommendation,
                 }),
-            ),
+            )),
+            actual_suggestion
         );
-        assert_eq!(variables, result);
     }
 }

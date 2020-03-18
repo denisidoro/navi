@@ -10,8 +10,8 @@ fn extract_elements(argstr: &str) -> (&str, &str, &str) {
     (tags, comment, snippet)
 }
 
-pub fn main(line: String) -> Result<(), Box<dyn Error>> {
-    let (tags, comment, snippet) = extract_elements(&line[..]);
+pub fn main(line: &str) -> Result<(), Box<dyn Error>> {
+    let (tags, comment, snippet) = extract_elements(line);
     display::preview(comment, tags, snippet);
     process::exit(0)
 }
