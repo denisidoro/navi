@@ -1,6 +1,6 @@
 use crate::display;
 use crate::filesystem;
-use crate::option::Config;
+use crate::structures::option::Config;
 use crate::structures::cheat::{SuggestionOpts, SuggestionType, VariableMap};
 use crate::structures::fnv::HashLine;
 use crate::welcome;
@@ -82,8 +82,8 @@ fn write_cmd(
 fn read_file(
     path: &str,
     variables: &mut VariableMap,
+    visited_lines: &mut HashSet<u64>,
     stdin: &mut std::process::ChildStdin,
-    set: &mut HashSet<u64>,
 ) -> bool {
     let mut tags = String::from("");
     let mut comment = String::from("");
@@ -100,10 +100,10 @@ fn read_file(
 
             let line = l.unwrap();
             let hash = line.hash_line();
-            if set.contains(&hash) {
+            if visited_lines.contains(&hash) {
                 continue;
             }
-            set.insert(hash);
+            visited_lines.insert(hash);
 
             // blank
             if line.is_empty() {
@@ -160,9 +160,9 @@ fn read_file(
 pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> VariableMap {
     let mut variables = VariableMap::new();
     let mut found_something = false;
+    let mut visited_lines = HashSet::new();
     let paths = filesystem::cheat_paths(config);
     let folders = paths.split(':');
-    let mut set = HashSet::new();
 
     for folder in folders {
         if let Ok(paths) = fs::read_dir(folder) {
@@ -170,7 +170,7 @@ pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> Variab
                 let path = path.unwrap().path();
                 let path_str = path.to_str().unwrap();
                 if path_str.ends_with(".cheat")
-                    && read_file(path_str, &mut variables, stdin, &mut set)
+                    && read_file(path_str, &mut variables, &mut visited_lines, stdin)
                     && !found_something
                 {
                     found_something = true;
@@ -214,8 +214,8 @@ mod tests {
         let mut variables = VariableMap::new();
         let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().unwrap();
         let child_stdin = child.stdin.as_mut().unwrap();
-        let mut set: HashSet<u64> = HashSet::new();
-        read_file(path, &mut variables, child_stdin, &mut set);
+        let mut visited_lines: HashSet<u64> = HashSet::new();
+        read_file(path, &mut variables, &mut visited_lines, child_stdin);
         let expected_suggestion = (
             r#" echo -e "$(whoami)\nroot" "#.to_string(),
             Some(SuggestionOpts {

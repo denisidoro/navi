@@ -1,7 +1,7 @@
 use crate::flows;
 use crate::flows::core::Variant;
-use crate::option::Command::{Best, Fn, Preview, Query, Repo, Search, Widget};
-use crate::option::{Config, RepoCommand};
+use crate::structures::option::Command::{Best, Fn, Preview, Query, Repo, Search, Widget};
+use crate::structures::option::{Config, RepoCommand};
 use std::error::Error;
 
 pub fn handle_config(mut config: Config) -> Result<(), Box<dyn Error>> {
