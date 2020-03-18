@@ -99,11 +99,10 @@ fn read_file(
             }
 
             let line = l.unwrap();
-            let hash = format!("{}{}{}{}", &tags, &comment, &snippet, &line).hash_line();
-            if visited_lines.contains(&hash) {
-                continue;
+
+            // duplicate
+            if !tags.is_empty() && !comment.is_empty() {
             }
-            visited_lines.insert(hash);
 
             // blank
             if line.is_empty() {
@@ -136,13 +135,17 @@ fn read_file(
                 let (variable, command, opts) = parse_variable_line(&line);
                 variables.insert(&tags, &variable, (String::from(command), opts));
             }
-            // first snippet line
-            else if (&snippet).is_empty() {
-                snippet.push_str(&line);
-            }
-            // other snippet lines
+            // snippet
             else {
-                snippet.push_str(display::LINE_SEPARATOR);
+                let hash = format!("{}{}{}", &tags, &comment, &line).hash_line();
+                if visited_lines.contains(&hash) {
+                    continue;
+                }
+                visited_lines.insert(hash);
+
+                if !(&snippet).is_empty() {
+                    snippet.push_str(display::LINE_SEPARATOR);
+                }
                 snippet.push_str(&line);
             }
         }

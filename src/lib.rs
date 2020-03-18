@@ -6,14 +6,11 @@ mod filesystem;
 mod flows;
 mod fzf;
 mod git;
-mod handler;
 mod parser;
 mod structures;
 mod terminal;
 mod welcome;
+mod handler;
 
-use std::error::Error;
-
-fn main() -> Result<(), Box<dyn Error>> {
-    handler::handle_config(structures::option::config_from_env())
-}
+pub use structures::option::{config_from_env, config_from_iter};
+pub use handler::handle_config;

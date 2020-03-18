@@ -42,7 +42,10 @@ test::equals() {
    local -r actual="$(cat)"
    local -r expected="$(echo "${1:-}")"
 
-   if [[ "$actual" != "$expected" ]]; then
+   local -r actual2="$(echo "$actual" | xargs | sed -E 's/\s/ /g')"
+   local -r expected2="$(echo "$expected" | xargs | sed -E 's/\s/ /g')"
+
+   if [[ "$actual2" != "$expected2" ]]; then
       log::error "Expected '${expected}' but got '${actual}'"
       return 2
    fi

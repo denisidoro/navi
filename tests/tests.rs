@@ -1,7 +1,10 @@
+use navi;
+
 #[cfg(test)]
 mod tests {
     #[test]
     fn it_works() {
-        assert_eq!(2 + 2, 4);
+        let x = navi::handle_config(navi::config_from_iter("navi best trivial".split(' ').collect()));
+        // assert_eq!(x, 3);
     }
 }

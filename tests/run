@@ -3,16 +3,18 @@
 export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 source "${NAVI_HOME}/tests/core.bash"
 
+TEST_CHEAT_PATH="${NAVI_HOME}/tests/cheats"
+
 _navi() {
-    NAVI_PATH="$(pwd)/tests/cheats" cargo run -- best "$1" 2> /dev/null \
-        | tr '\n' ' ' \
+    NAVI_PATH="$TEST_CHEAT_PATH" cargo run -- --fzf-overrides '--no-reverse' best "$1" 2> /dev/null \
         | test::equals "$2"
 }
 
 _get_tests() {
-    cat "$(pwd)/tests/cheats/corner_cases.cheat" \
+    cat "${TEST_CHEAT_PATH}/cases.cheat" \
         | grep '#' \
         | grep ' ->' \
+        | sed 's/\\n/ /g' \
         | sed -E 's/# (.*) -> "(.*)"/\1|\2/g'
 }
 
@@ -21,6 +23,6 @@ test::set_suite "doc"
 IFS=$'\n'
 for i in $(_get_tests); do
     query="$(echo "$i" | cut -d'|' -f1)"
-    expected="$(echo "$i" | cut -d'|' -f2 | sed 's/\\n/ /g')"
+    expected="$(echo "$i" | cut -d'|' -f2)"
     test::run "$query" _navi "$query" "$expected"
 done

@@ -5,25 +5,8 @@
 # escape code + subshell
 echo -ne "\033]0;$(hostname)\007"
 
-# sed with replacement -> "172.17.0.2"
-echo "8.8.8.8 via 172.17.0.1 dev eth0  src 172.17.0.2" | sed -E 's/.*src ([0-9.]+).*/\1/p' | head -n1
-
-# trivial case -> "foo"
-echo "foo"
-
-# multiline command: without backslash -> "foo\nbar"
-echo "foo"
-echo "bar"
-
 # env var
 echo "$HOME"
-
-# multiline command: with backslash
-echo 'lorem ipsum'
-echo "foo" \
-    | grep -q "bar" \
-    && echo "match" \
-    || echo "no match"
 
 # multi + column
 myfn() {
@@ -46,11 +29,8 @@ echo "I like these languages: "$(printf '%s' "<langs>" | tr '\n' ',' | sed 's/,/
 # return multiple results: multiple words
 echo "I like these examples: "$(printf '%s' "<examples>" | sed 's/^..*$/"&"/' | awk 1 ORS=', ' | sed 's/, $//')""
 
-# multiple replacements
+# multiple replacements -> "foo"
 echo "<x> <y> <x> <z>"
-
-# multi-word
-echo "<multiword>"
 
 $ x: echo '1 2 3' | tr ' ' '\n'
 $ y: echo 'a b c' | tr ' ' '\n'

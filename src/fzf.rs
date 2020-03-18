@@ -9,6 +9,9 @@ fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> Stri
         let mut result = String::from("");
         let re = regex::Regex::new(delimiter.unwrap_or(r"\s\s+")).unwrap();
         for line in text.split('\n') {
+            if (&line).is_empty() {
+                continue;
+            }
             let mut parts = re.split(line);
             for _ in 0..(c - 1) {
                 parts.next().unwrap();
@@ -16,7 +19,7 @@ fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> Stri
             if !result.is_empty() {
                 result.push('\n');
             }
-            result.push_str(parts.next().unwrap());
+            result.push_str(parts.next().unwrap_or(""));
         }
         result
     } else {
@@ -148,14 +151,14 @@ fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> Str
             let lines: Vec<&str> = text.lines().collect();
 
             match (lines.get(0), lines.get(1), lines.get(2)) {
-                (Some(one), Some(termination), Some(two)) if *termination == "enter" => {
+                (Some(one), Some(termination), Some(two)) if *termination == "enter" || termination.is_empty() => {
                     if two.is_empty() {
                         (*one).to_string()
                     } else {
                         (*two).to_string()
                     }
                 }
-                (Some(one), Some(termination), None) if *termination == "enter" => {
+                (Some(one), Some(termination), None) if *termination == "enter" || termination.is_empty() => {
                     (*one).to_string()
                 }
                 (Some(one), Some(termination), _) if *termination == "tab" => (*one).to_string(),

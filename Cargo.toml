@@ -34,7 +34,11 @@ version = "0.10.0"
 default-features = false
 features = ["vendored-openssl"]
 
-[[bin]]
-bench = false
-path = "src/main.rs"
+[lib]
 name = "navi"
+path = "src/lib.rs"
+
+[[bin]]
+name = "navi"
+path = "src/bin/main.rs"
+bench = false

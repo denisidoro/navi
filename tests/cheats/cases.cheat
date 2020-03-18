@@ -1,0 +1,42 @@
+; author: CI/CD
+
+% test, ci/cd
+
+# trivial case -> "foo"
+echo "foo"
+
+# sed with replacement -> "172.17.0.2"
+echo "8.8.8.8 via 172.17.0.1 dev eth0  src 172.17.0.2" | sed -E 's/.*src ([0-9.]+).*/\1/p' | head -n1
+
+# multiline command: no backslash -> "foo\nbar"
+echo "foo"
+echo "bar"
+
+# multiline command: with backslash -> "lorem ipsum\nno match"
+echo 'lorem ipsum'
+echo "foo" \
+    | grep -q "bar" \
+    && echo "match" \
+    || echo "no match"
+
+# 2nd column with default delimiter -> "rust is cool"
+echo "<language> is cool"
+
+# 2nd column with custom delimiter -> "clojure is cool"
+echo "<language2> is cool"
+
+# variable dependency -> "2 12 a 2"
+echo "<x> <x2> <y> <x>"
+
+# multiple words -> "lorem foo bar ipsum"
+echo "lorem <multiword> ipsum"
+
+$ x: echo '2'
+$ x2: echo "$((x+10))"
+$ y: echo 'a'
+$ language: echo '0  rust      rust-lang.org' --- --column 2
+$ language2: echo '1;clojure;clojure.org' --- --column 2 --delimiter ';'
+$ multiword: echo 'foo bar'
+
+# this should be displayed
+echo hi
