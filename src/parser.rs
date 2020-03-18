@@ -99,7 +99,7 @@ fn read_file(
             }
 
             let line = l.unwrap();
-            let hash = line.hash_line();
+            let hash = format!("{}{}{}{}", &tags, &comment, &snippet, &line).hash_line();
             if visited_lines.contains(&hash) {
                 continue;
             }

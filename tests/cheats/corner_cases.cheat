@@ -5,13 +5,13 @@
 # escape code + subshell
 echo -ne "\033]0;$(hostname)\007"
 
-# sed with replacement
+# sed with replacement -> "172.17.0.2"
 echo "8.8.8.8 via 172.17.0.1 dev eth0  src 172.17.0.2" | sed -E 's/.*src ([0-9.]+).*/\1/p' | head -n1
 
-# trivial case
+# trivial case -> "foo"
 echo "foo"
 
-# multiline command: without backslash
+# multiline command: without backslash -> "foo\nbar"
 echo "foo"
 echo "bar"
 
@@ -26,8 +26,13 @@ echo "foo" \
     || echo "no match"
 
 # multi + column
+myfn() {
+    for i in $@; do
+        echo -e "arg: $i\n"
+    done
+}
 folders=($(echo "<multi_col>"))
-ls "${folders[@]}"
+myfn "${folders[@]}"
 
 # second column: default delimiter
 echo "<table_elem> is cool"

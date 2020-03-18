@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
+source "${NAVI_HOME}/tests/core.bash"
+
+_navi() {
+    NAVI_PATH="$(pwd)/tests/cheats" cargo run -- best "$1" 2> /dev/null \
+        | tr '\n' ' ' \
+        | test::equals "$2"
+}
+
+_get_tests() {
+    cat "$(pwd)/tests/cheats/corner_cases.cheat" \
+        | grep '#' \
+        | grep ' ->' \
+        | sed -E 's/# (.*) -> "(.*)"/\1|\2/g'
+}
+
+test::set_suite "doc"
+
+IFS=$'\n'
+for i in $(_get_tests); do
+    query="$(echo "$i" | cut -d'|' -f1)"
+    expected="$(echo "$i" | cut -d'|' -f2 | sed 's/\\n/ /g')"
+    test::run "$query" _navi "$query" "$expected"
+done
