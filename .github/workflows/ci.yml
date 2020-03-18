@@ -49,6 +49,9 @@ jobs:
         with:
           command: test
 
+      - name: Integration tests
+        run: ./tests/run
+
   lints:
     name: Lints
     runs-on: ubuntu-latest
