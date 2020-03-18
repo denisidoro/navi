@@ -216,7 +216,6 @@ mod tests {
         let child_stdin = child.stdin.as_mut().unwrap();
         let mut set: HashSet<u64> = HashSet::new();
         read_file(path, &mut variables, child_stdin, &mut set);
-        let mut result = VariableMap::new();
         let expected_suggestion = (
             r#" echo -e "$(whoami)\nroot" "#.to_string(),
             Some(SuggestionOpts {
@@ -227,6 +226,6 @@ mod tests {
             }),
         );
         let actual_suggestion = variables.get("ssh", "user");
-        assert_eq!(expected_suggestion, actual_suggestion);
+        assert_eq!(Some(&expected_suggestion), actual_suggestion);
     }
 }
