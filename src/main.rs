@@ -5,6 +5,7 @@ mod cheat;
 mod cmds;
 mod display;
 mod filesystem;
+mod fnv;
 mod fzf;
 mod git;
 mod handler;
