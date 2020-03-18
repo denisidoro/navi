@@ -32,7 +32,7 @@ pub enum SuggestionType {
 
 pub type Suggestion = (String, Option<SuggestionOpts>);
 
-pub struct VariableMap (HashMap<u64, Suggestion>);
+pub struct VariableMap(HashMap<u64, Suggestion>);
 
 impl VariableMap {
     pub fn new() -> Self {
@@ -200,10 +200,7 @@ fn read_file(
     false
 }
 
-pub fn read_all(
-    config: &Config,
-    stdin: &mut std::process::ChildStdin,
-) -> VariableMap {
+pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> VariableMap {
     let mut variables = VariableMap::new();
     let mut found_something = false;
     let paths = filesystem::cheat_paths(config);
@@ -263,19 +260,19 @@ mod tests {
         let mut set: HashSet<u64> = HashSet::new();
         read_file(path, &mut variables, child_stdin, &mut set);
         let mut result = VariableMap::new();
-        let suggestion = 
-            (
-                r#" echo -e "$(whoami)\nroot" "#.to_string(),
-                Some(SuggestionOpts {
-                    header_lines: 0,
-                    column: None,
-                    delimiter: None,
-                    suggestion_type: SuggestionType::SingleRecommendation,
-                }),
-            );
+        let suggestion = (
+            r#" echo -e "$(whoami)\nroot" "#.to_string(),
+            Some(SuggestionOpts {
+                header_lines: 0,
+                column: None,
+                delimiter: None,
+                suggestion_type: SuggestionType::SingleRecommendation,
+            }),
+        );
         result.insert("ssh", "user", suggestion);
         let actual_suggestion = result.get("ssh", "user");
-        assert_eq!(Some(&(
+        assert_eq!(
+            Some(&(
                 r#" echo -e "$(whoami)\nroot" "#.to_string(),
                 Some(SuggestionOpts {
                     header_lines: 0,
@@ -283,6 +280,8 @@ mod tests {
                     delimiter: None,
                     suggestion_type: SuggestionType::SingleRecommendation,
                 }),
-            )), actual_suggestion);
+            )),
+            actual_suggestion
+        );
     }
 }
