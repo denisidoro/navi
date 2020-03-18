@@ -25,6 +25,10 @@ echo "foo" \
     && echo "match" \
     || echo "no match"
 
+# multi + column
+folders=($(echo "<multi_col>"))
+ls "${folders[@]}"
+
 # second column: default delimiter
 echo "<table_elem> is cool"
 
@@ -48,6 +52,7 @@ $ y: echo 'a b c' | tr ' ' '\n'
 $ z: echo 'foo bar' | tr ' ' '\n'
 $ table_elem: echo -e '0  rust      rust-lang.org\n1  clojure   clojure.org' --- --column 2
 $ table_elem2: echo -e '0;rust;rust-lang.org\n1;clojure;clojure.org' --- --column 2 --delimiter ';'
+$ multi_col: ls -la | awk '{print $1, $9}' --- --column 2 --delimiter '\s' --multi
 $ langs: echo 'clojure rust javascript' | tr ' ' '\n' --- --multi
 $ examples: echo -e 'foo bar\nlorem ipsum\ndolor sit' --- --multi
 $ multiword: echo -e 'foo bar\nlorem ipsum\ndolor sit\nbaz'

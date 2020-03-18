@@ -6,12 +6,19 @@ use std::process::{Command, Stdio};
 
 fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> String {
     if let Some(c) = column {
-        let re = regex::Regex::new(delimiter.unwrap_or(r"\s\s+")).unwrap();
-        let mut parts = re.split(text.as_str());
-        for _ in 0..(c - 1) {
-            parts.next().unwrap();
+        let mut result = String::from("");
+            let re = regex::Regex::new(delimiter.unwrap_or(r"\s\s+")).unwrap();
+        for line in text.split('\n') {
+            let mut parts = re.split(line);
+            for _ in 0..(c - 1) {
+                parts.next().unwrap();
+            }
+            if !result.is_empty() {
+result.push('\n');
+            } 
+            result.push_str(parts.next().unwrap()); 
         }
-        parts.next().unwrap().to_string()
+        result
     } else {
         text
     }
