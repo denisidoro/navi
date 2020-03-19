@@ -75,6 +75,7 @@ where
     }
 
     if let Some(f) = opts.filter {
+        eprintln!("filter: {}", &f);
         fzf_command.args(&["--filter", &f]);
     }
 
@@ -127,6 +128,8 @@ where
             panic!("External command failed:\n {}", err)
         }
     };
+
+    eprintln!("text: {}", text);
 
     (
         get_column(

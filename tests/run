@@ -32,13 +32,13 @@ cd "$NAVI_HOME"
 
 # TODO: remove
 _navi trivial "foo"
+_navi trivial "sed with"
 
 test::set_suite "cases"
 ifs="$IFS"
 IFS=$'\n'
 for i in $(_get_tests); do
    IFS="$ifs"
-   sleep 5
    query="$(echo "$i" | cut -d'|' -f1)"
    expected="$(echo "$i" | cut -d'|' -f2)"
    test::run "$query" _navi_test "$query" "$expected"
