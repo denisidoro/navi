@@ -25,6 +25,7 @@ _get_tests() {
 
 cd "$NAVI_HOME"
 
+ls -la "$HOME"
 which fzf
 
 # TODO: remove
