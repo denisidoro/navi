@@ -8,7 +8,7 @@ TEST_CHEAT_PATH="${NAVI_HOME}/tests/cheats"
 _navi() {
    stty sane || true
    local -r navi="./target/debug/navi"
-   RUST_BACKTRACE=1 NAVI_PATH="$TEST_CHEAT_PATH" "$navi" --fzf-overrides '--no-reverse' best "$1"
+   RUST_BACKTRACE=1 NAVI_PATH="$TEST_CHEAT_PATH" "$navi" best "$*"
 }
 
 _navi_test() {
@@ -38,6 +38,7 @@ ifs="$IFS"
 IFS=$'\n'
 for i in $(_get_tests); do
    IFS="$ifs"
+   sleep 5
    query="$(echo "$i" | cut -d'|' -f1)"
    expected="$(echo "$i" | cut -d'|' -f2)"
    test::run "$query" _navi_test "$query" "$expected"
