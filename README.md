@@ -227,6 +227,12 @@ true \
    || echo no
 ```
 
+### 
+```sh
+# This will output "foo\nyes"
+folders=($(echo "<multi_col>"))
+myfn "${folders[@]}"
+
 
 List customization
 ------------------
