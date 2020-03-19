@@ -3,7 +3,7 @@
 export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 source "${NAVI_HOME}/tests/core.bash"
 
-TEST_CHEAT_PATH="${NAVI_HOME}/tests/cheats"
+TEST_CHEAT_PATH="${NAVI_HOME}/tests/no_prompt_cheats"
 
 _navi() {
    stty sane || true
