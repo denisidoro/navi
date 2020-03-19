@@ -144,7 +144,10 @@ fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> Str
         SuggestionType::MultipleSelections
         | SuggestionType::Disabled
         | SuggestionType::SnippetSelection => {
-            text.truncate(text.len() - 1);
+            let len = text.len();
+            if len > 1 {
+                text.truncate(len - 1);
+            }
             text
         }
         SuggestionType::SingleRecommendation => {

@@ -6,8 +6,9 @@ source "${NAVI_HOME}/tests/core.bash"
 TEST_CHEAT_PATH="${NAVI_HOME}/tests/cheats"
 
 _navi() {
+   stty sane
    local -r navi="./target/debug/navi"
-   RUST_BACKTRACE=1 NAVI_PATH="$TEST_CHEAT_PATH" "$navi" --fzf-overrides '--no-reverse' best "$1"
+   RUST_BACKTRACE=1 NAVI_PATH="$TEST_CHEAT_PATH" "$navi" --fzf-overrides '--no-reverse' best "$1" </dev/tty
 }
 
 _navi_test() {
@@ -23,21 +24,20 @@ _get_tests() {
       | sed -E 's/# (.*) -> "(.*)"/\1|\2/g'
 }
 
+if ! command_exists fzf; then
+   export PATH="$PATH:$HOME/.fzf/bin" 
+fi
+
 cd "$NAVI_HOME"
-
-export PATH="$PATH:$HOME/.fzf/bin" 
-
-ls -la "$HOME"
-ls -la "$HOME/.fzf"
-echo -e '1\n2\n\3' | $HOME/.fzf/bin/fzf --filter 2
-which fzf
 
 # TODO: remove
 _navi trivial "foo"
 
 test::set_suite "cases"
+ifs="$IFS"
 IFS=$'\n'
 for i in $(_get_tests); do
+   IFS="$ifs"
    query="$(echo "$i" | cut -d'|' -f1)"
    expected="$(echo "$i" | cut -d'|' -f2)"
    test::run "$query" _navi_test "$query" "$expected"
