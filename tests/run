@@ -11,7 +11,7 @@ _navi() {
 }
 
 _navi_test() {
-   _navi "$1" 2> /dev/null \
+   _navi "$1" \
       | test::equals "$2"
 }
 
