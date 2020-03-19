@@ -30,7 +30,7 @@ jobs:
           command: check
 
   test:
-    name: Cargo tests
+    name: Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -48,26 +48,6 @@ jobs:
         continue-on-error: false
         with:
           command: test
-
-  acceptance:
-    name: Bash tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-
-      - name: Run cargo build
-        uses: actions-rs/cargo@v1
-        continue-on-error: false
-        with:
-          command: build
 
       - name: Install fzf
         run: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; yes | ~/.fzf/install;
