@@ -29,7 +29,7 @@ fn gen_core_fzf_opts(variant: Variant, config: &Config) -> FzfOpts {
             Some(format!("{} preview {{}}", filesystem::exe_string()))
         },
         autoselect: !config.no_autoselect,
-        overrides: config.fzf_overrides.as_ref(),
+        overrides: config.fzf_overrides.clone(),
         suggestion_type: SuggestionType::SnippetSelection,
         ..Default::default()
     };
@@ -87,7 +87,7 @@ fn prompt_with_suggestions(
 
     let mut opts = FzfOpts {
         autoselect: !config.no_autoselect,
-        overrides: config.fzf_overrides_var.as_ref(),
+        overrides: config.fzf_overrides_var.clone(),
         prompt: Some(display::variable_prompt(varname)),
         ..Default::default()
     };
@@ -96,7 +96,7 @@ fn prompt_with_suggestions(
         opts.suggestion_type = o.suggestion_type;
         opts.header_lines = o.header_lines;
         opts.column = o.column;
-        opts.delimiter = o.delimiter.as_deref();
+        opts.delimiter = o.delimiter.clone();
     };
 
     let (output, _) = fzf::call(opts, |stdin| {

@@ -132,7 +132,7 @@ where
         get_column(
             parse_output_single(text, opts.suggestion_type),
             opts.column,
-            opts.delimiter,
+            opts.delimiter.as_deref(),
         ),
         result,
     )
