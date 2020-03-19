@@ -26,6 +26,8 @@ _get_tests() {
 cd "$NAVI_HOME"
 
 ls -la "$HOME"
+ls -la "$HOME/.fzf"
+echo -e '1\n2\n\3' | $HOME/.fzf/bin/fzf --filter 2
 which fzf
 
 # TODO: remove
