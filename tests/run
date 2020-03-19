@@ -19,7 +19,7 @@ _get_tests() {
       | sed -E 's/# (.*) -> "(.*)"/\1|\2/g'
 }
 
-if !command_exists fzf; then
+if ! command_exists fzf; then
    apt install fzf \
       || sudo apt install fzf \
       || git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && yes | ~/.fzf/install && source ~/.bashrc
