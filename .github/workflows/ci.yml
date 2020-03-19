@@ -50,7 +50,7 @@ jobs:
           command: test
 
       - name: Install fzf
-        run: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; yes | ~/.fzf/install; ln -s ~/.fzf/bin/fzf /usr/local/bin/fzf;
+        run: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; yes | ~/.fzf/install;
 
       - name: Run bash tests
         run: ./tests/run
