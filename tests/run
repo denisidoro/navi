@@ -22,7 +22,8 @@ _get_tests() {
 if ! command_exists fzf; then
    apt install fzf \
       || sudo apt install fzf \
-      || (git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && yes | ~/.fzf/install)
+      || (git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && yes | ~/.fzf/install) \
+      || true
 fi
 
 source ~/.bashrc || true
