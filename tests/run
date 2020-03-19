@@ -25,7 +25,7 @@ _get_tests() {
 }
 
 if ! command_exists fzf; then
-   export PATH="$PATH:$HOME/.fzf/bin" 
+   export PATH="$PATH:$HOME/.fzf/bin"
 fi
 
 cd "$NAVI_HOME"
