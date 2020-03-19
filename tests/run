@@ -8,7 +8,9 @@ TEST_CHEAT_PATH="${NAVI_HOME}/tests/cheats"
 _navi() {
    stty sane || true
    local -r navi="./target/debug/navi"
-   RUST_BACKTRACE=1 NAVI_PATH="$TEST_CHEAT_PATH" "$navi" best "$*"
+   local filter="$*"
+   local filter="${filter::-2}"
+   RUST_BACKTRACE=1 NAVI_PATH="$TEST_CHEAT_PATH" "$navi" best "$filter"
 }
 
 _navi_test() {
@@ -24,17 +26,6 @@ _get_tests() {
       | sed -E 's/# (.*) -> "(.*)"/\1|\2/g'
 }
 
-_run_all() {
-   ifs="$IFS"
-   IFS=$'\n'
-   for i in $(_get_tests); do
-      IFS="$ifs"
-      query="$(echo "$i" | cut -d'|' -f1)"
-      expected="$(echo "$i" | cut -d'|' -f2)"
-      test::run "$query" _navi_test "$query" "$expected"
-   done
-}
-
 if ! command_exists fzf; then
    export PATH="$PATH:$HOME/.fzf/bin"
 fi
@@ -46,8 +37,14 @@ _navi trivial
 _navi "sed with"
 
 test::set_suite "cases"
-# _run_all
-query="sed with"; test::run "$query" _navi_test "$query" "172.sfsoidfj"
 
+   ifs="$IFS"
+   IFS=$'\n'
+   for i in $(_get_tests); do
+      IFS="$ifs"
+      query="$(echo "$i" | cut -d'|' -f1)"
+      expected="$(echo "$i" | cut -d'|' -f2)"
+      test::run "$query" _navi_test "$query" "$expected"
+   done
 
 exit $FAILED
