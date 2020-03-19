@@ -30,11 +30,11 @@ _get_tests() {
    local -r filter="$1"
 
    if [ -n "$filter" ]; then
-   _get_all_tests \
-      | grep "$filter"
-      else 
+      _get_all_tests \
+         | grep "$filter"
+   else
       _get_all_tests
-      fi
+   fi
 }
 
 if ! command_exists fzf; then
