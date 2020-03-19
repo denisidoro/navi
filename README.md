@@ -235,7 +235,7 @@ true \
 jsons=($(echo "<jsons>"))
 cat "${jsons[@]}"
 
-$ jsons: find . -iname '*.rs' -type f -print --- --multi
+$ jsons: find . -iname '*.json' -type f -print --- --multi
 ```
 
 List customization
