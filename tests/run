@@ -47,7 +47,7 @@ _navi "sed with"
 
 test::set_suite "cases"
 # _run_all
-query="sed with replacement"; test::run "$query" _navi_test "$query" "172.sfsoidfj"
+query="sed with"; test::run "$query" _navi_test "$query" "172.sfsoidfj"
 
 
 exit $FAILED
