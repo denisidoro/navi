@@ -7,7 +7,7 @@ TEST_CHEAT_PATH="${NAVI_HOME}/tests/cheats"
 
 _navi() {
    local -r navi="./target/debug/navi"
-   NAVI_PATH="$TEST_CHEAT_PATH" "$navi" --fzf-overrides '--no-reverse' best "$1" 2> /dev/null \
+   RUST_BACKTRACE=1 NAVI_PATH="$TEST_CHEAT_PATH" "$navi" --fzf-overrides '--no-reverse' best "$1" 2> /dev/null \
       | test::equals "$2"
 }
 
@@ -20,6 +20,9 @@ _get_tests() {
 }
 
 cd "$NAVI_HOME"
+
+# TODO: remove
+_navi trivial "foo"
 
 test::set_suite "cases"
 IFS=$'\n'
