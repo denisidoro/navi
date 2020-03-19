@@ -53,7 +53,7 @@ jobs:
         run: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; yes | ~/.fzf/install;
 
       - name: Run bash tests
-        run: ./tests/run
+        run: ./tests/run 'trivial\|multiple'
 
   lints:
     name: Lints

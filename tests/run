@@ -18,12 +18,23 @@ _navi_test() {
       | test::equals "$2"
 }
 
-_get_tests() {
+_get_all_tests() {
    cat "${TEST_CHEAT_PATH}/cases.cheat" \
       | grep '#' \
       | grep ' ->' \
       | sed 's/\\n/ /g' \
       | sed -E 's/# (.*) -> "(.*)"/\1|\2/g'
+}
+
+_get_tests() {
+   local -r filter="$1"
+
+   if [ -n "$filter" ]; then
+   _get_all_tests \
+      | grep "$filter"
+      else 
+      _get_all_tests
+      fi
 }
 
 if ! command_exists fzf; then
@@ -32,10 +43,12 @@ fi
 
 cd "$NAVI_HOME"
 
+filter="${1:-}"
+
 test::set_suite "cases"
 ifs="$IFS"
 IFS=$'\n'
-for i in $(_get_tests | grep 'trivial\|multiple'); do
+for i in $(_get_tests "$filter"); do
    IFS="$ifs"
    query="$(echo "$i" | cut -d'|' -f1)"
    expected="$(echo "$i" | cut -d'|' -f2)"
