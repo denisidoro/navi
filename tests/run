@@ -22,11 +22,12 @@ _get_tests() {
 if ! command_exists fzf; then
    apt install fzf \
       || sudo apt install fzf \
-      || git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && yes | ~/.fzf/install && source ~/.bashrc
+      || (git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && yes | ~/.fzf/install)
 fi
 
+source ~/.bashrc || true
+
 cd "$NAVI_HOME"
-find "./target"
 
 test::set_suite "cases"
 IFS=$'\n'
