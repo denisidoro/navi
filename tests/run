@@ -33,13 +33,13 @@ fi
 cd "$NAVI_HOME"
 
 test::set_suite "cases"
-   ifs="$IFS"
-   IFS=$'\n'
-   for i in $(_get_tests | grep 'trivial\|multiple'); do
-      IFS="$ifs"
-      query="$(echo "$i" | cut -d'|' -f1)"
-      expected="$(echo "$i" | cut -d'|' -f2)"
-      test::run "$query" _navi_test "$query" "$expected"
-   done
+ifs="$IFS"
+IFS=$'\n'
+for i in $(_get_tests | grep 'trivial\|multiple'); do
+   IFS="$ifs"
+   query="$(echo "$i" | cut -d'|' -f1)"
+   expected="$(echo "$i" | cut -d'|' -f2)"
+   test::run "$query" _navi_test "$query" "$expected"
+done
 
 test::finish
