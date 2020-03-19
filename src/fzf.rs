@@ -6,12 +6,22 @@ use std::process::{Command, Stdio};
 
 fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> String {
     if let Some(c) = column {
+        let mut result = String::from("");
         let re = regex::Regex::new(delimiter.unwrap_or(r"\s\s+")).unwrap();
-        let mut parts = re.split(text.as_str());
-        for _ in 0..(c - 1) {
-            parts.next().unwrap();
+        for line in text.split('\n') {
+            if (&line).is_empty() {
+                continue;
+            }
+            let mut parts = re.split(line);
+            for _ in 0..(c - 1) {
+                parts.next().unwrap();
+            }
+            if !result.is_empty() {
+                result.push('\n');
+            }
+            result.push_str(parts.next().unwrap_or(""));
         }
-        parts.next().unwrap().to_string()
+        result
     } else {
         text
     }
@@ -134,21 +144,28 @@ fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> Str
         SuggestionType::MultipleSelections
         | SuggestionType::Disabled
         | SuggestionType::SnippetSelection => {
-            text.truncate(text.len() - 1);
+            let len = text.len();
+            if len > 1 {
+                text.truncate(len - 1);
+            }
             text
         }
         SuggestionType::SingleRecommendation => {
             let lines: Vec<&str> = text.lines().collect();
 
             match (lines.get(0), lines.get(1), lines.get(2)) {
-                (Some(one), Some(termination), Some(two)) if *termination == "enter" => {
+                (Some(one), Some(termination), Some(two))
+                    if *termination == "enter" || termination.is_empty() =>
+                {
                     if two.is_empty() {
                         (*one).to_string()
                     } else {
                         (*two).to_string()
                     }
                 }
-                (Some(one), Some(termination), None) if *termination == "enter" => {
+                (Some(one), Some(termination), None)
+                    if *termination == "enter" || termination.is_empty() =>
+                {
                     (*one).to_string()
                 }
                 (Some(one), Some(termination), _) if *termination == "tab" => (*one).to_string(),

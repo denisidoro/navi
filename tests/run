@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
+source "${NAVI_HOME}/tests/core.bash"
+
+TEST_CHEAT_PATH="${NAVI_HOME}/tests/no_prompt_cheats"
+
+_navi() {
+   stty sane || true
+   local -r navi="./target/debug/navi"
+   local filter="$*"
+   local filter="${filter::-2}"
+   RUST_BACKTRACE=1 NAVI_PATH="$TEST_CHEAT_PATH" "$navi" best "$filter"
+}
+
+_navi_test() {
+   _navi "$1" \
+      | test::equals "$2"
+}
+
+_get_all_tests() {
+   cat "${TEST_CHEAT_PATH}/cases.cheat" \
+      | grep '#' \
+      | grep ' ->' \
+      | sed 's/\\n/ /g' \
+      | sed -E 's/# (.*) -> "(.*)"/\1|\2/g'
+}
+
+_get_tests() {
+   local -r filter="$1"
+
+   if [ -n "$filter" ]; then
+      _get_all_tests \
+         | grep "$filter"
+   else
+      _get_all_tests
+   fi
+}
+
+if ! command_exists fzf; then
+   export PATH="$PATH:$HOME/.fzf/bin"
+fi
+
+cd "$NAVI_HOME"
+
+filter="${1:-}"
+
+test::set_suite "cases"
+ifs="$IFS"
+IFS=$'\n'
+for i in $(_get_tests "$filter"); do
+   IFS="$ifs"
+   query="$(echo "$i" | cut -d'|' -f1)"
+   expected="$(echo "$i" | cut -d'|' -f2)"
+   test::run "$query" _navi_test "$query" "$expected"
+done
+
+test::finish

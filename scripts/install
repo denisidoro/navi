@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+
+# =====================
+# paths
+# =====================
+
 FIRST_SOURCE_DIR="/opt/navi"
 SECOND_SOURCE_DIR="${HOME}/.navi"
 
@@ -27,13 +32,105 @@ get_bin_dir() {
    get_dir "$FIRST_BIN_DIR" "$SECOND_BIN_DIR"
 }
 
+
+# =====================
+# logging
+# =====================
+
 echoerr() {
    echo "$@" 1>&2
 }
 
-command_exists() {
-   type "$1" &>/dev/null
+tap() {
+   local -r x="$(cat)"
+   echoerr "$x"
+   echo "$x"
 }
+
+log::ansi() {
+   local bg=false
+   case "$@" in
+      *reset*) echo "\e[0m"; return 0 ;;
+      *black*) color=30 ;;
+      *red*) color=31 ;;
+      *green*) color=32 ;;
+      *yellow*) color=33 ;;
+      *blue*) color=34 ;;
+      *purple*) color=35 ;;
+      *cyan*) color=36 ;;
+      *white*) color=37 ;;
+   esac
+   case "$@" in
+      *regular*) mod=0 ;;
+      *bold*) mod=1 ;;
+      *underline*) mod=4 ;;
+   esac
+   case "$@" in
+      *background*) bg=true ;;
+      *bg*) bg=true ;;
+   esac
+
+   if $bg; then
+      echo "\e[${color}m"
+   else
+      echo "\e[${mod:-0};${color}m"
+   fi
+}
+
+_log() {
+   local template="$1"
+   shift
+   echoerr -e "$(printf "$template" "$@")"
+}
+
+_header() {
+   local TOTAL_CHARS=60
+   local total=$TOTAL_CHARS-2
+   local size=${#1}
+   local left=$((($total - $size) / 2))
+   local right=$(($total - $size - $left))
+   printf "%${left}s" '' | tr ' ' =
+   printf " $1 "
+   printf "%${right}s" '' | tr ' ' =
+}
+
+log::header() { _log "\n$(log::ansi bold)$(log::ansi purple)$(_header "$1")$(log::ansi reset)\n"; }
+log::success() { _log "$(log::ansi green)✔ %s$(log::ansi reset)\n" "$@"; }
+log::error() { _log "$(log::ansi red)✖ %s$(log::ansi reset)\n" "$@"; }
+log::warning() { _log "$(log::ansi yellow)➜ %s$(log::ansi reset)\n" "$@"; }
+log::note() { _log "$(log::ansi blue)%s$(log::ansi reset)\n" "$@"; }
+
+# TODO: remove
+header() {
+   echoerr "$*"
+   echoerr
+}
+
+die() {
+   log::error "$@"
+   exit 42
+}
+
+no_binary_warning() {
+   echoerr "There's no precompiled binary for your platform: $(uname -a)"
+}
+
+installation_finish_instructions() {
+   local -r shell="$(get_shell)"
+   echoerr -e "Finished. To call navi, restart your shell or reload the config file:\n   source ~/.${shell}rc"
+   local code
+   if [[ $shell = "zsh" ]]; then
+      code="navi widget ${shell} | source"
+   else
+      code='source <(navi widget '"$shell"')'
+   fi
+   echoerr -e "\nTo add the Ctrl-G keybinding, add the following to ~/.${shell}rc:\n   ${code}"
+}
+
+
+# =====================
+# security
+# =====================
 
 sha256() {
    if command_exists sha256sum; then
@@ -48,24 +145,15 @@ sha256() {
    fi
 }
 
-header() {
-   echoerr "$*"
-   echoerr
-}
+
+# =====================
+# github
+# =====================
 
 latest_version_released() {
    curl -s 'https://api.github.com/repos/denisidoro/navi/releases/latest' \
       | grep -Eo 'releases/tag/v([0-9\.]+)' \
       | sed 's|releases/tag/v||'
-}
-
-version_from_toml() {
-   cat "${NAVI_HOME}/Cargo.toml" \
-      | grep version \
-      | head -n1 \
-      | awk '{print $NF}' \
-      | tr -d '"' \
-      | tr -d "'"
 }
 
 asset_url() {
@@ -96,6 +184,29 @@ sha_for_asset_on_github() {
    curl -sL "$url" | sha256 | awk '{print $1}'
 }
 
+
+# =====================
+# code
+# =====================
+
+version_from_toml() {
+   cat "${NAVI_HOME}/Cargo.toml" \
+      | grep version \
+      | head -n1 \
+      | awk '{print $NF}' \
+      | tr -d '"' \
+      | tr -d "'"
+}
+
+
+# =====================
+# platform
+# =====================
+
+command_exists() {
+   type "$1" &>/dev/null
+}
+
 get_target() {
    local -r unamea="$(uname -a)"
    local -r archi="$(uname -sm)"
@@ -114,25 +225,14 @@ get_target() {
    echo "$target"
 }
 
-no_binary_warning() {
-   echoerr "There's no precompiled binary for your platform: $(uname -a)"
-}
-
 get_shell() {
    echo $SHELL | xargs basename
 }
 
-installation_finish_instructions() {
-   local -r shell="$(get_shell)"
-   echoerr -e "Finished. To call navi, restart your shell or reload the config file:\n   source ~/.${shell}rc"
-   local code
-   if [[ $shell = "zsh" ]]; then
-      code="navi widget ${shell} | source"
-   else
-      code='source <(navi widget '"$shell"')'
-   fi
-   echoerr -e "\nTo add the Ctrl-G keybinding, add the following to ~/.${shell}rc:\n   ${code}"
-}
+
+# =====================
+# main
+# =====================
 
 install_navi() {
    export SOURCE_DIR="${SOURCE_DIR:-"$(get_source_dir)"}"

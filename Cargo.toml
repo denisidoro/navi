@@ -1,6 +1,6 @@
 [package]
 name = "navi"
-version = "2.1.4"
+version = "2.2.0"
 authors = ["Denis Isidoro <denis_isidoro@live.com>"]
 edition = "2018"
 description = "An interactive cheatsheet tool for the command-line"
@@ -34,7 +34,11 @@ version = "0.10.0"
 default-features = false
 features = ["vendored-openssl"]
 
-[[bin]]
-bench = false
-path = "src/main.rs"
+[lib]
 name = "navi"
+path = "src/lib.rs"
+
+[[bin]]
+name = "navi"
+path = "src/bin/main.rs"
+bench = false

@@ -39,6 +39,7 @@ Table of contents
       * [Advanced variable options](#advanced-variable-options)
       * [Variable dependency](#variable-dependency)
       * [Multiline snippets](#multiline-snippets)
+      * [Variable as multiple arguments](#variable-as-multiple-arguments)
    * [List customization](#list-customization)
    * [Related projects](#related-projects)
    * [Etymology](#etymology)
@@ -227,6 +228,15 @@ true \
    || echo no
 ```
 
+### Variable as multiple arguments
+
+```sh
+# This will result into: cat "file1.json" "file2.json"
+jsons=($(echo "<jsons>"))
+cat "${jsons[@]}"
+
+$ jsons: find . -iname '*.rs' -type f -print --- --multi
+```
 
 List customization
 ------------------

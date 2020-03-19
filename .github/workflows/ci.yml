@@ -6,7 +6,7 @@
 
 on: [push]
 
-name: Tests
+name: CI
 
 jobs:
   check:
@@ -30,7 +30,7 @@ jobs:
           command: check
 
   test:
-    name: Test Suite
+    name: Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -48,6 +48,12 @@ jobs:
         continue-on-error: false
         with:
           command: test
+
+      - name: Install fzf
+        run: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; yes | ~/.fzf/install;
+
+      - name: Run bash tests
+        run: ./tests/run 'trivial\|multiple'
 
   lints:
     name: Lints
