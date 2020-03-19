@@ -24,6 +24,17 @@ _get_tests() {
       | sed -E 's/# (.*) -> "(.*)"/\1|\2/g'
 }
 
+_run_all() {
+   ifs="$IFS"
+   IFS=$'\n'
+   for i in $(_get_tests); do
+      IFS="$ifs"
+      query="$(echo "$i" | cut -d'|' -f1)"
+      expected="$(echo "$i" | cut -d'|' -f2)"
+      test::run "$query" _navi_test "$query" "$expected"
+   done
+}
+
 if ! command_exists fzf; then
    export PATH="$PATH:$HOME/.fzf/bin"
 fi
@@ -35,13 +46,8 @@ _navi trivial
 _navi "sed with"
 
 test::set_suite "cases"
-ifs="$IFS"
-IFS=$'\n'
-for i in $(_get_tests); do
-   IFS="$ifs"
-   query="$(echo "$i" | cut -d'|' -f1)"
-   expected="$(echo "$i" | cut -d'|' -f2)"
-   test::run "$query" _navi_test "$query" "$expected"
-done
+# _run_all
+query="sed with replacement"; test::run "$query" _navi_test "$query" "172.sfsoidfj"
+
 
 exit $FAILED
