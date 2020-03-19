@@ -8,7 +8,7 @@ TEST_CHEAT_PATH="${NAVI_HOME}/tests/cheats"
 _navi() {
    stty sane || true
    local -r navi="./target/debug/navi"
-   RUST_BACKTRACE=1 NAVI_PATH="$TEST_CHEAT_PATH" "$navi" --fzf-overrides '--no-reverse' best "$1" </dev/tty
+   RUST_BACKTRACE=1 NAVI_PATH="$TEST_CHEAT_PATH" "$navi" --fzf-overrides '--no-reverse' best "$1"
 }
 
 _navi_test() {
