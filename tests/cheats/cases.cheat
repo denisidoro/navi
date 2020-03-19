@@ -12,7 +12,7 @@ echo "8.8.8.8 via 172.17.0.1 dev eth0  src 172.17.0.2" | sed -E 's/.*src ([0-9.]
 echo "foo"
 echo "bar"
 
-# multiline command: with backslash -> "lorem ipsum no match"
+# multiline command: with backslash -> "lorem ipsum\nno match"
 echo 'lorem ipsum'
 echo "foo" \
     | grep -q "bar" \
