@@ -1,20 +1,20 @@
 use crate::structures::cheat::SuggestionType;
 
-pub struct Opts<'a> {
+pub struct Opts {
     pub query: Option<String>,
     pub filter: Option<String>,
     pub prompt: Option<String>,
     pub preview: Option<String>,
     pub autoselect: bool,
-    pub overrides: Option<&'a String>, // TODO: remove &'a
+    pub overrides: Option<String>,
     pub header_lines: u8,
     pub header: Option<String>,
     pub suggestion_type: SuggestionType,
-    pub delimiter: Option<&'a str>,
+    pub delimiter: Option<String>,
     pub column: Option<u8>,
 }
 
-impl Default for Opts<'_> {
+impl Default for Opts {
     fn default() -> Self {
         Self {
             query: None,
