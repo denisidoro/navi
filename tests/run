@@ -25,6 +25,8 @@ _get_tests() {
 
 cd "$NAVI_HOME"
 
+export PATH="$PATH:$HOME/.fzf/bin" 
+
 ls -la "$HOME"
 ls -la "$HOME/.fzf"
 echo -e '1\n2\n\3' | $HOME/.fzf/bin/fzf --filter 2
