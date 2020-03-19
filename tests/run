@@ -31,8 +31,8 @@ fi
 cd "$NAVI_HOME"
 
 # TODO: remove
-_navi trivial "foo"
-_navi trivial "sed with"
+_navi trivial
+_navi "sed with"
 
 test::set_suite "cases"
 ifs="$IFS"

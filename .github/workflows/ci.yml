@@ -30,7 +30,7 @@ jobs:
           command: check
 
   test:
-    name: Test Suite
+    name: Cargo tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -50,7 +50,7 @@ jobs:
           command: test
 
   acceptance:
-    name: Acceptance Suite
+    name: Bash tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
