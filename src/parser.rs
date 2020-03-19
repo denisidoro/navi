@@ -136,7 +136,7 @@ fn read_file(
             }
             // snippet
             else {
-                let hash = format!("{}{}{}", &tags, &comment, &line).hash_line();
+                let hash = format!("{}{}", &comment, &line).hash_line();
                 if visited_lines.contains(&hash) {
                     continue;
                 }
