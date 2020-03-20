@@ -118,12 +118,12 @@ where
     };
 
     let stdin = child.stdin.as_mut().unwrap();
-    let result = stdin_fn(stdin);
+    let result_map = stdin_fn(stdin);
 
     let out = child.wait_with_output().unwrap();
 
     let text = match out.status.code() {
-        Some(0) | Some(1) => String::from_utf8(out.stdout).unwrap(),
+        Some(0) | Some(1) | Some(2) => String::from_utf8(out.stdout).unwrap(),
         Some(130) => process::exit(130),
         _ => {
             let err = String::from_utf8(out.stderr)
@@ -132,14 +132,13 @@ where
         }
     };
 
-    (
-        get_column(
+    let out = get_column(
             parse_output_single(text, opts.suggestion_type),
             opts.column,
             opts.delimiter.as_deref(),
-        ),
-        result,
-    )
+        );
+
+    (outresult_mapsult)
 }
 
 fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> String {
