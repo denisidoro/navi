@@ -1,6 +1,6 @@
 use crate::display;
-use crate::structures::cheat::{SuggestionType, VariableMap};
-use crate::structures::fzf::Opts;
+use crate::structures::cheat::VariableMap;
+use crate::structures::fzf::{Opts, SuggestionType};
 use std::process;
 use std::process::{Command, Stdio};
 
@@ -80,10 +80,14 @@ where
 
     if let Some(h) = opts.header {
         fzf_command.args(&["--header", &h]);
-    }
+    
 
     if let Some(p) = opts.prompt {
         fzf_command.args(&["--prompt", &p]);
+    }}
+
+    if let Some(pw) = opts.preview_window {
+        fzf_command.args(&["--preview-window", &pw]);
     }
 
     if opts.header_lines > 0 {

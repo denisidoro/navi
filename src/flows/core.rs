@@ -4,8 +4,8 @@ use crate::flows;
 use crate::fzf;
 use crate::handler;
 use crate::parser;
-use crate::structures::cheat::{Suggestion, SuggestionType, VariableMap};
-use crate::structures::fzf::Opts as FzfOpts;
+use crate::structures::cheat::{Suggestion, VariableMap};
+use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
 use crate::structures::option;
 use crate::structures::option::Config;
 use regex::Regex;
@@ -73,8 +73,8 @@ fn prompt_with_suggestions(
     for (key, value) in values.iter() {
         vars_cmd.push_str(format!("{}=\"{}\"; ", key, value).as_str());
     }
-    let (suggestion_command, suggestion_options) = &suggestion;
-    let command = format!("{} {}", vars_cmd, suggestion_command);
+    let (text, suggestion_opts) = suggestion;
+    let command = format!("{} {}", vars_cmd, text);
 
     let child = Command::new("bash")
         .stdout(Stdio::piped())
@@ -85,19 +85,15 @@ fn prompt_with_suggestions(
 
     let suggestions = String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap();
 
-    let mut opts = FzfOpts {
-        autoselect: !config.no_autoselect,
-        overrides: config.fzf_overrides_var.clone(),
-        prompt: Some(display::variable_prompt(varname)),
-        ..Default::default()
+    // TODO: make this more elegant
+    let mut opts = if let Some(o) = suggestion_opts {
+        o.clone()
+    } else {
+        Default::default()
     };
-
-    if let Some(o) = &suggestion_options {
-        opts.suggestion_type = o.suggestion_type;
-        opts.header_lines = o.header_lines;
-        opts.column = o.column;
-        opts.delimiter = o.delimiter.clone();
-    };
+    opts.autoselect = !config.no_autoselect;
+    opts.overrides = config.fzf_overrides_var.clone();
+    opts.prompt = Some(display::variable_prompt(varname));
 
     let (output, _) = fzf::call(opts, |stdin| {
         stdin.write_all(suggestions.as_bytes()).unwrap();
@@ -162,7 +158,8 @@ fn with_new_lines(txt: String) -> String {
 pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Box<dyn Error>> {
     let _ = display::WIDTHS;
 
-    let (raw_selection, variables) = fzf::call(gen_core_fzf_opts(variant, &config), |stdin| {
+    let opts = gen_core_fzf_opts(variant, &config);
+    let (raw_selection, variables) = fzf::call(opts, |stdin| {
         Some(parser::read_all(&config, stdin))
     });
 
