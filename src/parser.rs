@@ -1,15 +1,14 @@
 use crate::display;
 use crate::filesystem;
 use crate::structures::cheat::VariableMap;
-use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
 use crate::structures::fnv::HashLine;
+use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
 use crate::structures::option::Config;
 use crate::welcome;
 use regex::Regex;
 use std::collections::HashSet;
 use std::fs;
 use std::io::Write;
-use shellwords;
 
 fn parse_opts(text: &str) -> FzfOpts {
     let mut multi = false;
@@ -22,7 +21,9 @@ fn parse_opts(text: &str) -> FzfOpts {
         match p.as_str() {
             "--multi" => multi = true,
             "--prevent-extra" => prevent_extra = true,
-            "--headers" | "--header-lines" => opts.header_lines = parts.next().unwrap().parse::<u8>().unwrap(),
+            "--headers" | "--header-lines" => {
+                opts.header_lines = parts.next().unwrap().parse::<u8>().unwrap()
+            }
             "--column" => opts.column = Some(parts.next().unwrap().parse::<u8>().unwrap()),
             "--delimiter" => opts.delimiter = Some(parts.next().unwrap().to_string()),
             "--query" => opts.query = Some(parts.next().unwrap().to_string()),
@@ -31,15 +32,15 @@ fn parse_opts(text: &str) -> FzfOpts {
             "--preview-window" => opts.preview_window = Some(parts.next().unwrap().to_string()),
             "--header" => opts.header = Some(parts.next().unwrap().to_string()),
             _ => (),
-        } 
+        }
     }
 
     let suggestion_type = match (multi, prevent_extra) {
-            (true, _) => SuggestionType::MultipleSelections, // multi wins over allow-extra
-            (false, false) => SuggestionType::SingleRecommendation,
-            (false, true) => SuggestionType::SingleSelection,
-        };
-        opts.suggestion_type = suggestion_type;
+        (true, _) => SuggestionType::MultipleSelections, // multi wins over allow-extra
+        (false, false) => SuggestionType::SingleRecommendation,
+        (false, true) => SuggestionType::SingleSelection,
+    };
+    opts.suggestion_type = suggestion_type;
 
     opts
 }
@@ -200,7 +201,7 @@ mod tests {
                 column: None,
                 delimiter: None,
                 suggestion_type: SuggestionType::SingleRecommendation,
-        ..Default::default()
+                ..Default::default()
             })
         );
     }
@@ -221,7 +222,7 @@ mod tests {
                 column: None,
                 delimiter: None,
                 suggestion_type: SuggestionType::SingleRecommendation,
-        ..Default::default()
+                ..Default::default()
             }),
         );
         let actual_suggestion = variables.get("ssh", "user");

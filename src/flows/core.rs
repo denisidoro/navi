@@ -159,9 +159,8 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
     let _ = display::WIDTHS;
 
     let opts = gen_core_fzf_opts(variant, &config);
-    let (raw_selection, variables) = fzf::call(opts, |stdin| {
-        Some(parser::read_all(&config, stdin))
-    });
+    let (raw_selection, variables) =
+        fzf::call(opts, |stdin| Some(parser::read_all(&config, stdin)));
 
     let (key, tags, snippet) = extract_from_selections(&raw_selection[..], contains_key);
 

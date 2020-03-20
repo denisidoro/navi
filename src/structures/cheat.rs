@@ -1,6 +1,6 @@
 use crate::structures::fnv::HashLine;
-use std::collections::HashMap;
 use crate::structures::fzf::Opts;
+use std::collections::HashMap;
 
 pub type Suggestion = (String, Option<Opts>);
 
