@@ -2,6 +2,7 @@ use crate::filesystem;
 use crate::fzf;
 use crate::git;
 use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
+use anyhow::Context;
 use git2::Repository;
 use std::error::Error;
 use std::fs;
@@ -14,13 +15,12 @@ pub fn browse() -> Result<(), Box<dyn Error>> {
     filesystem::remove_dir(&repo_path_str);
     filesystem::create_dir(&repo_path_str);
 
-    match Repository::clone("https://github.com/denisidoro/cheats", &repo_path_str) {
-        Ok(r) => r,
-        Err(e) => panic!("failed to clone: {}", e),
-    };
+    let repo_url = "https://github.com/denisidoro/cheats";
+    Repository::clone(repo_url, &repo_path_str)
+        .with_context(|| format!("Failed to clone {}.", repo_url))?;
 
     let repos = fs::read_to_string(format!("{}/featured_repos.txt", &repo_path_str))
-        .expect("Unable to fetch featured repos");
+        .context("Unable to fetch featured repos.")?;
 
     let opts = FzfOpts {
         column: Some(1),
@@ -30,7 +30,7 @@ pub fn browse() -> Result<(), Box<dyn Error>> {
     let (repo, _) = fzf::call(opts, |stdin| {
         stdin
             .write_all(repos.as_bytes())
-            .expect("Unable to prompt featured repos");
+            .expect("Unable to prompt featured repos.");
         None
     });
 
