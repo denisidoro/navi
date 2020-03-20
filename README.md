@@ -203,7 +203,8 @@ The supported parameters are:
 - `--prevent-extra` *(experimental)*: limits the user to select one of the suggestions;
 - `--column <number>`: extracts a single column from the selected result;
 
-In addition, it's possible to forward the following parameters to `fzf`: 
+In addition, it's possible to forward the following parameters to `fzf`:
+- `--multi`;
 - `--header-lines <number>`;
 - `--delimiter <regex>`;
 - `--query <text>`;
