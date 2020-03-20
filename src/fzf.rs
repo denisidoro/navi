@@ -82,9 +82,9 @@ where
         fzf_command.args(&["--header", &h]);
     }
 
-        if let Some(p) = opts.prompt {
-            fzf_command.args(&["--prompt", &p]);
-        }
+    if let Some(p) = opts.prompt {
+        fzf_command.args(&["--prompt", &p]);
+    }
 
     if let Some(pw) = opts.preview_window {
         fzf_command.args(&["--preview-window", &pw]);
