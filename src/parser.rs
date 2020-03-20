@@ -196,7 +196,7 @@ mod tests {
         assert_eq!(variable, "user");
         assert_eq!(
             command_options,
-            Some(Opts {
+            Some(FzfOpts {
                 header_lines: 0,
                 column: None,
                 delimiter: None,
@@ -217,7 +217,7 @@ mod tests {
         read_file(path, &mut variables, &mut visited_lines, child_stdin);
         let expected_suggestion = (
             r#" echo -e "$(whoami)\nroot" "#.to_string(),
-            Some(Opts {
+            Some(FzfOpts {
                 header_lines: 0,
                 column: None,
                 delimiter: None,
