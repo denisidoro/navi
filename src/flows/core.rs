@@ -187,7 +187,8 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
         Command::new("bash")
             .arg("-c")
             .arg(&interpolated_snippet[..])
-            .spawn()?;
+            .spawn()?
+            .wait()?;
     }
 
     Ok(())
