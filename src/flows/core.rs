@@ -85,7 +85,7 @@ fn prompt_with_suggestions(
 
     let suggestions = String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap();
 
-    let opts = suggestion_opts.clone().unwrap();
+    let opts = suggestion_opts.clone().unwrap_or(Default::default());
     let opts = FzfOpts {
         autoselect: !config.no_autoselect,
         overrides: config.fzf_overrides_var.clone(),
