@@ -138,7 +138,7 @@ where
         opts.delimiter.as_deref(),
     );
 
-    (out, esult_map)
+    (out, result_map)
 }
 
 fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> String {
