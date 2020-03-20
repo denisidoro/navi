@@ -21,9 +21,7 @@ fn parse_opts(text: &str) -> FzfOpts {
         match p.as_str() {
             "--multi" => multi = true,
             "--prevent-extra" => prevent_extra = true,
-            "--headers" | "--header-lines" => {
-                opts.header_lines = parts.next().unwrap().parse::<u8>().unwrap()
-            }
+            "--headers" | "--header-lines" => opts.header_lines = parts.next().unwrap().parse::<u8>().unwrap(),
             "--column" => opts.column = Some(parts.next().unwrap().parse::<u8>().unwrap()),
             "--delimiter" => opts.delimiter = Some(parts.next().unwrap().to_string()),
             "--query" => opts.query = Some(parts.next().unwrap().to_string()),
