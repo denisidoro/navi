@@ -31,6 +31,7 @@ fn parse_opts(text: &str) -> FzfOpts {
             "--preview" => opts.preview = Some(parts.next().unwrap().to_string()),
             "--preview-window" => opts.preview_window = Some(parts.next().unwrap().to_string()),
             "--header" => opts.header = Some(parts.next().unwrap().to_string()),
+            "--overrides" => opts.overrides = Some(parts.next().unwrap().to_string()), 
             _ => (),
         }
     }
