@@ -1,7 +1,8 @@
 use crate::display;
 use crate::filesystem;
-use crate::structures::cheat::{SuggestionOpts, SuggestionType, VariableMap};
+use crate::structures::cheat::VariableMap;
 use crate::structures::fnv::HashLine;
+use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
 use crate::structures::option::Config;
 use crate::welcome;
 use regex::Regex;
@@ -9,47 +10,43 @@ use std::collections::HashSet;
 use std::fs;
 use std::io::Write;
 
-fn remove_quotes(txt: &str) -> String {
-    txt.replace('"', "").replace('\'', "")
-}
-
-fn parse_opts(text: &str) -> SuggestionOpts {
-    let mut header_lines: u8 = 0;
-    let mut column: Option<u8> = None;
+fn parse_opts(text: &str) -> FzfOpts {
     let mut multi = false;
     let mut prevent_extra = false;
-    let mut delimiter: Option<String> = None;
-
-    let mut parts = text.split(' ');
+    let mut opts = FzfOpts::default();
+    let parts_vec = shellwords::split(text).unwrap();
+    let mut parts = parts_vec.into_iter();
 
     while let Some(p) = parts.next() {
-        match p {
+        match p.as_str() {
             "--multi" => multi = true,
             "--prevent-extra" => prevent_extra = true,
-            "--header" | "--headers" | "--header-lines" => {
-                header_lines = remove_quotes(parts.next().unwrap()).parse::<u8>().unwrap()
+            "--headers" | "--header-lines" => {
+                opts.header_lines = parts.next().unwrap().parse::<u8>().unwrap()
             }
-            "--column" => {
-                column = Some(remove_quotes(parts.next().unwrap()).parse::<u8>().unwrap())
-            }
-            "--delimiter" => delimiter = Some(remove_quotes(parts.next().unwrap()).to_string()),
+            "--column" => opts.column = Some(parts.next().unwrap().parse::<u8>().unwrap()),
+            "--delimiter" => opts.delimiter = Some(parts.next().unwrap().to_string()),
+            "--query" => opts.query = Some(parts.next().unwrap().to_string()),
+            "--filter" => opts.filter = Some(parts.next().unwrap().to_string()),
+            "--preview" => opts.preview = Some(parts.next().unwrap().to_string()),
+            "--preview-window" => opts.preview_window = Some(parts.next().unwrap().to_string()),
+            "--header" => opts.header = Some(parts.next().unwrap().to_string()),
+            "--overrides" => opts.overrides = Some(parts.next().unwrap().to_string()),
             _ => (),
         }
     }
 
-    SuggestionOpts {
-        header_lines,
-        column,
-        delimiter,
-        suggestion_type: match (multi, prevent_extra) {
-            (true, _) => SuggestionType::MultipleSelections, // multi wins over allow-extra
-            (false, false) => SuggestionType::SingleRecommendation,
-            (false, true) => SuggestionType::SingleSelection,
-        },
-    }
+    let suggestion_type = match (multi, prevent_extra) {
+        (true, _) => SuggestionType::MultipleSelections, // multi wins over allow-extra
+        (false, false) => SuggestionType::SingleRecommendation,
+        (false, true) => SuggestionType::SingleSelection,
+    };
+    opts.suggestion_type = suggestion_type;
+
+    opts
 }
 
-fn parse_variable_line(line: &str) -> (&str, &str, Option<SuggestionOpts>) {
+fn parse_variable_line(line: &str) -> (&str, &str, Option<FzfOpts>) {
     let re = Regex::new(r"^\$\s*([^:]+):(.*)").unwrap();
     let caps = re.captures(line).unwrap();
     let variable = caps.get(1).unwrap().as_str().trim();
@@ -200,11 +197,12 @@ mod tests {
         assert_eq!(variable, "user");
         assert_eq!(
             command_options,
-            Some(SuggestionOpts {
+            Some(FzfOpts {
                 header_lines: 0,
                 column: None,
                 delimiter: None,
-                suggestion_type: SuggestionType::SingleRecommendation
+                suggestion_type: SuggestionType::SingleRecommendation,
+                ..Default::default()
             })
         );
     }
@@ -220,11 +218,12 @@ mod tests {
         read_file(path, &mut variables, &mut visited_lines, child_stdin);
         let expected_suggestion = (
             r#" echo -e "$(whoami)\nroot" "#.to_string(),
-            Some(SuggestionOpts {
+            Some(FzfOpts {
                 header_lines: 0,
                 column: None,
                 delimiter: None,
                 suggestion_type: SuggestionType::SingleRecommendation,
+                ..Default::default()
             }),
         );
         let actual_suggestion = variables.get("ssh", "user");

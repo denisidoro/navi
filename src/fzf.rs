@@ -1,6 +1,6 @@
 use crate::display;
-use crate::structures::cheat::{SuggestionType, VariableMap};
-use crate::structures::fzf::Opts;
+use crate::structures::cheat::VariableMap;
+use crate::structures::fzf::{Opts, SuggestionType};
 use std::process;
 use std::process::{Command, Stdio};
 
@@ -86,6 +86,10 @@ where
         fzf_command.args(&["--prompt", &p]);
     }
 
+    if let Some(pw) = opts.preview_window {
+        fzf_command.args(&["--preview-window", &pw]);
+    }
+
     if opts.header_lines > 0 {
         fzf_command.args(&["--header-lines", format!("{}", opts.header_lines).as_str()]);
     }
@@ -114,12 +118,12 @@ where
     };
 
     let stdin = child.stdin.as_mut().unwrap();
-    let result = stdin_fn(stdin);
+    let result_map = stdin_fn(stdin);
 
     let out = child.wait_with_output().unwrap();
 
     let text = match out.status.code() {
-        Some(0) | Some(1) => String::from_utf8(out.stdout).unwrap(),
+        Some(0) | Some(1) | Some(2) => String::from_utf8(out.stdout).unwrap(),
         Some(130) => process::exit(130),
         _ => {
             let err = String::from_utf8(out.stderr)
@@ -128,14 +132,13 @@ where
         }
     };
 
-    (
-        get_column(
-            parse_output_single(text, opts.suggestion_type),
-            opts.column,
-            opts.delimiter.as_deref(),
-        ),
-        result,
-    )
+    let out = get_column(
+        parse_output_single(text, opts.suggestion_type),
+        opts.column,
+        opts.delimiter.as_deref(),
+    );
+
+    (out, result_map)
 }
 
 fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> String {

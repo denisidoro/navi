@@ -202,9 +202,15 @@ $ image_id: docker images --- --column 3 --header-lines 1 --delimiter '\s\s+'
 The supported parameters are:
 - `--prevent-extra` *(experimental)*: limits the user to select one of the suggestions;
 - `--column <number>`: extracts a single column from the selected result;
-- `--delimiter <regex>`: delimits columns + forwarded option to `fzf`;
-- `--multi`: forwarded option to `fzf`;
-- `--header-lines <number>`: forwarded option to `fzf`;
+
+In addition, it's possible to forward the following parameters to `fzf`: 
+- `--header-lines <number>`;
+- `--delimiter <regex>`;
+- `--query <text>`;
+- `--filter <text>`;
+- `--header <text>`;
+- `--preview <code>`;
+- `--preview-window <text>`.
 
 ### Variable dependency
 

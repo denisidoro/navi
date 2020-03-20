@@ -1,8 +1,7 @@
 use crate::filesystem;
 use crate::fzf;
 use crate::git;
-use crate::structures::cheat::SuggestionType;
-use crate::structures::fzf::Opts as FzfOpts;
+use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
 use git2::Repository;
 use std::error::Error;
 use std::fs;
@@ -66,14 +65,13 @@ pub fn add(uri: String) -> Result<(), Box<dyn Error>> {
         .collect::<Vec<String>>()
         .join("\n");
 
-    let overrides = "--preview-window right:30%".to_string();
     let opts = FzfOpts {
         suggestion_type: SuggestionType::MultipleSelections,
         preview: Some(format!("cat '{}/{{}}'", tmp_path_str)),
         header: Some(
             "Select the cheatsheets you want to import with <TAB> then hit <Enter>".to_string(),
         ),
-        overrides: Some(overrides),
+        preview_window: Some("--preview-window right:30%".to_string()),
         ..Default::default()
     };
 

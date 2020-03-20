@@ -1,29 +1,8 @@
 use crate::structures::fnv::HashLine;
+use crate::structures::fzf::Opts;
 use std::collections::HashMap;
 
-#[derive(Debug, PartialEq)]
-pub struct SuggestionOpts {
-    pub header_lines: u8,
-    pub column: Option<u8>,
-    pub delimiter: Option<String>,
-    pub suggestion_type: SuggestionType,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub enum SuggestionType {
-    /// fzf will not print any suggestions
-    Disabled,
-    /// fzf will only select one of the suggestions
-    SingleSelection,
-    /// fzf will select multiple suggestions
-    MultipleSelections,
-    /// fzf will select one of the suggestions or use the query
-    SingleRecommendation,
-    /// initial snippet selection
-    SnippetSelection,
-}
-
-pub type Suggestion = (String, Option<SuggestionOpts>);
+pub type Suggestion = (String, Option<Opts>);
 
 fn gen_key(tags: &str, variable: &str) -> u64 {
     format!("{};{}", tags, variable).hash_line()
