@@ -73,8 +73,8 @@ fn prompt_with_suggestions(
     for (key, value) in values.iter() {
         vars_cmd.push_str(format!("{}=\"{}\"; ", key, value).as_str());
     }
-    let (text, suggestion_opts) = suggestion;
-    let command = format!("{} {}", vars_cmd, text);
+    let (suggestion_command, suggestion_opts) = suggestion;
+    let command = format!("{} {}", vars_cmd, suggestion_command);
 
     let child = Command::new("bash")
         .stdout(Stdio::piped())
@@ -85,15 +85,13 @@ fn prompt_with_suggestions(
 
     let suggestions = String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap();
 
-    // TODO: make this more elegant
-    let mut opts = if let Some(o) = suggestion_opts {
-        o.clone()
-    } else {
-        Default::default()
+    let opts = suggestion_opts.clone().unwrap();
+    let opts = FzfOpts {
+        autoselect: !config.no_autoselect,
+        overrides: config.fzf_overrides_var.clone(),
+        prompt: Some(display::variable_prompt(varname)),
+        ..opts
     };
-    opts.autoselect = !config.no_autoselect;
-    opts.overrides = config.fzf_overrides_var.clone();
-    opts.prompt = Some(display::variable_prompt(varname));
 
     let (output, _) = fzf::call(opts, |stdin| {
         stdin.write_all(suggestions.as_bytes()).unwrap();
