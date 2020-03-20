@@ -6,9 +6,12 @@ end
 
 function navi-widget -d "Show cheat sheets"
   begin
+    set ttysettings (stty -g)
     stty sane
     __call_navi | perl -pe 'chomp if eof' | read -lz result
     and commandline -- $result
+
+    stty $ttysettings
   end
   commandline -f repaint
 end
