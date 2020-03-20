@@ -133,10 +133,10 @@ where
     };
 
     let out = get_column(
-            parse_output_single(text, opts.suggestion_type),
-            opts.column,
-            opts.delimiter.as_deref(),
-        );
+        parse_output_single(text, opts.suggestion_type),
+        opts.column,
+        opts.delimiter.as_deref(),
+    );
 
     (outresult_mapsult)
 }
