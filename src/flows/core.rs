@@ -110,14 +110,15 @@ fn prompt_with_suggestions(
     let (output, _) = fzf::call(opts, |stdin| {
         stdin
             .write_all(suggestions.as_bytes())
-            .expect("Could not write to fzf's stdin");
-        None
-    });
+            .context("Could not write to fzf's stdin")?;
+        Ok(None)
+    })
+    .context("fzf was unable to prompt with suggestions")?;
 
     Ok(output)
 }
 
-fn prompt_without_suggestions(variable_name: &str) -> String {
+fn prompt_without_suggestions(variable_name: &str) -> Result<String, Error> {
     let opts = FzfOpts {
         autoselect: false,
         prompt: Some(display::variable_prompt(variable_name)),
@@ -125,9 +126,10 @@ fn prompt_without_suggestions(variable_name: &str) -> String {
         ..Default::default()
     };
 
-    let (output, _) = fzf::call(opts, |_stdin| None);
+    let (output, _) = fzf::call(opts, |_stdin| Ok(None))
+        .context("fzf was unable to prompt without suggestions")?;
 
-    output
+    Ok(output)
 }
 
 fn replace_variables_from_snippet(
@@ -135,7 +137,7 @@ fn replace_variables_from_snippet(
     tags: &str,
     variables: VariableMap,
     config: &Config,
-) -> String {
+) -> Result<String, Error> {
     let mut interpolated_snippet = String::from(snippet);
     let mut values: HashMap<String, String> = HashMap::new();
 
@@ -146,15 +148,16 @@ fn replace_variables_from_snippet(
         let value = values
             .get(variable_name)
             .map(|s| s.to_string())
-            .unwrap_or_else(|| {
+            .ok_or_else(|| anyhow!(format!("No value for variable {}", variable_name)))
+            .or_else(|_| {
                 variables
                     .get(&tags, &variable_name)
                     .ok_or_else(|| anyhow!("No suggestions"))
                     .and_then(|suggestion| {
                         prompt_with_suggestions(variable_name, &config, suggestion, &values)
                     })
-                    .unwrap_or_else(|_| prompt_without_suggestions(variable_name))
-            });
+                    .or_else(|_| prompt_without_suggestions(variable_name))
+            })?;
 
         values.insert(variable_name.to_string(), value.clone());
 
@@ -162,7 +165,7 @@ fn replace_variables_from_snippet(
             interpolated_snippet.replacen(bracketed_variable_name, value.as_str(), 1);
     }
 
-    interpolated_snippet
+    Ok(interpolated_snippet)
 }
 
 fn with_new_lines(txt: String) -> String {
@@ -174,20 +177,24 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
 
     let opts = gen_core_fzf_opts(variant, &config).context("Failed to generate fzf options")?;
     let (raw_selection, variables) = fzf::call(opts, |stdin| {
-        Some(
+        Ok(Some(
             parser::read_all(&config, stdin)
-                .expect("Failed to read all variables intended for fzf"),
-        )
-    });
+                .context("Failed to parse variables intended for fzf")?,
+        ))
+    })
+    .context("Failed getting selection and variables from fzf")?;
 
     let (key, tags, snippet) = extract_from_selections(&raw_selection[..], contains_key);
 
-    let interpolated_snippet = with_new_lines(replace_variables_from_snippet(
-        snippet,
-        tags,
-        variables.expect("No variables received from fzf"),
-        &config,
-    ));
+    let interpolated_snippet = with_new_lines(
+        replace_variables_from_snippet(
+            snippet,
+            tags,
+            variables.expect("No variables received from fzf"),
+            &config,
+        )
+        .context("Failed to replace variables from snippet")?,
+    );
 
     // copy to clipboard
     if key == "ctrl-y" {

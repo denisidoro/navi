@@ -30,9 +30,10 @@ pub fn browse() -> Result<(), Error> {
     let (repo, _) = fzf::call(opts, |stdin| {
         stdin
             .write_all(repos.as_bytes())
-            .expect("Unable to prompt featured repositories");
-        None
-    });
+            .context("Unable to prompt featured repositories")?;
+        Ok(None)
+    })
+    .context("Failed to get repo URL from fzf")?;
 
     filesystem::remove_dir(&repo_path_str)?;
 
@@ -76,9 +77,10 @@ pub fn add(uri: String) -> Result<(), Error> {
     let (files, _) = fzf::call(opts, |stdin| {
         stdin
             .write_all(all_files.as_bytes())
-            .expect("Unable to prompt cheats to import");
-        None
-    });
+            .context("Unable to prompt cheats to import")?;
+        Ok(None)
+    })
+    .context("Failed to get cheatsheet files from fzf")?;
 
     for f in files.split('\n') {
         let from = format!("{}/{}", tmp_path_str, f).replace("./", "");

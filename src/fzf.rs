@@ -1,21 +1,20 @@
 use crate::display;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fzf::{Opts, SuggestionType};
+use anyhow::Context;
+use anyhow::Error;
 use std::process;
 use std::process::{Command, Stdio};
 
 fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> String {
     if let Some(c) = column {
         let mut result = String::from("");
-        let re = regex::Regex::new(delimiter.unwrap_or(r"\s\s+")).unwrap();
+        let re = regex::Regex::new(delimiter.unwrap_or(r"\s\s+")).expect("Invalid regex");
         for line in text.split('\n') {
             if (&line).is_empty() {
                 continue;
             }
-            let mut parts = re.split(line);
-            for _ in 0..(c - 1) {
-                parts.next().unwrap();
-            }
+            let mut parts = re.split(line).skip((c - 1) as usize);
             if !result.is_empty() {
                 result.push('\n');
             }
@@ -27,9 +26,9 @@ fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> Stri
     }
 }
 
-pub fn call<F>(opts: Opts, stdin_fn: F) -> (String, Option<VariableMap>)
+pub fn call<F>(opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
 where
-    F: Fn(&mut process::ChildStdin) -> Option<VariableMap>,
+    F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>,
 {
     let mut fzf_command = Command::new("fzf");
 
@@ -117,13 +116,18 @@ where
         }
     };
 
-    let stdin = child.stdin.as_mut().unwrap();
-    let result_map = stdin_fn(stdin);
+    let stdin = child
+        .stdin
+        .as_mut()
+        .ok_or_else(|| anyhow!("Unable to acquire stdin of fzf"))?;
+    let result_map = stdin_fn(stdin).context("Failed to pass data to fzf")?;
 
-    let out = child.wait_with_output().unwrap();
+    let out = child.wait_with_output().context("Failed to wait for fzf")?;
 
     let text = match out.status.code() {
-        Some(0) | Some(1) | Some(2) => String::from_utf8(out.stdout).unwrap(),
+        Some(0) | Some(1) | Some(2) => {
+            String::from_utf8(out.stdout).context("Invalid utf8 received from fzf")?
+        }
         Some(130) => process::exit(130),
         _ => {
             let err = String::from_utf8(out.stderr)
@@ -133,17 +137,21 @@ where
     };
 
     let out = get_column(
-        parse_output_single(text, opts.suggestion_type),
+        parse_output_single(text, opts.suggestion_type)?,
         opts.column,
         opts.delimiter.as_deref(),
     );
 
-    (out, result_map)
+    Ok((out, result_map))
 }
 
-fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> String {
-    match suggestion_type {
-        SuggestionType::SingleSelection => text.lines().next().unwrap().to_string(),
+fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> Result<String, Error> {
+    Ok(match suggestion_type {
+        SuggestionType::SingleSelection => text
+            .lines()
+            .next()
+            .context("Not sufficient data for single selection")?
+            .to_string(),
         SuggestionType::MultipleSelections
         | SuggestionType::Disabled
         | SuggestionType::SnippetSelection => {
@@ -175,7 +183,7 @@ fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> Str
                 _ => "".to_string(),
             }
         }
-    }
+    })
 }
 
 #[cfg(test)]
@@ -185,49 +193,49 @@ mod tests {
     #[test]
     fn test_parse_output1() {
         let text = "palo\n".to_string();
-        let output = parse_output_single(text, SuggestionType::SingleSelection);
+        let output = parse_output_single(text, SuggestionType::SingleSelection).unwrap();
         assert_eq!(output, "palo");
     }
 
     #[test]
     fn test_parse_output2() {
         let text = "\nenter\npalo".to_string();
-        let output = parse_output_single(text, SuggestionType::SingleRecommendation);
+        let output = parse_output_single(text, SuggestionType::SingleRecommendation).unwrap();
         assert_eq!(output, "palo");
     }
 
     #[test]
     fn test_parse_recommendation_output_1() {
         let text = "\nenter\npalo".to_string();
-        let output = parse_output_single(text, SuggestionType::SingleRecommendation);
+        let output = parse_output_single(text, SuggestionType::SingleRecommendation).unwrap();
         assert_eq!(output, "palo");
     }
 
     #[test]
     fn test_parse_recommendation_output_2() {
         let text = "p\nenter\npalo".to_string();
-        let output = parse_output_single(text, SuggestionType::SingleRecommendation);
+        let output = parse_output_single(text, SuggestionType::SingleRecommendation).unwrap();
         assert_eq!(output, "palo");
     }
 
     #[test]
     fn test_parse_recommendation_output_3() {
         let text = "peter\nenter\n".to_string();
-        let output = parse_output_single(text, SuggestionType::SingleRecommendation);
+        let output = parse_output_single(text, SuggestionType::SingleRecommendation).unwrap();
         assert_eq!(output, "peter");
     }
 
     #[test]
     fn test_parse_output3() {
         let text = "p\ntab\npalo".to_string();
-        let output = parse_output_single(text, SuggestionType::SingleRecommendation);
+        let output = parse_output_single(text, SuggestionType::SingleRecommendation).unwrap();
         assert_eq!(output, "p");
     }
 
     #[test]
     fn test_parse_snippet_request() {
         let text = "enter\nssh                     ⠀login to a server and forward to ssh key (d…  ⠀ssh -A <user>@<server>  ⠀ssh  ⠀login to a server and forward to ssh key (dangerous but usefull for bastion hosts)  ⠀ssh -A <user>@<server>  ⠀\n".to_string();
-        let output = parse_output_single(text, SuggestionType::SnippetSelection);
+        let output = parse_output_single(text, SuggestionType::SnippetSelection).unwrap();
         assert_eq!(output,     "enter\nssh                     ⠀login to a server and forward to ssh key (d…  ⠀ssh -A <user>@<server>  ⠀ssh  ⠀login to a server and forward to ssh key (dangerous but usefull for bastion hosts)  ⠀ssh -A <user>@<server>  ⠀");
     }
 }
