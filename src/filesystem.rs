@@ -1,4 +1,5 @@
 use crate::structures::option::Config;
+use anyhow::Error;
 use std::fs;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, Lines};
@@ -16,15 +17,14 @@ pub fn pathbuf_to_string(pathbuf: PathBuf) -> String {
     pathbuf.as_os_str().to_str().unwrap().to_string()
 }
 
-pub fn cheat_pathbuf() -> Option<PathBuf> {
-    match dirs::data_dir() {
-        Some(mut d) => {
-            d.push("navi");
-            d.push("cheats");
-            Some(d)
-        }
-        None => None,
-    }
+pub fn cheat_pathbuf() -> Result<PathBuf, Error> {
+    dirs::data_dir()
+        .map(|mut dir| {
+            dir.push("navi");
+            dir.push("cheats");
+            dir
+        })
+        .ok_or_else(|| anyhow!("Unable to acquire user data directory for cheatsheets."))
 }
 
 fn follow_symlink(pathbuf: PathBuf) -> PathBuf {
@@ -57,7 +57,7 @@ pub fn exe_string() -> String {
 fn cheat_paths_from_config_dir() -> String {
     let mut paths_str = String::from("");
 
-    if let Some(f) = cheat_pathbuf() {
+    if let Ok(f) = cheat_pathbuf() {
         if let Ok(paths) = fs::read_dir(pathbuf_to_string(f)) {
             for path in paths {
                 paths_str.push_str(path.unwrap().path().into_os_string().to_str().unwrap());
