@@ -10,6 +10,11 @@ use std::collections::HashSet;
 use std::fs;
 use std::io::Write;
 
+lazy_static! {
+    pub static ref VAR_LINE_REGEX: Regex =
+        Regex::new(r"^\$\s*([^:]+):(.*)").expect("Invalid regex");
+}
+
 fn parse_opts(text: &str) -> FzfOpts {
     let mut multi = false;
     let mut prevent_extra = false;
@@ -47,8 +52,7 @@ fn parse_opts(text: &str) -> FzfOpts {
 }
 
 fn parse_variable_line(line: &str) -> (&str, &str, Option<FzfOpts>) {
-    let re = Regex::new(r"^\$\s*([^:]+):(.*)").unwrap();
-    let caps = re.captures(line).unwrap();
+    let caps = VAR_LINE_REGEX.captures(line).unwrap();
     let variable = caps.get(1).unwrap().as_str().trim();
     let mut command_plus_opts = caps.get(2).unwrap().as_str().split("---");
     let command = command_plus_opts.next().unwrap();

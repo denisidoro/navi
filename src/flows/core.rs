@@ -15,6 +15,10 @@ use std::fs;
 use std::io::Write;
 use std::process::{Command, Stdio};
 
+lazy_static! {
+    pub static ref VAR_REGEX: Regex = Regex::new(r"<(\w[\w\d\-_]*)>").expect("Invalid regex");
+}
+
 pub enum Variant {
     Core,
     Filter(String),
@@ -123,8 +127,7 @@ fn replace_variables_from_snippet(
     let mut interpolated_snippet = String::from(snippet);
     let mut values: HashMap<String, String> = HashMap::new();
 
-    let re = Regex::new(r"<(\w[\w\d\-_]*)>").unwrap();
-    for captures in re.captures_iter(snippet) {
+    for captures in VAR_REGEX.captures_iter(snippet) {
         let bracketed_variable_name = &captures[0];
         let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
 
