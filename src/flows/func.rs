@@ -16,7 +16,7 @@ pub fn main(func: String, args: Vec<String>) -> Result<(), Error> {
                 .arg("-c")
                 .arg(cmd.as_str())
                 .spawn()
-                .context("Failed to spawn bash instance")?;
+                .context("Failed to execute bash")?;
             Ok(())
         }
 
