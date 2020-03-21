@@ -8,9 +8,10 @@ use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
 use crate::structures::option;
 use crate::structures::option::Config;
+use anyhow::Context;
+use anyhow::Error;
 use regex::Regex;
 use std::collections::HashMap;
-use std::error::Error;
 use std::fs;
 use std::io::Write;
 use std::process::{Command, Stdio};
@@ -50,15 +51,18 @@ fn gen_core_fzf_opts(variant: Variant, config: &Config) -> FzfOpts {
 fn extract_from_selections(raw_snippet: &str, contains_key: bool) -> (&str, &str, &str) {
     let mut lines = raw_snippet.split('\n');
     let key = if contains_key {
-        lines.next().unwrap()
+        lines
+            .next()
+            .expect("Key was promised but not present in `selections`")
     } else {
         "enter"
     };
 
-    let mut parts = lines.next().unwrap().split(display::DELIMITER);
-    parts.next();
-    parts.next();
-    parts.next();
+    let mut parts = lines
+        .next()
+        .expect("No more parts in `selections`")
+        .split(display::DELIMITER)
+        .skip(3);
 
     let tags = parts.next().unwrap_or("");
     parts.next();
@@ -72,7 +76,7 @@ fn prompt_with_suggestions(
     config: &Config,
     suggestion: &Suggestion,
     values: &HashMap<String, String>,
-) -> String {
+) -> Result<String, Error> {
     let mut vars_cmd = String::from("");
     for (key, value) in values.iter() {
         vars_cmd.push_str(format!("{}=\"{}\"; ", key, value).as_str());
@@ -85,9 +89,15 @@ fn prompt_with_suggestions(
         .arg("-c")
         .arg(command)
         .spawn()
-        .unwrap();
+        .context("Failed to execute bash")?;
 
-    let suggestions = String::from_utf8(child.wait_with_output().unwrap().stdout).unwrap();
+    let suggestions = String::from_utf8(
+        child
+            .wait_with_output()
+            .context("Failed to wait and collect output from bash")?
+            .stdout,
+    )
+    .context("Suggestions are invalid utf8")?;
 
     let opts = suggestion_opts.clone().unwrap_or_default();
     let opts = FzfOpts {
@@ -98,11 +108,13 @@ fn prompt_with_suggestions(
     };
 
     let (output, _) = fzf::call(opts, |stdin| {
-        stdin.write_all(suggestions.as_bytes()).unwrap();
+        stdin
+            .write_all(suggestions.as_bytes())
+            .expect("Could not write to fzf's stdin");
         None
     });
 
-    output
+    Ok(output)
 }
 
 fn prompt_without_suggestions(variable_name: &str) -> String {
@@ -137,10 +149,11 @@ fn replace_variables_from_snippet(
             .unwrap_or_else(|| {
                 variables
                     .get(&tags, &variable_name)
-                    .map(|suggestion| {
+                    .ok_or_else(|| anyhow!("No suggestions"))
+                    .and_then(|suggestion| {
                         prompt_with_suggestions(variable_name, &config, suggestion, &values)
                     })
-                    .unwrap_or_else(|| prompt_without_suggestions(variable_name))
+                    .unwrap_or_else(|_| prompt_without_suggestions(variable_name))
             });
 
         values.insert(variable_name.to_string(), value.clone());
@@ -156,7 +169,7 @@ fn with_new_lines(txt: String) -> String {
     txt.replace(display::LINE_SEPARATOR, "\n")
 }
 
-pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Box<dyn Error>> {
+pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Error> {
     let _ = display::WIDTHS;
 
     let opts = gen_core_fzf_opts(variant, &config);
@@ -168,7 +181,7 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
     let interpolated_snippet = with_new_lines(replace_variables_from_snippet(
         snippet,
         tags,
-        variables.unwrap(),
+        variables.expect("No variables received from fzf"),
         &config,
     ));
 
@@ -180,7 +193,7 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
         println!("{}", interpolated_snippet);
     // save to file
     } else if let Some(s) = config.save {
-        fs::write(s, interpolated_snippet)?;
+        fs::write(s, interpolated_snippet).context("Unable to save config")?;
     // call navi (this prevents "failed to read /dev/tty" from fzf)
     } else if interpolated_snippet.starts_with("navi") {
         let new_config = option::config_from_iter(interpolated_snippet.split(' ').collect());
@@ -190,8 +203,10 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
         Command::new("bash")
             .arg("-c")
             .arg(&interpolated_snippet[..])
-            .spawn()?
-            .wait()?;
+            .spawn()
+            .context("Failed to execute bash")?
+            .wait()
+            .context("bash was not running")?;
     }
 
     Ok(())
