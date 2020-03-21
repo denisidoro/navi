@@ -5,6 +5,7 @@ use crate::structures::fnv::HashLine;
 use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
 use crate::structures::option::Config;
 use crate::welcome;
+use anyhow::Error;
 use regex::Regex;
 use std::collections::HashSet;
 use std::fs;
@@ -160,11 +161,14 @@ fn read_file(
     false
 }
 
-pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> VariableMap {
+pub fn read_all(
+    config: &Config,
+    stdin: &mut std::process::ChildStdin,
+) -> Result<VariableMap, Error> {
     let mut variables = VariableMap::new();
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
-    let paths = filesystem::cheat_paths(config);
+    let paths = filesystem::cheat_paths(config)?;
     let folders = paths.split(':');
 
     for folder in folders {
@@ -186,7 +190,7 @@ pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> Variab
         welcome::cheatsheet(stdin);
     }
 
-    variables
+    Ok(variables)
 }
 
 #[cfg(test)]

@@ -26,12 +26,12 @@ pub enum Variant {
     Query(String),
 }
 
-fn gen_core_fzf_opts(variant: Variant, config: &Config) -> FzfOpts {
+fn gen_core_fzf_opts(variant: Variant, config: &Config) -> Result<FzfOpts, Error> {
     let mut opts = FzfOpts {
         preview: if config.no_preview {
             None
         } else {
-            Some(format!("{} preview {{}}", filesystem::exe_string()))
+            Some(format!("{} preview {{}}", filesystem::exe_string()?))
         },
         autoselect: !config.no_autoselect,
         overrides: config.fzf_overrides.clone(),
@@ -45,7 +45,7 @@ fn gen_core_fzf_opts(variant: Variant, config: &Config) -> FzfOpts {
         Variant::Query(q) => opts.query = Some(q),
     }
 
-    opts
+    Ok(opts)
 }
 
 fn extract_from_selections(raw_snippet: &str, contains_key: bool) -> (&str, &str, &str) {
@@ -172,9 +172,13 @@ fn with_new_lines(txt: String) -> String {
 pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Error> {
     let _ = display::WIDTHS;
 
-    let opts = gen_core_fzf_opts(variant, &config);
-    let (raw_selection, variables) =
-        fzf::call(opts, |stdin| Some(parser::read_all(&config, stdin)));
+    let opts = gen_core_fzf_opts(variant, &config).context("Failed to generate fzf options")?;
+    let (raw_selection, variables) = fzf::call(opts, |stdin| {
+        Some(
+            parser::read_all(&config, stdin)
+                .expect("Failed to read all variables intended for fzf"),
+        )
+    });
 
     let (key, tags, snippet) = extract_from_selections(&raw_selection[..], contains_key);
 

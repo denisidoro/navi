@@ -1,4 +1,5 @@
 use crate::structures::option::Config;
+use anyhow::Context;
 use anyhow::Error;
 use std::fs;
 use std::fs::File;
@@ -13,8 +14,12 @@ where
     Ok(io::BufReader::new(file).lines())
 }
 
-pub fn pathbuf_to_string(pathbuf: PathBuf) -> String {
-    pathbuf.as_os_str().to_str().unwrap().to_string()
+pub fn pathbuf_to_string(pathbuf: PathBuf) -> Result<String, Error> {
+    pathbuf
+        .as_os_str()
+        .to_str()
+        .ok_or_else(|| anyhow!("Invalid path {}", pathbuf.display()))
+        .map(str::to_string)
 }
 
 pub fn cheat_pathbuf() -> Result<PathBuf, Error> {
@@ -27,64 +32,75 @@ pub fn cheat_pathbuf() -> Result<PathBuf, Error> {
         .ok_or_else(|| anyhow!("Unable to acquire user data directory for cheatsheets."))
 }
 
-fn follow_symlink(pathbuf: PathBuf) -> PathBuf {
-    let other = fs::read_link(pathbuf.clone());
-    match other {
-        Ok(o) => {
-            let o_str = o.as_os_str().to_str().unwrap();
+fn follow_symlink(pathbuf: PathBuf) -> Result<PathBuf, Error> {
+    fs::read_link(pathbuf.clone())
+        .map(|o| {
+            let o_str = o
+                .as_os_str()
+                .to_str()
+                .ok_or_else(|| anyhow!("Invalid path {}", o.display()))?;
             if o_str.starts_with('.') {
-                let parent_str = pathbuf.parent().unwrap().as_os_str().to_str().unwrap();
+                let parent_str = pathbuf
+                    .parent()
+                    .ok_or_else(|| anyhow!("{} has no parent", pathbuf.display()))?
+                    .as_os_str()
+                    .to_str()
+                    .ok_or_else(|| anyhow!("Parent of {} is an invalid path", pathbuf.display()))?;
                 let path_str = format!("{}/{}", parent_str, o_str);
                 let p = PathBuf::from(path_str);
                 follow_symlink(p)
             } else {
                 follow_symlink(o)
             }
-        }
-        Err(_) => pathbuf,
-    }
+        })
+        .unwrap_or(Ok(pathbuf))
 }
 
-fn exe_pathbuf() -> PathBuf {
-    let pathbuf = std::env::current_exe().unwrap();
+fn exe_pathbuf() -> Result<PathBuf, Error> {
+    let pathbuf = std::env::current_exe().context("Unable to acquire executable's path")?;
     follow_symlink(pathbuf)
 }
 
-pub fn exe_string() -> String {
-    pathbuf_to_string(exe_pathbuf())
+pub fn exe_string() -> Result<String, Error> {
+    pathbuf_to_string(exe_pathbuf()?)
 }
 
-fn cheat_paths_from_config_dir() -> String {
-    let mut paths_str = String::from("");
-
-    if let Ok(f) = cheat_pathbuf() {
-        if let Ok(paths) = fs::read_dir(pathbuf_to_string(f)) {
-            for path in paths {
-                paths_str.push_str(path.unwrap().path().into_os_string().to_str().unwrap());
+fn cheat_paths_from_config_dir() -> Result<String, Error> {
+    cheat_pathbuf()
+        .and_then(|f| fs::read_dir(pathbuf_to_string(f)?).context("Unable to read directory"))
+        .and_then(|dir_entries| {
+            let mut paths_str = String::from("");
+            for entry in dir_entries {
+                let path = entry.context("Unable to read directory")?;
+                paths_str.push_str(
+                    path.path()
+                        .into_os_string()
+                        .to_str()
+                        .ok_or_else(|| anyhow!("Invalid path {}", path.path().display()))?,
+                );
                 paths_str.push_str(":");
             }
-        }
-    }
-
-    paths_str
+            Ok(paths_str)
+        })
 }
 
-pub fn cheat_paths(config: &Config) -> String {
+pub fn cheat_paths(config: &Config) -> Result<String, Error> {
     config
         .path
         .clone()
-        .unwrap_or_else(cheat_paths_from_config_dir)
+        .ok_or_else(|| anyhow!("No cheat paths"))
+        .or_else(|_| cheat_paths_from_config_dir().context("No cheat paths from config directory"))
 }
 
-pub fn create_dir(path: &str) {
-    fs::create_dir_all(path).unwrap_or(());
+pub fn create_dir(path: &str) -> Result<(), Error> {
+    fs::create_dir_all(path).with_context(|| format!("Failed to create directory {}", path))
 }
 
-pub fn remove_dir(path: &str) {
-    fs::remove_dir_all(path).unwrap_or(());
+pub fn remove_dir(path: &str) -> Result<(), Error> {
+    fs::remove_dir_all(path).with_context(|| format!("Failed to remove directory {}", path))
 }
 
-pub fn tmp_path_str() -> String {
-    let cheat_path_str = pathbuf_to_string(cheat_pathbuf().unwrap());
-    format!("{}/tmp", cheat_path_str)
+pub fn tmp_path_str() -> Result<String, Error> {
+    let cheat_path_str = pathbuf_to_string(cheat_pathbuf()?)?;
+    Ok(format!("{}/tmp", cheat_path_str))
 }

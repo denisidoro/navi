@@ -10,10 +10,10 @@ use std::io::Write;
 use walkdir::WalkDir;
 
 pub fn browse() -> Result<(), Error> {
-    let repo_path_str = format!("{}/featured", filesystem::tmp_path_str());
+    let repo_path_str = format!("{}/featured", filesystem::tmp_path_str()?);
 
-    filesystem::remove_dir(&repo_path_str);
-    filesystem::create_dir(&repo_path_str);
+    filesystem::remove_dir(&repo_path_str)?;
+    filesystem::create_dir(&repo_path_str)?;
 
     let repo_url = "https://github.com/denisidoro/cheats";
     Repository::clone(repo_url, &repo_path_str)
@@ -34,7 +34,7 @@ pub fn browse() -> Result<(), Error> {
         None
     });
 
-    filesystem::remove_dir(&repo_path_str);
+    filesystem::remove_dir(&repo_path_str)?;
 
     add(repo)
 }
@@ -42,12 +42,12 @@ pub fn browse() -> Result<(), Error> {
 pub fn add(uri: String) -> Result<(), Error> {
     let (actual_uri, user, repo) = git::meta(uri.as_str());
 
-    let cheat_path_str = filesystem::pathbuf_to_string(filesystem::cheat_pathbuf()?);
-    let tmp_path_str = filesystem::tmp_path_str();
+    let cheat_path_str = filesystem::pathbuf_to_string(filesystem::cheat_pathbuf()?)?;
+    let tmp_path_str = filesystem::tmp_path_str()?;
     let tmp_path_str_with_trailing_slash = format!("{}/", &tmp_path_str);
 
-    filesystem::remove_dir(&tmp_path_str);
-    filesystem::create_dir(&tmp_path_str);
+    filesystem::remove_dir(&tmp_path_str)?;
+    filesystem::create_dir(&tmp_path_str)?;
 
     eprintln!("Cloning {} into {}...\n", &actual_uri, &tmp_path_str);
 
@@ -89,7 +89,7 @@ pub fn add(uri: String) -> Result<(), Error> {
         fs::copy(from, to)?;
     }
 
-    filesystem::remove_dir(&tmp_path_str);
+    filesystem::remove_dir(&tmp_path_str)?;
 
     eprintln!("The following .cheat files were imported successfully:\n{}\n\nThey are now located at {}\n\nPlease run navi again to check the results.", files, cheat_path_str);
 
