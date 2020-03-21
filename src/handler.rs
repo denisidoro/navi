@@ -9,7 +9,7 @@ pub fn handle_config(mut config: Config) -> Result<(), Box<dyn Error>> {
     match config.cmd.as_mut() {
         None => flows::core::main(Variant::Core, config, true),
         Some(c) => match c {
-            Preview { line } => flows::preview::main(&line[..]),
+            Preview { line } => Ok(flows::preview::main(&line[..])?),
             Query { query } => flows::query::main(query.clone(), config),
             Best { query, args } => flows::best::main(query.clone(), args.to_vec(), config),
             Search { query } => flows::search::main(query.clone(), config),
