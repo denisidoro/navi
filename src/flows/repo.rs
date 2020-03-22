@@ -91,7 +91,7 @@ pub fn add(uri: String) -> Result<(), Error> {
         let filename = f.replace("./", "").replace("/", "__");
         let to = format!("{}/{}", to_folder, filename);
         fs::create_dir_all(to_folder).unwrap_or(());
-        fs::copy(from, to)?;
+        fs::copy(&from, &to).with_context(|| format!("Failed to copy `{}` to `{}`", from, to))?;
     }
 
     filesystem::remove_dir(&tmp_path_str)?;
