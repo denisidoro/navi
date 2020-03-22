@@ -1,6 +1,6 @@
-use std::error::Error;
+use anyhow::Error;
 
-pub fn main(shell: &str) -> Result<(), Box<dyn Error>> {
+pub fn main(shell: &str) -> Result<(), Error> {
     let content = match shell {
         "zsh" => include_str!("../../shell/navi.plugin.zsh"),
         "fish" => include_str!("../../shell/navi.plugin.fish"),
