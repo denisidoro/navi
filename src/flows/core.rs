@@ -7,7 +7,7 @@ use crate::parser;
 use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
 use crate::structures::option;
-use crate::structures::option::Config;
+use crate::structures::{error::command::BashSpawnError, option::Config};
 use anyhow::Context;
 use anyhow::Error;
 use regex::Regex;
@@ -87,9 +87,9 @@ fn prompt_with_suggestions(
     let child = Command::new("bash")
         .stdout(Stdio::piped())
         .arg("-c")
-        .arg(command)
+        .arg(&command)
         .spawn()
-        .context("Failed to execute bash")?;
+        .map_err(|e| BashSpawnError::new(command, e))?;
 
     let suggestions = String::from_utf8(
         child
@@ -215,7 +215,7 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
             .arg("-c")
             .arg(&interpolated_snippet[..])
             .spawn()
-            .context("Failed to execute bash")?
+            .map_err(|e| BashSpawnError::new(&interpolated_snippet[..], e))?
             .wait()
             .context("bash was not running")?;
     }

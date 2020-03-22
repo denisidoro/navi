@@ -1,6 +1,5 @@
 use crate::handler;
-use crate::structures::option;
-use anyhow::Context;
+use crate::structures::{error::command::BashSpawnError, option};
 use anyhow::Error;
 use std::process::Command;
 
@@ -16,7 +15,7 @@ pub fn main(func: String, args: Vec<String>) -> Result<(), Error> {
                 .arg("-c")
                 .arg(cmd.as_str())
                 .spawn()
-                .context("Failed to execute bash")?;
+                .map_err(|e| BashSpawnError::new(cmd, e))?;
             Ok(())
         }
 
