@@ -227,18 +227,18 @@ pub fn read_all(
     let folders = paths_from_path_param(&paths);
 
     for folder in folders {
-        let dir_entries = fs::read_dir(folder).map_err(|e| UnreadableDir::new(folder, e))?;
-
-        for entry in dir_entries {
-            let path = entry.map_err(|e| UnreadableDir::new(folder, e))?.path();
-            let path_str = path
-                .to_str()
-                .ok_or_else(|| InvalidPath(path.to_path_buf()))?;
-            if path_str.ends_with(".cheat")
-                && read_file(path_str, &mut variables, &mut visited_lines, stdin).is_ok()
-                && !found_something
-            {
-                found_something = true;
+        if let Ok(dir_entries) = fs::read_dir(folder) {
+            for entry in dir_entries {
+                let path = entry.map_err(|e| UnreadableDir::new(folder, e))?.path();
+                let path_str = path
+                    .to_str()
+                    .ok_or_else(|| InvalidPath(path.to_path_buf()))?;
+                if path_str.ends_with(".cheat")
+                    && read_file(path_str, &mut variables, &mut visited_lines, stdin).is_ok()
+                    && !found_something
+                {
+                    found_something = true;
+                }
             }
         }
     }
