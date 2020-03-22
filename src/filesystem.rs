@@ -1,4 +1,5 @@
 use crate::structures::error::filesystem::InvalidPath;
+use crate::structures::error::filesystem::UnreadableDir;
 use crate::structures::option::Config;
 use anyhow::Context;
 use anyhow::Error;
@@ -78,13 +79,13 @@ fn cheat_paths_from_config_dir() -> Result<String, Error> {
         .and_then(pathbuf_to_string)
         .and_then(|path| {
             fs::read_dir(path.clone())
-                .with_context(|| format!("Unable to read directory `{}`", &path))
+                .map_err(|e| UnreadableDir::new(path.clone(), e).into())
                 .map(|entries| (path, entries))
         })
         .and_then(|(path, dir_entries)| {
             let mut paths_str = String::from("");
             for entry in dir_entries {
-                let path = entry.with_context(|| format!("Unable to read directory `{}`", path))?;
+                let path = entry.map_err(|e| UnreadableDir::new(path.clone(), e))?;
                 paths_str.push_str(
                     path.path()
                         .into_os_string()

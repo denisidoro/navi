@@ -3,7 +3,10 @@ use crate::filesystem;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fnv::HashLine;
 use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
-use crate::structures::{error::filesystem::InvalidPath, option::Config};
+use crate::structures::{
+    error::filesystem::{InvalidPath, UnreadableDir},
+    option::Config,
+};
 use crate::welcome;
 use anyhow::{Context, Error};
 use regex::Regex;
@@ -224,13 +227,10 @@ pub fn read_all(
     let folders = paths_from_path_param(&paths);
 
     for folder in folders {
-        let dir_entries = fs::read_dir(folder)
-            .with_context(|| format!("Unable to read directory `{}`", folder))?;
+        let dir_entries = fs::read_dir(folder).map_err(|e| UnreadableDir::new(folder, e))?;
 
         for entry in dir_entries {
-            let path = entry
-                .with_context(|| format!("Unable to read directory `{}`", folder))?
-                .path();
+            let path = entry.map_err(|e| UnreadableDir::new(folder, e))?.path();
             let path_str = path
                 .to_str()
                 .ok_or_else(|| InvalidPath(path.to_path_buf()))?;
