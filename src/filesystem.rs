@@ -1,17 +1,23 @@
 use crate::structures::option::Config;
 use anyhow::Context;
 use anyhow::Error;
+use core::fmt::Display;
 use std::fs;
 use std::fs::File;
-use std::io::{self, BufRead, BufReader, Lines};
+use std::io::{self, BufRead};
 use std::path::{Path, PathBuf};
 
-pub fn read_lines<P>(filename: P) -> io::Result<Lines<BufReader<File>>>
+pub fn read_lines<P>(filename: P) -> Result<Vec<String>, Error>
 where
-    P: AsRef<Path>,
+    P: AsRef<Path> + Display,
 {
+    let error_string = format!("Failed to read lines from {}", filename);
     let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
+    io::BufReader::new(file)
+        .lines()
+        .map(|line| line.map_err(Error::from))
+        .collect::<Result<Vec<String>, Error>>()
+        .with_context(|| error_string)
 }
 
 pub fn pathbuf_to_string(pathbuf: PathBuf) -> Result<String, Error> {
