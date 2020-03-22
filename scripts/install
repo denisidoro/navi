@@ -217,8 +217,8 @@ get_target() {
    local target
    case "$archi" in
       Darwin*) target="x86_64-osx" ;;
-      Linux\ *x86*) $is_android && target="aarch64-linux-android" || target="x86_64-unknown-linux-musl" ;;
-      *arm*) $is_android && target="armv7-linux-androideabi" || target="armv7-unknown-linux-musleabihf" ;;
+      *x86*) $is_android && target="aarch64-linux-android" || target="x86_64-unknown-linux-musl" ;;
+      *arm*|*aarch*) $is_android && target="armv7-linux-androideabi" || target="armv7-unknown-linux-musleabihf" ;;
       *) target="" ;;
    esac
 
