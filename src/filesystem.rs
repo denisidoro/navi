@@ -102,7 +102,9 @@ pub fn cheat_paths(config: &Config) -> Result<String, Error> {
         .path
         .clone()
         .ok_or_else(|| anyhow!("No cheat paths"))
-        .or_else(|_| cheat_paths_from_config_dir().context("No cheat paths from config directory"))
+        .or_else(|_| {
+            cheat_paths_from_config_dir().context("No directory for cheats in user data directory")
+        })
 }
 
 pub fn create_dir(path: &str) -> Result<(), Error> {
