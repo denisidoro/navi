@@ -28,11 +28,11 @@ pub fn handle_config(mut config: Config) -> Result<(), Error> {
             Widget { shell } => flows::shell::main(&shell[..]),
 
             Fn { func, args } => flows::func::main(func.clone(), args.to_vec())
-                .with_context(|| format!("Failed to execute function {}", func)),
+                .with_context(|| format!("Failed to execute function `{}`", func)),
 
             Repo { cmd } => match cmd {
                 RepoCommand::Add { uri } => flows::repo::add(uri.clone())
-                    .with_context(|| format!("Failed to import cheatsheets from {}", uri)),
+                    .with_context(|| format!("Failed to import cheatsheets from `{}`", uri)),
                 RepoCommand::Browse => {
                     flows::repo::browse().context("Failed to browse featured cheatsheets")
                 }

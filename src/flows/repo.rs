@@ -17,7 +17,7 @@ pub fn browse() -> Result<(), Error> {
 
     let repo_url = "https://github.com/denisidoro/cheats";
     Repository::clone(repo_url, &repo_path_str)
-        .with_context(|| format!("Failed to clone {}", repo_url))?;
+        .with_context(|| format!("Failed to clone `{}`", repo_url))?;
 
     let repos = fs::read_to_string(format!("{}/featured_repos.txt", &repo_path_str))
         .context("Unable to fetch featured repositories")?;
@@ -53,7 +53,7 @@ pub fn add(uri: String) -> Result<(), Error> {
     eprintln!("Cloning {} into {}...\n", &actual_uri, &tmp_path_str);
 
     Repository::clone(actual_uri.as_str(), &tmp_path_str)
-        .with_context(|| format!("Failed to clone {}", actual_uri))?;
+        .with_context(|| format!("Failed to clone `{}`", actual_uri))?;
 
     let all_files = WalkDir::new(&tmp_path_str)
         .into_iter()

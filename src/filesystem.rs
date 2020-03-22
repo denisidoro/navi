@@ -11,7 +11,7 @@ pub fn read_lines<P>(filename: P) -> Result<Vec<String>, Error>
 where
     P: AsRef<Path> + Display,
 {
-    let error_string = format!("Failed to read lines from {}", filename);
+    let error_string = format!("Failed to read lines from `{}`", filename);
     let file = File::open(filename)?;
     io::BufReader::new(file)
         .lines()
@@ -24,7 +24,7 @@ pub fn pathbuf_to_string(pathbuf: PathBuf) -> Result<String, Error> {
     pathbuf
         .as_os_str()
         .to_str()
-        .ok_or_else(|| anyhow!("Invalid path {}", pathbuf.display()))
+        .ok_or_else(|| anyhow!("Invalid path `{}`", pathbuf.display()))
         .map(str::to_string)
 }
 
@@ -44,14 +44,16 @@ fn follow_symlink(pathbuf: PathBuf) -> Result<PathBuf, Error> {
             let o_str = o
                 .as_os_str()
                 .to_str()
-                .ok_or_else(|| anyhow!("Invalid path {}", o.display()))?;
+                .ok_or_else(|| anyhow!("Invalid path `{}`", o.display()))?;
             if o_str.starts_with('.') {
                 let parent_str = pathbuf
                     .parent()
-                    .ok_or_else(|| anyhow!("{} has no parent", pathbuf.display()))?
+                    .ok_or_else(|| anyhow!("`{}` has no parent", pathbuf.display()))?
                     .as_os_str()
                     .to_str()
-                    .ok_or_else(|| anyhow!("Parent of {} is an invalid path", pathbuf.display()))?;
+                    .ok_or_else(|| {
+                        anyhow!("Parent of `{}` is an invalid path", pathbuf.display())
+                    })?;
                 let path_str = format!("{}/{}", parent_str, o_str);
                 let p = PathBuf::from(path_str);
                 follow_symlink(p)
@@ -76,18 +78,18 @@ fn cheat_paths_from_config_dir() -> Result<String, Error> {
         .and_then(pathbuf_to_string)
         .and_then(|path| {
             fs::read_dir(path.clone())
-                .with_context(|| format!("Unable to read directory {}", &path))
+                .with_context(|| format!("Unable to read directory `{}`", &path))
                 .map(|entries| (path, entries))
         })
         .and_then(|(path, dir_entries)| {
             let mut paths_str = String::from("");
             for entry in dir_entries {
-                let path = entry.with_context(|| format!("Unable to read directory {}", path))?;
+                let path = entry.with_context(|| format!("Unable to read directory `{}`", path))?;
                 paths_str.push_str(
                     path.path()
                         .into_os_string()
                         .to_str()
-                        .ok_or_else(|| anyhow!("Invalid path {}", path.path().display()))?,
+                        .ok_or_else(|| anyhow!("Invalid path `{}`", path.path().display()))?,
                 );
                 paths_str.push_str(":");
             }
@@ -104,11 +106,11 @@ pub fn cheat_paths(config: &Config) -> Result<String, Error> {
 }
 
 pub fn create_dir(path: &str) -> Result<(), Error> {
-    fs::create_dir_all(path).with_context(|| format!("Failed to create directory {}", path))
+    fs::create_dir_all(path).with_context(|| format!("Failed to create directory `{}`", path))
 }
 
 pub fn remove_dir(path: &str) -> Result<(), Error> {
-    fs::remove_dir_all(path).with_context(|| format!("Failed to remove directory {}", path))
+    fs::remove_dir_all(path).with_context(|| format!("Failed to remove directory `{}`", path))
 }
 
 pub fn tmp_path_str() -> Result<String, Error> {

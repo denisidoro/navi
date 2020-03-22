@@ -67,7 +67,7 @@ fn parse_opts(text: &str) -> Result<FzfOpts, Error> {
                 }
                 Ok(())
             } else if let [flag] = flag_and_value {
-                Err(anyhow!("No value provided for the flag {}", flag))
+                Err(anyhow!("No value provided for the flag `{}`", flag))
             } else {
                 unreachable!() // Chunking by 2 allows only for tuples of 1 or 2 items...
             }
@@ -88,23 +88,23 @@ fn parse_opts(text: &str) -> Result<FzfOpts, Error> {
 fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FzfOpts>), Error> {
     let caps = VAR_LINE_REGEX.captures(line).ok_or_else(|| {
         anyhow!(
-            "No variables, command, and options found in the line {}",
+            "No variables, command, and options found in the line `{}`",
             line
         )
     })?;
     let variable = caps
         .get(1)
-        .ok_or_else(|| anyhow!("No variable captured in the line {}", line))?
+        .ok_or_else(|| anyhow!("No variable captured in the line `{}`", line))?
         .as_str()
         .trim();
     let mut command_plus_opts = caps
         .get(2)
-        .ok_or_else(|| anyhow!("No command and options captured in the line {}", line))?
+        .ok_or_else(|| anyhow!("No command and options captured in the line `{}`", line))?
         .as_str()
         .split("---");
     let command = command_plus_opts
         .next()
-        .ok_or_else(|| anyhow!("No command captured in the line {}", line))?;
+        .ok_or_else(|| anyhow!("No command captured in the line `{}`", line))?;
     let command_options = command_plus_opts.next().map(parse_opts).transpose()?;
     Ok((variable, command, command_options))
 }
@@ -180,7 +180,7 @@ fn read_file(
             snippet = String::from("");
             let (variable, command, opts) = parse_variable_line(&line).with_context(|| {
                 format!(
-                    "Failed to parse variable line. See line nr.{} in cheatsheet {}",
+                    "Failed to parse variable line. See line nr.{} in cheatsheet `{}`",
                     line_nr + 1,
                     path
                 )
@@ -224,16 +224,16 @@ pub fn read_all(
     let folders = paths_from_path_param(&paths);
 
     for folder in folders {
-        let dir_entries =
-            fs::read_dir(folder).with_context(|| format!("Unable to read directory {}", folder))?;
+        let dir_entries = fs::read_dir(folder)
+            .with_context(|| format!("Unable to read directory `{}`", folder))?;
 
         for entry in dir_entries {
             let path = entry
-                .with_context(|| format!("Unable to read directory {}", folder))?
+                .with_context(|| format!("Unable to read directory `{}`", folder))?
                 .path();
             let path_str = path
                 .to_str()
-                .ok_or_else(|| anyhow!("Invalid path {}", path.display()))?;
+                .ok_or_else(|| anyhow!("Invalid path `{}`", path.display()))?;
             if path_str.ends_with(".cheat")
                 && read_file(path_str, &mut variables, &mut visited_lines, stdin).is_ok()
                 && !found_something

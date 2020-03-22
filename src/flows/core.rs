@@ -148,7 +148,7 @@ fn replace_variables_from_snippet(
         let value = values
             .get(variable_name)
             .map(|s| s.to_string())
-            .ok_or_else(|| anyhow!(format!("No value for variable {}", variable_name)))
+            .ok_or_else(|| anyhow!(format!("No value for variable `{}`", variable_name)))
             .or_else(|_| {
                 variables
                     .get(&tags, &variable_name)
