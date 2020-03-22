@@ -209,6 +209,10 @@ fn read_file(
     Ok(())
 }
 
+fn paths_from_path_param<'a>(env_var: &'a str) -> impl Iterator<Item = &'a str> + 'a {
+    env_var.split(':').filter(|folder| folder != &"")
+}
+
 pub fn read_all(
     config: &Config,
     stdin: &mut std::process::ChildStdin,
@@ -217,7 +221,7 @@ pub fn read_all(
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
     let paths = filesystem::cheat_paths(config)?;
-    let folders = paths.split(':');
+    let folders = paths_from_path_param(&paths);
 
     for folder in folders {
         let dir_entries =
@@ -289,5 +293,20 @@ mod tests {
         );
         let actual_suggestion = variables.get("ssh", "user");
         assert_eq!(Some(&expected_suggestion), actual_suggestion);
+    }
+
+    #[test]
+    fn splitting_of_dirs_param_may_not_contain_empty_items() {
+        // Trailing colon indicates potential extra path. Split returns an empty item for it. This empty item should be filtered away, which is what this test checks.
+        let given_path_config = "SOME_PATH:ANOTHER_PATH:";
+
+        let found_paths = paths_from_path_param(given_path_config);
+
+        let mut expected_paths = vec!["SOME_PATH", "ANOTHER_PATH"].into_iter();
+
+        for found in found_paths {
+            let expected = expected_paths.next().unwrap();
+            assert_eq!(found, expected)
+        }
     }
 }
