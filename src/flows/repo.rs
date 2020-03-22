@@ -73,7 +73,7 @@ pub fn add(uri: String) -> Result<(), Error> {
         header: Some(
             "Select the cheatsheets you want to import with <TAB> then hit <Enter>".to_string(),
         ),
-        preview_window: Some("--preview-window right:30%".to_string()),
+        preview_window: Some("right:30%".to_string()),
         ..Default::default()
     };
 
