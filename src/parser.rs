@@ -3,7 +3,7 @@ use crate::filesystem;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fnv::HashLine;
 use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
-use crate::structures::option::Config;
+use crate::structures::{error::FilesystemError, option::Config};
 use crate::welcome;
 use anyhow::{Context, Error};
 use regex::Regex;
@@ -233,7 +233,7 @@ pub fn read_all(
                 .path();
             let path_str = path
                 .to_str()
-                .ok_or_else(|| anyhow!("Invalid path `{}`", path.display()))?;
+                .ok_or_else(|| FilesystemError::InvalidPath(path.to_path_buf()))?;
             if path_str.ends_with(".cheat")
                 && read_file(path_str, &mut variables, &mut visited_lines, stdin).is_ok()
                 && !found_something

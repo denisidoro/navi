@@ -1,3 +1,4 @@
+use crate::structures::error::FilesystemError;
 use crate::structures::option::Config;
 use anyhow::Context;
 use anyhow::Error;
@@ -21,11 +22,11 @@ where
 }
 
 pub fn pathbuf_to_string(pathbuf: PathBuf) -> Result<String, Error> {
-    pathbuf
+    Ok(pathbuf
         .as_os_str()
         .to_str()
-        .ok_or_else(|| anyhow!("Invalid path `{}`", pathbuf.display()))
-        .map(str::to_string)
+        .ok_or_else(|| FilesystemError::InvalidPath(pathbuf.to_path_buf()))
+        .map(str::to_string)?)
 }
 
 pub fn cheat_pathbuf() -> Result<PathBuf, Error> {
@@ -44,16 +45,15 @@ fn follow_symlink(pathbuf: PathBuf) -> Result<PathBuf, Error> {
             let o_str = o
                 .as_os_str()
                 .to_str()
-                .ok_or_else(|| anyhow!("Invalid path `{}`", o.display()))?;
+                .ok_or_else(|| FilesystemError::InvalidPath(o.to_path_buf()))?;
             if o_str.starts_with('.') {
-                let parent_str = pathbuf
+                let parent = pathbuf
                     .parent()
-                    .ok_or_else(|| anyhow!("`{}` has no parent", pathbuf.display()))?
+                    .ok_or_else(|| anyhow!("`{}` has no parent", pathbuf.display()))?;
+                let parent_str = parent
                     .as_os_str()
                     .to_str()
-                    .ok_or_else(|| {
-                        anyhow!("Parent of `{}` is an invalid path", pathbuf.display())
-                    })?;
+                    .ok_or_else(|| FilesystemError::InvalidPath(parent.to_path_buf()))?;
                 let path_str = format!("{}/{}", parent_str, o_str);
                 let p = PathBuf::from(path_str);
                 follow_symlink(p)
@@ -89,7 +89,7 @@ fn cheat_paths_from_config_dir() -> Result<String, Error> {
                     path.path()
                         .into_os_string()
                         .to_str()
-                        .ok_or_else(|| anyhow!("Invalid path `{}`", path.path().display()))?,
+                        .ok_or_else(|| FilesystemError::InvalidPath(path.path()))?,
                 );
                 paths_str.push_str(":");
             }
