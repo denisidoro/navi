@@ -1,7 +1,7 @@
 extern crate navi;
 
-use anyhow::Error;
+use navi::FileAnIssue;
 
-fn main() -> Result<(), Error> {
-    navi::handle_config(navi::config_from_env())
+fn main() -> Result<(), FileAnIssue> {
+    navi::handle_config(navi::config_from_env()).map_err(FileAnIssue::new)
 }

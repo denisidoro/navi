@@ -15,4 +15,5 @@ mod terminal;
 mod welcome;
 
 pub use handler::handle_config;
+pub use structures::error::file_issue::FileAnIssue;
 pub use structures::option::{config_from_env, config_from_iter};
