@@ -1,4 +1,4 @@
-use crate::structures::error::FilesystemError;
+use crate::structures::error::filesystem::InvalidPath;
 use crate::structures::option::Config;
 use anyhow::Context;
 use anyhow::Error;
@@ -25,7 +25,7 @@ pub fn pathbuf_to_string(pathbuf: PathBuf) -> Result<String, Error> {
     Ok(pathbuf
         .as_os_str()
         .to_str()
-        .ok_or_else(|| FilesystemError::InvalidPath(pathbuf.to_path_buf()))
+        .ok_or_else(|| InvalidPath(pathbuf.to_path_buf()))
         .map(str::to_string)?)
 }
 
@@ -45,7 +45,7 @@ fn follow_symlink(pathbuf: PathBuf) -> Result<PathBuf, Error> {
             let o_str = o
                 .as_os_str()
                 .to_str()
-                .ok_or_else(|| FilesystemError::InvalidPath(o.to_path_buf()))?;
+                .ok_or_else(|| InvalidPath(o.to_path_buf()))?;
             if o_str.starts_with('.') {
                 let parent = pathbuf
                     .parent()
@@ -53,7 +53,7 @@ fn follow_symlink(pathbuf: PathBuf) -> Result<PathBuf, Error> {
                 let parent_str = parent
                     .as_os_str()
                     .to_str()
-                    .ok_or_else(|| FilesystemError::InvalidPath(parent.to_path_buf()))?;
+                    .ok_or_else(|| InvalidPath(parent.to_path_buf()))?;
                 let path_str = format!("{}/{}", parent_str, o_str);
                 let p = PathBuf::from(path_str);
                 follow_symlink(p)
@@ -89,7 +89,7 @@ fn cheat_paths_from_config_dir() -> Result<String, Error> {
                     path.path()
                         .into_os_string()
                         .to_str()
-                        .ok_or_else(|| FilesystemError::InvalidPath(path.path()))?,
+                        .ok_or_else(|| InvalidPath(path.path()))?,
                 );
                 paths_str.push_str(":");
             }
