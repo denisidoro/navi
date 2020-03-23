@@ -13,13 +13,16 @@ pub fn handle_config(config: Config) -> Result<(), Error> {
             Preview { line } => flows::preview::main(&line[..]),
 
             Query { query } => {
-                let error_string = format!("Failed to filter cheatsheets for {}", &query);
-                flows::query::main(query.clone(), config).context(error_string)
+                let query_clone = query.clone();
+                flows::query::main(query.clone(), config)
+                    .with_context(|| format!("Failed to filter cheatsheets for {}", query_clone))
             }
 
             Best { query, args } => {
-                let error_string = format!("Failed to execute snippet similar to {}", &query);
-                flows::best::main(query.clone(), args.to_vec(), config).context(error_string)
+                let query_clone = query.clone();
+                flows::best::main(query.clone(), args.to_vec(), config).with_context(|| {
+                    format!("Failed to execute snippet similar to {}", query_clone)
+                })
             }
 
             Search { query } => flows::search::main(query.clone(), config)
