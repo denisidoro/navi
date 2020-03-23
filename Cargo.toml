@@ -1,6 +1,6 @@
 [package]
 name = "navi"
-version = "2.3.1"
+version = "2.4.0"
 authors = ["Denis Isidoro <denis_isidoro@live.com>"]
 edition = "2018"
 description = "An interactive cheatsheet tool for the command-line"
@@ -24,6 +24,8 @@ dirs = "2.0.0"
 terminal_size = "0.1.10"
 walkdir = "2"
 shellwords = "1.0.0"
+anyhow = "1.0.27"
+thiserror = "1.0.12"
 
 [dependencies.git2]
 version = "0.10.0"

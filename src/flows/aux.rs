@@ -1,7 +1,7 @@
-use std::error::Error;
+use anyhow::Error;
 use std::process;
 
-pub fn abort(operation: &str, issue_number: u32) -> Result<(), Box<dyn Error>> {
+pub fn abort(operation: &str, issue_number: u32) -> Result<(), Error> {
     eprintln!("This version of navi doesn't support {}.", operation);
     eprintln!(
         "Please check https://github.com/denisidoro/navi/issues/{} for more info.",

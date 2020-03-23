@@ -13,7 +13,7 @@ pub const DELIMITER: &str = r"  ⠀";
 
 lazy_static! {
     pub static ref WIDTHS: (usize, usize) = get_widths();
-    pub static ref NEWLINE_REGEX: Regex = Regex::new(r"\\\s+").unwrap();
+    pub static ref NEWLINE_REGEX: Regex = Regex::new(r"\\\s+").expect("Invalid regex");
 }
 
 fn get_widths() -> (usize, usize) {

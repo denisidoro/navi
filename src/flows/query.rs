@@ -1,8 +1,8 @@
 use crate::flows;
 use crate::flows::core::Variant;
 use crate::structures::option::Config;
-use std::error::Error;
+use anyhow::Error;
 
-pub fn main(query: String, config: Config) -> Result<(), Box<dyn Error>> {
+pub fn main(query: String, config: Config) -> Result<(), Error> {
     flows::core::main(Variant::Query(query), config, true)
 }

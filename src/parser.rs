@@ -3,38 +3,80 @@ use crate::filesystem;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fnv::HashLine;
 use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
-use crate::structures::option::Config;
+use crate::structures::{
+    error::filesystem::{InvalidPath, UnreadableDir},
+    option::Config,
+};
 use crate::welcome;
+use anyhow::{Context, Error};
 use regex::Regex;
 use std::collections::HashSet;
 use std::fs;
 use std::io::Write;
 
-fn parse_opts(text: &str) -> FzfOpts {
+lazy_static! {
+    pub static ref VAR_LINE_REGEX: Regex =
+        Regex::new(r"^\$\s*([^:]+):(.*)").expect("Invalid regex");
+}
+
+fn parse_opts(text: &str) -> Result<FzfOpts, Error> {
     let mut multi = false;
     let mut prevent_extra = false;
     let mut opts = FzfOpts::default();
-    let parts_vec = shellwords::split(text).unwrap();
-    let mut parts = parts_vec.into_iter();
+    let parts = shellwords::split(text)
+        .map_err(|_| anyhow!("Given options are missing a closing quote"))?;
 
-    while let Some(p) = parts.next() {
-        match p.as_str() {
-            "--multi" => multi = true,
-            "--prevent-extra" => prevent_extra = true,
-            "--headers" | "--header-lines" => {
-                opts.header_lines = parts.next().unwrap().parse::<u8>().unwrap()
+    parts
+        .into_iter()
+        .filter(|part| {
+            // We'll take parts in pairs of 2: (argument, value). Flags don't have a value tho, so we filter and handle them beforehand.
+            match part.as_str() {
+                "--multi" => {
+                    multi = true;
+                    false
+                }
+                "--prevent-extra" => {
+                    prevent_extra = true;
+                    false
+                }
+                _ => true,
             }
-            "--column" => opts.column = Some(parts.next().unwrap().parse::<u8>().unwrap()),
-            "--delimiter" => opts.delimiter = Some(parts.next().unwrap().to_string()),
-            "--query" => opts.query = Some(parts.next().unwrap().to_string()),
-            "--filter" => opts.filter = Some(parts.next().unwrap().to_string()),
-            "--preview" => opts.preview = Some(parts.next().unwrap().to_string()),
-            "--preview-window" => opts.preview_window = Some(parts.next().unwrap().to_string()),
-            "--header" => opts.header = Some(parts.next().unwrap().to_string()),
-            "--overrides" => opts.overrides = Some(parts.next().unwrap().to_string()),
-            _ => (),
-        }
-    }
+        })
+        .collect::<Vec<_>>()
+        .chunks(2)
+        .map(|flag_and_value| {
+            if let [flag, value] = flag_and_value {
+                match flag.as_str() {
+                    "--headers" | "--header-lines" => {
+                        opts.header_lines = value
+                            .parse::<u8>()
+                            .context("Value for `--headers` is invalid u8")?
+                    }
+                    "--column" => {
+                        opts.column = Some(
+                            value
+                                .parse::<u8>()
+                                .context("Value for `--column` is invalid u8")?,
+                        )
+                    }
+                    "--delimiter" => opts.delimiter = Some(value.to_string()),
+                    "--query" => opts.query = Some(value.to_string()),
+                    "--filter" => opts.filter = Some(value.to_string()),
+                    "--preview" => opts.preview = Some(value.to_string()),
+                    "--preview-window" => opts.preview_window = Some(value.to_string()),
+                    "--header" => opts.header = Some(value.to_string()),
+                    "--overrides" => opts.overrides = Some(value.to_string()),
+                    _ => (),
+                }
+                Ok(())
+            } else if let [flag] = flag_and_value {
+                Err(anyhow!("No value provided for the flag `{}`", flag))
+            } else {
+                unreachable!() // Chunking by 2 allows only for tuples of 1 or 2 items...
+            }
+        })
+        .collect::<Result<_, _>>()
+        .context("Failed to parse fzf options")?;
 
     let suggestion_type = match (multi, prevent_extra) {
         (true, _) => SuggestionType::MultipleSelections, // multi wins over allow-extra
@@ -43,17 +85,31 @@ fn parse_opts(text: &str) -> FzfOpts {
     };
     opts.suggestion_type = suggestion_type;
 
-    opts
+    Ok(opts)
 }
 
-fn parse_variable_line(line: &str) -> (&str, &str, Option<FzfOpts>) {
-    let re = Regex::new(r"^\$\s*([^:]+):(.*)").unwrap();
-    let caps = re.captures(line).unwrap();
-    let variable = caps.get(1).unwrap().as_str().trim();
-    let mut command_plus_opts = caps.get(2).unwrap().as_str().split("---");
-    let command = command_plus_opts.next().unwrap();
-    let command_options = command_plus_opts.next().map(parse_opts);
-    (variable, command, command_options)
+fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FzfOpts>), Error> {
+    let caps = VAR_LINE_REGEX.captures(line).ok_or_else(|| {
+        anyhow!(
+            "No variables, command, and options found in the line `{}`",
+            line
+        )
+    })?;
+    let variable = caps
+        .get(1)
+        .ok_or_else(|| anyhow!("No variable captured in the line `{}`", line))?
+        .as_str()
+        .trim();
+    let mut command_plus_opts = caps
+        .get(2)
+        .ok_or_else(|| anyhow!("No command and options captured in the line `{}`", line))?
+        .as_str()
+        .split("---");
+    let command = command_plus_opts
+        .next()
+        .ok_or_else(|| anyhow!("No command captured in the line `{}`", line))?;
+    let command_options = command_plus_opts.next().map(parse_opts).transpose()?;
+    Ok((variable, command, command_options))
 }
 
 fn write_cmd(
@@ -63,16 +119,16 @@ fn write_cmd(
     tag_width: usize,
     comment_width: usize,
     stdin: &mut std::process::ChildStdin,
-) -> bool {
+) -> Result<(), Error> {
     if snippet.is_empty() {
-        true
+        Ok(())
     } else {
         stdin
             .write_all(
                 display::format_line(&tags, &comment, &snippet, tag_width, comment_width)
                     .as_bytes(),
             )
-            .is_ok()
+            .context("Failed to write command to fzf's stdin")
     }
 }
 
@@ -81,7 +137,7 @@ fn read_file(
     variables: &mut VariableMap,
     visited_lines: &mut HashSet<u64>,
     stdin: &mut std::process::ChildStdin,
-) -> bool {
+) -> Result<(), Error> {
     let mut tags = String::from("");
     let mut comment = String::from("");
     let mut snippet = String::from("");
@@ -89,87 +145,99 @@ fn read_file(
 
     let (tag_width, comment_width) = *display::WIDTHS;
 
-    if let Ok(lines) = filesystem::read_lines(path) {
-        for l in lines {
-            if should_break {
-                break;
-            }
+    for (line_nr, line_result) in filesystem::read_lines(path)?.enumerate() {
+        let line = line_result
+            .with_context(|| format!("Failed to read line nr.{} from `{}`", line_nr, path))?;
 
-            let line = l.unwrap();
-
-            // duplicate
-            if !tags.is_empty() && !comment.is_empty() {}
-
-            // blank
-            if line.is_empty() {
-            }
-            // tag
-            else if line.starts_with('%') {
-                if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
-                    should_break = true
-                }
-                snippet = String::from("");
-                tags = String::from(&line[2..]);
-            }
-            // metacomment
-            else if line.starts_with(';') {
-            }
-            // comment
-            else if line.starts_with('#') {
-                if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
-                    should_break = true
-                }
-                snippet = String::from("");
-                comment = String::from(&line[2..]);
-            }
-            // variable
-            else if line.starts_with('$') {
-                if !write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin) {
-                    should_break = true
-                }
-                snippet = String::from("");
-                let (variable, command, opts) = parse_variable_line(&line);
-                variables.insert(&tags, &variable, (String::from(command), opts));
-            }
-            // snippet
-            else {
-                let hash = format!("{}{}", &comment, &line).hash_line();
-                if visited_lines.contains(&hash) {
-                    continue;
-                }
-                visited_lines.insert(hash);
-
-                if !(&snippet).is_empty() {
-                    snippet.push_str(display::LINE_SEPARATOR);
-                }
-                snippet.push_str(&line);
-            }
+        if should_break {
+            break;
         }
 
-        if !should_break {
-            write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin);
-        }
+        // duplicate
+        if !tags.is_empty() && !comment.is_empty() {}
 
-        return true;
+        // blank
+        if line.is_empty() {
+        }
+        // tag
+        else if line.starts_with('%') {
+            if write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin).is_err() {
+                should_break = true
+            }
+            snippet = String::from("");
+            tags = String::from(&line[2..]);
+        }
+        // metacomment
+        else if line.starts_with(';') {
+        }
+        // comment
+        else if line.starts_with('#') {
+            if write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin).is_err() {
+                should_break = true
+            }
+            snippet = String::from("");
+            comment = String::from(&line[2..]);
+        }
+        // variable
+        else if line.starts_with('$') {
+            if write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin).is_err() {
+                should_break = true
+            }
+            snippet = String::from("");
+            let (variable, command, opts) = parse_variable_line(&line).with_context(|| {
+                format!(
+                    "Failed to parse variable line. See line nr.{} in cheatsheet `{}`",
+                    line_nr + 1,
+                    path
+                )
+            })?;
+            variables.insert(&tags, &variable, (String::from(command), opts));
+        }
+        // snippet
+        else {
+            let hash = format!("{}{}", &comment, &line).hash_line();
+            if visited_lines.contains(&hash) {
+                continue;
+            }
+            visited_lines.insert(hash);
+
+            if !(&snippet).is_empty() {
+                snippet.push_str(display::LINE_SEPARATOR);
+            }
+            snippet.push_str(&line);
+        }
     }
 
-    false
+    if !should_break {
+        let _ = write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin);
+    }
+
+    Ok(())
 }
 
-pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> VariableMap {
+fn paths_from_path_param<'a>(env_var: &'a str) -> impl Iterator<Item = &'a str> + 'a {
+    env_var.split(':').filter(|folder| folder != &"")
+}
+
+pub fn read_all(
+    config: &Config,
+    stdin: &mut std::process::ChildStdin,
+) -> Result<VariableMap, Error> {
     let mut variables = VariableMap::new();
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
-    let paths = filesystem::cheat_paths(config);
-    let folders = paths.split(':');
+    let paths = filesystem::cheat_paths(config)?;
+    let folders = paths_from_path_param(&paths);
 
     for folder in folders {
-        if let Ok(paths) = fs::read_dir(folder) {
-            for path in paths {
-                let path = path.unwrap().path();
-                let path_str = path.to_str().unwrap();
+        if let Ok(dir_entries) = fs::read_dir(folder) {
+            for entry in dir_entries {
+                let path = entry.map_err(|e| UnreadableDir::new(folder, e))?.path();
+                let path_str = path
+                    .to_str()
+                    .ok_or_else(|| InvalidPath(path.to_path_buf()))?;
                 if path_str.ends_with(".cheat")
-                    && read_file(path_str, &mut variables, &mut visited_lines, stdin)
+                    && read_file(path_str, &mut variables, &mut visited_lines, stdin).is_ok()
                     && !found_something
                 {
                     found_something = true;
@@ -182,7 +250,7 @@ pub fn read_all(config: &Config, stdin: &mut std::process::ChildStdin) -> Variab
         welcome::cheatsheet(stdin);
     }
 
-    variables
+    Ok(variables)
 }
 
 #[cfg(test)]
@@ -192,7 +260,7 @@ mod tests {
     #[test]
     fn test_parse_variable_line() {
         let (variable, command, command_options) =
-            parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --allow-extra");
+            parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --allow-extra").unwrap();
         assert_eq!(command, " echo -e \"$(whoami)\\nroot\" ");
         assert_eq!(variable, "user");
         assert_eq!(
@@ -215,7 +283,7 @@ mod tests {
         let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().unwrap();
         let child_stdin = child.stdin.as_mut().unwrap();
         let mut visited_lines: HashSet<u64> = HashSet::new();
-        read_file(path, &mut variables, &mut visited_lines, child_stdin);
+        read_file(path, &mut variables, &mut visited_lines, child_stdin).unwrap();
         let expected_suggestion = (
             r#" echo -e "$(whoami)\nroot" "#.to_string(),
             Some(FzfOpts {
@@ -228,5 +296,20 @@ mod tests {
         );
         let actual_suggestion = variables.get("ssh", "user");
         assert_eq!(Some(&expected_suggestion), actual_suggestion);
+    }
+
+    #[test]
+    fn splitting_of_dirs_param_may_not_contain_empty_items() {
+        // Trailing colon indicates potential extra path. Split returns an empty item for it. This empty item should be filtered away, which is what this test checks.
+        let given_path_config = "SOME_PATH:ANOTHER_PATH:";
+
+        let found_paths = paths_from_path_param(given_path_config);
+
+        let mut expected_paths = vec!["SOME_PATH", "ANOTHER_PATH"].into_iter();
+
+        for found in found_paths {
+            let expected = expected_paths.next().unwrap();
+            assert_eq!(found, expected)
+        }
     }
 }

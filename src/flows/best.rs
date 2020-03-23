@@ -1,9 +1,9 @@
 use crate::flows;
 use crate::flows::core::Variant;
 use crate::structures::option::Config;
-use std::error::Error;
+use anyhow::Error;
 
-pub fn main(query: String, args: Vec<String>, config: Config) -> Result<(), Box<dyn Error>> {
+pub fn main(query: String, args: Vec<String>, config: Config) -> Result<(), Error> {
     if args.is_empty() {
         flows::core::main(Variant::Filter(query), config, false)
     } else {

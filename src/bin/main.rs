@@ -1,7 +1,5 @@
 extern crate navi;
 
-use std::error::Error;
-
-fn main() -> Result<(), Box<dyn Error>> {
-    navi::handle_config(navi::config_from_env())
+fn main() -> Result<(), anyhow::Error> {
+    navi::handle_config(navi::config_from_env()).map_err(|e| navi::FileAnIssue::new(e).into())
 }
