@@ -6,7 +6,7 @@
 
 ## [v2.3.0](https://github.com/denisidoro/navi/releases/tag/v2.3.0) - 2020-03-22
 - [10f02](https://github.com/denisidoro/navi/commit/10f02) Forward many more parameters to fzf after `---` ([#294](https://github.com/denisidoro/navi/issues/294))
-- [Remov](https://github.com/denisidoro/navi/commit/Remov) need for lifetime on FzfOpts ([#293](https://github.com/denisidoro/navi/issues/293))
+- [64045](https://github.com/denisidoro/navi/commit/64045) Remove need for lifetime on FzfOpts ([#293](https://github.com/denisidoro/navi/issues/293))
 
 
 ## [v2.2.0](https://github.com/denisidoro/navi/releases/tag/v2.2.0) - 2020-03-22
@@ -24,7 +24,7 @@
 
 ## [v2.1.1](https://github.com/denisidoro/navi/releases/tag/v2.1.1) - 2020-03-22
 - [92cf1](https://github.com/denisidoro/navi/commit/92cf1) Allow repos with @ ([#272](https://github.com/denisidoro/navi/issues/272))
-- [Impro](https://github.com/denisidoro/navi/commit/Impro) README ([#271](https://github.com/denisidoro/navi/issues/271))
+- [672fc](https://github.com/denisidoro/navi/commit/672fc) Improve README ([#271](https://github.com/denisidoro/navi/issues/271))
 
 
 ## [v2.1.0](https://github.com/denisidoro/navi/releases/tag/v2.1.0) - 2020-03-22
@@ -32,7 +32,7 @@
 - [bbbd5](https://github.com/denisidoro/navi/commit/bbbd5) Remove TODO
 - [3fa14](https://github.com/denisidoro/navi/commit/3fa14) Allow multiline commands ([#262](https://github.com/denisidoro/navi/issues/262))
 - [b8097](https://github.com/denisidoro/navi/commit/b8097) add `--allow-extra` option
-- [add](https://github.com/denisidoro/navi/commit/add) variable name to prompt with suggestions
+- [e99e1](https://github.com/denisidoro/navi/commit/e99e1) add variable name to prompt with suggestions
 
 
 ## [v2.0.11](https://github.com/denisidoro/navi/releases/tag/v2.0.11) - 2020-03-22
@@ -41,12 +41,12 @@
 - [95ed7](https://github.com/denisidoro/navi/commit/95ed7) :sparkles: Add basic firebase cheatsheet
 - [db965](https://github.com/denisidoro/navi/commit/db965) Add files via upload
 - [c5b3b](https://github.com/denisidoro/navi/commit/c5b3b) Add support for navi fn ([#241](https://github.com/denisidoro/navi/issues/241))
-- [Menti](https://github.com/denisidoro/navi/commit/Menti) fzf ([#240](https://github.com/denisidoro/navi/issues/240))
+- [5af27](https://github.com/denisidoro/navi/commit/5af27) Mention fzf ([#240](https://github.com/denisidoro/navi/issues/240))
 
 
 ## [v2.0.8](https://github.com/denisidoro/navi/releases/tag/v2.0.8) - 2020-03-22
 - [e32e0](https://github.com/denisidoro/navi/commit/e32e0) Fix delimiter ([#239](https://github.com/denisidoro/navi/issues/239))
-- [Fix](https://github.com/denisidoro/navi/commit/Fix) crash when user enters a command that doesn't match any cheats
+- [8d0c8](https://github.com/denisidoro/navi/commit/8d0c8) Fix crash when user enters a command that doesn't match any cheats
 
 
 ## [v2.0.6](https://github.com/denisidoro/navi/releases/tag/v2.0.6) - 2020-03-22
@@ -69,7 +69,7 @@
 - [75139](https://github.com/denisidoro/navi/commit/75139) Defensive cheats folder ([#220](https://github.com/denisidoro/navi/issues/220))
 - [aefc1](https://github.com/denisidoro/navi/commit/aefc1) Rename CI pipeline ([#218](https://github.com/denisidoro/navi/issues/218))
 - [1cbb1](https://github.com/denisidoro/navi/commit/1cbb1) Allow custom dirs when running make ([#214](https://github.com/denisidoro/navi/issues/214))
-- [Add](https://github.com/denisidoro/navi/commit/Add) support for metacomment ([#216](https://github.com/denisidoro/navi/issues/216))
+- [4a1bb](https://github.com/denisidoro/navi/commit/4a1bb) Add support for metacomment ([#216](https://github.com/denisidoro/navi/issues/216))
 
 
 ## [v2.0.0](https://github.com/denisidoro/navi/releases/tag/v2.0.0) - 2020-03-22
@@ -89,7 +89,7 @@
 
 ## [v0.18.2](https://github.com/denisidoro/navi/releases/tag/v0.18.2) - 2020-03-22
 - [dbcd7](https://github.com/denisidoro/navi/commit/dbcd7) Revert "Correctly escape backslashes" ([#181](https://github.com/denisidoro/navi/issues/181))
-- [Add](https://github.com/denisidoro/navi/commit/Add) experimental funding button ([#178](https://github.com/denisidoro/navi/issues/178))
+- [4d7b5](https://github.com/denisidoro/navi/commit/4d7b5) Add experimental funding button ([#178](https://github.com/denisidoro/navi/issues/178))
 
 
 ## [v0.18.1](https://github.com/denisidoro/navi/releases/tag/v0.18.1) - 2020-03-22
@@ -106,7 +106,7 @@
 
 ## [v0.17.0](https://github.com/denisidoro/navi/releases/tag/v0.17.0) - 2020-03-22
 - [61ba5](https://github.com/denisidoro/navi/commit/61ba5) Fix preview in fish shell
-- [Creat](https://github.com/denisidoro/navi/commit/Creat) cf.cheat ([#166](https://github.com/denisidoro/navi/issues/166))
+- [76177](https://github.com/denisidoro/navi/commit/76177) Create cf.cheat ([#166](https://github.com/denisidoro/navi/issues/166))
 
 
 ## [v0.16.0](https://github.com/denisidoro/navi/releases/tag/v0.16.0) - 2020-03-22
@@ -123,7 +123,7 @@
 - [8da2e](https://github.com/denisidoro/navi/commit/8da2e) Sync with master
 - [1bd17](https://github.com/denisidoro/navi/commit/1bd17) Use 2+ spaces as column separator ([#156](https://github.com/denisidoro/navi/issues/156))
 - [fa9fa](https://github.com/denisidoro/navi/commit/fa9fa) Update-git-cheats
-- [Updat](https://github.com/denisidoro/navi/commit/Updat) demo gif ([#143](https://github.com/denisidoro/navi/issues/143))
+- [434ab](https://github.com/denisidoro/navi/commit/434ab) Update demo gif ([#143](https://github.com/denisidoro/navi/issues/143))
 
 
 ## [v0.15.2](https://github.com/denisidoro/navi/releases/tag/v0.15.2) - 2020-03-22
@@ -139,7 +139,7 @@
 
 ## [v0.14.3](https://github.com/denisidoro/navi/releases/tag/v0.14.3) - 2020-03-22
 - [51bc3](https://github.com/denisidoro/navi/commit/51bc3) Add new cheats ([#136](https://github.com/denisidoro/navi/issues/136))
-- [## Wh](https://github.com/denisidoro/navi/commit/## Wh) does this do
+- [fdf5b](https://github.com/denisidoro/navi/commit/fdf5b) ## What does this do
 
 
 ## [v0.14.2](https://github.com/denisidoro/navi/releases/tag/v0.14.2) - 2020-03-22
@@ -148,7 +148,7 @@
 
 ## [v0.14.1](https://github.com/denisidoro/navi/releases/tag/v0.14.1) - 2020-03-22
 - [6b1e3](https://github.com/denisidoro/navi/commit/6b1e3) fix bug about variable suggestion
-- [Creat](https://github.com/denisidoro/navi/commit/Creat) cheats yum
+- [9de87](https://github.com/denisidoro/navi/commit/9de87) Create cheats yum
 
 
 ## [v0.14.0](https://github.com/denisidoro/navi/releases/tag/v0.14.0) - 2020-03-22
@@ -156,18 +156,18 @@
 - [8b99c](https://github.com/denisidoro/navi/commit/8b99c) navi fish plugin with ability to edit commandline
 - [fe8c6](https://github.com/denisidoro/navi/commit/fe8c6) doc([#121](https://github.com/denisidoro/navi/issues/121)): Clarify that oh-my-zsh does not add navi to PATH.
 - [1a640](https://github.com/denisidoro/navi/commit/1a640) doc([#121](https://github.com/denisidoro/navi/issues/121)): Clarify that oh-my-zsh does not add navi to PATH.
-- [Minor](https://github.com/denisidoro/navi/commit/Minor) changes ([#122](https://github.com/denisidoro/navi/issues/122))
+- [69e74](https://github.com/denisidoro/navi/commit/69e74) Minor changes ([#122](https://github.com/denisidoro/navi/issues/122))
 
 
 ## [v0.12.0](https://github.com/denisidoro/navi/releases/tag/v0.12.0) - 2020-03-22
 - [6129d](https://github.com/denisidoro/navi/commit/6129d) Refactor string escaping code ([#114](https://github.com/denisidoro/navi/issues/114))
 - [b7c5f](https://github.com/denisidoro/navi/commit/b7c5f) Add possibility to pass argument values ([#110](https://github.com/denisidoro/navi/issues/110))
-- [[src]](https://github.com/denisidoro/navi/commit/[src]) condition to check regex for arg/escaped_arg ([#109](https://github.com/denisidoro/navi/issues/109))
+- [7c767](https://github.com/denisidoro/navi/commit/7c767) [src]: Add condition to check regex for arg/escaped_arg ([#109](https://github.com/denisidoro/navi/issues/109))
 
 
 ## [v0.11.1](https://github.com/denisidoro/navi/releases/tag/v0.11.1) - 2020-03-22
 - [78638](https://github.com/denisidoro/navi/commit/78638) Add fallback to tac ([#108](https://github.com/denisidoro/navi/issues/108))
-- [Insta](https://github.com/denisidoro/navi/commit/Insta) instruction updates ([#106](https://github.com/denisidoro/navi/issues/106))
+- [ae8de](https://github.com/denisidoro/navi/commit/ae8de) Install instruction updates ([#106](https://github.com/denisidoro/navi/issues/106))
 
 
 ## [v0.11.0](https://github.com/denisidoro/navi/releases/tag/v0.11.0) - 2020-03-22
@@ -197,7 +197,7 @@
 - [9dce9](https://github.com/denisidoro/navi/commit/9dce9) Improve lib for collections ([#82](https://github.com/denisidoro/navi/issues/82))
 - [28597](https://github.com/denisidoro/navi/commit/28597) The commands added are as under:-
 - [44d15](https://github.com/denisidoro/navi/commit/44d15) Refer to FZF_DEFAULT_OPTS ([#80](https://github.com/denisidoro/navi/issues/80))
-- [Updat](https://github.com/denisidoro/navi/commit/Updat) command name in usage and examples
+- [e720f](https://github.com/denisidoro/navi/commit/e720f) Update command name in usage and examples
 
 
 ## [v0.9.4](https://github.com/denisidoro/navi/releases/tag/v0.9.4) - 2020-03-22
@@ -208,12 +208,12 @@
 - [9638f](https://github.com/denisidoro/navi/commit/9638f) Add Github badges ([#71](https://github.com/denisidoro/navi/issues/71))
 - [d9743](https://github.com/denisidoro/navi/commit/d9743) Suppress tput errors ([#69](https://github.com/denisidoro/navi/issues/69))
 - [51657](https://github.com/denisidoro/navi/commit/51657) Fix snippets with multiple arguments ([#67](https://github.com/denisidoro/navi/issues/67))
-- [Setup](https://github.com/denisidoro/navi/commit/Setup) CODEOWNERS ([#59](https://github.com/denisidoro/navi/issues/59))
+- [38116](https://github.com/denisidoro/navi/commit/38116) Setup CODEOWNERS ([#59](https://github.com/denisidoro/navi/issues/59))
 
 
 ## [v0.9.2](https://github.com/denisidoro/navi/releases/tag/v0.9.2) - 2020-03-22
 - [36cd5](https://github.com/denisidoro/navi/commit/36cd5) Minor refactor ([#57](https://github.com/denisidoro/navi/issues/57))
-- [Add](https://github.com/denisidoro/navi/commit/Add) workaround for --help ([#54](https://github.com/denisidoro/navi/issues/54))
+- [2ee25](https://github.com/denisidoro/navi/commit/2ee25) Add workaround for --help ([#54](https://github.com/denisidoro/navi/issues/54))
 
 
 ## [v0.9.0](https://github.com/denisidoro/navi/releases/tag/v0.9.0) - 2020-03-22
@@ -241,7 +241,7 @@
 - [62d64](https://github.com/denisidoro/navi/commit/62d64) Remove dependency on brew in scripts/release ([#23](https://github.com/denisidoro/navi/issues/23))
 - [0f2c9](https://github.com/denisidoro/navi/commit/0f2c9) Configure welcome probot ([#7](https://github.com/denisidoro/navi/issues/7))
 - [49060](https://github.com/denisidoro/navi/commit/49060) Request for contributions ([#5](https://github.com/denisidoro/navi/issues/5))
-- [Licen](https://github.com/denisidoro/navi/commit/Licen) under AGPL-3 ([#4](https://github.com/denisidoro/navi/issues/4))
+- [91d86](https://github.com/denisidoro/navi/commit/91d86) License under AGPL-3 ([#4](https://github.com/denisidoro/navi/issues/4))
 
 
 ## [v0.6.0](https://github.com/denisidoro/navi/releases/tag/v0.6.0) - 2020-03-22
