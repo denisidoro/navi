@@ -9,17 +9,14 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::{Path, PathBuf};
 
-pub fn read_lines<P>(filename: P) -> Result<Vec<String>, Error>
+pub fn read_lines<P>(filename: P) -> Result<impl Iterator<Item = Result<String, Error>>, Error>
 where
-    P: AsRef<Path> + Display,
+    P: AsRef<Path> + Display + Copy,
 {
-    let error_string = format!("Failed to read lines from `{}`", filename);
-    let file = File::open(filename)?;
-    io::BufReader::new(file)
+    let file = File::open(filename).with_context(|| format!("Failed to open file {}", filename))?;
+    Ok(io::BufReader::new(file)
         .lines()
-        .map(|line| line.map_err(Error::from))
-        .collect::<Result<Vec<String>, Error>>()
-        .with_context(|| error_string)
+        .map(|line| line.map_err(Error::from)))
 }
 
 pub fn pathbuf_to_string(pathbuf: PathBuf) -> Result<String, Error> {

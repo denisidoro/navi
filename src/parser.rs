@@ -145,7 +145,10 @@ fn read_file(
 
     let (tag_width, comment_width) = *display::WIDTHS;
 
-    for (line_nr, line) in filesystem::read_lines(path)?.into_iter().enumerate() {
+    for (line_nr, line_result) in filesystem::read_lines(path)?.enumerate() {
+        let line = line_result
+            .with_context(|| format!("Failed to read line nr.{} from `{}`", line_nr, path))?;
+
         if should_break {
             break;
         }
