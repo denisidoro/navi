@@ -5,8 +5,8 @@ use crate::structures::option::{Config, RepoCommand};
 use anyhow::Context;
 use anyhow::Error;
 
-pub fn handle_config(mut config: Config) -> Result<(), Error> {
-    match config.cmd.as_mut() {
+pub fn handle_config(config: Config) -> Result<(), Error> {
+    match config.cmd.as_ref() {
         None => flows::core::main(Variant::Core, config, true),
 
         Some(c) => match c {
