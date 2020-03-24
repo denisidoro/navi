@@ -79,7 +79,7 @@ fn parse_opts(text: &str) -> Result<FzfOpts, Error> {
         .context("Failed to parse fzf options")?;
 
     let suggestion_type = match (multi, prevent_extra) {
-        (true, _) => SuggestionType::MultipleSelections, // multi wins over allow-extra
+        (true, _) => SuggestionType::MultipleSelections, // multi wins over prevent-extra
         (false, false) => SuggestionType::SingleRecommendation,
         (false, true) => SuggestionType::SingleSelection,
     };
