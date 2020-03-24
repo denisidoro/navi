@@ -290,7 +290,7 @@ mod tests {
                 header_lines: 0,
                 column: None,
                 delimiter: None,
-                suggestion_type: SuggestionType::SingleRecommendation,
+                suggestion_type: SuggestionType::SingleSelection,
                 ..Default::default()
             }),
         );
