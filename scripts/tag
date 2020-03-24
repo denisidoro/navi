@@ -8,5 +8,5 @@ version="${1:-$(version_from_toml)}"
 echo "version: $version..."
 sleep 2
 
-git tag -a "v${version}" -m 'WIP version written in Rust. Use 1.0.0 instead'
+git tag -a "v${version}"
 git push origin --tags
