@@ -26,7 +26,7 @@ impl Default for Opts {
             header_lines: 0,
             header: None,
             prompt: None,
-            suggestion_type: SuggestionType::SingleSelection,
+            suggestion_type: SuggestionType::SingleRecommendation,
             column: None,
             delimiter: None,
         }

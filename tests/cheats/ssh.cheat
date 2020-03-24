@@ -3,4 +3,4 @@
 # login to a server with a key and port
 ssh -i <sshkey> -p <port> <user>@<server>
 
-$ user : echo -e "$(whoami)\nroot" --- --allow-extra
+$ user : echo -e "$(whoami)\nroot" --- --prevent-extra

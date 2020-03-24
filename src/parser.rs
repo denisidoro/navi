@@ -79,7 +79,7 @@ fn parse_opts(text: &str) -> Result<FzfOpts, Error> {
         .context("Failed to parse fzf options")?;
 
     let suggestion_type = match (multi, prevent_extra) {
-        (true, _) => SuggestionType::MultipleSelections, // multi wins over allow-extra
+        (true, _) => SuggestionType::MultipleSelections, // multi wins over prevent-extra
         (false, false) => SuggestionType::SingleRecommendation,
         (false, true) => SuggestionType::SingleSelection,
     };
@@ -260,7 +260,8 @@ mod tests {
     #[test]
     fn test_parse_variable_line() {
         let (variable, command, command_options) =
-            parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --allow-extra").unwrap();
+            parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --prevent-extra")
+                .unwrap();
         assert_eq!(command, " echo -e \"$(whoami)\\nroot\" ");
         assert_eq!(variable, "user");
         assert_eq!(
@@ -269,7 +270,7 @@ mod tests {
                 header_lines: 0,
                 column: None,
                 delimiter: None,
-                suggestion_type: SuggestionType::SingleRecommendation,
+                suggestion_type: SuggestionType::SingleSelection,
                 ..Default::default()
             })
         );
@@ -290,7 +291,7 @@ mod tests {
                 header_lines: 0,
                 column: None,
                 delimiter: None,
-                suggestion_type: SuggestionType::SingleRecommendation,
+                suggestion_type: SuggestionType::SingleSelection,
                 ..Default::default()
             }),
         );
