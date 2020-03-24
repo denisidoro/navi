@@ -260,7 +260,8 @@ mod tests {
     #[test]
     fn test_parse_variable_line() {
         let (variable, command, command_options) =
-            parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --prevent-extra").unwrap();
+            parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --prevent-extra")
+                .unwrap();
         assert_eq!(command, " echo -e \"$(whoami)\\nroot\" ");
         assert_eq!(variable, "user");
         assert_eq!(
