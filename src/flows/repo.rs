@@ -50,7 +50,7 @@ pub fn add(uri: String) -> Result<(), Error> {
     let tmp_path_str = filesystem::tmp_path_str()?;
     let tmp_path_str_with_trailing_slash = format!("{}/", &tmp_path_str);
 
-    filesystem::remove_dir(&tmp_path_str)?;
+    let _ = filesystem::remove_dir(&tmp_path_str);
     filesystem::create_dir(&tmp_path_str)?;
 
     eprintln!("Cloning {} into {}...\n", &actual_uri, &tmp_path_str);

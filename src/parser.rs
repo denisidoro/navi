@@ -3,10 +3,7 @@ use crate::filesystem;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fnv::HashLine;
 use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
-use crate::structures::{
-    error::filesystem::{InvalidPath, UnreadableDir},
-    option::Config,
-};
+use crate::structures::{error::filesystem::InvalidPath, option::Config};
 use crate::welcome;
 use anyhow::{Context, Error};
 use regex::Regex;
@@ -226,21 +223,30 @@ pub fn read_all(
     let mut variables = VariableMap::new();
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
-    let paths = filesystem::cheat_paths(config)?;
+    let paths = filesystem::cheat_paths(config);
+
+    if paths.is_err() {
+        welcome::cheatsheet(stdin);
+        return Ok(variables);
+    }
+
+    let paths = paths.expect("Unable to get paths");
     let folders = paths_from_path_param(&paths);
 
     for folder in folders {
         if let Ok(dir_entries) = fs::read_dir(folder) {
             for entry in dir_entries {
-                let path = entry.map_err(|e| UnreadableDir::new(folder, e))?.path();
-                let path_str = path
-                    .to_str()
-                    .ok_or_else(|| InvalidPath(path.to_path_buf()))?;
-                if path_str.ends_with(".cheat")
-                    && read_file(path_str, &mut variables, &mut visited_lines, stdin).is_ok()
-                    && !found_something
-                {
-                    found_something = true;
+                if entry.is_ok() {
+                    let path = entry.expect("Impossible to read an invalid entry").path();
+                    let path_str = path
+                        .to_str()
+                        .ok_or_else(|| InvalidPath(path.to_path_buf()))?;
+                    if path_str.ends_with(".cheat")
+                        && read_file(path_str, &mut variables, &mut visited_lines, stdin).is_ok()
+                        && !found_something
+                    {
+                        found_something = true;
+                    }
                 }
             }
         }
