@@ -1,6 +1,6 @@
 ## [v2.3.1](https://github.com/denisidoro/navi/releases/tag/v2.3.1) - 2020-03-22
 
-### :bug: Fixed
+### :bug: Fixes
 - [`8c374`](https://github.com/denisidoro/navi/commit/8c374) Panic on `navi repo ` commands because of invalid `--preview-window` syntax ([#302](https://github.com/denisidoro/navi/issues/302))
 - [`c12c2`](https://github.com/denisidoro/navi/commit/c12c2) Issue of terminal programs like fzf not recognizing stdin as terminal ([#267](https://github.com/denisidoro/navi/issues/267))
 - [`1986d`](https://github.com/denisidoro/navi/commit/1986d) Fish widget changing tty settings ([#296](https://github.com/denisidoro/navi/issues/296))
@@ -22,7 +22,7 @@
 - [`a51a5`](https://github.com/denisidoro/navi/commit/a51a5) De-duplicate cheatsheets
 - [`b49ee`](https://github.com/denisidoro/navi/commit/b49ee) Make `--allow-extra` default and add `--prevent-extra` ([#281](https://github.com/denisidoro/navi/issues/281)`
 
-### :bug: Fixed
+### :bug: Fixes
 - [`2ca1d`](https://github.com/denisidoro/navi/commit/2ca1d) `--column` with `--multi` selecting first line only ([#290](https://github.com/denisidoro/navi/issues/290))
 - [`a0bba`](https://github.com/denisidoro/navi/commit/a0bba) Minor fixes ([#285](https://github.com/denisidoro/navi/issues/285))
 
@@ -32,7 +32,7 @@
 
 ## [v2.1.3](https://github.com/denisidoro/navi/releases/tag/v2.1.3) - 2020-03-22
 
-### :bug: Fixed
+### :bug: Fixes
 - [`98658`](https://github.com/denisidoro/navi/commit/98658) Fix OpenSSL dependency
 
 
@@ -73,7 +73,7 @@
 
 ## [v2.0.8](https://github.com/denisidoro/navi/releases/tag/v2.0.8) - 2020-03-22
 
-### :bug: Fixed
+### :bug: Fixes
 - [`e32e0`](https://github.com/denisidoro/navi/commit/e32e0) Delimiter ([#239](https://github.com/denisidoro/navi/issues/239))
 - [`8d0c8`](https://github.com/denisidoro/navi/commit/8d0c8) Crash when user enters a command that doesn't match any cheats
 
@@ -86,19 +86,19 @@
 
 ## [v2.0.5](https://github.com/denisidoro/navi/releases/tag/v2.0.5) - 2020-03-22
 
-### :bug: Fixed
+### :bug: Fixes
 - [`a1dea`](https://github.com/denisidoro/navi/commit/a1dea) Path issues ([#231](https://github.com/denisidoro/navi/issues/231))
 
 
 ## [v2.0.4](https://github.com/denisidoro/navi/releases/tag/v2.0.4) - 2020-03-22
 
-### :bug: Fixed
+### :bug: Fixes
 - [`77079`](https://github.com/denisidoro/navi/commit/77079) Handle relative symlinks ([#225](https://github.com/denisidoro/navi/issues/225))
 
 
 ## [v2.0.3](https://github.com/denisidoro/navi/releases/tag/v2.0.3) - 2020-03-22
 
-### :bug: Fixed
+### :bug: Fixes
 - [`06eae`](https://github.com/denisidoro/navi/commit/06eae) Minor fixes ([#221](https://github.com/denisidoro/navi/issues/221))
 
 
@@ -107,7 +107,7 @@
 ### :zap: New features
 - [`4a1bb`](https://github.com/denisidoro/navi/commit/4a1bb) Add support for metacomment ([#216](https://github.com/denisidoro/navi/issues/216))
 
-### :bug: Fixed
+### :bug: Fixes
 - [`75139`](https://github.com/denisidoro/navi/commit/75139) Problems retrieving cheats folder ([#220](https://github.com/denisidoro/navi/issues/220))
 - [`1cbb1`](https://github.com/denisidoro/navi/commit/1cbb1) Allow custom dirs when running make ([#214](https://github.com/denisidoro/navi/issues/214))
 
