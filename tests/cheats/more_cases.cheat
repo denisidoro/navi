@@ -35,6 +35,9 @@ echo "<x> <y> <x> <z>"
 # with preview
 cat "<file>"
 
+# fzf
+ls / | fzf
+
 $ x: echo '1 2 3' | tr ' ' '\n'
 $ y: echo 'a b c' | tr ' ' '\n'
 $ z: echo 'foo bar' | tr ' ' '\n'
