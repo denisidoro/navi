@@ -6,15 +6,9 @@ set -euo pipefail
 # paths
 # =====================
 
-FIRST_SOURCE_DIR="/opt/navi"
-SECOND_SOURCE_DIR="${HOME}/.navi"
-
-FIRST_BIN_DIR="/usr/bin"
-SECOND_BIN_DIR="/usr/local/bin"
-
 get_dir() {
    local -r first_dir="$1"
-   local -r second_dir="$1"
+   local -r second_dir="$2"
    local -r useless_folder="${first_dir}/useless"
    local folder
    mkdir -p "$useless_folder" 2>/dev/null \
@@ -25,11 +19,15 @@ get_dir() {
 }
 
 get_source_dir() {
-   get_dir "$FIRST_SOURCE_DIR" "$SECOND_SOURCE_DIR"
+   get_dir "/opt/navi" "${HOME}/.navi/src"
 }
 
 get_bin_dir() {
-   get_dir "$FIRST_BIN_DIR" "$SECOND_BIN_DIR"
+   get_dir "/usr/bin" "/usr/local/bin"
+}
+
+get_tmp_dir() {
+   get_dir "/tmp/navi" "${HOME}/.navi/tmp"
 }
 
 
@@ -119,7 +117,7 @@ installation_finish_instructions() {
    local -r shell="$(get_shell)"
    echoerr -e "Finished. To call navi, restart your shell or reload the config file:\n   source ~/.${shell}rc"
    local code
-   if [[ $shell = "zsh" ]]; then
+   if [[ "$shell" == "zsh" ]]; then
       code="navi widget ${shell} | source"
    else
       code='source <(navi widget '"$shell"')'
@@ -169,14 +167,14 @@ asset_url() {
 
 download_asset() {
    local -r url="$(asset_url "$@")"
-   mkdir -p "$SOURCE_DIR"
-   cd "$SOURCE_DIR"
+   mkdir -p "$TMP_DIR"
+   cd "$TMP_DIR"
    rm -f navi.tar.gz
    echoerr "Downloading ${url}..."
    curl -L "$url" -o navi.tar.gz
    tar xvzf navi.tar.gz
    rm -f navi.tar.gz
-   ln -s "${SOURCE_DIR}/navi" "${BIN_DIR}/navi"
+   ln -s "${TMP_DIR}/navi" "${BIN_DIR}/navi"
 }
 
 sha_for_asset_on_github() {
@@ -236,9 +234,10 @@ get_shell() {
 # =====================
 
 install_navi() {
-   export SOURCE_DIR="${SOURCE_DIR:-"$(get_source_dir)"}"
+   export SRC_DIR="${SRC_DIR:-"$(get_source_dir)"}"
    export BIN_DIR="${BIN_DIR:-"$(get_bin_dir)"}"
-   echoerr "Sources will be downloaded to ${SOURCE_DIR}..."
+   export TMP_DIR="${TMP_DIR:-"$(get_tmp_dir)"}"
+   echoerr -e "Relevant directories:\n- src: ${SRC_DIR}\n- bin: ${BIN_DIR}\n- tmp: ${TMP_DIR}\n"
 
    local -r target="$(get_target)"
 
@@ -249,8 +248,8 @@ install_navi() {
    elif command_exists cargo; then
       no_binary_warning
       echoerr "Building sources..."
-      git clone https://github.com/denisidoro/navi "$SOURCE_DIR"
-      cd "$SOURCE_DIR"
+      git clone https://github.com/denisidoro/navi "$SRC_DIR"
+      cd "$SRC_DIR"
       make install
 
    else
