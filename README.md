@@ -50,11 +50,6 @@ Installation
 ### Using [Homebrew](http://brew.sh/) or [Linuxbrew](http://linuxbrew.sh/)
 
 ```sh
-brew install denisidoro/tools/navi
-```
-
-Alternatively, you can use the official formula (but it will install a very old version):
-```sh
 brew install navi
 ```
 
