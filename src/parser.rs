@@ -117,7 +117,7 @@ fn write_cmd(
     comment_width: usize,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
-    if snippet.is_empty() {
+    if snippet.len() <= 1 {
         Ok(())
     } else {
         stdin
