@@ -51,7 +51,7 @@ pub fn preview(comment: &str, tags: &str, snippet: &str) {
 
 fn limit_str(text: &str, length: usize) -> String {
     if text.len() > length {
-        format!("{}…", text.chars().take(length).collect::<String>())
+        format!("{}…", text.chars().take(length - 1).collect::<String>())
     } else {
         format!("{:width$}", text, width = length)
     }
