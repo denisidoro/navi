@@ -174,7 +174,7 @@ download_asset() {
    curl -L "$url" -o navi.tar.gz
    tar xvzf navi.tar.gz
    rm -f navi.tar.gz
-   ln -s "${TMP_DIR}/navi" "${BIN_DIR}/navi"
+   cp "${TMP_DIR}/navi" "${BIN_DIR}/navi"
 }
 
 sha_for_asset_on_github() {
