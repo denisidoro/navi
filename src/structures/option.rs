@@ -38,11 +38,11 @@ pub struct Config {
     pub no_preview: bool,
 
     /// finder overrides for cheat selection
-    #[structopt(long, env = "NAVI_FINDER_OVERRIDES")]
+    #[structopt(long, env = "NAVI_FZF_OVERRIDES")]
     pub finder_overrides: Option<String>,
 
     /// finder overrides for variable selection
-    #[structopt(long, env = "NAVI_FINDER_OVERRIDES_VAR")]
+    #[structopt(long, env = "NAVI_FZF_OVERRIDES_VAR")]
     pub finder_overrides_var: Option<String>,
 
     #[structopt(subcommand)]
