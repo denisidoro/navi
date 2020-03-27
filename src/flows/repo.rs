@@ -1,7 +1,7 @@
 use crate::filesystem;
-use crate::fzf;
+use crate::finder;
 use crate::git;
-use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
+use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use anyhow::Context;
 use anyhow::Error;
 use git2::Repository;
@@ -25,18 +25,18 @@ pub fn browse() -> Result<(), Error> {
     let repos = fs::read_to_string(format!("{}/featured_repos.txt", &repo_path_str))
         .context("Unable to fetch featured repositories")?;
 
-    let opts = FzfOpts {
+    let opts = FinderOpts {
         column: Some(1),
         ..Default::default()
     };
 
-    let (repo, _) = fzf::call(opts, |stdin| {
+    let (repo, _) = finder::call(opts, |stdin| {
         stdin
             .write_all(repos.as_bytes())
             .context("Unable to prompt featured repositories")?;
         Ok(None)
     })
-    .context("Failed to get repo URL from fzf")?;
+    .context("Failed to get repo URL from finder")?;
 
     filesystem::remove_dir(&repo_path_str)?;
 
@@ -67,7 +67,7 @@ pub fn add(uri: String) -> Result<(), Error> {
         .collect::<Vec<String>>()
         .join("\n");
 
-    let opts = FzfOpts {
+    let opts = FinderOpts {
         suggestion_type: SuggestionType::MultipleSelections,
         preview: Some(format!("cat '{}/{{}}'", tmp_path_str)),
         header: Some(
@@ -77,13 +77,13 @@ pub fn add(uri: String) -> Result<(), Error> {
         ..Default::default()
     };
 
-    let (files, _) = fzf::call(opts, |stdin| {
+    let (files, _) = finder::call(opts, |stdin| {
         stdin
             .write_all(all_files.as_bytes())
             .context("Unable to prompt cheats to import")?;
         Ok(None)
     })
-    .context("Failed to get cheatsheet files from fzf")?;
+    .context("Failed to get cheatsheet files from finder")?;
 
     for f in files.split('\n') {
         let from = format!("{}/{}", tmp_path_str, f).replace("./", "");

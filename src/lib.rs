@@ -5,8 +5,8 @@ extern crate anyhow;
 
 mod display;
 mod filesystem;
+mod finder;
 mod flows;
-mod fzf;
 mod git;
 mod handler;
 mod parser;

@@ -1,11 +1,11 @@
 use crate::display;
 use crate::filesystem;
+use crate::finder;
 use crate::flows;
-use crate::fzf;
 use crate::handler;
 use crate::parser;
 use crate::structures::cheat::{Suggestion, VariableMap};
-use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
+use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use crate::structures::option;
 use crate::structures::{error::command::BashSpawnError, option::Config};
 use anyhow::Context;
@@ -26,15 +26,15 @@ pub enum Variant {
     Query(String),
 }
 
-fn gen_core_fzf_opts(variant: Variant, config: &Config) -> Result<FzfOpts, Error> {
-    let mut opts = FzfOpts {
+fn gen_core_finder_opts(variant: Variant, config: &Config) -> Result<FinderOpts, Error> {
+    let mut opts = FinderOpts {
         preview: if config.no_preview {
             None
         } else {
             Some(format!("{} preview {{}}", filesystem::exe_string()?))
         },
         autoselect: !config.no_autoselect,
-        overrides: config.fzf_overrides.clone(),
+        overrides: config.finder_overrides.clone(),
         suggestion_type: SuggestionType::SnippetSelection,
         ..Default::default()
     };
@@ -100,34 +100,34 @@ fn prompt_with_suggestions(
     .context("Suggestions are invalid utf8")?;
 
     let opts = suggestion_opts.clone().unwrap_or_default();
-    let opts = FzfOpts {
+    let opts = FinderOpts {
         autoselect: !config.no_autoselect,
-        overrides: config.fzf_overrides_var.clone(),
+        overrides: config.finder_overrides_var.clone(),
         prompt: Some(display::variable_prompt(varname)),
         ..opts
     };
 
-    let (output, _) = fzf::call(opts, |stdin| {
+    let (output, _) = finder::call(opts, |stdin| {
         stdin
             .write_all(suggestions.as_bytes())
-            .context("Could not write to fzf's stdin")?;
+            .context("Could not write to finder's stdin")?;
         Ok(None)
     })
-    .context("fzf was unable to prompt with suggestions")?;
+    .context("finder was unable to prompt with suggestions")?;
 
     Ok(output)
 }
 
 fn prompt_without_suggestions(variable_name: &str) -> Result<String, Error> {
-    let opts = FzfOpts {
+    let opts = FinderOpts {
         autoselect: false,
         prompt: Some(display::variable_prompt(variable_name)),
         suggestion_type: SuggestionType::Disabled,
         ..Default::default()
     };
 
-    let (output, _) = fzf::call(opts, |_stdin| Ok(None))
-        .context("fzf was unable to prompt without suggestions")?;
+    let (output, _) = finder::call(opts, |_stdin| Ok(None))
+        .context("finder was unable to prompt without suggestions")?;
 
     Ok(output)
 }
@@ -175,14 +175,14 @@ fn with_new_lines(txt: String) -> String {
 pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Error> {
     let _ = display::WIDTHS;
 
-    let opts = gen_core_fzf_opts(variant, &config).context("Failed to generate fzf options")?;
-    let (raw_selection, variables) = fzf::call(opts, |stdin| {
-        Ok(Some(
-            parser::read_all(&config, stdin)
-                .context("Failed to parse variables intended for fzf")?,
-        ))
+    let opts =
+        gen_core_finder_opts(variant, &config).context("Failed to generate finder options")?;
+    let (raw_selection, variables) = finder::call(opts, |stdin| {
+        Ok(Some(parser::read_all(&config, stdin).context(
+            "Failed to parse variables intended for finder",
+        )?))
     })
-    .context("Failed getting selection and variables from fzf")?;
+    .context("Failed getting selection and variables from finder")?;
 
     let (key, tags, snippet) = extract_from_selections(&raw_selection[..], contains_key);
 
@@ -190,7 +190,7 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
         replace_variables_from_snippet(
             snippet,
             tags,
-            variables.expect("No variables received from fzf"),
+            variables.expect("No variables received from finder"),
             &config,
         )
         .context("Failed to replace variables from snippet")?,
@@ -205,7 +205,7 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
     // save to file
     } else if let Some(s) = config.save {
         fs::write(s, interpolated_snippet).context("Unable to save config")?;
-    // call navi (this prevents "failed to read /dev/tty" from fzf)
+    // call navi (this prevents "failed to read /dev/tty" from finder)
     } else if interpolated_snippet.starts_with("navi") {
         let new_config = option::config_from_iter(interpolated_snippet.split(' ').collect());
         handler::handle_config(new_config)?;

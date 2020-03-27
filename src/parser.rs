@@ -1,8 +1,8 @@
 use crate::display;
 use crate::filesystem;
 use crate::structures::cheat::VariableMap;
+use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use crate::structures::fnv::HashLine;
-use crate::structures::fzf::{Opts as FzfOpts, SuggestionType};
 use crate::structures::{error::filesystem::InvalidPath, option::Config};
 use crate::welcome;
 use anyhow::{Context, Error};
@@ -16,10 +16,10 @@ lazy_static! {
         Regex::new(r"^\$\s*([^:]+):(.*)").expect("Invalid regex");
 }
 
-fn parse_opts(text: &str) -> Result<FzfOpts, Error> {
+fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
     let mut multi = false;
     let mut prevent_extra = false;
-    let mut opts = FzfOpts::default();
+    let mut opts = FinderOpts::default();
     let parts = shellwords::split(text)
         .map_err(|_| anyhow!("Given options are missing a closing quote"))?;
 
@@ -73,7 +73,7 @@ fn parse_opts(text: &str) -> Result<FzfOpts, Error> {
             }
         })
         .collect::<Result<_, _>>()
-        .context("Failed to parse fzf options")?;
+        .context("Failed to parse finder options")?;
 
     let suggestion_type = match (multi, prevent_extra) {
         (true, _) => SuggestionType::MultipleSelections, // multi wins over prevent-extra
@@ -85,7 +85,7 @@ fn parse_opts(text: &str) -> Result<FzfOpts, Error> {
     Ok(opts)
 }
 
-fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FzfOpts>), Error> {
+fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FinderOpts>), Error> {
     let caps = VAR_LINE_REGEX.captures(line).ok_or_else(|| {
         anyhow!(
             "No variables, command, and options found in the line `{}`",
@@ -125,7 +125,7 @@ fn write_cmd(
                 display::format_line(&tags, &comment, &snippet, tag_width, comment_width)
                     .as_bytes(),
             )
-            .context("Failed to write command to fzf's stdin")
+            .context("Failed to write command to finder's stdin")
     }
 }
 
@@ -272,7 +272,7 @@ mod tests {
         assert_eq!(variable, "user");
         assert_eq!(
             command_options,
-            Some(FzfOpts {
+            Some(FinderOpts {
                 header_lines: 0,
                 column: None,
                 delimiter: None,
@@ -293,7 +293,7 @@ mod tests {
         read_file(path, &mut variables, &mut visited_lines, child_stdin).unwrap();
         let expected_suggestion = (
             r#" echo -e "$(whoami)\nroot" "#.to_string(),
-            Some(FzfOpts {
+            Some(FinderOpts {
                 header_lines: 0,
                 column: None,
                 delimiter: None,
