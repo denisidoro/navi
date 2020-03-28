@@ -1,5 +1,5 @@
 use crate::filesystem;
-use crate::finder;
+use crate::finder::{Finder, FinderChoice};
 use crate::git;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use anyhow::Context;
@@ -9,7 +9,7 @@ use std::fs;
 use std::io::Write;
 use walkdir::WalkDir;
 
-pub fn browse() -> Result<(), Error> {
+pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
     let repo_path_str = format!("{}/featured", filesystem::tmp_path_str()?);
 
     // The dir might not exist which would throw an error. But here we don't care about that
@@ -30,20 +30,21 @@ pub fn browse() -> Result<(), Error> {
         ..Default::default()
     };
 
-    let (repo, _) = finder::call(opts, |stdin| {
-        stdin
-            .write_all(repos.as_bytes())
-            .context("Unable to prompt featured repositories")?;
-        Ok(None)
-    })
-    .context("Failed to get repo URL from finder")?;
+    let (repo, _) = finder
+        .call(opts, |stdin| {
+            stdin
+                .write_all(repos.as_bytes())
+                .context("Unable to prompt featured repositories")?;
+            Ok(None)
+        })
+        .context("Failed to get repo URL from finder")?;
 
     filesystem::remove_dir(&repo_path_str)?;
 
-    add(repo)
+    add(repo, finder)
 }
 
-pub fn add(uri: String) -> Result<(), Error> {
+pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
     let (actual_uri, user, repo) = git::meta(uri.as_str());
 
     let cheat_path_str = filesystem::pathbuf_to_string(filesystem::cheat_pathbuf()?)?;
@@ -77,13 +78,14 @@ pub fn add(uri: String) -> Result<(), Error> {
         ..Default::default()
     };
 
-    let (files, _) = finder::call(opts, |stdin| {
-        stdin
-            .write_all(all_files.as_bytes())
-            .context("Unable to prompt cheats to import")?;
-        Ok(None)
-    })
-    .context("Failed to get cheatsheet files from finder")?;
+    let (files, _) = finder
+        .call(opts, |stdin| {
+            stdin
+                .write_all(all_files.as_bytes())
+                .context("Unable to prompt cheats to import")?;
+            Ok(None)
+        })
+        .context("Failed to get cheatsheet files from finder")?;
 
     for f in files.split('\n') {
         let from = format!("{}/{}", tmp_path_str, f).replace("./", "");

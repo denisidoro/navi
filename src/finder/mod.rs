@@ -1,17 +1,39 @@
-#[cfg(not(feature = "use_skim"))]
 mod fzf;
-#[cfg(feature = "use_skim")]
 mod skim;
 
-#[cfg(not(feature = "use_skim"))]
-pub use fzf::call;
+pub use fzf::FzfFinder;
+pub use skim::SkimFinder;
 
-#[cfg(feature = "use_skim")]
-pub use skim::call;
-
+use crate::structures::cheat::VariableMap;
+use crate::structures::finder::Opts;
 use crate::structures::finder::SuggestionType;
 use anyhow::Context;
 use anyhow::Error;
+use std::process;
+
+#[derive(Debug)]
+pub enum FinderChoice {
+    Fzf,
+    Skim,
+}
+
+impl Finder for FinderChoice {
+    fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
+    where
+        F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>,
+    {
+        match self {
+            Self::Fzf => FzfFinder.call(opts, stdin_fn),
+            Self::Skim => SkimFinder.call(opts, stdin_fn),
+        }
+    }
+}
+
+pub trait Finder {
+    fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
+    where
+        F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>;
+}
 
 fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> String {
     if let Some(c) = column {

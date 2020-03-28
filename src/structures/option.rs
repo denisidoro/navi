@@ -1,4 +1,14 @@
+use crate::finder::FinderChoice;
+use anyhow::Error;
 use structopt::{clap::AppSettings, StructOpt};
+
+fn parse_finder(src: &str) -> Result<FinderChoice, Error> {
+    match src {
+        "fzf" => Ok(FinderChoice::Fzf),
+        "skim" => Ok(FinderChoice::Skim),
+        _ => Err(Error::msg(format!("unknown finder '{}'", src))),
+    }
+}
 
 #[derive(Debug, StructOpt)]
 #[structopt(after_help = r#"EXAMPLES:
@@ -10,6 +20,7 @@ use structopt::{clap::AppSettings, StructOpt};
     navi best 'sql create db' root mydb    # uses a snippet as a CLI
     navi repo add denisidoro/cheats        # imports cheats from github.com/denisidoro/cheats
     source <(navi widget zsh)              # loads the zsh widget
+    navi --finder 'skim'                   # set which finder is supposed to be used (fzf [default] / skim)
     navi --fzf-overrides ' --with-nth 1,2' # shows only the comment and tag columns
     navi --fzf-overrides ' --nth 1,2'      # search will consider only the first two columns
     navi --fzf-overrides ' --no-exact'     # looser search algorithm"#)]
@@ -39,11 +50,15 @@ pub struct Config {
 
     /// finder overrides for cheat selection
     #[structopt(long, env = "NAVI_FZF_OVERRIDES")]
-    pub finder_overrides: Option<String>,
+    pub fzf_overrides: Option<String>,
 
     /// finder overrides for variable selection
     #[structopt(long, env = "NAVI_FZF_OVERRIDES_VAR")]
-    pub finder_overrides_var: Option<String>,
+    pub fzf_overrides_var: Option<String>,
+
+    /// finder overrides for variable selection
+    #[structopt(long, env = "NAVI_FINDER", default_value = "fzf", parse(try_from_str = parse_finder))]
+    pub finder: FinderChoice,
 
     #[structopt(subcommand)]
     pub cmd: Option<Command>,

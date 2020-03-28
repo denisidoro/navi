@@ -1,6 +1,6 @@
 use crate::display;
 use crate::filesystem;
-use crate::finder;
+use crate::finder::Finder;
 use crate::flows;
 use crate::handler;
 use crate::parser;
@@ -34,7 +34,7 @@ fn gen_core_finder_opts(variant: Variant, config: &Config) -> Result<FinderOpts,
             Some(format!("{} preview {{}}", filesystem::exe_string()?))
         },
         autoselect: !config.no_autoselect,
-        overrides: config.finder_overrides.clone(),
+        overrides: config.fzf_overrides.clone(),
         suggestion_type: SuggestionType::SnippetSelection,
         ..Default::default()
     };
@@ -102,23 +102,25 @@ fn prompt_with_suggestions(
     let opts = suggestion_opts.clone().unwrap_or_default();
     let opts = FinderOpts {
         autoselect: !config.no_autoselect,
-        overrides: config.finder_overrides_var.clone(),
+        overrides: config.fzf_overrides_var.clone(),
         prompt: Some(display::variable_prompt(varname)),
         ..opts
     };
 
-    let (output, _) = finder::call(opts, |stdin| {
-        stdin
-            .write_all(suggestions.as_bytes())
-            .context("Could not write to finder's stdin")?;
-        Ok(None)
-    })
-    .context("finder was unable to prompt with suggestions")?;
+    let (output, _) = config
+        .finder
+        .call(opts, |stdin| {
+            stdin
+                .write_all(suggestions.as_bytes())
+                .context("Could not write to finder's stdin")?;
+            Ok(None)
+        })
+        .context("finder was unable to prompt with suggestions")?;
 
     Ok(output)
 }
 
-fn prompt_without_suggestions(variable_name: &str) -> Result<String, Error> {
+fn prompt_without_suggestions(variable_name: &str, config: &Config) -> Result<String, Error> {
     let opts = FinderOpts {
         autoselect: false,
         prompt: Some(display::variable_prompt(variable_name)),
@@ -126,7 +128,9 @@ fn prompt_without_suggestions(variable_name: &str) -> Result<String, Error> {
         ..Default::default()
     };
 
-    let (output, _) = finder::call(opts, |_stdin| Ok(None))
+    let (output, _) = config
+        .finder
+        .call(opts, |_stdin| Ok(None))
         .context("finder was unable to prompt without suggestions")?;
 
     Ok(output)
@@ -156,7 +160,7 @@ fn replace_variables_from_snippet(
                     .and_then(|suggestion| {
                         prompt_with_suggestions(variable_name, &config, suggestion, &values)
                     })
-                    .or_else(|_| prompt_without_suggestions(variable_name))
+                    .or_else(|_| prompt_without_suggestions(variable_name, &config))
             })?;
 
         values.insert(variable_name.to_string(), value.clone());
@@ -177,12 +181,14 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
 
     let opts =
         gen_core_finder_opts(variant, &config).context("Failed to generate finder options")?;
-    let (raw_selection, variables) = finder::call(opts, |stdin| {
-        Ok(Some(parser::read_all(&config, stdin).context(
-            "Failed to parse variables intended for finder",
-        )?))
-    })
-    .context("Failed getting selection and variables from finder")?;
+    let (raw_selection, variables) = config
+        .finder
+        .call(opts, |stdin| {
+            Ok(Some(parser::read_all(&config, stdin).context(
+                "Failed to parse variables intended for finder",
+            )?))
+        })
+        .context("Failed getting selection and variables from finder")?;
 
     let (key, tags, snippet) = extract_from_selections(&raw_selection[..], contains_key);
 
