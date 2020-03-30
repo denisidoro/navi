@@ -35,13 +35,13 @@ impl Default for Opts {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum SuggestionType {
-    /// fzf will not print any suggestions
+    /// finder will not print any suggestions
     Disabled,
-    /// fzf will only select one of the suggestions
+    /// finder will only select one of the suggestions
     SingleSelection,
-    /// fzf will select multiple suggestions
+    /// finder will select multiple suggestions
     MultipleSelections,
-    /// fzf will select one of the suggestions or use the query
+    /// finder will select one of the suggestions or use the query
     SingleRecommendation,
     /// initial snippet selection
     SnippetSelection,

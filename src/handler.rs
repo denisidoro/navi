@@ -34,11 +34,10 @@ pub fn handle_config(config: Config) -> Result<(), Error> {
                 .with_context(|| format!("Failed to execute function `{}`", func)),
 
             Repo { cmd } => match cmd {
-                RepoCommand::Add { uri } => flows::repo::add(uri.clone())
+                RepoCommand::Add { uri } => flows::repo::add(uri.clone(), &config.finder)
                     .with_context(|| format!("Failed to import cheatsheets from `{}`", uri)),
-                RepoCommand::Browse => {
-                    flows::repo::browse().context("Failed to browse featured cheatsheets")
-                }
+                RepoCommand::Browse => flows::repo::browse(&config.finder)
+                    .context("Failed to browse featured cheatsheets"),
             },
         },
     }
