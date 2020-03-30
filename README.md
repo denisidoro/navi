@@ -13,7 +13,7 @@ An interactive cheatsheet tool for the command-line.
 - it will spare you from knowing CLIs by heart;
 - it will teach you new one-liners.
 
-It uses [fzf](https://github.com/junegunn/fzf) under the hood and it can be either used as a command or as a shell widget (*à la* Ctrl-R).
+It uses [fzf](https://github.com/junegunn/fzf) or [skim](https://github.com/lotabout/skim) under the hood and it can be either used as a command or as a shell widget (*à la* Ctrl-R).
 
 Table of contents
 -----------------
