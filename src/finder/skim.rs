@@ -19,7 +19,7 @@ impl Finder for SkimFinder {
 
         skim_command.args(&[
             "--preview-window",
-            "up:2",
+            "up:3",
             "--with-nth",
             "1,2,3",
             "--delimiter",
