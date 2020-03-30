@@ -21,9 +21,9 @@ fn parse_finder(src: &str) -> Result<FinderChoice, Error> {
     navi repo add denisidoro/cheats        # imports cheats from github.com/denisidoro/cheats
     source <(navi widget zsh)              # loads the zsh widget
     navi --finder 'skim'                   # set which finder is supposed to be used (fzf [default] / skim)
-    navi --fzf-overrides ' --with-nth 1,2' # shows only the comment and tag columns
-    navi --fzf-overrides ' --nth 1,2'      # search will consider only the first two columns
-    navi --fzf-overrides ' --no-exact'     # looser search algorithm"#)]
+    navi --fzf-overrides '--with-nth 1,2'  # shows only the comment and tag columns
+    navi --fzf-overrides '--nth 1,2'       # search will consider only the first two columns
+    navi --fzf-overrides '--no-exact'      # looser search algorithm"#)]
 #[structopt(setting = AppSettings::ColorAuto)]
 #[structopt(setting = AppSettings::ColoredHelp)]
 #[structopt(setting = AppSettings::AllowLeadingHyphen)]
