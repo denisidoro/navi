@@ -212,11 +212,11 @@ In addition, it's possible to forward the following parameters to `fzf`:
 
 The command for generating possible inputs can refer previous variables:
 ```sh
-# If you select 2 for x, the possible values of y will be 12 and 22
+# If you select "hello" for <x>, the possible values of <y> will be "hello foo" and "hello bar"
 echo <x> <y>
 
-$ x: echo '1 2 3' | tr ' ' '\n'
-$ y: echo "$((x+10)) $((x+20))" | tr ' ' '\n'
+$ x: echo "hello hi" | tr ' ' '\n'
+$ y: echo "$x foo;$x bar" | tr ';' '\n'
 ```
 
 ### Multiline snippets
