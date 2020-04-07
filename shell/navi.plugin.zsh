@@ -1,10 +1,11 @@
 #!/usr/bin/env zsh
 
 _call_navi() {
-   local -r buff="$BUFFER"
-   local -r r="$(printf "$(navi --print </dev/tty)")"
-   zle kill-whole-line
-   zle -U "${buff}${r}"
+  local selected
+  if selected="$(printf "$(navi --print </dev/tty)")"; then
+    LBUFFER="$selected"
+  fi
+  zle redisplay
 }
 
 zle -N _call_navi
