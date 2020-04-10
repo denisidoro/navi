@@ -3,6 +3,7 @@ extern crate lazy_static;
 #[macro_use]
 extern crate anyhow;
 
+mod clipboard;
 mod display;
 mod filesystem;
 mod finder;
