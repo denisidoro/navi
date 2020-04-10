@@ -10,7 +10,10 @@ pub fn main(func: String, args: Vec<String>) -> Result<(), Error> {
                 .into_iter()
                 .next()
                 .ok_or_else(|| anyhow!("No URL specified"))?;
-            let cmd = format!("url=\"$(echo \"{}\" | tr ' ' '+')\"; (xdg-open \"$url\" 2> /dev/null || open \"$url\" 2> /dev/null) &disown", url);
+            let cmd = format!(
+                r#"url="$(echo "{}" | tr ' ' '+')"; (xdg-open "$url" 2> /dev/null || open "$url" 2> /dev/null) &disown"#,
+                url
+            );
             Command::new("bash")
                 .arg("-c")
                 .arg(cmd.as_str())

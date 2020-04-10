@@ -1,7 +1,7 @@
+use crate::clipboard;
 use crate::display;
 use crate::filesystem;
 use crate::finder::Finder;
-use crate::flows;
 use crate::handler;
 use crate::parser;
 use crate::structures::cheat::{Suggestion, VariableMap};
@@ -204,7 +204,7 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
 
     // copy to clipboard
     if key == "ctrl-y" {
-        flows::aux::abort("copying snippets to the clipboard", 201)?
+        clipboard::copy(interpolated_snippet)?;
     // print to stdout
     } else if config.print {
         println!("{}", interpolated_snippet);
