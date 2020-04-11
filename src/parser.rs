@@ -20,6 +20,7 @@ fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
     let mut multi = false;
     let mut prevent_extra = false;
     let mut opts = FinderOpts::default();
+
     let parts = shellwords::split(text)
         .map_err(|_| anyhow!("Given options are missing a closing quote"))?;
 
@@ -56,6 +57,7 @@ fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
                                 .context("Value for `--column` is invalid u8")?,
                         )
                     }
+                    "--map" => opts.map = Some(value.to_string()),
                     "--delimiter" => opts.delimiter = Some(value.to_string()),
                     "--query" => opts.query = Some(value.to_string()),
                     "--filter" => opts.filter = Some(value.to_string()),
