@@ -1,21 +1,21 @@
-use super::{get_column, parse_output_single, Finder};
+use super::{parse, Finder};
 use crate::display;
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::{Opts, SuggestionType};
 use anyhow::Context;
 use anyhow::Error;
-use std::process;
-use std::process::{Command, Stdio};
+use std::process::{self, Command, Stdio};
 
 #[derive(Debug)]
 pub struct FzfFinder;
 
 impl Finder for FzfFinder {
-    fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
+    fn call<F>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
     where
         F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>,
     {
         let mut fzf_command = Command::new("fzf");
+        let opts = finder_opts.clone();
 
         fzf_command.args(&[
             "--preview-window",
@@ -109,24 +109,7 @@ impl Finder for FzfFinder {
 
         let out = child.wait_with_output().context("Failed to wait for fzf")?;
 
-        let text = match out.status.code() {
-            Some(0) | Some(1) | Some(2) => {
-                String::from_utf8(out.stdout).context("Invalid utf8 received from fzf")?
-            }
-            Some(130) => process::exit(130),
-            _ => {
-                let err = String::from_utf8(out.stderr)
-                    .unwrap_or_else(|_| "<stderr contains invalid UTF-8>".to_owned());
-                panic!("External command failed:\n {}", err)
-            }
-        };
-
-        let out = get_column(
-            parse_output_single(text, opts.suggestion_type)?,
-            opts.column,
-            opts.delimiter.as_deref(),
-        );
-
-        Ok((out, result_map))
+        let output = parse(out, finder_opts).context("Unable to get output")?;
+        Ok((output, result_map))
     }
 }

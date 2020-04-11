@@ -12,6 +12,7 @@ pub struct Opts {
     pub suggestion_type: SuggestionType,
     pub delimiter: Option<String>,
     pub column: Option<u8>,
+    pub map: Option<String>,
 }
 
 impl Default for Opts {
@@ -29,6 +30,7 @@ impl Default for Opts {
             suggestion_type: SuggestionType::SingleRecommendation,
             column: None,
             delimiter: None,
+            map: None,
         }
     }
 }

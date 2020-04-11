@@ -9,7 +9,8 @@ use crate::structures::finder::Opts;
 use crate::structures::finder::SuggestionType;
 use anyhow::Context;
 use anyhow::Error;
-use std::process;
+use std::process::{self, Output};
+use std::process::{Command, Stdio};
 
 #[derive(Debug)]
 pub enum FinderChoice {
@@ -33,6 +34,21 @@ pub trait Finder {
     fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
     where
         F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>;
+}
+
+fn apply_map(text: String, map_fn: Option<String>) -> String {
+    if let Some(m) = map_fn {
+        let output = Command::new("bash")
+            .arg("-c")
+            .arg(m)
+            .stderr(Stdio::inherit())
+            .output()
+            .expect("Failed to execute map function");
+
+            String::from_utf8(output.stdout).expect("Invalid utf8 output for map function")
+    } else {
+        text
+    }
 }
 
 fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> String {
@@ -95,6 +111,25 @@ fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> Res
         }
     })
 }
+
+fn parse(out: Output, opts: Opts) -> Result<String, Error> {
+        let text = match out.status.code() {
+            Some(0) | Some(1) | Some(2) => {
+                String::from_utf8(out.stdout).context("Invalid utf8 received from finder")?
+            }
+            Some(130) => process::exit(130),
+            _ => {
+                let err = String::from_utf8(out.stderr)
+                    .unwrap_or_else(|_| "<stderr contains invalid UTF-8>".to_owned());
+                panic!("External command failed:\n {}", err)
+            }
+        };
+
+        let output = parse_output_single(text, opts.suggestion_type)?;
+        let output = get_column(output, opts.column, opts.delimiter.as_deref());
+        let output = apply_map(output, opts.map);
+        Ok(output) 
+ }
 
 #[cfg(test)]
 mod tests {

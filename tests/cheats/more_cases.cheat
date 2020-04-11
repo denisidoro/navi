@@ -35,6 +35,9 @@ echo "<x> <y> <x> <z>"
 # with preview
 cat "<file>"
 
+# with map
+echo "<mapped>"
+
 # fzf
 ls / | fzf
 
@@ -48,6 +51,7 @@ $ langs: echo 'clojure rust javascript' | tr ' ' '\n' --- --multi
 $ examples: echo -e 'foo bar\nlorem ipsum\ndolor sit' --- --mult
 $ multiword: echo -e 'foo bar\nlorem ipsum\ndolor sit\nbaz'i
 $ file: ls . --- --preview 'cat {}' --preview-window '50%'
+$ mapped: echo 'foo bar' | tr ' ' '\n' --- --map "tr 'o' 'X'"
 
 # this should be displayed
 echo hi
