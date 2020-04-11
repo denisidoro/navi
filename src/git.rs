@@ -26,7 +26,7 @@ pub fn meta(uri: &str) -> (String, String, String) {
     let user = parts[parts.len() - 2];
     let repo = parts[parts.len() - 1].replace(".git", "");
 
-    (actual_uri.clone(), user.to_string(), repo)
+    (actual_uri, user.to_string(), repo)
 }
 
 #[cfg(test)]
