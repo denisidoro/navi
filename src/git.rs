@@ -21,7 +21,8 @@ pub fn meta(uri: &str) -> (String, String, String) {
         format!("https://github.com/{}", uri)
     };
 
-    let parts: Vec<&str> = actual_uri.split('/').collect();
+    let uri_to_split = actual_uri.replace(':', "/");
+    let parts: Vec<&str> = uri_to_split.split('/').collect();
     let user = parts[parts.len() - 2];
     let repo = parts[parts.len() - 1].replace(".git", "");
 
@@ -43,7 +44,7 @@ mod tests {
     #[test]
     fn test_meta_github_ssh() {
         let (actual_uri, user, repo) = meta("git@github.com:denisidoro/navi.git");
-        assert_eq!(actual_uri, "git@github.com/denisidoro/navi.git".to_string());
+        assert_eq!(actual_uri, "git@github.com:denisidoro/navi.git".to_string());
         assert_eq!(user, "denisidoro".to_string());
         assert_eq!(repo, "navi".to_string());
     }
