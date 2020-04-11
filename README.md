@@ -191,12 +191,17 @@ For lines starting with `$` you can use `---` to customize the behavior of `fzf`
 # This will pick the 3rd column and use the first line as header
 docker rmi <image_id>
 
+# Even though "false/true" is displayed, this will print "0/1"
+echo <mapped>
+
 $ image_id: docker images --- --column 3 --header-lines 1 --delimiter '\s\s+'
+$ mapped: echo 'false true' | tr ' ' '\n' --- --map "[[ $0 == t* ]] && echo 1 || echo 0"
 ```
 
 The supported parameters are:
 - `--prevent-extra` *(experimental)*: limits the user to select one of the suggestions;
 - `--column <number>`: extracts a single column from the selected result;
+- `--map <bash_code>` *(experimental)*: applies a map function to the selected variable value;
 
 In addition, it's possible to forward the following parameters to `fzf`:
 - `--multi`;
@@ -205,7 +210,7 @@ In addition, it's possible to forward the following parameters to `fzf`:
 - `--query <text>`;
 - `--filter <text>`;
 - `--header <text>`;
-- `--preview <code>`;
+- `--preview <bash_code>`;
 - `--preview-window <text>`.
 
 ### Variable dependency

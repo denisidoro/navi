@@ -10,7 +10,11 @@ use std::process::{self, Command, Stdio};
 pub struct SkimFinder;
 
 impl Finder for SkimFinder {
-    fn call<F>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
+    fn call<F>(
+        &self,
+        finder_opts: Opts,
+        stdin_fn: F,
+    ) -> Result<(String, Option<VariableMap>), Error>
     where
         F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>,
     {
@@ -90,10 +94,7 @@ impl Finder for SkimFinder {
                 });
         }
 
-        let child = command
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .spawn();
+        let child = command.stdin(Stdio::piped()).stdout(Stdio::piped()).spawn();
 
         let mut child = match child {
             Ok(x) => x,
@@ -109,7 +110,9 @@ impl Finder for SkimFinder {
             .ok_or_else(|| anyhow!("Unable to acquire stdin of skim"))?;
         let result_map = stdin_fn(stdin).context("Failed to pass data to skim")?;
 
-        let out = child.wait_with_output().context("Failed to wait for skim")?;
+        let out = child
+            .wait_with_output()
+            .context("Failed to wait for skim")?;
 
         let output = parse(out, finder_opts).context("Unable to get output")?;
         Ok((output, result_map))
