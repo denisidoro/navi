@@ -15,9 +15,7 @@ pub fn shallow_clone(uri: &str, target: &str) -> Result<(), Error> {
 }
 
 pub fn meta(uri: &str) -> (String, String, String) {
-    let actual_uri = if uri.contains("://") {
-        uri.to_string()
-    } else if uri.contains('@') {
+    let actual_uri = if uri.contains("://") || uri.contains('@') {
         uri.to_string()
     } else {
         format!("https://github.com/{}", uri)
