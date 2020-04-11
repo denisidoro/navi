@@ -1,8 +1,24 @@
+use anyhow::{Context, Error};
+use std::process::Command;
+use crate::structures::error::command::BashSpawnError;
+
+pub fn shallow_clone(uri: &str, target: &str) -> Result<(), Error> {
+    let cmd = format!("git clone {} {} --depth 1", uri, target);
+        Command::new("bash")
+            .arg("-c")
+            .arg(&cmd[..])
+            .spawn()
+            .map_err(|e| BashSpawnError::new(&cmd[..], e))?
+            .wait()
+            .context("Unable to git clone")?;
+            Ok(())
+}
+
 pub fn meta(uri: &str) -> (String, String, String) {
     let actual_uri = if uri.contains("://") {
         uri.to_string()
     } else if uri.contains('@') {
-        uri.replace(':', "/").replace("git@", "https://")
+        uri.to_string()
     } else {
         format!("https://github.com/{}", uri)
     };
@@ -31,7 +47,7 @@ mod tests {
         let (actual_uri, user, repo) = meta("git@github.com:denisidoro/navi.git");
         assert_eq!(
             actual_uri,
-            "https://github.com/denisidoro/navi.git".to_string()
+            "git@github.com/denisidoro/navi.git".to_string()
         );
         assert_eq!(user, "denisidoro".to_string());
         assert_eq!(repo, "navi".to_string());

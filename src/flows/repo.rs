@@ -4,7 +4,6 @@ use crate::git;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use anyhow::Context;
 use anyhow::Error;
-use git2::Repository;
 use std::fs;
 use std::io::Write;
 use walkdir::WalkDir;
@@ -18,8 +17,8 @@ pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
     let _ = filesystem::remove_dir(&repo_path_str);
     filesystem::create_dir(&repo_path_str)?;
 
-    let repo_url = "https://github.com/denisidoro/cheats";
-    Repository::clone(repo_url, &repo_path_str)
+    let (repo_url, _, _) = git::meta("denisidoro/cheats");
+    git::shallow_clone(repo_url.as_str(), &repo_path_str)
         .with_context(|| format!("Failed to clone `{}`", repo_url))?;
 
     let repos = fs::read_to_string(format!("{}/featured_repos.txt", &repo_path_str))
@@ -56,7 +55,7 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
 
     eprintln!("Cloning {} into {}...\n", &actual_uri, &tmp_path_str);
 
-    Repository::clone(actual_uri.as_str(), &tmp_path_str)
+    git::shallow_clone(actual_uri.as_str(), &tmp_path_str)
         .with_context(|| format!("Failed to clone `{}`", actual_uri))?;
 
     let all_files = WalkDir::new(&tmp_path_str)
