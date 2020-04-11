@@ -27,16 +27,6 @@ shellwords = "1.0.0"
 anyhow = "1.0.27"
 thiserror = "1.0.12"
 
-[dependencies.git2]
-version = "0.10.0"
-default-features = false
-features = ["https"]
-
-[target.'cfg(target_os = "macos")'.dependencies.git2]
-version = "0.10.0"
-default-features = false
-features = ["vendored-openssl"]
-
 [lib]
 name = "navi"
 path = "src/lib.rs"
