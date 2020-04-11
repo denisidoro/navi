@@ -76,7 +76,7 @@ fn prompt_with_suggestions(
     config: &Config,
     suggestion: &Suggestion,
     values: &HashMap<String, String>,
-    snippet: String
+    snippet: String,
 ) -> Result<String, Error> {
     let mut vars_cmd = String::from("");
     for (key, value) in values.iter() {
@@ -102,7 +102,11 @@ fn prompt_with_suggestions(
 
     let mut opts = suggestion_opts.clone().unwrap_or_default();
     if opts.preview.is_none() {
-        opts.preview = Some(format!("echo '{}' | sed 's/<{}>/{{}}/g'", snippet.replace('\'', "\""), variable_name));
+        opts.preview = Some(format!(
+            "echo '{}' | sed 's/<{}>/{{}}/g'",
+            snippet.replace('\'', "\""),
+            variable_name
+        ));
     }
     if opts.preview_window.is_none() {
         opts.preview_window = Some("up:1".to_string());
@@ -127,12 +131,20 @@ fn prompt_with_suggestions(
     Ok(output)
 }
 
-fn prompt_without_suggestions(variable_name: &str, config: &Config, snippet: String) -> Result<String, Error> {
+fn prompt_without_suggestions(
+    variable_name: &str,
+    config: &Config,
+    snippet: String,
+) -> Result<String, Error> {
     let opts = FinderOpts {
         autoselect: false,
         prompt: Some(display::variable_prompt(variable_name)),
         suggestion_type: SuggestionType::Disabled,
-        preview: Some(format!("echo '{}' | sed 's/<{}>/{{}}/g'", snippet.replace('\'', "\""), variable_name)),
+        preview: Some(format!(
+            "echo '{}' | sed 's/<{}>/{{}}/g'",
+            snippet.replace('\'', "\""),
+            variable_name
+        )),
         preview_window: Some("up:1".to_string()),
         ..Default::default()
     };
@@ -167,9 +179,21 @@ fn replace_variables_from_snippet(
                     .get(&tags, &variable_name)
                     .ok_or_else(|| anyhow!("No suggestions"))
                     .and_then(|suggestion| {
-                        prompt_with_suggestions(variable_name, &config, suggestion, &values, interpolated_snippet.clone())
+                        prompt_with_suggestions(
+                            variable_name,
+                            &config,
+                            suggestion,
+                            &values,
+                            interpolated_snippet.clone(),
+                        )
                     })
-                    .or_else(|_| prompt_without_suggestions(variable_name, &config, interpolated_snippet.clone()))
+                    .or_else(|_| {
+                        prompt_without_suggestions(
+                            variable_name,
+                            &config,
+                            interpolated_snippet.clone(),
+                        )
+                    })
             })?;
 
         values.insert(variable_name.to_string(), value.clone());
