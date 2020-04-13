@@ -50,6 +50,14 @@ echo description space
 #
 echo description blank
 
+# x
+echo description one character
+
+# Concatenate pdf files
+files=($(echo "<files>"))
+echo pdftk "${files[@]:-}" cat output <pdf_output>
+
+$ files: echo 'file1.pdf file2.pdf file3.pdf' | tr ' ' '\n' --- --multi --overrides '--tac'
 $ x: echo '1 2 3' | tr ' ' '\n'
 $ y: echo 'a b c' | tr ' ' '\n'
 $ z: echo 'foo bar' | tr ' ' '\n'
