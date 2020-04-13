@@ -164,7 +164,11 @@ fn read_file(
                 should_break = true
             }
             snippet = String::from("");
-            tags = String::from(&line[2..]);
+            tags = if line.len() > 2 {
+                String::from(&line[2..])
+            } else {
+                String::from("")
+            };
         }
         // metacomment
         else if line.starts_with(';') {
@@ -175,7 +179,11 @@ fn read_file(
                 should_break = true
             }
             snippet = String::from("");
-            comment = String::from(&line[2..]);
+            comment = if line.len() > 2 {
+                String::from(&line[2..])
+            } else {
+                String::from("")
+            };
         }
         // variable
         else if line.starts_with('$') {
