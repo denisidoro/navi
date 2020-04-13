@@ -50,6 +50,9 @@ echo description space
 #
 echo description blank
 
+# x
+echo description one character
+
 $ x: echo '1 2 3' | tr ' ' '\n'
 $ y: echo 'a b c' | tr ' ' '\n'
 $ z: echo 'foo bar' | tr ' ' '\n'

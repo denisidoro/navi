@@ -71,6 +71,14 @@ fn extract_from_selections(raw_snippet: &str, contains_key: bool) -> (&str, &str
     (key, tags, snippet)
 }
 
+fn gen_opts_preview(snippet: &str, variable_name: &str) -> Option<String> {
+    Some(format!(
+        r#"query="{{}}"; [[ "${{#query:-}}" -lt 3 ]] && query="{{q}}"; query="${{query:1:${{#query}}-2}}"; query="$(echo "$query" | sed 's|/|\\/|g')"; echo "{}" | sed "s/<{}>/${{query}}/g" || echo 'Unable to generate command preview'"#,
+        snippet.replace('"', "\\\""),
+        variable_name
+    ))
+}
+
 fn prompt_with_suggestions(
     variable_name: &str,
     config: &Config,
@@ -102,11 +110,7 @@ fn prompt_with_suggestions(
 
     let mut opts = suggestion_opts.clone().unwrap_or_default();
     if opts.preview.is_none() {
-        opts.preview = Some(format!(
-            "echo '{}' | sed 's/<{}>/{{}}/g'",
-            snippet.replace('\'', "\""),
-            variable_name
-        ));
+        opts.preview = gen_opts_preview(&snippet, &variable_name);
     }
     if opts.preview_window.is_none() {
         opts.preview_window = Some("up:1".to_string());
@@ -140,11 +144,7 @@ fn prompt_without_suggestions(
         autoselect: false,
         prompt: Some(display::variable_prompt(variable_name)),
         suggestion_type: SuggestionType::Disabled,
-        preview: Some(format!(
-            "echo '{}' | sed 's/<{}>/{{}}/g'",
-            snippet.replace('\'', "\""),
-            variable_name
-        )),
+        preview: gen_opts_preview(&snippet, &variable_name),
         preview_window: Some("up:1".to_string()),
         ..Default::default()
     };
