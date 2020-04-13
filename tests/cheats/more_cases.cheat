@@ -44,6 +44,12 @@ echo "http://google.com?q=<query>"
 # fzf
 ls / | fzf
 
+# 
+echo description space
+
+#
+echo description blank
+
 $ x: echo '1 2 3' | tr ' ' '\n'
 $ y: echo 'a b c' | tr ' ' '\n'
 $ z: echo 'foo bar' | tr ' ' '\n'
@@ -58,3 +64,8 @@ $ file: ls . --- --preview 'cat {}' --preview-window 'right:50%'
 
 # this should be displayed
 echo hi
+
+%
+
+# Without tag
+echo hi 1 2 3
