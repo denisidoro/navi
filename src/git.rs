@@ -3,7 +3,7 @@ use anyhow::{Context, Error};
 use std::process::Command;
 
 pub fn shallow_clone(uri: &str, target: &str) -> Result<(), Error> {
-    let cmd = format!("git clone {} {} --depth 1", uri, target);
+    let cmd = format!(r#"git clone "{}" "{}" --depth 1"#, uri, target);
     Command::new("bash")
         .arg("-c")
         .arg(&cmd[..])
