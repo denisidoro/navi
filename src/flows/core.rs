@@ -71,20 +71,20 @@ fn extract_from_selections(raw_snippet: &str, contains_key: bool) -> (&str, &str
     (key, tags, snippet)
 }
 
-fn gen_opts_preview(snippet: &str, variable_name: &str) -> Option<String> {
+/* fn gen_opts_preview(snippet: &str, variable_name: &str) -> Option<String> {
     Some(format!(
         r#"query="{{}}"; [[ "${{#query:-}}" -lt 3 ]] && query="{{q}}"; query="${{query:1:${{#query}}-2}}"; query="$(echo "$query" | sed 's|/|\\/|g')"; echo "{}" | sed "s/<{}>/${{query}}/g" || echo 'Unable to generate command preview'"#,
         snippet.replace('"', "\\\""),
         variable_name
     ))
-}
+} */
 
 fn prompt_with_suggestions(
     variable_name: &str,
     config: &Config,
     suggestion: &Suggestion,
     values: &HashMap<String, String>,
-    snippet: String,
+    _snippet: String,
 ) -> Result<String, Error> {
     let mut vars_cmd = String::from("");
     for (key, value) in values.iter() {
@@ -108,13 +108,13 @@ fn prompt_with_suggestions(
     )
     .context("Suggestions are invalid utf8")?;
 
-    let mut opts = suggestion_opts.clone().unwrap_or_default();
-    if opts.preview.is_none() {
+    let opts = suggestion_opts.clone().unwrap_or_default();
+    /* if opts.preview.is_none() {
         opts.preview = gen_opts_preview(&snippet, &variable_name);
     }
     if opts.preview_window.is_none() {
         opts.preview_window = Some("up:1".to_string());
-    }
+    } */
     let opts = FinderOpts {
         autoselect: !config.no_autoselect,
         overrides: config.fzf_overrides_var.clone(),
@@ -138,13 +138,13 @@ fn prompt_with_suggestions(
 fn prompt_without_suggestions(
     variable_name: &str,
     config: &Config,
-    snippet: String,
+    _snippet: String,
 ) -> Result<String, Error> {
     let opts = FinderOpts {
         autoselect: false,
         prompt: Some(display::variable_prompt(variable_name)),
         suggestion_type: SuggestionType::Disabled,
-        preview: gen_opts_preview(&snippet, &variable_name),
+        // preview: gen_opts_preview(&snippet, &variable_name),
         preview_window: Some("up:1".to_string()),
         ..Default::default()
     };
