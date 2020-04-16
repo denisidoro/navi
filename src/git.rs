@@ -3,12 +3,14 @@ use anyhow::{Context, Error};
 use std::process::Command;
 
 pub fn shallow_clone(uri: &str, target: &str) -> Result<(), Error> {
-    let cmd = format!(r#"git clone "{}" "{}" --depth 1"#, uri, target);
-    Command::new("bash")
-        .arg("-c")
-        .arg(&cmd[..])
+    Command::new("git")
+        .arg("clone")
+        .arg(uri)
+        .arg(target)
+        .arg("--depth")
+        .arg("1")
         .spawn()
-        .map_err(|e| BashSpawnError::new(&cmd[..], e))?
+        .map_err(|e| BashSpawnError::new("git clone", e))?
         .wait()
         .context("Unable to git clone")?;
     Ok(())
