@@ -35,7 +35,8 @@ echo -n "$x" | _copy"#,
             .as_str(),
         )
         .spawn()
-        .map_err(|e| BashSpawnError::new(cmd, e))?;
+        .map_err(|e| BashSpawnError::new(cmd, e))?
+        .wait()?;
 
     Ok(())
 }
