@@ -33,8 +33,7 @@ read -r -d '' url <<'EOF'
 EOF
 
 _open_url "$url""#,
-code,
-                url
+                code, url
             );
             Command::new("bash")
                 .arg("-c")
