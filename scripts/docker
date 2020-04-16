@@ -8,8 +8,8 @@ cd "$NAVI_HOME"
 ./scripts/action release x86_64-unknown-linux-musl
 
 docker run \
-	       -e HOMEBREW_NO_AUTO_UPDATE=1 \
-	       -e HOMEBREW_NO_INSTALL_CLEANUP=1 \
-	       -v "$(pwd):/navi" \
-	       -it 'bashell/alpine-bash' \
-	       bash -c 'apk add git; apk add curl; git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && yes | ln -s /navi/target/debug/navi /usr/local/bin/navi; source $HOME/.bashrc; bash'
+   -e HOMEBREW_NO_AUTO_UPDATE=1 \
+   -e HOMEBREW_NO_INSTALL_CLEANUP=1 \
+   -v "$(pwd):/navi" \
+   -it 'bashell/alpine-bash' \
+   bash -c 'apk add git; apk add curl; git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && yes | ln -s /navi/target/debug/navi /usr/local/bin/navi; source $HOME/.bashrc; bash'
