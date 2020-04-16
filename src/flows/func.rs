@@ -11,8 +11,8 @@ pub fn main(func: String, args: Vec<String>) -> Result<(), Error> {
                 .next()
                 .ok_or_else(|| anyhow!("No URL specified"))?;
             let cmd = format!(
-                r#"url="$(echo "{}" | tr ' ' '+')"; (xdg-open "$url" 2> /dev/null || open "$url" 2> /dev/null) &disown"#,
-                url
+                r#"url="{}"; (xdg-open "$url" 2> /dev/null || open "$url" 2> /dev/null) &disown"#,
+                url.replace('"', "").replace('\'', "").replace(' ', "+")
             );
             Command::new("bash")
                 .arg("-c")
@@ -23,7 +23,7 @@ pub fn main(func: String, args: Vec<String>) -> Result<(), Error> {
         }
 
         "welcome" => handler::handle_config(option::config_from_iter(
-            "navi --path /tmp/irrelevant".split(' ').collect(),
+            "navi --path /tmp/navi/irrelevant".split(' ').collect(),
         )),
 
         _ => Err(anyhow!("Unrecognized function")),

@@ -8,7 +8,7 @@ exst() {
    type "$1" &>/dev/null
 }
 
-_paste() {
+_copy() {
    if exst pbcopy; then
       pbcopy
    elif exst xclip; then
@@ -18,12 +18,16 @@ _paste() {
    else
       exit 55
    fi
-}
-"#;
+}"#;
 
     Command::new("bash")
         .arg("-c")
-        .arg(format!(r#"{} echo "{}" | _paste"#, cmd, text).as_str())
+        .arg(format!(r#"{} 
+        read -r -d '' x <<'EOF'
+{}
+EOF
+
+echo -n "$x" | _copy"#, cmd, text).as_str())
         .spawn()
         .map_err(|e| BashSpawnError::new(cmd, e))?;
 
