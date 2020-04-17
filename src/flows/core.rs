@@ -203,7 +203,6 @@ fn replace_variables_from_snippet(
         } else {
             interpolated_snippet.replacen(bracketed_variable_name, value.as_str(), 1)
         };
-            
     }
 
     Ok(interpolated_snippet)
