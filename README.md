@@ -135,7 +135,7 @@ navi repo browse
 
 In addition, you can import cheatsheets from any git repository:
 ```sh
-navi repo add https://github.com/denisidoro/navi
+navi repo add https://github.com/denisidoro/cheats
 ```
 
 ### Adding your own cheatsheets
