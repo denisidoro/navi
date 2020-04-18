@@ -1,6 +1,6 @@
 use crate::flows;
 use crate::flows::core::Variant;
-use crate::structures::option::Command::{Best, Fn, Preview, Query, Repo, Search, Widget};
+use crate::structures::option::Command::{Best, Fn, Preview, Query, Repo, Search, Widget, Alfred};
 use crate::structures::option::{Config, RepoCommand};
 use anyhow::Context;
 use anyhow::Error;
@@ -39,6 +39,8 @@ pub fn handle_config(config: Config) -> Result<(), Error> {
                 RepoCommand::Browse => flows::repo::browse(&config.finder)
                     .context("Failed to browse featured cheatsheets"),
             },
+
+            Alfred => flows::alfred::main(config)
         },
     }
 }

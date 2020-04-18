@@ -7,3 +7,4 @@ pub mod query;
 pub mod repo;
 pub mod search;
 pub mod shell;
+pub mod alfred;

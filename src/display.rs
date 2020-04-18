@@ -2,6 +2,7 @@ use crate::terminal;
 use regex::Regex;
 use std::cmp::max;
 use termion::color;
+use crate::structures::item::Item;
 
 const COMMENT_COLOR: color::LightCyan = color::LightCyan;
 const TAG_COLOR: color::Blue = color::Blue;
@@ -12,11 +13,10 @@ pub const LINE_SEPARATOR: &str = " \x15 ";
 pub const DELIMITER: &str = r"  ⠀";
 
 lazy_static! {
-    pub static ref WIDTHS: (usize, usize) = get_widths();
     pub static ref NEWLINE_REGEX: Regex = Regex::new(r"\\\s+").expect("Invalid regex");
 }
 
-fn get_widths() -> (usize, usize) {
+pub fn get_widths() -> (usize, usize) {
     let width = terminal::width();
     let tag_width = max(4, width * 20 / 100);
     let comment_width = max(4, width * 40 / 100);
@@ -76,4 +76,19 @@ pub fn format_line(
        comment = comment,
        delimiter = DELIMITER,
        snippet = &snippet)
+}
+
+pub trait Writer {
+    fn write(&self, item: Item) -> String;
+}
+
+pub struct FinderWriter {
+    pub tag_width: usize,
+    pub comment_width: usize
+}
+
+impl Writer for FinderWriter {
+    fn write(&self, item: Item) -> String {
+        format_line(item.tags, item.comment, item.snippet, self.tag_width, self.comment_width)
+    }
 }

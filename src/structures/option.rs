@@ -106,6 +106,8 @@ pub enum Command {
         /// bash, zsh or fish
         shell: String,
     },
+    /// Alfred
+    Alfred
 }
 
 #[derive(Debug, StructOpt)]

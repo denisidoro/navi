@@ -1,9 +1,9 @@
-use crate::display;
+use crate::display::{self, Writer};
 use crate::filesystem;
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use crate::structures::fnv::HashLine;
-use crate::structures::{error::filesystem::InvalidPath, option::Config};
+use crate::structures::{error::filesystem::InvalidPath, option::Config, item::Item};
 use crate::welcome;
 use anyhow::{Context, Error};
 use regex::Regex;
@@ -115,16 +115,16 @@ fn write_cmd(
     tags: &str,
     comment: &str,
     snippet: &str,
-    tag_width: usize,
-    comment_width: usize,
+    writer: &Box<impl Writer>,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
     if snippet.len() <= 1 {
         Ok(())
     } else {
+        let item = Item { tags: &tags, comment: &comment, snippet: &snippet };
         stdin
             .write_all(
-                display::format_line(&tags, &comment, &snippet, tag_width, comment_width)
+                writer.write(item)
                     .as_bytes(),
             )
             .context("Failed to write command to finder's stdin")
@@ -135,14 +135,13 @@ fn read_file(
     path: &str,
     variables: &mut VariableMap,
     visited_lines: &mut HashSet<u64>,
+    writer: &Box<impl Writer>,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
     let mut tags = String::from("");
     let mut comment = String::from("");
     let mut snippet = String::from("");
     let mut should_break = false;
-
-    let (tag_width, comment_width) = *display::WIDTHS;
 
     for (line_nr, line_result) in filesystem::read_lines(path)?.enumerate() {
         let line = line_result
@@ -158,9 +157,10 @@ fn read_file(
         // blank
         if line.is_empty() {
         }
+
         // tag
         else if line.starts_with('%') {
-            if write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin).is_err() {
+            if write_cmd(&tags, &comment, &snippet, writer, stdin).is_err() {
                 should_break = true
             }
             snippet = String::from("");
@@ -170,12 +170,14 @@ fn read_file(
                 String::from("")
             };
         }
+
         // metacomment
         else if line.starts_with(';') {
         }
+        
         // comment
         else if line.starts_with('#') {
-            if write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin).is_err() {
+            if write_cmd(&tags, &comment, &snippet, writer, stdin).is_err() {
                 should_break = true
             }
             snippet = String::from("");
@@ -185,9 +187,10 @@ fn read_file(
                 String::from("")
             };
         }
+
         // variable
         else if line.starts_with('$') {
-            if write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin).is_err() {
+            if write_cmd(&tags, &comment, &snippet, writer, stdin).is_err() {
                 should_break = true
             }
             snippet = String::from("");
@@ -200,6 +203,7 @@ fn read_file(
             })?;
             variables.insert(&tags, &variable, (String::from(command), opts));
         }
+        
         // snippet
         else {
             let hash = format!("{}{}", &comment, &line).hash_line();
@@ -216,7 +220,7 @@ fn read_file(
     }
 
     if !should_break {
-        let _ = write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin);
+        let _ = write_cmd(&tags, &comment, &snippet, writer, stdin);
     }
 
     Ok(())
@@ -233,10 +237,12 @@ pub fn read_all(
     let mut variables = VariableMap::new();
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
+    let (tag_width, comment_width) = display::get_widths();
+    let writer = Box::new(display::FinderWriter { tag_width, comment_width });
     let paths = filesystem::cheat_paths(config);
 
     if paths.is_err() {
-        welcome::cheatsheet(stdin);
+        welcome::cheatsheet(&writer, stdin);
         return Ok(variables);
     }
 
@@ -252,7 +258,7 @@ pub fn read_all(
                         .to_str()
                         .ok_or_else(|| InvalidPath(path.to_path_buf()))?;
                     if path_str.ends_with(".cheat")
-                        && read_file(path_str, &mut variables, &mut visited_lines, stdin).is_ok()
+                        && read_file(path_str, &mut variables, &mut visited_lines, &writer, stdin).is_ok()
                         && !found_something
                     {
                         found_something = true;
@@ -263,7 +269,7 @@ pub fn read_all(
     }
 
     if !found_something {
-        welcome::cheatsheet(stdin);
+        welcome::cheatsheet(&writer, stdin);
     }
 
     Ok(variables)

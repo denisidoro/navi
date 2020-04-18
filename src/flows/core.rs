@@ -213,7 +213,6 @@ fn with_new_lines(txt: String) -> String {
 }
 
 pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Error> {
-    let _ = display::WIDTHS;
 
     let opts =
         gen_core_finder_opts(variant, &config).context("Failed to generate finder options")?;
