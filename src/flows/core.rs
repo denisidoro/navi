@@ -198,8 +198,11 @@ fn replace_variables_from_snippet(
 
         values.insert(variable_name.to_string(), value.clone());
 
-        interpolated_snippet =
-            interpolated_snippet.replacen(bracketed_variable_name, value.as_str(), 1);
+        interpolated_snippet = if value.as_str() == "\n" {
+            interpolated_snippet.replacen(bracketed_variable_name, "", 1)
+        } else {
+            interpolated_snippet.replacen(bracketed_variable_name, value.as_str(), 1)
+        };
     }
 
     Ok(interpolated_snippet)
