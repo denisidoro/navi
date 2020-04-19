@@ -4,7 +4,9 @@
 
 An interactive cheatsheet tool for the command-line.
 
-![Demo](https://user-images.githubusercontent.com/3226564/76437136-ddc35900-6397-11ea-823c-d2da7615fe60.gif)
+![Terminal demo](https://user-images.githubusercontent.com/3226564/76437136-ddc35900-6397-11ea-823c-d2da7615fe60.gif)
+
+![Alfred demo](https://user-images.githubusercontent.com/3226564/79696281-35d06380-8252-11ea-87d5-dc619d869e81.gif)
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands. Argument suggestions are prompted to you.
 
@@ -13,7 +15,7 @@ An interactive cheatsheet tool for the command-line.
 - it will spare you from knowing CLIs by heart;
 - it will teach you new one-liners.
 
-It uses [fzf](https://github.com/junegunn/fzf) or [skim](https://github.com/lotabout/skim) under the hood and it can be either used as a command or as a shell widget (*à la* Ctrl-R).
+It uses [fzf](https://github.com/junegunn/fzf), [skim](https://github.com/lotabout/skim), or [Alfred](https://www.alfredapp.com/) under the hood and it can be either used as a command or as a shell widget (*à la* Ctrl-R).
 
 Table of contents
 -----------------

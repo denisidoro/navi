@@ -88,8 +88,8 @@ impl Writer for FinderWriter {
 }
 
 fn escape_for_json(txt: &str) -> String {
-    txt.replace('"', "")
-        .replace('\\', "")
+    txt.replace('\\', "\\\\")
+        .replace('"', "\\\"")
         .replace(NEWLINE_ESCAPE_CHAR, " ")
 }
 

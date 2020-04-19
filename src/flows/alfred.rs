@@ -89,7 +89,7 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
 
         let mut is_first = true;
         for line in lines.split('\n') {
-            if line.len() < 2 {
+            if line.len() < 3 {
                 continue;
             }
 
@@ -104,7 +104,7 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
                 r#"{prefix}{{
         "type": "file",
         "title": "{value}",
-        "subtitle": "subtitle",
+        "subtitle": "{snippet}",
         "autocomplete": "Desktop",
         "variables": {{
                 "{varname}": "{value}"
@@ -115,6 +115,7 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
         }}
 }}"#,
                 prefix = prefix,
+                snippet = snippet,
                 varname = varname,
                 value = line
             );
