@@ -95,7 +95,7 @@ fn escape_for_json(txt: &str) -> String {
 
 impl Writer for AlfredWriter {
     fn write(&mut self, item: Item) -> String {
-        let prefix = if self.is_first == true {
+        let prefix = if self.is_first {
             self.is_first = false;
             ""
         } else {

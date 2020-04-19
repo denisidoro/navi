@@ -93,7 +93,7 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
                 continue;
             }
 
-            let prefix = if is_first == true {
+            let prefix = if is_first {
                 is_first = false;
                 ""
             } else {
