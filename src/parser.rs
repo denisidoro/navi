@@ -3,8 +3,8 @@ use crate::filesystem;
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use crate::structures::fnv::HashLine;
-use crate::structures::{error::filesystem::InvalidPath, option::Config, item::Item};
-use crate::structures::option::Command::{Best, Fn, Preview, Query, Repo, Search, Widget, Alfred};
+use crate::structures::option::Command::{Alfred, Best, Fn, Preview, Query, Repo, Search, Widget};
+use crate::structures::{error::filesystem::InvalidPath, item::Item, option::Config};
 use crate::welcome;
 use anyhow::{Context, Error};
 use regex::Regex;
@@ -122,12 +122,13 @@ fn write_cmd(
     if snippet.len() <= 1 {
         Ok(())
     } else {
-        let item = Item { tags: &tags, comment: &comment, snippet: &snippet };
+        let item = Item {
+            tags: &tags,
+            comment: &comment,
+            snippet: &snippet,
+        };
         stdin
-            .write_all(
-                writer.write(item)
-                    .as_bytes(),
-            )
+            .write_all(writer.write(item).as_bytes())
             .context("Failed to write command to finder's stdin")
     }
 }
@@ -158,7 +159,6 @@ fn read_file(
         // blank
         if line.is_empty() {
         }
-
         // tag
         else if line.starts_with('%') {
             if write_cmd(&tags, &comment, &snippet, writer, stdin).is_err() {
@@ -171,11 +171,9 @@ fn read_file(
                 String::from("")
             };
         }
-
         // metacomment
         else if line.starts_with(';') {
         }
-        
         // comment
         else if line.starts_with('#') {
             if write_cmd(&tags, &comment, &snippet, writer, stdin).is_err() {
@@ -188,7 +186,6 @@ fn read_file(
                 String::from("")
             };
         }
-
         // variable
         else if line.starts_with('$') {
             if write_cmd(&tags, &comment, &snippet, writer, stdin).is_err() {
@@ -204,7 +201,6 @@ fn read_file(
             })?;
             variables.insert(&tags, &variable, (String::from(command), opts));
         }
-
         // snippet
         else {
             let hash = format!("{}{}", &comment, &line).hash_line();
@@ -238,11 +234,14 @@ pub fn read_all(
     let mut variables = VariableMap::new();
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
-    let mut writer: Box<dyn Writer> = if let Some(Alfred) = config.cmd {
+    let mut writer: Box<dyn Writer> = if let Some(Alfred { cmd }) = &config.cmd {
         Box::new(display::AlfredWriter { is_first: true })
     } else {
         let (tag_width, comment_width) = display::get_widths();
-        Box::new(display::FinderWriter { tag_width, comment_width })
+        Box::new(display::FinderWriter {
+            tag_width,
+            comment_width,
+        })
     };
     let paths = filesystem::cheat_paths(config);
 
@@ -263,7 +262,14 @@ pub fn read_all(
                         .to_str()
                         .ok_or_else(|| InvalidPath(path.to_path_buf()))?;
                     if path_str.ends_with(".cheat")
-                        && read_file(path_str, &mut variables, &mut visited_lines, &mut writer, stdin).is_ok()
+                        && read_file(
+                            path_str,
+                            &mut variables,
+                            &mut visited_lines,
+                            &mut writer,
+                            stdin,
+                        )
+                        .is_ok()
                         && !found_something
                     {
                         found_something = true;
