@@ -62,7 +62,11 @@ fn prompt_with_suggestions(
 }
 
 pub fn suggestions(config: Config) -> Result<(), Error> {
-    let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().unwrap();
+    let mut child = Command::new("cat")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::null())
+        .spawn()
+        .unwrap();
     let stdin = child.stdin.as_mut().unwrap();
 
     let variables = parser::read_all(&config, stdin)
@@ -73,40 +77,44 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
     let comment = env::var("comment").unwrap();
     let snippet = env::var("snippet").unwrap();
 
-    let varname = &VAR_REGEX.captures_iter(&snippet).next().unwrap()[0];
+    let varname = VAR_REGEX.captures_iter(&snippet).next();
 
-    variables
-        .get(&tags, &variable_name)
-        .ok_or_else(|| anyhow!("No suggestions"))
-        .and_then(|suggestion| {
-            let out = prompt_with_suggestions(&variable_name, &config, suggestion).unwrap();
+    if varname.is_some() {
+        let varname = &varname.unwrap()[0];
 
-            println!("{}", out);
-            Ok(())
-        })?;
+        variables
+            .get(&tags, &variable_name)
+            .ok_or_else(|| anyhow!("No suggestions"))
+            .and_then(|suggestion| {
+                let out = prompt_with_suggestions(&variable_name, &config, suggestion).unwrap();
 
-    println!(
-        r#"{{"variables": {{"varname": {varname}, "items": ["#,
-        varname = varname
-    );
+                println!("{}", out);
+                Ok(())
+            })?;
 
-    /*println!(r#"
-                {{
-          "type": "file",
-          "title": "lorem",
-          "subtitle": "uber, url :: navi fn url::open https://ubunny.uberinternal.com/ubunny?q=eng+<query>",
-          "variables": {{
-            "{varname}": "lorem"
-          }},
-          "autocomplete": "Desktop",
-          "icon": {{
-            "type": "fileicon",
-            "path": "~/Desktop"
-          }}
-        }}"#,
-    varname = varname);*/
+        /*println!(
+            r#"{{"variables": {{"varname": {varname}, "items": ["#,
+            varname = varname
+        );*/
 
-    println!(r#"]}}"#);
+        /*println!(r#"
+                    {{
+              "type": "file",
+              "title": "lorem",
+              "subtitle": "uber, url :: navi fn url::open https://ubunny.uberinternal.com/ubunny?q=eng+<query>",
+              "variables": {{
+                "{varname}": "lorem"
+              }},
+              "autocomplete": "Desktop",
+              "icon": {{
+                "type": "fileicon",
+                "path": "~/Desktop"
+              }}
+            }}"#,
+        varname = varname);*/
+
+        //println!(r#"]}}"#);
+    }
 
     Ok(())
 }
