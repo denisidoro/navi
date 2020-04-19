@@ -107,7 +107,7 @@ impl Writer for AlfredWriter {
         let snippet = escape_for_json(item.snippet);
 
         format!(
-            r#"{prefix}{{"type":"file","title":"{comment}","match":"{comment} {tags} {snippet}","subtitle":"{tags} :: {snippet}","variables":{{"tag":"mytag","comment":"mycomment","snippet":"{snippet}"}},"autocomplete":"Desktop","icon":{{"type":"fileicon","path":"~/Desktop"}}}}"#,
+            r#"{prefix}{{"type":"file","title":"{comment}","match":"{comment} {tags} {snippet}","subtitle":"{tags} :: {snippet}","variables":{{"tags":"{tags}","comment":"{comment}","snippet":"{snippet}"}},"autocomplete":"Desktop","icon":{{"type":"fileicon","path":"~/Desktop"}}}}"#,
             prefix = prefix,
             tags = tags,
             comment = comment,

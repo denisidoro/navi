@@ -65,7 +65,6 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
     let variables = parser::read_all(&config, stdin)
         .context("Failed to parse variables intended for finder")?;
 
-    let variable_name = env::var("varname").unwrap();
     let tags = env::var("tags").unwrap();
     let _comment = env::var("comment").unwrap();
     let snippet = env::var("snippet").unwrap();
@@ -73,43 +72,22 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
     let varname = VAR_REGEX.captures_iter(&snippet).next();
 
     if varname.is_some() {
-        let _varname = &varname.unwrap()[0];
+        let varname = &varname.unwrap()[0];
+        let varname = &varname[1..varname.len()-1];
 
-        variables
-            .get(&tags, &variable_name)
+println!(r#"{{"variables": {{"varname": "$varname"}}, "items": ["#);
+
+        let lines = variables
+            .get(&tags, &varname)
             .ok_or_else(|| anyhow!("No suggestions"))
             .and_then(|suggestion| {
-                let out = prompt_with_suggestions(&variable_name, &config, suggestion).unwrap();
-
-                println!("{}", out);
-                Ok(())
+                Ok(prompt_with_suggestions(&varname, &config, suggestion).unwrap())
             })?;
 
-        /*println!(
-            r#"{{"variables": {{"varname": {varname}, "items": ["#,
-            varname = varname
-        );*/
+println!(r#"]}}"#);
+}
 
-        /*println!(r#"
-                    {{
-              "type": "file",
-              "title": "lorem",
-              "subtitle": "uber, url :: navi fn url::open https://ubunny.uberinternal.com/ubunny?q=eng+<query>",
-              "variables": {{
-                "{varname}": "lorem"
-              }},
-              "autocomplete": "Desktop",
-              "icon": {{
-                "type": "fileicon",
-                "path": "~/Desktop"
-              }}
-            }}"#,
-        varname = varname);*/
-
-        //println!(r#"]}}"#);
-    }
-
-    Ok(())
+Ok(())
 }
 
 pub fn transform(_config: Config) -> Result<(), Error> {
