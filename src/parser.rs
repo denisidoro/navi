@@ -116,7 +116,7 @@ fn write_cmd(
     tags: &str,
     comment: &str,
     snippet: &str,
-    writer: &mut Box<dyn Writer>,
+    writer: &mut dyn Writer,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
     if snippet.len() <= 1 {
@@ -137,7 +137,7 @@ fn read_file(
     path: &str,
     variables: &mut VariableMap,
     visited_lines: &mut HashSet<u64>,
-    writer: &mut Box<dyn Writer>,
+    writer: &mut dyn Writer,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
     let mut tags = String::from("");
@@ -234,7 +234,7 @@ pub fn read_all(
     let mut variables = VariableMap::new();
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
-    let mut writer: Box<dyn Writer> = if let Some(Alfred { cmd: _ }) = &config.cmd {
+    let mut writer: Box<dyn Writer> = if let Some(Alfred { .. }) = &config.cmd {
         Box::new(display::AlfredWriter { is_first: true })
     } else {
         let (tag_width, comment_width) = display::get_widths();

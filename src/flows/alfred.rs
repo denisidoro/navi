@@ -71,8 +71,8 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
 
     let varname = VAR_REGEX.captures_iter(&snippet).next();
 
-    if varname.is_some() {
-        let varname = &varname.unwrap()[0];
+    if let Some(varname) = varname {
+        let varname = &varname[0];
         let varname = &varname[1..varname.len() - 1];
 
         println!(
