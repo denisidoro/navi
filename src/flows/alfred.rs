@@ -75,17 +75,48 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
         let varname = &varname.unwrap()[0];
         let varname = &varname[1..varname.len() - 1];
 
-        println!(r#"{{"variables": {{"varname": "$varname"}}, "items": ["#);
+        println!(r#"{{"variables": {{"varname": "{varname}"}}, "items": ["#,
+    varname = varname);
 
-        let _lines = variables
+        let lines = variables
             .get(&tags, &varname)
             .ok_or_else(|| anyhow!("No suggestions"))
             .and_then(|suggestion| {
                 Ok(prompt_with_suggestions(&varname, &config, suggestion).unwrap())
             })?;
 
-        println!(r#"]}}"#);
+            let mut is_first = true;
+        for line in lines.split('\n') {
+            let prefix = if is_first == true {
+                is_first = false;
+                ""
+            } else {
+                ","
+            };
+
+            println!(r#"{prefix}{{
+        "type": "file",
+        "title": "{value}",
+        "subtitle": "subtitle",
+        "autocomplete": "Desktop",
+        "variables": {{
+                "{varname}": "{value}"
+        }},
+        "icon": {{
+                "type": "fileicon",
+                "path": "~/Desktop"
+        }}
+}}"#,
+prefix = prefix,
+varname = varname,
+value = line);
+        }
+
+    } else {
+        println!(r#"{{"items": ["#);
     }
+
+        println!(r#"]}}"#);
 
     Ok(())
 }
