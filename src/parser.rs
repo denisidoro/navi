@@ -137,7 +137,7 @@ fn read_file(
     path: &str,
     variables: &mut VariableMap,
     visited_lines: &mut HashSet<u64>,
-    writer: &mut Bo<dyn Writer>,
+    writer: &mut Box<dyn Writer>,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
     let mut tags = String::from("");
