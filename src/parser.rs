@@ -116,7 +116,7 @@ fn write_cmd(
     tags: &str,
     comment: &str,
     snippet: &str,
-    writer: &mut dyn Writer,
+    writer: &mut Box<dyn Writer>,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
     if snippet.len() <= 1 {
@@ -137,7 +137,7 @@ fn read_file(
     path: &str,
     variables: &mut VariableMap,
     visited_lines: &mut HashSet<u64>,
-    writer: &mut dyn Writer,
+    writer: &mut Bo<dyn Writer>,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
     let mut tags = String::from("");
