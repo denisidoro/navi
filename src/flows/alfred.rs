@@ -89,6 +89,10 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
 
         let mut is_first = true;
         for line in lines.split('\n') {
+            if line.len() < 2 { 
+                continue; 
+            }
+
             let prefix = if is_first == true {
                 is_first = false;
                 ""
