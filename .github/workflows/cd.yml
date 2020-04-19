@@ -9,7 +9,7 @@ jobs:
 
   alfred:
     name: Publish Alfred workflow
-    os: macos-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - name: Zip
