@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.github.denisidoro.navi</string>
+	<key>category</key>
+	<string>Tools</string>
+	<key>connections</key>
+	<dict>
+		<key>3CE4BEC1-BEBE-4A11-B182-E63693AE2FE6</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>98658166-32FC-4F9D-8247-52BEDE6394EE</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>55C46852-4807-4374-95AB-CC055F4ECB7C</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>7DD3BDE5-A157-42E5-9376-F681FB50A4EE</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>7DD3BDE5-A157-42E5-9376-F681FB50A4EE</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>3CE4BEC1-BEBE-4A11-B182-E63693AE2FE6</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>98658166-32FC-4F9D-8247-52BEDE6394EE</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>B55D209F-7FF3-4C23-AA39-BA8E37B91452</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>B55D209F-7FF3-4C23-AA39-BA8E37B91452</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>93437EDA-0308-467D-BE3F-6855C638D49D</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>F78DD511-9EC2-4272-8946-C6E3E269DE2E</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>529BC67C-C77D-41CA-B095-996CC1317556</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>F05BFEA8-AEE7-486A-9A54-B3162A233BAC</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>7DD3BDE5-A157-42E5-9376-F681FB50A4EE</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Denis Isidoro</string>
+	<key>description</key>
+	<string>Integration with navi, the interactive cheatsheet tool for the command-line</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>navi</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>externaltriggerid</key>
+				<string>play</string>
+				<key>passinputasargument</key>
+				<false/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>93437EDA-0308-467D-BE3F-6855C638D49D</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>n</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<false/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Generating results...</string>
+				<key>script</key>
+				<string>#!/bin/bash
+#
+# Alfred Script Filter JSON format
+#
+# This example demonstrates all fields available for populating results.
+#
+# For an in-depth explanation, use the (?) help button to the bottom left.
+#
+
+_print_snippets() {
+
+        IFS=$'\n'
+
+        items="{\"items\": ["
+        uid="$RANDOM"
+
+        snippets="$(cat uber.cheat | grep '^#' | sed 's/^# //')"
+
+        for line in $snippets; do 
+
+                # title="$(echo "$line" | tr -d '"')"
+                title="$(echo "$line" | tr -d '"')"
+                uid="$title"
+
+                item=$(cat &lt;&lt;EOF
+{
+        "uid": "$uid",
+        "type": "file",
+        "title": "$title",
+        "subtitle": "subtitle",
+        "arg": "echo &lt;foo&gt; &lt;bar&gt;",
+        "autocomplete": "Desktop",
+        "icon": {
+                "type": "fileicon",
+                "path": "~/Desktop"
+        }
+},
+EOF
+                )
+
+                items="$items $item"
+
+        done
+
+        echo "${items%?} ]}"
+                
+}
+
+_interpolate() {
+
+        snippet="$1"
+
+        IFS=$'\n'
+
+        items="{\"items\": ["
+        uid="$RANDOM"
+
+        snippets="foo
+        bar"
+
+        for line in $snippets; do 
+
+                # title="$(echo "$line" | tr -d '"')"
+                title="$(echo "$line" | tr -d '"')"
+                uid="$title"
+
+                item=$(cat &lt;&lt;EOF
+{
+        "uid": "$uid",
+        "type": "file",
+        "title": "lorem",
+        "subtitle": "subtitle",
+        "arg": "ipsum",
+        "autocomplete": "Desktop",
+        "icon": {
+                "type": "fileicon",
+                "path": "~/Desktop"
+        }
+},
+EOF
+                )
+
+                items="$items $item"
+
+        done
+
+        echo "${items%?} ]}"
+                
+}
+
+if [ -n "${snippet:-} "]; then 
+        _interpolate "$snippet"
+elif [ -n "${query:-} "]; then 
+        _interpolate "$query"
+else
+        _print_snippets
+fi
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>alfred.bash</string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>navi</string>
+				<key>type</key>
+				<integer>8</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>7DD3BDE5-A157-42E5-9376-F681FB50A4EE</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>triggerid</key>
+				<string>play</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>55C46852-4807-4374-95AB-CC055F4ECB7C</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>echo asdsds</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>alfred2.bash</string>
+				<key>type</key>
+				<integer>8</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>3CE4BEC1-BEBE-4A11-B182-E63693AE2FE6</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string>{var:snippet}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
+						<string>&lt;[\w\d_\-]+&gt;</string>
+						<key>outputlabel</key>
+						<string>variable left</string>
+						<key>uid</key>
+						<string>F78DD511-9EC2-4272-8946-C6E3E269DE2E</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>no variables</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>B55D209F-7FF3-4C23-AA39-BA8E37B91452</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>variables</key>
+				<dict>
+					<key>snippet</key>
+					<string>{query}</string>
+				</dict>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>98658166-32FC-4F9D-8247-52BEDE6394EE</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<true/>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>source $HOME/.bashrc
+eval "$snippet"</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string>navi</string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>529BC67C-C77D-41CA-B095-996CC1317556</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>6</integer>
+				<key>hotmod</key>
+				<integer>1966080</integer>
+				<key>hotstring</key>
+				<string>Z</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>F05BFEA8-AEE7-486A-9A54-B3162A233BAC</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>3CE4BEC1-BEBE-4A11-B182-E63693AE2FE6</key>
+		<dict>
+			<key>xpos</key>
+			<integer>355</integer>
+			<key>ypos</key>
+			<integer>170</integer>
+		</dict>
+		<key>529BC67C-C77D-41CA-B095-996CC1317556</key>
+		<dict>
+			<key>xpos</key>
+			<integer>835</integer>
+			<key>ypos</key>
+			<integer>285</integer>
+		</dict>
+		<key>55C46852-4807-4374-95AB-CC055F4ECB7C</key>
+		<dict>
+			<key>xpos</key>
+			<integer>10</integer>
+			<key>ypos</key>
+			<integer>170</integer>
+		</dict>
+		<key>7DD3BDE5-A157-42E5-9376-F681FB50A4EE</key>
+		<dict>
+			<key>xpos</key>
+			<integer>175</integer>
+			<key>ypos</key>
+			<integer>170</integer>
+		</dict>
+		<key>93437EDA-0308-467D-BE3F-6855C638D49D</key>
+		<dict>
+			<key>xpos</key>
+			<integer>830</integer>
+			<key>ypos</key>
+			<integer>155</integer>
+		</dict>
+		<key>98658166-32FC-4F9D-8247-52BEDE6394EE</key>
+		<dict>
+			<key>xpos</key>
+			<integer>535</integer>
+			<key>ypos</key>
+			<integer>200</integer>
+		</dict>
+		<key>B55D209F-7FF3-4C23-AA39-BA8E37B91452</key>
+		<dict>
+			<key>xpos</key>
+			<integer>640</integer>
+			<key>ypos</key>
+			<integer>190</integer>
+		</dict>
+		<key>F05BFEA8-AEE7-486A-9A54-B3162A233BAC</key>
+		<dict>
+			<key>xpos</key>
+			<integer>10</integer>
+			<key>ypos</key>
+			<integer>310</integer>
+		</dict>
+	</dict>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>0.1.0</string>
+	<key>webaddress</key>
+	<string>https://github.com/denisidoro</string>
+</dict>
+</plist>

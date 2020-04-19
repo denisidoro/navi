@@ -1,9 +1,10 @@
-use crate::display;
+use crate::display::{self, Writer};
 use crate::filesystem;
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use crate::structures::fnv::HashLine;
-use crate::structures::{error::filesystem::InvalidPath, option::Config};
+use crate::structures::option::Command::Alfred;
+use crate::structures::{error::filesystem::InvalidPath, item::Item, option::Config};
 use crate::welcome;
 use anyhow::{Context, Error};
 use regex::Regex;
@@ -115,18 +116,19 @@ fn write_cmd(
     tags: &str,
     comment: &str,
     snippet: &str,
-    tag_width: usize,
-    comment_width: usize,
+    writer: &mut Box<dyn Writer>,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
     if snippet.len() <= 1 {
         Ok(())
     } else {
+        let item = Item {
+            tags: &tags,
+            comment: &comment,
+            snippet: &snippet,
+        };
         stdin
-            .write_all(
-                display::format_line(&tags, &comment, &snippet, tag_width, comment_width)
-                    .as_bytes(),
-            )
+            .write_all(writer.write(item).as_bytes())
             .context("Failed to write command to finder's stdin")
     }
 }
@@ -135,14 +137,13 @@ fn read_file(
     path: &str,
     variables: &mut VariableMap,
     visited_lines: &mut HashSet<u64>,
+    writer: &mut Box<dyn Writer>,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
     let mut tags = String::from("");
     let mut comment = String::from("");
     let mut snippet = String::from("");
     let mut should_break = false;
-
-    let (tag_width, comment_width) = *display::WIDTHS;
 
     for (line_nr, line_result) in filesystem::read_lines(path)?.enumerate() {
         let line = line_result
@@ -160,7 +161,7 @@ fn read_file(
         }
         // tag
         else if line.starts_with('%') {
-            if write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin).is_err() {
+            if write_cmd(&tags, &comment, &snippet, writer, stdin).is_err() {
                 should_break = true
             }
             snippet = String::from("");
@@ -175,7 +176,7 @@ fn read_file(
         }
         // comment
         else if line.starts_with('#') {
-            if write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin).is_err() {
+            if write_cmd(&tags, &comment, &snippet, writer, stdin).is_err() {
                 should_break = true
             }
             snippet = String::from("");
@@ -187,13 +188,13 @@ fn read_file(
         }
         // variable
         else if line.starts_with('$') {
-            if write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin).is_err() {
+            if write_cmd(&tags, &comment, &snippet, writer, stdin).is_err() {
                 should_break = true
             }
             snippet = String::from("");
             let (variable, command, opts) = parse_variable_line(&line).with_context(|| {
                 format!(
-                    "Failed to parse variable line. See line nr.{} in cheatsheet `{}`",
+                    "Failed to parse variable line. See line number {} in cheatsheet `{}`",
                     line_nr + 1,
                     path
                 )
@@ -216,7 +217,7 @@ fn read_file(
     }
 
     if !should_break {
-        let _ = write_cmd(&tags, &comment, &snippet, tag_width, comment_width, stdin);
+        let _ = write_cmd(&tags, &comment, &snippet, writer, stdin);
     }
 
     Ok(())
@@ -233,10 +234,19 @@ pub fn read_all(
     let mut variables = VariableMap::new();
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
+    let mut writer: Box<dyn Writer> = if let Some(Alfred { .. }) = &config.cmd {
+        Box::new(display::AlfredWriter { is_first: true })
+    } else {
+        let (tag_width, comment_width) = display::get_widths();
+        Box::new(display::FinderWriter {
+            tag_width,
+            comment_width,
+        })
+    };
     let paths = filesystem::cheat_paths(config);
 
     if paths.is_err() {
-        welcome::cheatsheet(stdin);
+        welcome::cheatsheet(&mut writer, stdin);
         return Ok(variables);
     }
 
@@ -252,7 +262,14 @@ pub fn read_all(
                         .to_str()
                         .ok_or_else(|| InvalidPath(path.to_path_buf()))?;
                     if path_str.ends_with(".cheat")
-                        && read_file(path_str, &mut variables, &mut visited_lines, stdin).is_ok()
+                        && read_file(
+                            path_str,
+                            &mut variables,
+                            &mut visited_lines,
+                            &mut writer,
+                            stdin,
+                        )
+                        .is_ok()
                         && !found_something
                     {
                         found_something = true;
@@ -263,7 +280,7 @@ pub fn read_all(
     }
 
     if !found_something {
-        welcome::cheatsheet(stdin);
+        welcome::cheatsheet(&mut writer, stdin);
     }
 
     Ok(variables)
@@ -300,7 +317,18 @@ mod tests {
         let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().unwrap();
         let child_stdin = child.stdin.as_mut().unwrap();
         let mut visited_lines: HashSet<u64> = HashSet::new();
-        read_file(path, &mut variables, &mut visited_lines, child_stdin).unwrap();
+        let mut writer: Box<dyn Writer> = Box::new(display::FinderWriter {
+            comment_width: 20,
+            tag_width: 30,
+        });
+        read_file(
+            path,
+            &mut variables,
+            &mut visited_lines,
+            &mut writer,
+            child_stdin,
+        )
+        .unwrap();
         let expected_suggestion = (
             r#" echo -e "$(whoami)\nroot" "#.to_string(),
             Some(FinderOpts {

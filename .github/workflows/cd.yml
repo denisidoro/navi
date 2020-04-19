@@ -6,8 +6,27 @@ on:
       - '*'
 
 jobs:
-  publish:
-    name: Publish for ${{ matrix.os }}
+
+  alfred:
+    name: Publish Alfred workflow
+    os: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Zip
+      run: scripts/action workflow
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+    - name: Upload workflow to release
+      uses: svenstaro/upload-release-action@v1-release
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: target/workflow/navi.zip
+        tag: ${{ github.ref }}
+        asset_name: navi-${{ steps.get_version.outputs.VERSION }}.alfredworkflow
+
+  binary:
+    name: Publish binary for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

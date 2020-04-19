@@ -2,9 +2,9 @@
   
 > :information_source: If you're here because you upgraded **navi** and are having some issues, please check [this thread](https://github.com/denisidoro/navi/issues/201).
 
-An interactive cheatsheet tool for the command-line.
+An interactive cheatsheet tool for the command-line and application launchers.
 
-![Demo](https://user-images.githubusercontent.com/3226564/76437136-ddc35900-6397-11ea-823c-d2da7615fe60.gif)
+![Terminal demo](https://user-images.githubusercontent.com/3226564/76437136-ddc35900-6397-11ea-823c-d2da7615fe60.gif)
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands. Argument suggestions are prompted to you.
 
@@ -13,7 +13,9 @@ An interactive cheatsheet tool for the command-line.
 - it will spare you from knowing CLIs by heart;
 - it will teach you new one-liners.
 
-It uses [fzf](https://github.com/junegunn/fzf) or [skim](https://github.com/lotabout/skim) under the hood and it can be either used as a command or as a shell widget (*à la* Ctrl-R).
+It uses [fzf](https://github.com/junegunn/fzf), [skim](https://github.com/lotabout/skim), or [Alfred](https://www.alfredapp.com/) under the hood and it can be either used as a command or as a shell widget (*à la* Ctrl-R).
+
+![Alfred demo](https://user-images.githubusercontent.com/3226564/79696281-35d06380-8252-11ea-87d5-dc619d869e81.gif)
 
 Table of contents
 -----------------
@@ -27,6 +29,7 @@ Table of contents
       * [Other package managers](#other-package-managers)
    * [Usage](#usage)
       * [Shell widget](#shell-widget)
+      * [Alfred](#alfred)
       * [More options](#more-options)
    * [Trying out online](#trying-out-online)
    * [Cheatsheets](#cheatsheets)
@@ -111,6 +114,8 @@ navi widget fish | source
 ```
 
 By default, `Ctrl+G` is assigned to launching **navi**.
+
+### Alfred
 
 ### More options
 
@@ -248,7 +253,7 @@ $ jsons: find . -iname '*.json' -type f -print --- --multi
 List customization
 ------------------
 
-Lists can be stylized with the [$FZF_DEFAULT_OPTS](https://github.com/junegunn/fzf#layout) environment variable or similar variables or parameters ( please refer to `navi --help`). This way, you can change the [color scheme](https://github.com/junegunn/fzf/wiki/Color-schemes), for example.
+Lists can be stylized with the [$FZF_DEFAULT_OPTS](https://github.com/junegunn/fzf#layout) environment variable or similar variables/parameters (please refer to `navi --help`). This way, you can change the [color scheme](https://github.com/junegunn/fzf/wiki/Color-schemes), for example.
 
 
 Related projects

@@ -35,8 +35,24 @@ release() {
 
    cp "$bin_path" "$TAR_DIR"
 
-   cd "${NAVI_HOME}/target/tar"
+   cd "$TAR_DIR"
    tar -czf navi.tar.gz *
+
+}
+
+workflow() {
+
+   WORKFLOW_DIR="${NAVI_HOME}/target/workflow"
+
+   cd "$NAVI_HOME"
+
+   rm -rf "${NAVI_HOME}/target" 2> /dev/null || true
+
+   mkdir -p "$WORKFLOW_DIR" 2> /dev/null || true
+
+   cp -r "${NAVI_HOME}/alfred" "$WORKFLOW_DIR"
+   cd "$WORKFLOW_DIR"
+   zip -r "navi.zip" "."
 
 }
 
@@ -45,4 +61,5 @@ shift
 
 case "$cmd" in
    "release") release "$@" ;;
+   "workflow") workflow "$@" ;;
 esac

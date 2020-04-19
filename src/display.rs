@@ -1,3 +1,4 @@
+use crate::structures::item::Item;
 use crate::terminal;
 use regex::Regex;
 use std::cmp::max;
@@ -12,11 +13,10 @@ pub const LINE_SEPARATOR: &str = " \x15 ";
 pub const DELIMITER: &str = r"  ⠀";
 
 lazy_static! {
-    pub static ref WIDTHS: (usize, usize) = get_widths();
     pub static ref NEWLINE_REGEX: Regex = Regex::new(r"\\\s+").expect("Invalid regex");
 }
 
-fn get_widths() -> (usize, usize) {
+pub fn get_widths() -> (usize, usize) {
     let width = terminal::width();
     let tag_width = max(4, width * 20 / 100);
     let comment_width = max(4, width * 40 / 100);
@@ -57,23 +57,61 @@ fn limit_str(text: &str, length: usize) -> String {
     }
 }
 
-pub fn format_line(
-    tags: &str,
-    comment: &str,
-    snippet: &str,
-    tag_width: usize,
-    comment_width: usize,
-) -> String {
-    format!(
+pub trait Writer {
+    fn write(&mut self, item: Item) -> String;
+}
+
+pub struct FinderWriter {
+    pub tag_width: usize,
+    pub comment_width: usize,
+}
+
+pub struct AlfredWriter {
+    pub is_first: bool,
+}
+
+impl Writer for FinderWriter {
+    fn write(&mut self, item: Item) -> String {
+        format!(
        "{tag_color}{tags_short}{delimiter}{comment_color}{comment_short}{delimiter}{snippet_color}{snippet_short}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}\n",
-       tags_short = limit_str(tags, tag_width),
-       comment_short = limit_str(comment, comment_width),
-       snippet_short = fix_newlines(snippet),
+       tags_short = limit_str(item.tags, self.tag_width),
+       comment_short = limit_str(item.comment, self.comment_width),
+       snippet_short = fix_newlines(item.snippet),
        comment_color = color::Fg(COMMENT_COLOR),
        tag_color = color::Fg(TAG_COLOR),
        snippet_color = color::Fg(SNIPPET_COLOR),
-       tags = tags,
-       comment = comment,
+       tags = item.tags,
+       comment = item.comment,
        delimiter = DELIMITER,
-       snippet = &snippet)
+       snippet = &item.snippet)
+    }
+}
+
+fn escape_for_json(txt: &str) -> String {
+    txt.replace('\\', "\\\\")
+        .replace('"', "\\\"")
+        .replace(NEWLINE_ESCAPE_CHAR, " ")
+}
+
+impl Writer for AlfredWriter {
+    fn write(&mut self, item: Item) -> String {
+        let prefix = if self.is_first {
+            self.is_first = false;
+            ""
+        } else {
+            ","
+        };
+
+        let tags = escape_for_json(item.tags);
+        let comment = escape_for_json(item.comment);
+        let snippet = escape_for_json(item.snippet);
+
+        format!(
+            r#"{prefix}{{"type":"file","title":"{comment}","match":"{comment} {tags} {snippet}","subtitle":"{tags} :: {snippet}","variables":{{"tags":"{tags}","comment":"{comment}","snippet":"{snippet}"}},"autocomplete":"Desktop","icon":{{"type":"fileicon","path":"~/Desktop"}}}}"#,
+            prefix = prefix,
+            tags = tags,
+            comment = comment,
+            snippet = snippet
+        )
+    }
 }

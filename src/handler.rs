@@ -1,7 +1,7 @@
 use crate::flows;
 use crate::flows::core::Variant;
-use crate::structures::option::Command::{Best, Fn, Preview, Query, Repo, Search, Widget};
-use crate::structures::option::{Config, RepoCommand};
+use crate::structures::option::Command::{Alfred, Best, Fn, Preview, Query, Repo, Search, Widget};
+use crate::structures::option::{AlfredCommand, Config, RepoCommand};
 use anyhow::Context;
 use anyhow::Error;
 
@@ -38,6 +38,12 @@ pub fn handle_config(config: Config) -> Result<(), Error> {
                     .with_context(|| format!("Failed to import cheatsheets from `{}`", uri)),
                 RepoCommand::Browse => flows::repo::browse(&config.finder)
                     .context("Failed to browse featured cheatsheets"),
+            },
+
+            Alfred { cmd } => match cmd {
+                AlfredCommand::Start => flows::alfred::main(config),
+                AlfredCommand::Suggestions => flows::alfred::suggestions(config),
+                AlfredCommand::Transform => flows::alfred::transform(config),
             },
         },
     }

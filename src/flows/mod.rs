@@ -1,3 +1,4 @@
+pub mod alfred;
 pub mod aux;
 pub mod best;
 pub mod core;

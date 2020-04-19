@@ -106,6 +106,11 @@ pub enum Command {
         /// bash, zsh or fish
         shell: String,
     },
+    /// Alfred
+    Alfred {
+        #[structopt(subcommand)]
+        cmd: AlfredCommand,
+    },
 }
 
 #[derive(Debug, StructOpt)]
@@ -117,6 +122,16 @@ pub enum RepoCommand {
     },
     /// Browses for featured cheatsheet repos
     Browse,
+}
+
+#[derive(Debug, StructOpt)]
+pub enum AlfredCommand {
+    /// Start
+    Start,
+    /// Suggestions
+    Suggestions,
+    /// Transform
+    Transform,
 }
 
 pub fn config_from_env() -> Config {
