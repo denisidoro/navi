@@ -73,21 +73,21 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
 
     if varname.is_some() {
         let varname = &varname.unwrap()[0];
-        let varname = &varname[1..varname.len()-1];
+        let varname = &varname[1..varname.len() - 1];
 
-println!(r#"{{"variables": {{"varname": "$varname"}}, "items": ["#);
+        println!(r#"{{"variables": {{"varname": "$varname"}}, "items": ["#);
 
-        let lines = variables
+        let _lines = variables
             .get(&tags, &varname)
             .ok_or_else(|| anyhow!("No suggestions"))
             .and_then(|suggestion| {
                 Ok(prompt_with_suggestions(&varname, &config, suggestion).unwrap())
             })?;
 
-println!(r#"]}}"#);
-}
+        println!(r#"]}}"#);
+    }
 
-Ok(())
+    Ok(())
 }
 
 pub fn transform(_config: Config) -> Result<(), Error> {
