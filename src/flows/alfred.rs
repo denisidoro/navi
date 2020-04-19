@@ -75,8 +75,10 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
         let varname = &varname.unwrap()[0];
         let varname = &varname[1..varname.len() - 1];
 
-        println!(r#"{{"variables": {{"varname": "{varname}"}}, "items": ["#,
-    varname = varname);
+        println!(
+            r#"{{"variables": {{"varname": "{varname}"}}, "items": ["#,
+            varname = varname
+        );
 
         let lines = variables
             .get(&tags, &varname)
@@ -85,7 +87,7 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
                 Ok(prompt_with_suggestions(&varname, &config, suggestion).unwrap())
             })?;
 
-            let mut is_first = true;
+        let mut is_first = true;
         for line in lines.split('\n') {
             let prefix = if is_first == true {
                 is_first = false;
@@ -94,7 +96,8 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
                 ","
             };
 
-            println!(r#"{prefix}{{
+            println!(
+                r#"{prefix}{{
         "type": "file",
         "title": "{value}",
         "subtitle": "subtitle",
@@ -107,16 +110,16 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
                 "path": "~/Desktop"
         }}
 }}"#,
-prefix = prefix,
-varname = varname,
-value = line);
+                prefix = prefix,
+                varname = varname,
+                value = line
+            );
         }
-
     } else {
         println!(r#"{{"items": ["#);
     }
 
-        println!(r#"]}}"#);
+    println!(r#"]}}"#);
 
     Ok(())
 }
