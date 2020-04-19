@@ -120,7 +120,7 @@ By default, `Ctrl+G` is assigned to launching **navi**.
 This is *experimental*. If you face any issues, please report the issue [here](https://github.com/denisidoro/navi/issues/348).
 
 - make sure **navi** is up to date;
-- make sure that the `navi` binary is in the `$PATH` determined by your `.bashrc`;
+- make sure that the `navi` binary is in the `$PATH` determined by `~/.bashrc`;
 - download and install the `.alfredworkflow` for the [latest release](https://github.com/denisidoro/navi/releases/latest).
 
 ### More options
