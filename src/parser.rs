@@ -317,8 +317,18 @@ mod tests {
         let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().unwrap();
         let child_stdin = child.stdin.as_mut().unwrap();
         let mut visited_lines: HashSet<u64> = HashSet::new();
-        let mut writer: Box<dyn Writer> = Box::new(display::FinderWriter {comment_width: 20, tag_width: 30});
-        read_file(path, &mut variables, &mut visited_lines, &mut writer, child_stdin).unwrap();
+        let mut writer: Box<dyn Writer> = Box::new(display::FinderWriter {
+            comment_width: 20,
+            tag_width: 30,
+        });
+        read_file(
+            path,
+            &mut variables,
+            &mut visited_lines,
+            &mut writer,
+            child_stdin,
+        )
+        .unwrap();
         let expected_suggestion = (
             r#" echo -e "$(whoami)\nroot" "#.to_string(),
             Some(FinderOpts {
