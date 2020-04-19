@@ -1,4 +1,4 @@
-use crate::display::{self, Writer};
+use crate::display::Writer;
 use crate::structures::item::Item;
 use std::io::Write;
 

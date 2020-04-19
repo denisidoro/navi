@@ -3,7 +3,7 @@ use crate::filesystem;
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use crate::structures::fnv::HashLine;
-use crate::structures::option::Command::{Alfred, Best, Fn, Preview, Query, Repo, Search, Widget};
+use crate::structures::option::Command::Alfred;
 use crate::structures::{error::filesystem::InvalidPath, item::Item, option::Config};
 use crate::welcome;
 use anyhow::{Context, Error};
@@ -234,7 +234,7 @@ pub fn read_all(
     let mut variables = VariableMap::new();
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
-    let mut writer: Box<dyn Writer> = if let Some(Alfred { cmd }) = &config.cmd {
+    let mut writer: Box<dyn Writer> = if let Some(Alfred { cmd: _ }) = &config.cmd {
         Box::new(display::AlfredWriter { is_first: true })
     } else {
         let (tag_width, comment_width) = display::get_widths();

@@ -1,20 +1,13 @@
-use crate::clipboard;
-use crate::display;
-use crate::filesystem;
-use crate::finder::Finder;
-use crate::handler;
 use crate::parser;
-use crate::structures::cheat::{Suggestion, VariableMap};
-use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
-use crate::structures::option;
+use crate::structures::cheat::Suggestion;
+
 use crate::structures::{error::command::BashSpawnError, option::Config};
 use anyhow::Context;
 use anyhow::Error;
 use regex::Regex;
-use std::collections::HashMap;
+
 use std::env;
-use std::fs;
-use std::io::Write;
+
 use std::process::{Command, Stdio};
 
 lazy_static! {
@@ -37,11 +30,11 @@ pub fn main(config: Config) -> Result<(), Error> {
 }
 
 fn prompt_with_suggestions(
-    variable_name: &str,
-    config: &Config,
+    _variable_name: &str,
+    _config: &Config,
     suggestion: &Suggestion,
 ) -> Result<String, Error> {
-    let (suggestion_command, suggestion_opts) = suggestion;
+    let (suggestion_command, _suggestion_opts) = suggestion;
 
     let child = Command::new("bash")
         .stdout(Stdio::piped())
@@ -74,13 +67,13 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
 
     let variable_name = env::var("varname").unwrap();
     let tags = env::var("tags").unwrap();
-    let comment = env::var("comment").unwrap();
+    let _comment = env::var("comment").unwrap();
     let snippet = env::var("snippet").unwrap();
 
     let varname = VAR_REGEX.captures_iter(&snippet).next();
 
     if varname.is_some() {
-        let varname = &varname.unwrap()[0];
+        let _varname = &varname.unwrap()[0];
 
         variables
             .get(&tags, &variable_name)
@@ -119,6 +112,6 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
     Ok(())
 }
 
-pub fn transform(config: Config) -> Result<(), Error> {
+pub fn transform(_config: Config) -> Result<(), Error> {
     Ok(())
 }
