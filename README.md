@@ -2,11 +2,9 @@
   
 > :information_source: If you're here because you upgraded **navi** and are having some issues, please check [this thread](https://github.com/denisidoro/navi/issues/201).
 
-An interactive cheatsheet tool for the command-line.
+An interactive cheatsheet tool for the command-line and application launchers.
 
 ![Terminal demo](https://user-images.githubusercontent.com/3226564/76437136-ddc35900-6397-11ea-823c-d2da7615fe60.gif)
-
-![Alfred demo](https://user-images.githubusercontent.com/3226564/79696281-35d06380-8252-11ea-87d5-dc619d869e81.gif)
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands. Argument suggestions are prompted to you.
 
@@ -16,6 +14,8 @@ An interactive cheatsheet tool for the command-line.
 - it will teach you new one-liners.
 
 It uses [fzf](https://github.com/junegunn/fzf), [skim](https://github.com/lotabout/skim), or [Alfred](https://www.alfredapp.com/) under the hood and it can be either used as a command or as a shell widget (*à la* Ctrl-R).
+
+![Alfred demo](https://user-images.githubusercontent.com/3226564/79696281-35d06380-8252-11ea-87d5-dc619d869e81.gif)
 
 Table of contents
 -----------------
@@ -29,6 +29,7 @@ Table of contents
       * [Other package managers](#other-package-managers)
    * [Usage](#usage)
       * [Shell widget](#shell-widget)
+      * [Alfred](#alfred)
       * [More options](#more-options)
    * [Trying out online](#trying-out-online)
    * [Cheatsheets](#cheatsheets)
@@ -113,6 +114,8 @@ navi widget fish | source
 ```
 
 By default, `Ctrl+G` is assigned to launching **navi**.
+
+### Alfred
 
 ### More options
 
