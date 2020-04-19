@@ -4,6 +4,7 @@ use crate::structures::cheat::VariableMap;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use crate::structures::fnv::HashLine;
 use crate::structures::{error::filesystem::InvalidPath, option::Config, item::Item};
+use crate::structures::option::Command::{Best, Fn, Preview, Query, Repo, Search, Widget, Alfred};
 use crate::welcome;
 use anyhow::{Context, Error};
 use regex::Regex;
@@ -115,7 +116,7 @@ fn write_cmd(
     tags: &str,
     comment: &str,
     snippet: &str,
-    writer: &Box<impl Writer>,
+    writer: &mut Box<dyn Writer>,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
     if snippet.len() <= 1 {
@@ -135,7 +136,7 @@ fn read_file(
     path: &str,
     variables: &mut VariableMap,
     visited_lines: &mut HashSet<u64>,
-    writer: &Box<impl Writer>,
+    writer: &mut Box<dyn Writer>,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
     let mut tags = String::from("");
@@ -196,14 +197,14 @@ fn read_file(
             snippet = String::from("");
             let (variable, command, opts) = parse_variable_line(&line).with_context(|| {
                 format!(
-                    "Failed to parse variable line. See line nr.{} in cheatsheet `{}`",
+                    "Failed to parse variable line. See line number {} in cheatsheet `{}`",
                     line_nr + 1,
                     path
                 )
             })?;
             variables.insert(&tags, &variable, (String::from(command), opts));
         }
-        
+
         // snippet
         else {
             let hash = format!("{}{}", &comment, &line).hash_line();
@@ -237,12 +238,16 @@ pub fn read_all(
     let mut variables = VariableMap::new();
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
-    let (tag_width, comment_width) = display::get_widths();
-    let writer = Box::new(display::FinderWriter { tag_width, comment_width });
+    let mut writer: Box<dyn Writer> = if let Some(Alfred) = config.cmd {
+        Box::new(display::AlfredWriter { is_first: true })
+    } else {
+        let (tag_width, comment_width) = display::get_widths();
+        Box::new(display::FinderWriter { tag_width, comment_width })
+    };
     let paths = filesystem::cheat_paths(config);
 
     if paths.is_err() {
-        welcome::cheatsheet(&writer, stdin);
+        welcome::cheatsheet(&mut writer, stdin);
         return Ok(variables);
     }
 
@@ -258,7 +263,7 @@ pub fn read_all(
                         .to_str()
                         .ok_or_else(|| InvalidPath(path.to_path_buf()))?;
                     if path_str.ends_with(".cheat")
-                        && read_file(path_str, &mut variables, &mut visited_lines, &writer, stdin).is_ok()
+                        && read_file(path_str, &mut variables, &mut visited_lines, &mut writer, stdin).is_ok()
                         && !found_something
                     {
                         found_something = true;
@@ -269,7 +274,7 @@ pub fn read_all(
     }
 
     if !found_something {
-        welcome::cheatsheet(&writer, stdin);
+        welcome::cheatsheet(&mut writer, stdin);
     }
 
     Ok(variables)

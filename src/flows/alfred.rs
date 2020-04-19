@@ -36,9 +36,11 @@ pub fn main(config: Config) -> Result<(), Error> {
         let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().unwrap();
         let stdin = child.stdin.as_mut().unwrap();
 
+        println!(r#"{{"items": ["#);
             parser::read_all(&config, stdin).context(
                 "Failed to parse variables intended for finder",
             )?;
-
-            Ok(())
+        let _ = child.wait_with_output().context("Failed to wait for fzf")?;
+        println!(r#"]}}"#);
+        Ok(())
 }

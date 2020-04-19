@@ -79,7 +79,7 @@ pub fn format_line(
 }
 
 pub trait Writer {
-    fn write(&self, item: Item) -> String;
+    fn write(&mut self, item: Item) -> String;
 }
 
 pub struct FinderWriter {
@@ -87,8 +87,34 @@ pub struct FinderWriter {
     pub comment_width: usize
 }
 
+pub struct AlfredWriter {
+    pub is_first: bool
+}
+
 impl Writer for FinderWriter {
-    fn write(&self, item: Item) -> String {
+    fn write(&mut self, item: Item) -> String {
         format_line(item.tags, item.comment, item.snippet, self.tag_width, self.comment_width)
+    }
+}
+
+impl Writer for AlfredWriter {
+    fn write(&mut self, item: Item) -> String {
+        let prefix = if self.is_first == true {
+            self.is_first = false;
+            ""
+        } else {
+            ","
+        };
+
+        let tags = item.tags.replace('"', "").replace('\\', "").replace(NEWLINE_ESCAPE_CHAR, " ");
+        let comment = item.comment.replace('"', "").replace('\\', "").replace(NEWLINE_ESCAPE_CHAR, " ");
+        let snippet = item.snippet.replace('"', "").replace('\\', "").replace(NEWLINE_ESCAPE_CHAR, " ");
+
+        format!(r#"{prefix}{{"type":"file","title":"{comment}","match":"{comment} {tags} {snippet}","subtitle":"subtitle","variables":{{"tag":"mytag","comment":"mycomment","snippet":"navi fn url::open https://google.com/?q=<foo>+<bar>"}},"autocomplete":"Desktop","icon":{{"type":"fileicon","path":"~/Desktop"}}}}"#, 
+        prefix = prefix, 
+        tags = tags,
+        comment = comment,
+        snippet = snippet)
+
     }
 }
