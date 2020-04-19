@@ -50,9 +50,9 @@ workflow() {
 
    mkdir -p "$WORKFLOW_DIR" 2> /dev/null || true
 
-   cp -r "${NAVI_HOME}/alfred" "$WORKFLOW_DIR"
+   cp ${NAVI_HOME}/alfred/* "$WORKFLOW_DIR"
    cd "$WORKFLOW_DIR"
-   zip -r "navi.zip" "."
+   zip -j -r navi.zip *
 
 }
 
