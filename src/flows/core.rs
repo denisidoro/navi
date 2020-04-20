@@ -11,9 +11,9 @@ use crate::structures::{error::command::BashSpawnError, option::Config};
 use anyhow::Context;
 use anyhow::Error;
 use regex::Regex;
+use std::env;
 use std::fs;
 use std::io::Write;
-use std::env;
 use std::process::{Command, Stdio};
 
 lazy_static! {
@@ -162,25 +162,21 @@ fn replace_variables_from_snippet(
         let value = if let Ok(e) = env_value {
             e
         } else {
-             variables
-                    .get(&tags, &variable_name)
-                    .ok_or_else(|| anyhow!("No suggestions"))
-                    .and_then(|suggestion| {
-                        prompt_with_suggestions(
-                            variable_name,
-                            &config,
-                            suggestion,
-                            interpolated_snippet.clone(),
-                        )
-                    })
-                    .or_else(|_| {
-                        prompt_without_suggestions(
-                            variable_name,
-                            &config,
-                            interpolated_snippet.clone(),
-                        )
-                    })?
-                };
+            variables
+                .get(&tags, &variable_name)
+                .ok_or_else(|| anyhow!("No suggestions"))
+                .and_then(|suggestion| {
+                    prompt_with_suggestions(
+                        variable_name,
+                        &config,
+                        suggestion,
+                        interpolated_snippet.clone(),
+                    )
+                })
+                .or_else(|_| {
+                    prompt_without_suggestions(variable_name, &config, interpolated_snippet.clone())
+                })?
+        };
 
         env::set_var(variable_name, &value);
 
