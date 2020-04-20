@@ -11,9 +11,9 @@ use crate::structures::{error::command::BashSpawnError, option::Config};
 use anyhow::Context;
 use anyhow::Error;
 use regex::Regex;
-use std::collections::HashMap;
 use std::fs;
 use std::io::Write;
+use std::env;
 use std::process::{Command, Stdio};
 
 lazy_static! {
@@ -83,22 +83,16 @@ fn prompt_with_suggestions(
     variable_name: &str,
     config: &Config,
     suggestion: &Suggestion,
-    values: &HashMap<String, String>,
     _snippet: String,
 ) -> Result<String, Error> {
-    let mut vars_cmd = String::from("");
-    for (key, value) in values.iter() {
-        vars_cmd.push_str(format!("{}=\"{}\"; ", key, value).as_str());
-    }
     let (suggestion_command, suggestion_opts) = suggestion;
-    let command = format!("{} {}", vars_cmd, suggestion_command);
 
     let child = Command::new("bash")
         .stdout(Stdio::piped())
         .arg("-c")
-        .arg(&command)
+        .arg(&suggestion_command)
         .spawn()
-        .map_err(|e| BashSpawnError::new(command, e))?;
+        .map_err(|e| BashSpawnError::new(suggestion_command, e))?;
 
     let suggestions = String::from_utf8(
         child
@@ -109,12 +103,6 @@ fn prompt_with_suggestions(
     .context("Suggestions are invalid utf8")?;
 
     let opts = suggestion_opts.clone().unwrap_or_default();
-    /* if opts.preview.is_none() {
-        opts.preview = gen_opts_preview(&snippet, &variable_name);
-    }
-    if opts.preview_window.is_none() {
-        opts.preview_window = Some("up:1".to_string());
-    } */
     let opts = FinderOpts {
         autoselect: !config.no_autoselect,
         overrides: config.fzf_overrides_var.clone(),
@@ -164,18 +152,17 @@ fn replace_variables_from_snippet(
     config: &Config,
 ) -> Result<String, Error> {
     let mut interpolated_snippet = String::from(snippet);
-    let mut values: HashMap<String, String> = HashMap::new();
 
     for captures in VAR_REGEX.captures_iter(snippet) {
         let bracketed_variable_name = &captures[0];
         let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
 
-        let value = values
-            .get(variable_name)
-            .map(|s| s.to_string())
-            .ok_or_else(|| anyhow!(format!("No value for variable `{}`", variable_name)))
-            .or_else(|_| {
-                variables
+        let env_value = env::var(variable_name);
+
+        let value = if let Ok(e) = env_value {
+            e
+        } else {
+             variables
                     .get(&tags, &variable_name)
                     .ok_or_else(|| anyhow!("No suggestions"))
                     .and_then(|suggestion| {
@@ -183,7 +170,6 @@ fn replace_variables_from_snippet(
                             variable_name,
                             &config,
                             suggestion,
-                            &values,
                             interpolated_snippet.clone(),
                         )
                     })
@@ -193,10 +179,10 @@ fn replace_variables_from_snippet(
                             &config,
                             interpolated_snippet.clone(),
                         )
-                    })
-            })?;
+                    })?
+                };
 
-        values.insert(variable_name.to_string(), value.clone());
+        env::set_var(variable_name, &value);
 
         interpolated_snippet = if value.as_str() == "\n" {
             interpolated_snippet.replacen(bracketed_variable_name, "", 1)
