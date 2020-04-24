@@ -34,6 +34,43 @@
 				<false/>
 			</dict>
 		</array>
+		<key>706751F1-C904-448E-84C5-0DF7DBE26AE1</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>529BC67C-C77D-41CA-B095-996CC1317556</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>F78DD511-9EC2-4272-8946-C6E3E269DE2E</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>529BC67C-C77D-41CA-B095-996CC1317556</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>4F6E003F-FB02-4432-B025-249F22385B86</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>5E378616-C00A-4608-9313-8D7DCF421BC5</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>7DD3BDE5-A157-42E5-9376-F681FB50A4EE</key>
 		<array>
 			<dict>
@@ -76,7 +113,7 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>529BC67C-C77D-41CA-B095-996CC1317556</string>
+				<string>706751F1-C904-448E-84C5-0DF7DBE26AE1</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -413,6 +450,65 @@ eval "$snippet"</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string>{var:snippet}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
+						<string>url::open</string>
+						<key>outputlabel</key>
+						<string>url::open</string>
+						<key>uid</key>
+						<string>F78DD511-9EC2-4272-8946-C6E3E269DE2E</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string>{var:snippet}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
+						<string>osascript</string>
+						<key>outputlabel</key>
+						<string>osascript</string>
+						<key>uid</key>
+						<string>4F6E003F-FB02-4432-B025-249F22385B86</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>else</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>706751F1-C904-448E-84C5-0DF7DBE26AE1</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>{var:snippet}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.terminalcommand</string>
+			<key>uid</key>
+			<string>5E378616-C00A-4608-9313-8D7DCF421BC5</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string></string>
@@ -428,9 +524,9 @@ eval "$snippet"</string>
 		<key>529BC67C-C77D-41CA-B095-996CC1317556</key>
 		<dict>
 			<key>xpos</key>
-			<integer>835</integer>
+			<integer>985</integer>
 			<key>ypos</key>
-			<integer>285</integer>
+			<integer>300</integer>
 		</dict>
 		<key>55C46852-4807-4374-95AB-CC055F4ECB7C</key>
 		<dict>
@@ -438,6 +534,20 @@ eval "$snippet"</string>
 			<integer>10</integer>
 			<key>ypos</key>
 			<integer>170</integer>
+		</dict>
+		<key>5E378616-C00A-4608-9313-8D7DCF421BC5</key>
+		<dict>
+			<key>xpos</key>
+			<integer>985</integer>
+			<key>ypos</key>
+			<integer>430</integer>
+		</dict>
+		<key>706751F1-C904-448E-84C5-0DF7DBE26AE1</key>
+		<dict>
+			<key>xpos</key>
+			<integer>825</integer>
+			<key>ypos</key>
+			<integer>315</integer>
 		</dict>
 		<key>7DD3BDE5-A157-42E5-9376-F681FB50A4EE</key>
 		<dict>
@@ -449,9 +559,9 @@ eval "$snippet"</string>
 		<key>93437EDA-0308-467D-BE3F-6855C638D49D</key>
 		<dict>
 			<key>xpos</key>
-			<integer>830</integer>
+			<integer>815</integer>
 			<key>ypos</key>
-			<integer>155</integer>
+			<integer>75</integer>
 		</dict>
 		<key>98658166-32FC-4F9D-8247-52BEDE6394EE</key>
 		<dict>
