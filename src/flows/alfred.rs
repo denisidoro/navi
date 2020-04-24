@@ -101,19 +101,7 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
             };
 
             println!(
-                r#"{prefix}{{
-        "type": "file",
-        "title": "{value}",
-        "subtitle": "{snippet}",
-        "autocomplete": "Desktop",
-        "variables": {{
-                "{varname}": "{value}"
-        }},
-        "icon": {{
-                "type": "fileicon",
-                "path": "~/Desktop"
-        }}
-}}"#,
+                r#"{prefix}{{"title":"{value}","subtitle":"{snippet}","variables":{{"{varname}":"{value}"}},"icon":{{"path":"navi.png"}}}}"#,
                 prefix = prefix,
                 snippet = snippet,
                 varname = varname,
