@@ -8,7 +8,10 @@ use std::env;
 use std::process::{Command, Stdio};
 
 pub fn main(config: Config) -> Result<(), Error> {
-    let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().context("Unable to create child")?;
+    let mut child = Command::new("cat")
+        .stdin(Stdio::piped())
+        .spawn()
+        .context("Unable to create child")?;
     let stdin = child.stdin.as_mut().context("Unable to get stdin")?;
 
     display::alfred::print_items_start(None);
