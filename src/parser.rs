@@ -310,7 +310,11 @@ mod tests {
     fn test_read_file() {
         let path = "tests/cheats/ssh.cheat";
         let mut variables = VariableMap::new();
-        let mut child = Command::new("cat").stdin(Stdio::piped()).stdout(Stdio::null()).spawn().unwrap();
+        let mut child = Command::new("cat")
+            .stdin(Stdio::piped())
+            .stdout(Stdio::null())
+            .spawn()
+            .unwrap();
         let child_stdin = child.stdin.as_mut().unwrap();
         let mut visited_lines: HashSet<u64> = HashSet::new();
         let mut writer: Box<dyn Writer> = Box::new(display::terminal::new_writer());
