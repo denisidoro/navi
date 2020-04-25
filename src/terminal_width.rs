@@ -1,4 +1,5 @@
 use terminal_size::{terminal_size, terminal_size_using_fd, Height, Width};
+use std::cmp::max;
 
 fn width_with_shell_out() -> u16 {
     use std::process::Command;
@@ -53,11 +54,18 @@ fn width_with_fd() -> u16 {
     }
 }
 
-pub fn width() -> u16 {
+fn width() -> u16 {
     let size = terminal_size();
     if let Some((Width(w), Height(_))) = size {
         w
     } else {
         width_with_fd()
     }
+}
+
+pub fn get_widths() -> (usize, usize) {
+    let width = width();
+    let tag_width = max(4, width * 20 / 100);
+    let comment_width = max(4, width * 40 / 100);
+    (usize::from(tag_width), usize::from(comment_width))
 }

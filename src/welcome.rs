@@ -6,7 +6,7 @@ fn add_msg(
     tags: &str,
     comment: &str,
     snippet: &str,
-    writer: &mut Box<dyn Writer>,
+    writer: &mut dyn Writer,
     stdin: &mut std::process::ChildStdin,
 ) {
     let item = Item {
@@ -19,7 +19,7 @@ fn add_msg(
         .expect("Could not write to fzf's stdin");
 }
 
-pub fn cheatsheet(writer: &mut Box<dyn Writer>, stdin: &mut std::process::ChildStdin) {
+pub fn cheatsheet(writer: &mut dyn Writer, stdin: &mut std::process::ChildStdin) {
     add_msg(
         "cheatsheets",
         "Download default cheatsheets",

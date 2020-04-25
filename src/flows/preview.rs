@@ -12,6 +12,6 @@ fn extract_elements(argstr: &str) -> (&str, &str, &str) {
 
 pub fn main(line: &str) -> Result<(), Error> {
     let (tags, comment, snippet) = extract_elements(line);
-    display::preview(comment, tags, snippet);
+    display::terminal::preview(comment, tags, snippet);
     process::exit(0)
 }
