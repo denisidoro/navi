@@ -12,16 +12,6 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>500F5E6F-E824-4007-8AC4-FB9AE27F1129</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
 				<string>98658166-32FC-4F9D-8247-52BEDE6394EE</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -156,23 +146,6 @@
 	<string>navi</string>
 	<key>objects</key>
 	<array>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argument</key>
-				<string>'{query}', {allvars}</string>
-				<key>cleardebuggertext</key>
-				<false/>
-				<key>processoutputs</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.debug</string>
-			<key>uid</key>
-			<string>500F5E6F-E824-4007-8AC4-FB9AE27F1129</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -547,13 +520,6 @@ eval "$snippet"</string>
 			<integer>355</integer>
 			<key>ypos</key>
 			<integer>170</integer>
-		</dict>
-		<key>500F5E6F-E824-4007-8AC4-FB9AE27F1129</key>
-		<dict>
-			<key>xpos</key>
-			<integer>570</integer>
-			<key>ypos</key>
-			<integer>75</integer>
 		</dict>
 		<key>529BC67C-C77D-41CA-B095-996CC1317556</key>
 		<dict>

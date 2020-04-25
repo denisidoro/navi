@@ -11,7 +11,10 @@ fn parse_finder(src: &str) -> Result<FinderChoice, Error> {
 }
 
 #[derive(Debug, StructOpt)]
-#[structopt(after_help = r#"EXAMPLES:
+#[structopt(after_help = r#"MORE INFO:
+    Please refer to https://github.com/denisidoro/navi
+
+EXAMPLES:
     navi                                   # default behavior
     navi --print                           # doesn't execute the snippet
     navi --path '/some/dir:/other/dir'     # uses custom cheats
@@ -106,7 +109,8 @@ pub enum Command {
         /// bash, zsh or fish
         shell: String,
     },
-    /// Alfred
+    /// Helper command for Alfred integration
+    #[structopt(setting = AppSettings::Hidden)]
     Alfred {
         #[structopt(subcommand)]
         cmd: AlfredCommand,
@@ -126,11 +130,11 @@ pub enum RepoCommand {
 
 #[derive(Debug, StructOpt)]
 pub enum AlfredCommand {
-    /// Start
+    /// Outputs a JSON with commands
     Start,
-    /// Suggestions
+    /// Outputs a JSON with variable suggestions
     Suggestions,
-    /// Transform
+    /// Transforms the snippet env var with the selected value
     Transform,
 }
 
