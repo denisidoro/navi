@@ -2,8 +2,8 @@
 
 source "${HOME}/.bashrc"
 
-if [ -n "${varname:-}" ]; then 
-        echo -n "$(navi transform)"
+if [ -n "${varname:-}" ]; then
+   echo -n "$(navi transform)"
 else
-        echo -n "$snippet"
+   echo -n "$snippet"
 fi
