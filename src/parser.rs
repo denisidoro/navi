@@ -116,7 +116,7 @@ fn write_cmd(
     tags: &str,
     comment: &str,
     snippet: &str,
-    writer: &mut Box<dyn Writer>,
+    writer: &mut dyn Writer,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
     if snippet.len() <= 1 {
@@ -137,7 +137,7 @@ fn read_file(
     path: &str,
     variables: &mut VariableMap,
     visited_lines: &mut HashSet<u64>,
-    writer: &mut Box<dyn Writer>,
+    writer: &mut dyn Writer,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
     let mut tags = String::from("");
@@ -235,18 +235,14 @@ pub fn read_all(
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
     let mut writer: Box<dyn Writer> = if let Some(Alfred { .. }) = &config.cmd {
-        Box::new(display::AlfredWriter { is_first: true })
+        Box::new(display::alfred::new_writer())
     } else {
-        let (tag_width, comment_width) = display::get_widths();
-        Box::new(display::FinderWriter {
-            tag_width,
-            comment_width,
-        })
+        Box::new(display::terminal::new_writer())
     };
     let paths = filesystem::cheat_paths(config);
 
     if paths.is_err() {
-        welcome::cheatsheet(&mut writer, stdin);
+        welcome::cheatsheet(&mut *writer, stdin);
         return Ok(variables);
     }
 
@@ -266,7 +262,7 @@ pub fn read_all(
                             path_str,
                             &mut variables,
                             &mut visited_lines,
-                            &mut writer,
+                            &mut *writer,
                             stdin,
                         )
                         .is_ok()
@@ -280,7 +276,7 @@ pub fn read_all(
     }
 
     if !found_something {
-        welcome::cheatsheet(&mut writer, stdin);
+        welcome::cheatsheet(&mut *writer, stdin);
     }
 
     Ok(variables)
@@ -314,18 +310,19 @@ mod tests {
     fn test_read_file() {
         let path = "tests/cheats/ssh.cheat";
         let mut variables = VariableMap::new();
-        let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().unwrap();
+        let mut child = Command::new("cat")
+            .stdin(Stdio::piped())
+            .stdout(Stdio::null())
+            .spawn()
+            .unwrap();
         let child_stdin = child.stdin.as_mut().unwrap();
         let mut visited_lines: HashSet<u64> = HashSet::new();
-        let mut writer: Box<dyn Writer> = Box::new(display::FinderWriter {
-            comment_width: 20,
-            tag_width: 30,
-        });
+        let mut writer: Box<dyn Writer> = Box::new(display::terminal::new_writer());
         read_file(
             path,
             &mut variables,
             &mut visited_lines,
-            &mut writer,
+            &mut *writer,
             child_stdin,
         )
         .unwrap();

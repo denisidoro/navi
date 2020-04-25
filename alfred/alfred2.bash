@@ -1,15 +1,9 @@
 #!/bin/bash
 
-_interpolate() {
-        local -r snippet="$1"
-        local -r varname="$2"
-        local -r value="${!varname}"
+source "${HOME}/.bashrc"
 
-        echo "$snippet" | sed "s/<${varname}>/${value}/g"
-}
-
-if [ -n "${varname:-}" ]; then 
-        echo -n "$(_interpolate "$snippet" "$varname" || echo "")"
+if [ -n "${varname:-}" ]; then
+   echo -n "$(navi alfred transform)"
 else
-        echo -n "$snippet"
+   echo -n "$snippet"
 fi

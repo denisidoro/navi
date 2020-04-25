@@ -2,8 +2,8 @@
 
 source "${HOME}/.bashrc"
 
-if [ -n "${snippet:-}" ]; then 
-        navi alfred suggestions
+if [ -n "${snippet:-}" ]; then
+   navi alfred suggestions
 else
-        navi alfred start
+   navi alfred start
 fi

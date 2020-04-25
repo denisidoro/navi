@@ -10,15 +10,10 @@ use crate::structures::option;
 use crate::structures::{error::command::BashSpawnError, option::Config};
 use anyhow::Context;
 use anyhow::Error;
-use regex::Regex;
 use std::env;
 use std::fs;
 use std::io::Write;
 use std::process::{Command, Stdio};
-
-lazy_static! {
-    pub static ref VAR_REGEX: Regex = Regex::new(r"<(\w[\w\d\-_]*)>").expect("Invalid regex");
-}
 
 pub enum Variant {
     Core,
@@ -71,14 +66,6 @@ fn extract_from_selections(raw_snippet: &str, contains_key: bool) -> (&str, &str
     (key, tags, snippet)
 }
 
-/* fn gen_opts_preview(snippet: &str, variable_name: &str) -> Option<String> {
-    Some(format!(
-        r#"query="{{}}"; [[ "${{#query:-}}" -lt 3 ]] && query="{{q}}"; query="${{query:1:${{#query}}-2}}"; query="$(echo "$query" | sed 's|/|\\/|g')"; echo "{}" | sed "s/<{}>/${{query}}/g" || echo 'Unable to generate command preview'"#,
-        snippet.replace('"', "\\\""),
-        variable_name
-    ))
-} */
-
 fn prompt_with_suggestions(
     variable_name: &str,
     config: &Config,
@@ -106,7 +93,7 @@ fn prompt_with_suggestions(
     let opts = FinderOpts {
         autoselect: !config.no_autoselect,
         overrides: config.fzf_overrides_var.clone(),
-        prompt: Some(display::variable_prompt(variable_name)),
+        prompt: Some(display::terminal::variable_prompt(variable_name)),
         ..opts
     };
 
@@ -130,9 +117,8 @@ fn prompt_without_suggestions(
 ) -> Result<String, Error> {
     let opts = FinderOpts {
         autoselect: false,
-        prompt: Some(display::variable_prompt(variable_name)),
+        prompt: Some(display::terminal::variable_prompt(variable_name)),
         suggestion_type: SuggestionType::Disabled,
-        // preview: gen_opts_preview(&snippet, &variable_name),
         preview_window: Some("up:1".to_string()),
         ..Default::default()
     };
@@ -153,7 +139,7 @@ fn replace_variables_from_snippet(
 ) -> Result<String, Error> {
     let mut interpolated_snippet = String::from(snippet);
 
-    for captures in VAR_REGEX.captures_iter(snippet) {
+    for captures in display::VAR_REGEX.captures_iter(snippet) {
         let bracketed_variable_name = &captures[0];
         let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
 
@@ -226,7 +212,7 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
         println!("{}", interpolated_snippet);
     // save to file
     } else if let Some(s) = config.save {
-        fs::write(s, interpolated_snippet).context("Unable to save config")?;
+        fs::write(s, interpolated_snippet).context("Unable to save output")?;
     // call navi (this prevents "failed to read /dev/tty" from finder)
     } else if interpolated_snippet.starts_with("navi") {
         let new_config = option::config_from_iter(interpolated_snippet.split(' ').collect());

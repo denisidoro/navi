@@ -12,7 +12,7 @@ mod git;
 mod handler;
 mod parser;
 mod structures;
-mod terminal;
+mod terminal_width;
 mod welcome;
 
 pub use handler::handle_config;

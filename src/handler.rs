@@ -43,7 +43,7 @@ pub fn handle_config(config: Config) -> Result<(), Error> {
             Alfred { cmd } => match cmd {
                 AlfredCommand::Start => flows::alfred::main(config),
                 AlfredCommand::Suggestions => flows::alfred::suggestions(config),
-                AlfredCommand::Transform => flows::alfred::transform(config),
+                AlfredCommand::Transform => flows::alfred::transform(),
             },
         },
     }
