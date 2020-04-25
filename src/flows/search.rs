@@ -1,5 +1,5 @@
 use super::aux;
-use crate::structures::option::Config;
+use crate::structures::config::Config;
 use anyhow::Error;
 
 pub fn main(_query: String, _config: Config) -> Result<(), Error> {

@@ -6,8 +6,8 @@ use crate::handler;
 use crate::parser;
 use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
-use crate::structures::option;
-use crate::structures::{error::command::BashSpawnError, option::Config};
+use crate::structures::config;
+use crate::structures::{error::command::BashSpawnError, config::Config};
 use anyhow::Context;
 use anyhow::Error;
 use std::env;
@@ -210,7 +210,7 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
         fs::write(s, interpolated_snippet).context("Unable to save output")?;
     // call navi (this prevents shelling out to call navi again
     } else if interpolated_snippet.starts_with("navi") {
-        let new_config = option::config_from_iter(interpolated_snippet.split(' ').collect());
+        let new_config = config::config_from_iter(interpolated_snippet.split(' ').collect());
         handler::handle_config(new_config)?;
     // shell out and execute snippet
     } else {

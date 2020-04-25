@@ -1,7 +1,7 @@
 use crate::display;
 use crate::parser;
 use crate::structures::cheat::Suggestion;
-use crate::structures::{error::command::BashSpawnError, option::Config};
+use crate::structures::{error::command::BashSpawnError, config::Config};
 use anyhow::Context;
 use anyhow::Error;
 use std::env;

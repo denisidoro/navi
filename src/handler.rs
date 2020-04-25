@@ -1,7 +1,7 @@
 use crate::flows;
 use crate::flows::core::Variant;
-use crate::structures::option::Command::{Alfred, Best, Fn, Preview, Query, Repo, Search, Widget};
-use crate::structures::option::{AlfredCommand, Config, RepoCommand};
+use crate::structures::config::Command::{Alfred, Best, Fn, Preview, Query, Repo, Search, Widget};
+use crate::structures::config::{AlfredCommand, Config, RepoCommand};
 use anyhow::Context;
 use anyhow::Error;
 

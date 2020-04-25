@@ -1,6 +1,6 @@
 use crate::structures::error::filesystem::InvalidPath;
 use crate::structures::error::filesystem::UnreadableDir;
-use crate::structures::option::Config;
+use crate::structures::config::Config;
 use anyhow::Context;
 use anyhow::Error;
 use core::fmt::Display;
