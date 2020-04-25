@@ -229,7 +229,7 @@ fn paths_from_path_param<'a>(env_var: &'a str) -> impl Iterator<Item = &'a str> 
 pub fn read_all(
     config: &Config,
     stdin: &mut std::process::ChildStdin,
-    writer: &mut dyn Writer
+    writer: &mut dyn Writer,
 ) -> Result<VariableMap, Error> {
     let mut variables = VariableMap::new();
     let mut found_something = false;
@@ -253,14 +253,8 @@ pub fn read_all(
                         .to_str()
                         .ok_or_else(|| InvalidPath(path.to_path_buf()))?;
                     if path_str.ends_with(".cheat")
-                        && read_file(
-                            path_str,
-                            &mut variables,
-                            &mut visited_lines,
-                            writer,
-                            stdin,
-                        )
-                        .is_ok()
+                        && read_file(path_str, &mut variables, &mut visited_lines, writer, stdin)
+                            .is_ok()
                         && !found_something
                     {
                         found_something = true;

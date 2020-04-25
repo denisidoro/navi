@@ -1,8 +1,8 @@
 use crate::display;
 use crate::structures::item::Item;
 use crate::terminal_width;
-use termion::color;
 use std::cmp::max;
+use termion::color;
 
 const COMMENT_COLOR: color::LightCyan = color::LightCyan;
 const TAG_COLOR: color::Blue = color::Blue;
@@ -45,13 +45,13 @@ pub struct Writer {
 }
 
 impl Writer {
-pub fn new() -> Writer {
-    let (tag_width, comment_width) = get_widths();
-    display::terminal::Writer {
-        tag_width,
-        comment_width,
+    pub fn new() -> Writer {
+        let (tag_width, comment_width) = get_widths();
+        display::terminal::Writer {
+            tag_width,
+            comment_width,
+        }
     }
-}
 }
 
 impl display::Writer for Writer {

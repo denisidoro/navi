@@ -13,11 +13,12 @@ pub fn main(config: Config) -> Result<(), Error> {
         .spawn()
         .context("Unable to create child")?;
     let stdin = child.stdin.as_mut().context("Unable to get stdin")?;
-        let mut writer = display::alfred::Writer::new();
+    let mut writer = display::alfred::Writer::new();
 
     display::alfred::print_items_start(None);
 
-    parser::read_all(&config, stdin, &mut writer).context("Failed to parse variables intended for finder")?;
+    parser::read_all(&config, stdin, &mut writer)
+        .context("Failed to parse variables intended for finder")?;
 
     // make sure everything was printed to stdout before attempting to close the items vector
     let _ = child.wait_with_output().context("Failed to wait for fzf")?;
@@ -26,9 +27,7 @@ pub fn main(config: Config) -> Result<(), Error> {
     Ok(())
 }
 
-fn prompt_with_suggestions(
-    suggestion: &Suggestion,
-) -> Result<String, Error> {
+fn prompt_with_suggestions(suggestion: &Suggestion) -> Result<String, Error> {
     let (suggestion_command, _suggestion_opts) = suggestion;
 
     let child = Command::new("bash")
@@ -56,7 +55,7 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
         .spawn()
         .context("Unable to create child")?;
     let stdin = child.stdin.as_mut().context("Unable to get stdin")?;
-        let mut writer = display::alfred::Writer::new();
+    let mut writer = display::alfred::Writer::new();
 
     let variables = parser::read_all(&config, stdin, &mut writer)
         .context("Failed to parse variables intended for finder")?;
@@ -67,28 +66,26 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
     let capture = display::VAR_REGEX.captures_iter(&snippet).next();
 
     if capture.is_none() {
-display::alfred::print_items_start(None);
-display::alfred::print_items_end();
-return Ok(())
+        display::alfred::print_items_start(None);
+        display::alfred::print_items_end();
+        return Ok(());
     }
 
-        let bracketed_varname = &(capture.expect("Invalid capture"))[0];
-        let varname = &bracketed_varname[1..bracketed_varname.len() - 1];
+    let bracketed_varname = &(capture.expect("Invalid capture"))[0];
+    let varname = &bracketed_varname[1..bracketed_varname.len() - 1];
 
-        display::alfred::print_items_start(Some(varname));
+    display::alfred::print_items_start(Some(varname));
 
-        let lines = variables
-            .get(&tags, &varname)
-            .ok_or_else(|| anyhow!("No suggestions"))
-            .and_then(|suggestion| {
-                Ok(prompt_with_suggestions(suggestion).unwrap())
-            })?;
+    let lines = variables
+        .get(&tags, &varname)
+        .ok_or_else(|| anyhow!("No suggestions"))
+        .and_then(|suggestion| Ok(prompt_with_suggestions(suggestion).unwrap()))?;
 
-        writer.reset();
+    writer.reset();
 
-        for line in lines.split('\n') {
-            writer.write_suggestion(&snippet, &varname, &line);
-        }
+    for line in lines.split('\n') {
+        writer.write_suggestion(&snippet, &varname, &line);
+    }
 
     display::alfred::print_items_end();
 

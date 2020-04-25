@@ -43,7 +43,10 @@ fn gen_core_finder_opts(variant: Variant, config: &Config) -> Result<FinderOpts,
     Ok(opts)
 }
 
-fn extract_from_selections(raw_snippet: &str, contains_key: bool) -> Result<(&str, &str, &str), Error> {
+fn extract_from_selections(
+    raw_snippet: &str,
+    contains_key: bool,
+) -> Result<(&str, &str, &str), Error> {
     let mut lines = raw_snippet.split('\n');
     let key = if contains_key {
         lines
@@ -110,10 +113,7 @@ fn prompt_with_suggestions(
     Ok(output)
 }
 
-fn prompt_without_suggestions(
-    variable_name: &str,
-    config: &Config,
-) -> Result<String, Error> {
+fn prompt_without_suggestions(variable_name: &str, config: &Config) -> Result<String, Error> {
     let opts = FinderOpts {
         autoselect: false,
         prompt: Some(display::terminal::variable_prompt(variable_name)),
@@ -158,9 +158,7 @@ fn replace_variables_from_snippet(
                         interpolated_snippet.clone(),
                     )
                 })
-                .or_else(|_| {
-                    prompt_without_suggestions(variable_name, &config)
-                })?
+                .or_else(|_| prompt_without_suggestions(variable_name, &config))?
         };
 
         env::set_var(variable_name, &value);
@@ -176,14 +174,16 @@ fn replace_variables_from_snippet(
 }
 
 pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Error> {
-    let opts = gen_core_finder_opts(variant, &config).context("Failed to generate finder options")?;
+    let opts =
+        gen_core_finder_opts(variant, &config).context("Failed to generate finder options")?;
     let (raw_selection, variables) = config
         .finder
         .call(opts, |stdin| {
-    let mut writer = display::terminal::Writer::new();
-            Ok(Some(parser::read_all(&config, stdin, &mut writer).context(
-                "Failed to parse variables intended for finder",
-            )?))
+            let mut writer = display::terminal::Writer::new();
+            Ok(Some(
+                parser::read_all(&config, stdin, &mut writer)
+                    .context("Failed to parse variables intended for finder")?,
+            ))
         })
         .context("Failed getting selection and variables from finder")?;
 

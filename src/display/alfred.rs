@@ -49,13 +49,13 @@ impl display::Writer for Writer {
 }
 
 impl Writer {
-pub fn new() -> Writer {
-    Writer { is_first: true }
-}
+    pub fn new() -> Writer {
+        Writer { is_first: true }
+    }
 
-pub fn reset(&mut self) {
-    self.is_first = true
-}
+    pub fn reset(&mut self) {
+        self.is_first = true
+    }
 
     pub fn write_suggestion(&mut self, snippet: &str, varname: &str, line: &str) {
         if line.len() < 3 {
