@@ -8,8 +8,8 @@ use std::env;
 use std::process::{Command, Stdio};
 
 pub fn main(config: Config) -> Result<(), Error> {
-    let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().unwrap();
-    let stdin = child.stdin.as_mut().unwrap();
+    let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().context("Unable to create child")?;
+    let stdin = child.stdin.as_mut().context("Unable to get stdin")?;
 
     display::alfred::print_items_start(None);
 
@@ -52,14 +52,14 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
         .stdin(Stdio::piped())
         .stdout(Stdio::null())
         .spawn()
-        .unwrap();
-    let stdin = child.stdin.as_mut().unwrap();
+        .context("Unable to create child")?;
+    let stdin = child.stdin.as_mut().context("Unable to get stdin")?;
 
     let variables = parser::read_all(&config, stdin)
         .context("Failed to parse variables intended for finder")?;
 
-    let tags = env::var("tags").unwrap();
-    let snippet = env::var("snippet").unwrap();
+    let tags = env::var("tags").context(r#"The env var "tags" isn't set"#)?;
+    let snippet = env::var("snippet").context(r#"The env var "snippet" isn't set"#)?;
 
     let varname = display::VAR_REGEX.captures_iter(&snippet).next();
 
@@ -90,6 +90,14 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
     Ok(())
 }
 
-pub fn transform(_config: Config) -> Result<(), Error> {
+pub fn transform() -> Result<(), Error> {
+    let snippet = env::var("snippet").context(r#"The env var "snippet" isn't set"#)?;
+    let varname = env::var("varname").context(r#"The env var "varname" isn't set"#)?;
+    let value = env::var(&varname).context(format!(r#"The env var "{}" isn't set"#, &varname))?;
+
+    let bracketed_varname = format!("<{}>", varname);
+    let interpolated_snippet = snippet.replace(&bracketed_varname, &value);
+    println!("{}", interpolated_snippet);
+
     Ok(())
 }

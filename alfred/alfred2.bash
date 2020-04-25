@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source "${HOME}/.bashrc"
+
 _interpolate() {
         local -r snippet="$1"
         local -r varname="$2"
@@ -9,7 +11,7 @@ _interpolate() {
 }
 
 if [ -n "${varname:-}" ]; then 
-        echo -n "$(_interpolate "$snippet" "$varname" || echo "")"
+        echo -n "$(navi interpolate "$snippet" "$varname")"
 else
         echo -n "$snippet"
 fi
