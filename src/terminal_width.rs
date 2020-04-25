@@ -1,5 +1,5 @@
-use terminal_size::{terminal_size, terminal_size_using_fd, Height, Width};
 use std::cmp::max;
+use terminal_size::{terminal_size, terminal_size_using_fd, Height, Width};
 
 fn width_with_shell_out() -> u16 {
     use std::process::Command;

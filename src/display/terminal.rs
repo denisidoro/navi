@@ -1,6 +1,6 @@
+use crate::display::{self, Writer};
 use crate::structures::item::Item;
 use crate::terminal_width;
-use crate::display::{self, Writer};
 use termion::color;
 
 const COMMENT_COLOR: color::LightCyan = color::LightCyan;
@@ -37,12 +37,12 @@ pub struct TerminalWriter {
 }
 
 pub fn new_writer() -> TerminalWriter {
-        let (tag_width, comment_width) = terminal_width::get_widths();
-        display::terminal::TerminalWriter {
-            tag_width,
-            comment_width,
-        }
-} 
+    let (tag_width, comment_width) = terminal_width::get_widths();
+    display::terminal::TerminalWriter {
+        tag_width,
+        comment_width,
+    }
+}
 
 impl Writer for TerminalWriter {
     fn write(&mut self, item: Item) -> String {

@@ -1,12 +1,12 @@
-use crate::structures::item::Item;
 use crate::display::{self, Writer};
+use crate::structures::item::Item;
 
 pub struct AlfredWriter {
     is_first: bool,
 }
 
 pub fn new_writer() -> AlfredWriter {
-AlfredWriter { is_first: false }
+    AlfredWriter { is_first: false }
 }
 
 fn escape_for_json(txt: &str) -> String {
