@@ -12,6 +12,16 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
+				<string>500F5E6F-E824-4007-8AC4-FB9AE27F1129</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>98658166-32FC-4F9D-8247-52BEDE6394EE</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -149,6 +159,23 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argument</key>
+				<string>'{query}', {allvars}</string>
+				<key>cleardebuggertext</key>
+				<false/>
+				<key>processoutputs</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.debug</string>
+			<key>uid</key>
+			<string>500F5E6F-E824-4007-8AC4-FB9AE27F1129</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>externaltriggerid</key>
 				<string>play</string>
 				<key>passinputasargument</key>
@@ -162,6 +189,19 @@
 			<string>alfred.workflow.output.callexternaltrigger</string>
 			<key>uid</key>
 			<string>93437EDA-0308-467D-BE3F-6855C638D49D</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>triggerid</key>
+				<string>play</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>55C46852-4807-4374-95AB-CC055F4ECB7C</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -310,19 +350,6 @@ fi
 			<string>7DD3BDE5-A157-42E5-9376-F681FB50A4EE</string>
 			<key>version</key>
 			<integer>3</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>triggerid</key>
-				<string>play</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.external</string>
-			<key>uid</key>
-			<string>55C46852-4807-4374-95AB-CC055F4ECB7C</string>
-			<key>version</key>
-			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -520,6 +547,13 @@ eval "$snippet"</string>
 			<integer>355</integer>
 			<key>ypos</key>
 			<integer>170</integer>
+		</dict>
+		<key>500F5E6F-E824-4007-8AC4-FB9AE27F1129</key>
+		<dict>
+			<key>xpos</key>
+			<integer>570</integer>
+			<key>ypos</key>
+			<integer>75</integer>
 		</dict>
 		<key>529BC67C-C77D-41CA-B095-996CC1317556</key>
 		<dict>
