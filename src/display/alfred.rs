@@ -15,6 +15,20 @@ fn escape_for_json(txt: &str) -> String {
         .replace(display::NEWLINE_ESCAPE_CHAR, " ")
 }
 
+pub fn print_items_start(varname: Option<&str>) {
+    print!("{{");
+
+    if let Some(v) = varname {
+        print!(r#""variables": {{"varname": "{varname}"}},"#, varname = v);
+    }
+
+    println!(r#""items": ["#);
+}
+
+pub fn print_items_end() {
+    println!(r#"]}}"#);
+}
+
 impl Writer for AlfredWriter {
     fn write(&mut self, item: Item) -> String {
         let prefix = if self.is_first {
@@ -35,5 +49,28 @@ impl Writer for AlfredWriter {
             comment = comment,
             snippet = snippet
         )
+    }
+}
+
+impl AlfredWriter {
+    pub fn write_suggestion(&mut self, snippet: &str, varname: &str, line: &str) {
+            if line.len() < 3 {
+                return
+            }
+
+                    let prefix = if self.is_first {
+                self.is_first = false;
+                ""
+            } else {
+                ","
+            };
+
+            println!(
+                r#"{prefix}{{"title":"{value}","subtitle":"{snippet}","variables":{{"{varname}":"{value}"}},"icon":{{"path":"navi.png"}}}}"#,
+                prefix = prefix,
+                snippet = snippet,
+                varname = varname,
+                value = line
+            );
     }
 }

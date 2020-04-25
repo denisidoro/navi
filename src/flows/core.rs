@@ -10,15 +10,10 @@ use crate::structures::option;
 use crate::structures::{error::command::BashSpawnError, option::Config};
 use anyhow::Context;
 use anyhow::Error;
-use regex::Regex;
 use std::env;
 use std::fs;
 use std::io::Write;
 use std::process::{Command, Stdio};
-
-lazy_static! {
-    pub static ref VAR_REGEX: Regex = Regex::new(r"<(\w[\w\d\-_]*)>").expect("Invalid regex");
-}
 
 pub enum Variant {
     Core,
@@ -144,7 +139,7 @@ fn replace_variables_from_snippet(
 ) -> Result<String, Error> {
     let mut interpolated_snippet = String::from(snippet);
 
-    for captures in VAR_REGEX.captures_iter(snippet) {
+    for captures in display::VAR_REGEX.captures_iter(snippet) {
         let bracketed_variable_name = &captures[0];
         let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
 
