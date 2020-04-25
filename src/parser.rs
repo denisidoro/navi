@@ -3,7 +3,7 @@ use crate::filesystem;
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use crate::structures::fnv::HashLine;
-use crate::structures::{error::filesystem::InvalidPath, item::Item, config::Config};
+use crate::structures::{config::Config, error::filesystem::InvalidPath, item::Item};
 use crate::welcome;
 use anyhow::{Context, Error};
 use regex::Regex;

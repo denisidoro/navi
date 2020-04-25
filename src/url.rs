@@ -1,13 +1,13 @@
-use crate::structures::{error::command::BashSpawnError};
+use crate::structures::error::command::BashSpawnError;
 use anyhow::Error;
 use std::process::Command;
 
 pub fn open(args: Vec<String>) -> Result<(), Error> {
-            let url = args
-                .into_iter()
-                .next()
-                .ok_or_else(|| anyhow!("No URL specified"))?;
-            let code = r#"
+    let url = args
+        .into_iter()
+        .next()
+        .ok_or_else(|| anyhow!("No URL specified"))?;
+    let code = r#"
 exst() {
    type "$1" &>/dev/null
 }
@@ -22,21 +22,21 @@ _open_url() {
         exit 55
     fi
 }"#;
-            let cmd = format!(
-                r#"{}
+    let cmd = format!(
+        r#"{}
                 
 read -r -d '' url <<'EOF'
 {}
 EOF
 
 _open_url "$url""#,
-                code, url
-            );
-            Command::new("bash")
-                .arg("-c")
-                .arg(cmd.as_str())
-                .spawn()
-                .map_err(|e| BashSpawnError::new(cmd, e))?
-                .wait()?;
-            Ok(())
-        }
+        code, url
+    );
+    Command::new("bash")
+        .arg("-c")
+        .arg(cmd.as_str())
+        .spawn()
+        .map_err(|e| BashSpawnError::new(cmd, e))?
+        .wait()?;
+    Ok(())
+}
