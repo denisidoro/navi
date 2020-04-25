@@ -6,7 +6,7 @@ pub struct AlfredWriter {
 }
 
 pub fn new_writer() -> AlfredWriter {
-    AlfredWriter { is_first: false }
+    AlfredWriter { is_first: true }
 }
 
 fn escape_for_json(txt: &str) -> String {

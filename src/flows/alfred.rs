@@ -10,9 +10,14 @@ use std::process::{Command, Stdio};
 pub fn main(config: Config) -> Result<(), Error> {
     let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().unwrap();
     let stdin = child.stdin.as_mut().unwrap();
+
     display::alfred::print_items_start(None);
+
     parser::read_all(&config, stdin).context("Failed to parse variables intended for finder")?;
+
+    // make sure everything was printed to stdout before attempting to close the items vector
     let _ = child.wait_with_output().context("Failed to wait for fzf")?;
+
     display::alfred::print_items_end();
     Ok(())
 }
@@ -54,7 +59,6 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
         .context("Failed to parse variables intended for finder")?;
 
     let tags = env::var("tags").unwrap();
-    let _comment = env::var("comment").unwrap();
     let snippet = env::var("snippet").unwrap();
 
     let varname = display::VAR_REGEX.captures_iter(&snippet).next();
