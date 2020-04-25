@@ -1,9 +1,9 @@
+use crate::display;
 use crate::parser;
 use crate::structures::cheat::Suggestion;
 use crate::structures::{error::command::BashSpawnError, option::Config};
 use anyhow::Context;
 use anyhow::Error;
-use crate::display;
 use std::env;
 use std::process::{Command, Stdio};
 
@@ -72,11 +72,10 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
                 Ok(prompt_with_suggestions(&varname, &config, suggestion).unwrap())
             })?;
 
-let mut writer = display::alfred::new_writer();
+        let mut writer = display::alfred::new_writer();
 
         for line in lines.split('\n') {
-
-writer.write_suggestion(&snippet, &varname, &line);
+            writer.write_suggestion(&snippet, &varname, &line);
         }
     } else {
         display::alfred::print_items_start(None);

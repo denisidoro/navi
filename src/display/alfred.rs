@@ -54,23 +54,23 @@ impl Writer for AlfredWriter {
 
 impl AlfredWriter {
     pub fn write_suggestion(&mut self, snippet: &str, varname: &str, line: &str) {
-            if line.len() < 3 {
-                return
-            }
+        if line.len() < 3 {
+            return;
+        }
 
-                    let prefix = if self.is_first {
-                self.is_first = false;
-                ""
-            } else {
-                ","
-            };
+        let prefix = if self.is_first {
+            self.is_first = false;
+            ""
+        } else {
+            ","
+        };
 
-            println!(
-                r#"{prefix}{{"title":"{value}","subtitle":"{snippet}","variables":{{"{varname}":"{value}"}},"icon":{{"path":"navi.png"}}}}"#,
-                prefix = prefix,
-                snippet = snippet,
-                varname = varname,
-                value = line
-            );
+        println!(
+            r#"{prefix}{{"title":"{value}","subtitle":"{snippet}","variables":{{"{varname}":"{value}"}},"icon":{{"path":"navi.png"}}}}"#,
+            prefix = prefix,
+            snippet = snippet,
+            varname = varname,
+            value = line
+        );
     }
 }
