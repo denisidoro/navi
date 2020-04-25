@@ -1,12 +1,8 @@
-use crate::display::{self, Writer};
+use crate::display;
 use crate::structures::item::Item;
 
-pub struct AlfredWriter {
+pub struct Writer {
     is_first: bool,
-}
-
-pub fn new_writer() -> AlfredWriter {
-    AlfredWriter { is_first: true }
 }
 
 fn escape_for_json(txt: &str) -> String {
@@ -29,7 +25,7 @@ pub fn print_items_end() {
     println!(r#"]}}"#);
 }
 
-impl Writer for AlfredWriter {
+impl display::Writer for Writer {
     fn write(&mut self, item: Item) -> String {
         let prefix = if self.is_first {
             self.is_first = false;
@@ -52,7 +48,15 @@ impl Writer for AlfredWriter {
     }
 }
 
-impl AlfredWriter {
+impl Writer {
+pub fn new() -> Writer {
+    Writer { is_first: true }
+}
+
+pub fn reset(&mut self) {
+    self.is_first = true
+}
+
     pub fn write_suggestion(&mut self, snippet: &str, varname: &str, line: &str) {
         if line.len() < 3 {
             return;

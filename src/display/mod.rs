@@ -13,6 +13,10 @@ lazy_static! {
     pub static ref VAR_REGEX: Regex = Regex::new(r"<(\w[\w\d\-_]*)>").expect("Invalid regex");
 }
 
+pub fn with_new_lines(txt: String) -> String {
+    txt.replace(LINE_SEPARATOR, "\n")
+}
+
 pub fn fix_newlines(txt: &str) -> String {
     if txt.contains(NEWLINE_ESCAPE_CHAR) {
         (*NEWLINE_REGEX)

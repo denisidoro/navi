@@ -43,19 +43,19 @@ fn gen_core_finder_opts(variant: Variant, config: &Config) -> Result<FinderOpts,
     Ok(opts)
 }
 
-fn extract_from_selections(raw_snippet: &str, contains_key: bool) -> (&str, &str, &str) {
+fn extract_from_selections(raw_snippet: &str, contains_key: bool) -> Result<(&str, &str, &str), Error> {
     let mut lines = raw_snippet.split('\n');
     let key = if contains_key {
         lines
             .next()
-            .expect("Key was promised but not present in `selections`")
+            .context("Key was promised but not present in `selections`")?
     } else {
         "enter"
     };
 
     let mut parts = lines
         .next()
-        .expect("No more parts in `selections`")
+        .context("No more parts in `selections`")?
         .split(display::DELIMITER)
         .skip(3);
 
@@ -63,7 +63,7 @@ fn extract_from_selections(raw_snippet: &str, contains_key: bool) -> (&str, &str
     parts.next();
 
     let snippet = parts.next().unwrap_or("");
-    (key, tags, snippet)
+    Ok((key, tags, snippet))
 }
 
 fn prompt_with_suggestions(
@@ -113,7 +113,6 @@ fn prompt_with_suggestions(
 fn prompt_without_suggestions(
     variable_name: &str,
     config: &Config,
-    _snippet: String,
 ) -> Result<String, Error> {
     let opts = FinderOpts {
         autoselect: false,
@@ -160,7 +159,7 @@ fn replace_variables_from_snippet(
                     )
                 })
                 .or_else(|_| {
-                    prompt_without_suggestions(variable_name, &config, interpolated_snippet.clone())
+                    prompt_without_suggestions(variable_name, &config)
                 })?
         };
 
@@ -176,25 +175,21 @@ fn replace_variables_from_snippet(
     Ok(interpolated_snippet)
 }
 
-fn with_new_lines(txt: String) -> String {
-    txt.replace(display::LINE_SEPARATOR, "\n")
-}
-
 pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Error> {
-    let opts =
-        gen_core_finder_opts(variant, &config).context("Failed to generate finder options")?;
+    let opts = gen_core_finder_opts(variant, &config).context("Failed to generate finder options")?;
     let (raw_selection, variables) = config
         .finder
         .call(opts, |stdin| {
-            Ok(Some(parser::read_all(&config, stdin).context(
+    let mut writer = display::terminal::Writer::new();
+            Ok(Some(parser::read_all(&config, stdin, &mut writer).context(
                 "Failed to parse variables intended for finder",
             )?))
         })
         .context("Failed getting selection and variables from finder")?;
 
-    let (key, tags, snippet) = extract_from_selections(&raw_selection[..], contains_key);
+    let (key, tags, snippet) = extract_from_selections(&raw_selection[..], contains_key)?;
 
-    let interpolated_snippet = with_new_lines(
+    let interpolated_snippet = display::with_new_lines(
         replace_variables_from_snippet(
             snippet,
             tags,
@@ -213,7 +208,7 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
     // save to file
     } else if let Some(s) = config.save {
         fs::write(s, interpolated_snippet).context("Unable to save output")?;
-    // call navi (this prevents "failed to read /dev/tty" from finder)
+    // call navi (this prevents shelling out to call navi again
     } else if interpolated_snippet.starts_with("navi") {
         let new_config = option::config_from_iter(interpolated_snippet.split(' ').collect());
         handler::handle_config(new_config)?;

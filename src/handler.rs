@@ -28,7 +28,7 @@ pub fn handle_config(config: Config) -> Result<(), Error> {
             Search { query } => flows::search::main(query.clone(), config)
                 .context("Failed to search for online cheatsheets"),
 
-            Widget { shell } => flows::shell::main(&shell[..]),
+            Widget { shell } => flows::shell::main(&shell).context("Failed to print shell widget code"),
 
             Fn { func, args } => flows::func::main(func.clone(), args.to_vec())
                 .with_context(|| format!("Failed to execute function `{}`", func)),
@@ -41,9 +41,9 @@ pub fn handle_config(config: Config) -> Result<(), Error> {
             },
 
             Alfred { cmd } => match cmd {
-                AlfredCommand::Start => flows::alfred::main(config),
-                AlfredCommand::Suggestions => flows::alfred::suggestions(config),
-                AlfredCommand::Transform => flows::alfred::transform(),
+                AlfredCommand::Start => flows::alfred::main(config).context("Failed to call Alfred starting function"),
+                AlfredCommand::Suggestions => flows::alfred::suggestions(config).context("Failed to call Alfred suggestion function"),
+                AlfredCommand::Transform => flows::alfred::transform().context("Failed to call Alfred transform function"),
             },
         },
     }

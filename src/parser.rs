@@ -3,7 +3,6 @@ use crate::filesystem;
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use crate::structures::fnv::HashLine;
-use crate::structures::option::Command::Alfred;
 use crate::structures::{error::filesystem::InvalidPath, item::Item, option::Config};
 use crate::welcome;
 use anyhow::{Context, Error};
@@ -230,19 +229,15 @@ fn paths_from_path_param<'a>(env_var: &'a str) -> impl Iterator<Item = &'a str> 
 pub fn read_all(
     config: &Config,
     stdin: &mut std::process::ChildStdin,
+    writer: &mut dyn Writer
 ) -> Result<VariableMap, Error> {
     let mut variables = VariableMap::new();
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
-    let mut writer: Box<dyn Writer> = if let Some(Alfred { .. }) = &config.cmd {
-        Box::new(display::alfred::new_writer())
-    } else {
-        Box::new(display::terminal::new_writer())
-    };
     let paths = filesystem::cheat_paths(config);
 
     if paths.is_err() {
-        welcome::cheatsheet(&mut *writer, stdin);
+        welcome::cheatsheet(writer, stdin);
         return Ok(variables);
     }
 
@@ -262,7 +257,7 @@ pub fn read_all(
                             path_str,
                             &mut variables,
                             &mut visited_lines,
-                            &mut *writer,
+                            writer,
                             stdin,
                         )
                         .is_ok()
@@ -276,7 +271,7 @@ pub fn read_all(
     }
 
     if !found_something {
-        welcome::cheatsheet(&mut *writer, stdin);
+        welcome::cheatsheet(writer, stdin);
     }
 
     Ok(variables)
@@ -317,7 +312,7 @@ mod tests {
             .unwrap();
         let child_stdin = child.stdin.as_mut().unwrap();
         let mut visited_lines: HashSet<u64> = HashSet::new();
-        let mut writer: Box<dyn Writer> = Box::new(display::terminal::new_writer());
+        let mut writer: Box<dyn Writer> = Box::new(display::terminal::Writer::new());
         read_file(
             path,
             &mut variables,
