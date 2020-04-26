@@ -39,7 +39,7 @@ impl display::Writer for Writer {
         let snippet = escape_for_json(item.snippet);
 
         format!(
-            r#"{prefix}{{"type":"file","title":"{comment}","match":"{comment} {tags} {snippet}","subtitle":"{tags} :: {snippet}","variables":{{"tags":"{tags}","comment":"{comment}","snippet":"{snippet}"}},"icon":{{"path":"navi.png"}}}}"#,
+            r#"{prefix}{{"type":"file","title":"{comment}","match":"{comment} {tags} {snippet}","subtitle":"{tags} :: {snippet}","variables":{{"tags":"{tags}","comment":"{comment}","snippet":"{snippet}"}},"icon":{{"path":"icon.png"}}}}"#,
             prefix = prefix,
             tags = tags,
             comment = comment,
@@ -70,7 +70,7 @@ impl Writer {
         };
 
         println!(
-            r#"{prefix}{{"title":"{value}","subtitle":"{snippet}","variables":{{"{varname}":"{value}"}},"icon":{{"path":"navi.png"}}}}"#,
+            r#"{prefix}{{"title":"{value}","subtitle":"{snippet}","variables":{{"{varname}":"{value}"}},"icon":{{"path":"icon.png"}}}}"#,
             prefix = prefix,
             snippet = snippet,
             varname = varname,
