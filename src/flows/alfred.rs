@@ -69,16 +69,16 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
     let command = variables.get(&tags, &varname);
 
     if dry_run {
-if command.is_none() {
-        println!("{}", varname);
-}
-        return Ok(())
+        if command.is_none() {
+            println!("{}", varname);
+        }
+        return Ok(());
     }
 
     display::alfred::print_items_start(Some(varname));
 
     let command = command.context("Invalid command")?;
-        let lines = prompt_with_suggestions(command).context("Invalid lines")?;
+    let lines = prompt_with_suggestions(command).context("Invalid lines")?;
 
     writer.reset();
 
@@ -95,9 +95,9 @@ pub fn transform() -> Result<(), Error> {
     let snippet = env::var("snippet").context(r#"The env var "snippet" isn't set"#)?;
     let varname = env::var("varname").context(r#"The env var "varname" isn't set"#)?;
     let value = if let Ok(v) = env::var(&varname) {
-v
+        v
     } else {
-env::var("free").context("The env var for varname isn't set")?
+        env::var("free").context("The env var for varname isn't set")?
     };
 
     let bracketed_varname = format!("<{}>", varname);
