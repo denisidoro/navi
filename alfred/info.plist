@@ -627,7 +627,7 @@ fi
 						<key>inputstring</key>
 						<string>{query}</string>
 						<key>matchcasesensitive</key>
-						<false/>
+						<true/>
 						<key>matchmode</key>
 						<integer>0</integer>
 						<key>matchstring</key>
@@ -782,7 +782,7 @@ eval "$snippet"</string>
 			<key>xpos</key>
 			<integer>1210</integer>
 			<key>ypos</key>
-			<integer>265</integer>
+			<integer>270</integer>
 		</dict>
 		<key>2B0EE026-57A9-4097-ACE7-FE4E78F20EC0</key>
 		<dict>
