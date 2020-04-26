@@ -15,7 +15,7 @@ An interactive cheatsheet tool for the command-line and application launchers.
 
 It uses [fzf](https://github.com/junegunn/fzf), [skim](https://github.com/lotabout/skim), or [Alfred](https://www.alfredapp.com/) under the hood and it can be either used as a command or as a shell widget (*à la* Ctrl-R).
 
-![Alfred demo](https://user-images.githubusercontent.com/3226564/79696281-35d06380-8252-11ea-87d5-dc619d869e81.gif)
+![Alfred demo](https://user-images.githubusercontent.com/3226564/80294838-582b1b00-8743-11ea-9eb5-a335d8eed833.gif)
 
 Table of contents
 -----------------

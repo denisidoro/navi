@@ -70,7 +70,7 @@ impl Writer {
         };
 
         println!(
-            r#"{prefix}{{"title":"{value}","subtitle":"{snippet}","variables":{{"{varname}":"{value}"}},"icon":{{"path":"code.png"}}}}"#,
+            r#"{prefix}{{"title":"{value}","subtitle":"{snippet}","variables":{{"{varname}":"{value}"}},"icon":{{"path":"icon.png"}}}}"#,
             prefix = prefix,
             snippet = snippet,
             varname = varname,
