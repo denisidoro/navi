@@ -48,7 +48,7 @@ fn prompt_with_suggestions(suggestion: &Suggestion) -> Result<String, Error> {
     Ok(suggestions)
 }
 
-pub fn suggestions(config: Config) -> Result<(), Error> {
+pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
     let mut child = Command::new("cat")
         .stdin(Stdio::piped())
         .stdout(Stdio::null())
@@ -64,22 +64,21 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
     let snippet = env::var("snippet").context(r#"The env var "snippet" isn't set"#)?;
 
     let capture = display::VAR_REGEX.captures_iter(&snippet).next();
-
-    if capture.is_none() {
-        display::alfred::print_items_start(None);
-        display::alfred::print_items_end();
-        return Ok(());
-    }
-
     let bracketed_varname = &(capture.expect("Invalid capture"))[0];
     let varname = &bracketed_varname[1..bracketed_varname.len() - 1];
+    let command = variables.get(&tags, &varname);
+
+    if dry_run {
+if command.is_none() {
+        println!("{}", varname);
+}
+        return Ok(())
+    }
 
     display::alfred::print_items_start(Some(varname));
 
-    let lines = variables
-        .get(&tags, &varname)
-        .ok_or_else(|| anyhow!("No suggestions"))
-        .and_then(|suggestion| Ok(prompt_with_suggestions(suggestion).unwrap()))?;
+    let command = command.context("Invalid command")?;
+        let lines = prompt_with_suggestions(command).context("Invalid lines")?;
 
     writer.reset();
 
@@ -95,7 +94,11 @@ pub fn suggestions(config: Config) -> Result<(), Error> {
 pub fn transform() -> Result<(), Error> {
     let snippet = env::var("snippet").context(r#"The env var "snippet" isn't set"#)?;
     let varname = env::var("varname").context(r#"The env var "varname" isn't set"#)?;
-    let value = env::var(&varname).context(format!(r#"The env var "{}" isn't set"#, &varname))?;
+    let value = if let Ok(v) = env::var(&varname) {
+v
+    } else {
+env::var("free").context("The env var for varname isn't set")?
+    };
 
     let bracketed_varname = format!("<{}>", varname);
     let interpolated_snippet = snippet.replace(&bracketed_varname, &value);

@@ -1,8 +1,7 @@
 #!/bin/bash
 
-source "${HOME}/.bashrc"
-
 if [ -n "${varname:-}" ]; then
+   source "${HOME}/.bashrc"
    echo -n "$(navi alfred transform)"
 else
    echo -n "$snippet"

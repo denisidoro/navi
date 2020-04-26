@@ -136,6 +136,8 @@ pub enum AlfredCommand {
     Suggestions,
     /// Transforms the snippet env var with the selected value
     Transform,
+    /// Checks whether to use free input
+    Check,
 }
 
 pub fn config_from_env() -> Config {

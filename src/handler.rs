@@ -46,8 +46,10 @@ pub fn handle_config(config: Config) -> Result<(), Error> {
                 match cmd {
                     AlfredCommand::Start => flows::alfred::main(config)
                         .context("Failed to call Alfred starting function"),
-                    AlfredCommand::Suggestions => flows::alfred::suggestions(config)
+                    AlfredCommand::Suggestions => flows::alfred::suggestions(config, false)
                         .context("Failed to call Alfred suggestion function"),
+                    AlfredCommand::Check => flows::alfred::suggestions(config, true)
+                        .context("Failed to call Alfred check function"),
                     AlfredCommand::Transform => flows::alfred::transform()
                         .context("Failed to call Alfred transform function"),
                 }
