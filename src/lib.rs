@@ -13,8 +13,9 @@ mod handler;
 mod parser;
 mod structures;
 mod terminal_width;
+mod url;
 mod welcome;
 
 pub use handler::handle_config;
+pub use structures::config::{config_from_env, config_from_iter};
 pub use structures::error::file_issue::FileAnIssue;
-pub use structures::option::{config_from_env, config_from_iter};

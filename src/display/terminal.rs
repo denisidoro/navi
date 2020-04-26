@@ -1,6 +1,7 @@
-use crate::display::{self, Writer};
+use crate::display;
 use crate::structures::item::Item;
 use crate::terminal_width;
+use std::cmp::max;
 use termion::color;
 
 const COMMENT_COLOR: color::LightCyan = color::LightCyan;
@@ -31,20 +32,29 @@ fn limit_str(text: &str, length: usize) -> String {
     }
 }
 
-pub struct TerminalWriter {
+fn get_widths() -> (usize, usize) {
+    let width = terminal_width::get();
+    let tag_width = max(4, width * 20 / 100);
+    let comment_width = max(4, width * 40 / 100);
+    (usize::from(tag_width), usize::from(comment_width))
+}
+
+pub struct Writer {
     tag_width: usize,
     comment_width: usize,
 }
 
-pub fn new_writer() -> TerminalWriter {
-    let (tag_width, comment_width) = terminal_width::get_widths();
-    display::terminal::TerminalWriter {
-        tag_width,
-        comment_width,
+impl Writer {
+    pub fn new() -> Writer {
+        let (tag_width, comment_width) = get_widths();
+        display::terminal::Writer {
+            tag_width,
+            comment_width,
+        }
     }
 }
 
-impl Writer for TerminalWriter {
+impl display::Writer for Writer {
     fn write(&mut self, item: Item) -> String {
         format!(
        "{tag_color}{tags_short}{delimiter}{comment_color}{comment_short}{delimiter}{snippet_color}{snippet_short}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}\n",

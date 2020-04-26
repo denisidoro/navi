@@ -1,7 +1,7 @@
 use crate::flows;
 use crate::flows::core::Variant;
-use crate::structures::option::Command::{Alfred, Best, Fn, Preview, Query, Repo, Search, Widget};
-use crate::structures::option::{AlfredCommand, Config, RepoCommand};
+use crate::structures::config::Command::{Alfred, Best, Fn, Preview, Query, Repo, Search, Widget};
+use crate::structures::config::{AlfredCommand, Config, RepoCommand};
 use anyhow::Context;
 use anyhow::Error;
 
@@ -28,7 +28,9 @@ pub fn handle_config(config: Config) -> Result<(), Error> {
             Search { query } => flows::search::main(query.clone(), config)
                 .context("Failed to search for online cheatsheets"),
 
-            Widget { shell } => flows::shell::main(&shell[..]),
+            Widget { shell } => {
+                flows::shell::main(&shell).context("Failed to print shell widget code")
+            }
 
             Fn { func, args } => flows::func::main(func.clone(), args.to_vec())
                 .with_context(|| format!("Failed to execute function `{}`", func)),
@@ -40,11 +42,16 @@ pub fn handle_config(config: Config) -> Result<(), Error> {
                     .context("Failed to browse featured cheatsheets"),
             },
 
-            Alfred { cmd } => match cmd {
-                AlfredCommand::Start => flows::alfred::main(config),
-                AlfredCommand::Suggestions => flows::alfred::suggestions(config),
-                AlfredCommand::Transform => flows::alfred::transform(),
-            },
+            Alfred { cmd } => {
+                match cmd {
+                    AlfredCommand::Start => flows::alfred::main(config)
+                        .context("Failed to call Alfred starting function"),
+                    AlfredCommand::Suggestions => flows::alfred::suggestions(config)
+                        .context("Failed to call Alfred suggestion function"),
+                    AlfredCommand::Transform => flows::alfred::transform()
+                        .context("Failed to call Alfred transform function"),
+                }
+            }
         },
     }
 }
