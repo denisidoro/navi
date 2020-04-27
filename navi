@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-echo "navi has been rewritten from scratch. The previous way of calling the program isn't supported anymore."
-echo "Please check https://github.com/denisidoro/navi/issues/201 for more details."
-echo "I'm sorry for the inconvenience."
-
-exit 42
