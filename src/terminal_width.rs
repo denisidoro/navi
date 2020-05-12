@@ -1,5 +1,7 @@
 use terminal_size::{terminal_size, terminal_size_using_fd, Height, Width};
 
+const FALLBACK_WIDTH: u16 = 80;
+
 fn width_with_shell_out() -> u16 {
     use std::process::Command;
     use std::process::Stdio;
@@ -30,7 +32,7 @@ fn width_with_shell_out() -> u16 {
             u16::from_str_radix(data.next().expect("Not enough data"), 10)
                 .expect("Invalid base-10 number")
         }
-        _ => 40,
+        _ => FALLBACK_WIDTH,
     }
 }
 
