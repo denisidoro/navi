@@ -31,7 +31,6 @@ impl Finder for SkimFinder {
             "--ansi",
             "--bind",
             "ctrl-j:down,ctrl-k:up",
-            "--exact",
         ]);
 
         if opts.autoselect {
@@ -84,14 +83,25 @@ impl Finder for SkimFinder {
             command.args(&["--header-lines", format!("{}", opts.header_lines).as_str()]);
         }
 
+        let mut exact = true;
+
         if let Some(o) = opts.overrides {
+            if o.contains("--no-exact") {
+                exact = false
+            }
+
             o.as_str()
                 .split(' ')
                 .map(|s| s.to_string())
                 .filter(|s| !s.is_empty())
+                .filter(|s| s != "--no-exact")
                 .for_each(|s| {
                     command.arg(s);
                 });
+        }
+
+        if exact {
+            command.arg("--exact");
         }
 
         let child = command.stdin(Stdio::piped()).stdout(Stdio::piped()).spawn();
