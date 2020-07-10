@@ -2,7 +2,7 @@
 
 _call_navi() {
   local selected
-  if selected="$(printf "$(navi --print </dev/tty)")"; then
+  if selected="$(printf "%s" "$(navi --print </dev/tty)")"; then
     LBUFFER="$selected"
   fi
   zle redisplay

@@ -46,6 +46,16 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>4B245423-CD5B-4FB1-A819-4214E93BC683</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 		</array>
 		<key>2B0EE026-57A9-4097-ACE7-FE4E78F20EC0</key>
 		<array>
@@ -89,6 +99,16 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>98658166-32FC-4F9D-8247-52BEDE6394EE</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>BD60B64B-EC93-467E-AEC2-0489A3090113</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -426,29 +446,6 @@ fi
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
-				<string>alfred2.bash</string>
-				<key>type</key>
-				<integer>8</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>3CE4BEC1-BEBE-4A11-B182-E63693AE2FE6</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>echo asdsds</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
 				<string>alfred0.bash</string>
 				<key>type</key>
 				<integer>8</integer>
@@ -487,6 +484,29 @@ fi
 			<string>EB668A02-2BBA-4539-B4C0-20F2498ECD71</string>
 			<key>version</key>
 			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>echo asdsds</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>alfred2.bash</string>
+				<key>type</key>
+				<integer>8</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>3CE4BEC1-BEBE-4A11-B182-E63693AE2FE6</string>
+			<key>version</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -682,12 +702,31 @@ fi
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argument</key>
+				<string>'{query}', {allvars}</string>
+				<key>cleardebuggertext</key>
+				<false/>
+				<key>processoutputs</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.debug</string>
+			<key>uid</key>
+			<string>BD60B64B-EC93-467E-AEC2-0489A3090113</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>concurrently</key>
 				<true/>
 				<key>escaping</key>
 				<integer>0</integer>
 				<key>script</key>
-				<string>source $HOME/.bashrc
+				<string>source "${HOME}/.bashrc"
+export PATH="/usr/local/bin:$PATH"
+
 eval "$snippet"</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
@@ -758,6 +797,23 @@ eval "$snippet"</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>'{query}', {allvars}</string>
+				<key>cleardebuggertext</key>
+				<false/>
+				<key>processoutputs</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.debug</string>
+			<key>uid</key>
+			<string>4B245423-CD5B-4FB1-A819-4214E93BC683</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string></string>
@@ -780,9 +836,9 @@ eval "$snippet"</string>
 		<key>282E2B68-29A1-4EF0-B328-2BE38CBF67F0</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1210</integer>
+			<integer>1185</integer>
 			<key>ypos</key>
-			<integer>270</integer>
+			<integer>275</integer>
 		</dict>
 		<key>2B0EE026-57A9-4097-ACE7-FE4E78F20EC0</key>
 		<dict>
@@ -794,9 +850,16 @@ eval "$snippet"</string>
 		<key>3CE4BEC1-BEBE-4A11-B182-E63693AE2FE6</key>
 		<dict>
 			<key>xpos</key>
-			<integer>815</integer>
+			<integer>820</integer>
 			<key>ypos</key>
-			<integer>160</integer>
+			<integer>165</integer>
+		</dict>
+		<key>4B245423-CD5B-4FB1-A819-4214E93BC683</key>
+		<dict>
+			<key>xpos</key>
+			<integer>1355</integer>
+			<key>ypos</key>
+			<integer>455</integer>
 		</dict>
 		<key>529BC67C-C77D-41CA-B095-996CC1317556</key>
 		<dict>
@@ -824,21 +887,21 @@ eval "$snippet"</string>
 			<key>xpos</key>
 			<integer>615</integer>
 			<key>ypos</key>
-			<integer>85</integer>
+			<integer>80</integer>
 		</dict>
 		<key>93437EDA-0308-467D-BE3F-6855C638D49D</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1235</integer>
+			<integer>1230</integer>
 			<key>ypos</key>
 			<integer>60</integer>
 		</dict>
 		<key>98658166-32FC-4F9D-8247-52BEDE6394EE</key>
 		<dict>
 			<key>xpos</key>
-			<integer>980</integer>
+			<integer>985</integer>
 			<key>ypos</key>
-			<integer>190</integer>
+			<integer>195</integer>
 		</dict>
 		<key>ABA74294-992D-4528-A609-964B0ACA9346</key>
 		<dict>
@@ -850,7 +913,7 @@ eval "$snippet"</string>
 		<key>B3B967BC-EC30-47DE-B233-2F3F97568857</key>
 		<dict>
 			<key>xpos</key>
-			<integer>595</integer>
+			<integer>600</integer>
 			<key>ypos</key>
 			<integer>350</integer>
 		</dict>
@@ -859,7 +922,14 @@ eval "$snippet"</string>
 			<key>xpos</key>
 			<integer>1055</integer>
 			<key>ypos</key>
-			<integer>180</integer>
+			<integer>185</integer>
+		</dict>
+		<key>BD60B64B-EC93-467E-AEC2-0489A3090113</key>
+		<dict>
+			<key>xpos</key>
+			<integer>1010</integer>
+			<key>ypos</key>
+			<integer>340</integer>
 		</dict>
 		<key>E8FC4B20-3DD5-4684-97C0-FBBC2FC1AD45</key>
 		<dict>

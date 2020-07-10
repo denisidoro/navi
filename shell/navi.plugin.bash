@@ -5,7 +5,7 @@ __call_navi() {
     local -r linecount="$(echo "$result" | wc -l)"
 
     if [[ "$linecount" -lt 2 ]]; then
-        printf "$result"
+        printf "%s" "$result"
         return 0
     fi
 
