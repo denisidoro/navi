@@ -3,7 +3,7 @@
 _call_navi() {
   local selected
   if [ -n "$LBUFFER" ]; then
-    if selected="$(printf "%s" "$(navi --print query "${LBUFFER}" </dev/tty)")"; then
+    if selected="$(printf "%s" "$(navi --print --no-autoselect query "${LBUFFER}" </dev/tty)")"; then
       LBUFFER="$selected"
     fi
   else
