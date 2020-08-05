@@ -2,8 +2,14 @@
 
 _call_navi() {
   local selected
-  if selected="$(printf "%s" "$(navi --print </dev/tty)")"; then
-    LBUFFER="$selected"
+  if [ -n "$LBUFFER" ]; then
+    if selected="$(printf "%s" "$(navi --print query "${LBUFFER}" </dev/tty)")"; then
+      LBUFFER="$selected"
+    fi
+  else
+    if selected="$(printf "%s" "$(navi --print </dev/tty)")"; then
+      LBUFFER="$selected"
+    fi
   fi
   zle redisplay
 }
