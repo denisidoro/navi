@@ -109,10 +109,10 @@ By running `navi` for the first time, you'll be suggested to download some cheat
 You can use **navi** as a widget to your shell. This way, your history is correctly populated and you can edit the command as you wish before executing it. To set it up, add this line to your `.bashrc`-like file:
 ```sh
 # bash
-source <(navi widget bash)
+source <(echo "$(navi widget bash)")
 
 # zsh
-source <(navi widget zsh)
+source <(echo "$(navi widget zsh)")
 
 # fish
 navi widget fish | source
