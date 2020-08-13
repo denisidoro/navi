@@ -1,26 +1,19 @@
 #!/usr/bin/env bash
 
-__call_navi() {
-    local -r result="$(navi --print)"
-    local -r linecount="$(echo "$result" | wc -l)"
+_call_navi() {
+    local selected
 
-    if [[ "$linecount" -lt 2 ]]; then
-        printf "%s" "$result"
-        return 0
-    fi
-
-    IFS=$'\n'
-    local i=1;
-    for line in $result; do
-        if echo "$line" | grep -q '\\$'; then
-            printf "${line::-1} "
-        elif [[ "$i" -eq "$linecount" ]]; then
-            printf "$line "
-        else 
-            printf "${line}; "
+    if [ -n "${READLINE_LINE}" ]; then
+        if selected="$(printf "%s" "$(navi --print --no-autoselect query "${READLINE_LINE}" </dev/tty)")"; then
+            READLINE_LINE="$selected"
+            READLINE_POINT=${#READLINE_LINE}
         fi
-        i=$((i+1))
-    done
+    else
+        if selected="$(printf "%s" "$(navi --print </dev/tty)")"; then
+            READLINE_LINE="$selected"
+            READLINE_POINT=${#READLINE_LINE}
+        fi
+    fi
 }
 
-bind '"\C-g": " \C-b\C-k \C-u`__call_navi`\e\C-e\C-a\C-y\C-h\C-e\e \C-y\ey\C-x\C-x\C-f"'
+bind -x '"\C-g": _call_navi'
