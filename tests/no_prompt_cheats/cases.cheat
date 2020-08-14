@@ -28,8 +28,11 @@ echo "<language2> is cool"
 # multiple words -> "lorem foo bar ipsum"
 echo "lorem <multiword> ipsum"
 
-# variable dependency -> "2 12 a 2"
+# variable dependency, full -> "2 12 a 2"
 echo "<x> <x2> <y> <x>"
+
+# variable dependency, we can ignore intermediate values -> "12"
+: <x>; echo "<x2>"
 
 # nested used value -> "path: /my/pictures/wallpapers"
 echo "path: <wallpaper_folder>"
