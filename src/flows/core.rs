@@ -151,10 +151,13 @@ fn replace_variables_from_snippet(
                 .get(&tags, &variable_name)
                 .ok_or_else(|| anyhow!("No suggestions"))
                 .and_then(|suggestion| {
+                    let mut new_suggestion = suggestion.clone();
+                    new_suggestion.0 = replace_variables_from_snippet(&new_suggestion.0, tags, variables.clone(), config)?;
+
                     prompt_with_suggestions(
                         variable_name,
                         &config,
-                        suggestion,
+                        &new_suggestion,
                         interpolated_snippet.clone(),
                     )
                 })

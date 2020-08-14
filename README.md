@@ -237,8 +237,20 @@ The command for generating possible inputs can refer previous variables:
 # If you select "hello" for <x>, the possible values of <y> will be "hello foo" and "hello bar"
 echo <x> <y>
 
+# If you want to ignore the contents of <x> and only print <y>
+: <x>; echo <y>
+
 $ x: echo "hello hi" | tr ' ' '\n'
 $ y: echo "$x foo;$x bar" | tr ';' '\n'
+```
+
+If you want to have implicit variable dependency, you can use the `<varname>` syntax inside a variable command:
+```sh
+# Should print /my/pictures/wallpapers
+echo "<wallpaper_folder>"
+
+$ pictures_folder: echo "/my/pictures"
+$ wallpaper_folder: echo "<pictures_folder>/wallpapers"
 ```
 
 ### Multiline snippets
