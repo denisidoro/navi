@@ -49,13 +49,13 @@ Table of contents
 Installation
 ------------
 
-### Using [Homebrew](http://brew.sh/) or [Linuxbrew](http://linuxbrew.sh/) [![Homebrew](https://repology.org/badge/version-for-repo/homebrew/navi.svg?header=homebrew)](https://formulae.brew.sh/formula/navi)
+### Using [Homebrew](http://brew.sh/) or [Linuxbrew](http://linuxbrew.sh/)
 
 ```sh
 brew install navi
 ```
 
-### Using [nix](https://nixos.org/) [![nixpkgs unstable](https://repology.org/badge/version-for-repo/nix_unstable/navi.svg?header=nixpkgs%20unstable)](https://nixos.org/nixos/packages.html?attr=navi&channel=nixpkgs-unstable)
+### Using [nix](https://nixos.org/)
 
 ```sh
 nix-env -iA nixpkgs.navi
