@@ -42,7 +42,7 @@ $ language2: echo '1;clojure;clojure.org' --- --column 2 --delimiter ';'
 $ multiword: echo 'foo bar'
 $ repo: echo "/home/user/repo"
 $ embedded: echo "$repo/embedded"
-$ core: echo "$repo/core"
+$ core: echo "<repo>/core"
 
 # this should be displayed -> "hi"
 echo hi
