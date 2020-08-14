@@ -31,11 +31,11 @@ echo "lorem <multiword> ipsum"
 # variable dependency -> "2 12 a 2"
 echo "<x> <x2> <y> <x>"
 
-# nested used value -> "path: /home/user/repo/core"
-echo "path: <core>"
+# nested used value -> "path: /my/pictures/wallpapers"
+echo "path: <wallpaper_folder>"
 
-# nested unused value -> "path: /home/user/repo"
-echo "path: <repo>"
+# nested unused value -> "path: /my/pictures"
+echo "path: <pictures_folder>"
 
 $ x: echo '2'
 $ x2: echo "$((x+10))"
@@ -43,8 +43,8 @@ $ y: echo 'a'
 $ language: echo '0  rust      rust-lang.org' --- --column 2
 $ language2: echo '1;clojure;clojure.org' --- --column 2 --delimiter ';'
 $ multiword: echo 'foo bar'
-$ repo: echo "/home/user/repo"
-$ core: echo "<repo>/core"
+$ pictures_folder: echo "/my/pictures"
+$ wallpaper_folder: echo "<pictures_folder>/wallpapers"
 
 # this should be displayed -> "hi"
 echo hi
