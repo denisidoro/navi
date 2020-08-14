@@ -31,12 +31,18 @@ echo "lorem <multiword> ipsum"
 # variable dependency -> "2 12 a 2"
 echo "<x> <x2> <y> <x>"
 
+# nested
+echo "my path: " "<core>"
+
 $ x: echo '2' --- --global
 $ x2: echo "$((x+10))"
 $ y: echo 'a'
 $ language: echo '0  rust      rust-lang.org' --- --column 2
 $ language2: echo '1;clojure;clojure.org' --- --column 2 --delimiter ';'
 $ multiword: echo 'foo bar'
+$ repo: echo "/home/user/repo"
+$ embedded: echo "$repo/embedded"
+$ core: echo "$repo/core"
 
 # this should be displayed -> "hi"
 echo hi
