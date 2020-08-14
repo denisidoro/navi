@@ -4,22 +4,30 @@ use std::collections::HashMap;
 
 pub type Suggestion = (String, Option<Opts>);
 
-fn gen_key(tags: &str, variable: &str) -> u64 {
-    format!("{};{}", tags, variable).hash_line()
-}
-
-pub struct VariableMap(HashMap<u64, Suggestion>);
+pub struct VariableMap(HashMap<u64, HashMap<String, Suggestion>>);
 
 impl VariableMap {
     pub fn new() -> Self {
         Self(HashMap::new())
     }
 
-    pub fn insert(&mut self, tags: &str, variable: &str, value: Suggestion) -> Option<Suggestion> {
-        self.0.insert(gen_key(tags, variable), value)
+    pub fn insert(&mut self, tags: &str, variable: &str, value: Suggestion) {
+        let k1 = tags.hash_line();
+        let k2 = String::from(variable);
+        if let Some(m) = self.0.get_mut(&k1) {
+            m.insert(k2, value);
+        } else {
+            let mut m = HashMap::new();
+            m.insert(k2, value);
+            self.0.insert(k1, m);
+        }
+    }
+
+    pub fn get_for_tags(&self, tags: &str) -> Option<&HashMap<String, Suggestion>> {
+        self.0.get(&tags.hash_line()) 
     }
 
     pub fn get(&self, tags: &str, variable: &str) -> Option<&Suggestion> {
-        self.0.get(&gen_key(tags, variable))
+        self.0.get(&tags.hash_line())?.get(variable)
     }
 }

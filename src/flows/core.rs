@@ -138,6 +138,18 @@ fn replace_variables_from_snippet(
 ) -> Result<String, Error> {
     let mut interpolated_snippet = String::from(snippet);
 
+    if let Some(vs) = variables.get_for_tags(tags) {
+        let mut prefix = String::from("");
+        for (variable, suggestion) in vs.iter() {
+            if let Some(o) = &suggestion.1 {
+                if o.global {
+                    prefix.push_str(&format!(": {}; ", variable));
+                }
+            }
+        }
+        interpolated_snippet = format!("{}{}", prefix, interpolated_snippet)
+    }
+
     for captures in display::VAR_REGEX.captures_iter(snippet) {
         let bracketed_variable_name = &captures[0];
         let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
