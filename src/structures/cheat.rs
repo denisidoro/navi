@@ -4,6 +4,7 @@ use std::collections::HashMap;
 
 pub type Suggestion = (String, Option<Opts>);
 
+#[derive(Clone)]
 pub struct VariableMap(HashMap<u64, HashMap<String, Suggestion>>);
 
 impl VariableMap {
@@ -21,10 +22,6 @@ impl VariableMap {
             m.insert(k2, value);
             self.0.insert(k1, m);
         }
-    }
-
-    pub fn get_for_tags(&self, tags: &str) -> Option<&HashMap<String, Suggestion>> {
-        self.0.get(&tags.hash_line()) 
     }
 
     pub fn get(&self, tags: &str, variable: &str) -> Option<&Suggestion> {
