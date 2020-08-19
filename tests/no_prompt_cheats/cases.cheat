@@ -28,21 +28,26 @@ echo "<language2> is cool"
 # multiple words -> "lorem foo bar ipsum"
 echo "lorem <multiword> ipsum"
 
-# variable dependency -> "2 12 a 2"
+# variable dependency, full -> "2 12 a 2"
 echo "<x> <x2> <y> <x>"
 
-# nested
-echo "my path: " "<core>"
+# variable dependency, we can ignore intermediate values -> "12"
+: <x>; echo "<x2>"
 
-$ x: echo '2' --- --global
+# nested used value -> "path: /my/pictures/wallpapers"
+echo "path: <wallpaper_folder>"
+
+# nested unused value -> "path: /my/pictures"
+echo "path: <pictures_folder>"
+
+$ x: echo '2'
 $ x2: echo "$((x+10))"
 $ y: echo 'a'
 $ language: echo '0  rust      rust-lang.org' --- --column 2
 $ language2: echo '1;clojure;clojure.org' --- --column 2 --delimiter ';'
 $ multiword: echo 'foo bar'
-$ repo: echo "/home/user/repo"
-$ embedded: echo "$repo/embedded"
-$ core: echo "<repo>/core"
+$ pictures_folder: echo "/my/pictures"
+$ wallpaper_folder: echo "<pictures_folder>/wallpapers"
 
 # this should be displayed -> "hi"
 echo hi
