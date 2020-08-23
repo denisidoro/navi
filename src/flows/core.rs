@@ -148,7 +148,7 @@ fn replace_variables_from_snippet(
             e
         } else {
             variables
-                .get(&tags, &variable_name)
+                .get_suggestion(&tags, &variable_name)
                 .ok_or_else(|| anyhow!("No suggestions"))
                 .and_then(|suggestion| {
                     let mut new_suggestion = suggestion.clone();

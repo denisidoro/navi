@@ -185,7 +185,8 @@ $ branch: git branch | awk '{print $NF}'
 - lines starting with `%` determine the start of a new cheatsheet and should contain tags, useful for searching;
 - lines starting with `#` should be descriptions of commands;
 - lines starting with `;` are ignored. You can use them for metacomments;
-- lines starting with `$` should contain commands that generate a list of possible values for a given argument;
+- lines starting with `$` should contain [commands that generate a list of possible values for a given argument](#variables);
+- lines starting with `@` should contain [tags whose associated cheatsheet you want to base on](#extending-cheatsheets);
 - all the other non-empty lines are considered as executable commands.
 
 It's irrelevant how many files are used to store cheatsheets. They can be all in a single file if you wish, as long as you split them accordingly with lines starting with `%`.
@@ -232,7 +233,16 @@ In addition, it's possible to forward the following parameters to `fzf`:
 
 ### Variable dependency
 
-The command for generating possible inputs can refer previous variables:
+The command for generating possible inputs can implicitly refer previous variables by using the `<varname>` syntax:
+```sh
+# Should print /my/pictures/wallpapers
+echo "<wallpaper_folder>"
+
+$ pictures_folder: echo "/my/pictures"
+$ wallpaper_folder: echo "<pictures_folder>/wallpapers"
+```
+
+If you want to make dependencies explicit, you can use the `$varname` syntax:
 ```sh
 # If you select "hello" for <x>, the possible values of <y> will be "hello foo" and "hello bar"
 echo <x> <y>
@@ -244,13 +254,26 @@ $ x: echo "hello hi" | tr ' ' '\n'
 $ y: echo "$x foo;$x bar" | tr ';' '\n'
 ```
 
-If you want to have implicit variable dependency, you can use the `<varname>` syntax inside a variable command:
+### Extending cheatsheets
+
+With the `@ same tags from other cheatsheet` syntax you can reuse the same variable in multiple cheatsheets. 
+
 ```sh
-# Should print /my/pictures/wallpapers
-echo "<wallpaper_folder>"
+% dirs, common
 
 $ pictures_folder: echo "/my/pictures"
-$ wallpaper_folder: echo "<pictures_folder>/wallpapers"
+
+% wallpapers
+@ dirs, common
+
+# Should print /my/pictures/wallpapers
+echo "<pictures_folder>/wallpapers"
+
+% screenshots
+@ dirs, common
+
+# Should print /my/pictures/screenshots
+echo "<pictures_folder>/screenshots"
 ```
 
 ### Multiline snippets

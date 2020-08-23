@@ -66,7 +66,7 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
     let capture = display::VAR_REGEX.captures_iter(&snippet).next();
     let bracketed_varname = &(capture.expect("Invalid capture"))[0];
     let varname = &bracketed_varname[1..bracketed_varname.len() - 1];
-    let command = variables.get(&tags, &varname);
+    let command = variables.get_suggestion(&tags, &varname);
 
     if dry_run {
         if command.is_none() {

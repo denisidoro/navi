@@ -5,26 +5,56 @@ use std::collections::HashMap;
 pub type Suggestion = (String, Option<Opts>);
 
 #[derive(Clone)]
-pub struct VariableMap(HashMap<u64, HashMap<String, Suggestion>>);
+pub struct VariableMap {
+    variables: HashMap<u64, HashMap<String, Suggestion>>,
+    dependencies: HashMap<u64, Vec<u64>>,
+}
 
 impl VariableMap {
     pub fn new() -> Self {
-        Self(HashMap::new())
+        Self {
+            variables: HashMap::new(),
+            dependencies: HashMap::new(),
+        }
     }
 
-    pub fn insert(&mut self, tags: &str, variable: &str, value: Suggestion) {
+    pub fn insert_dependency(&mut self, tags: &str, tags_dependency: &str) {
+        let k = tags.hash_line();
+        if let Some(v) = self.dependencies.get_mut(&k) {
+            v.push(tags_dependency.hash_line());
+        } else {
+            let mut v: Vec<u64> = Vec::new();
+            v.push(tags_dependency.hash_line());
+            self.dependencies.insert(k, v);
+        }
+    }
+
+    pub fn insert_suggestion(&mut self, tags: &str, variable: &str, value: Suggestion) {
         let k1 = tags.hash_line();
         let k2 = String::from(variable);
-        if let Some(m) = self.0.get_mut(&k1) {
+        if let Some(m) = self.variables.get_mut(&k1) {
             m.insert(k2, value);
         } else {
             let mut m = HashMap::new();
             m.insert(k2, value);
-            self.0.insert(k1, m);
+            self.variables.insert(k1, m);
         }
     }
 
-    pub fn get(&self, tags: &str, variable: &str) -> Option<&Suggestion> {
-        self.0.get(&tags.hash_line())?.get(variable)
+    pub fn get_suggestion(&self, tags: &str, variable: &str) -> Option<&Suggestion> {
+        let k = tags.hash_line();
+        let res = self.variables.get(&k)?.get(variable);
+        if res.is_some() {
+            return res;
+        }
+        if let Some(dependency_keys) = self.dependencies.get(&k) {
+            for dependency_key in dependency_keys {
+                let res = self.variables.get(&dependency_key)?.get(variable);
+                if res.is_some() {
+                    return res;
+                }
+            }
+        }
+        None
     }
 }
