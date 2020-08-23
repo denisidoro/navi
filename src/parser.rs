@@ -339,7 +339,7 @@ mod tests {
                 ..Default::default()
             }),
         );
-        let actual_suggestion = variables.get("ssh", "user");
+        let actual_suggestion = variables.get_suggestion("ssh", "user");
         assert_eq!(Some(&expected_suggestion), actual_suggestion);
     }
 

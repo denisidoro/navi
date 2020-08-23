@@ -45,15 +45,15 @@ impl VariableMap {
         let k = tags.hash_line();
         let res = self.variables.get(&k)?.get(variable);
         if res.is_some() {
-            return res
+            return res;
         }
         if let Some(dependency_keys) = self.dependencies.get(&k) {
             for dependency_key in dependency_keys {
                 let res = self.variables.get(&dependency_key)?.get(variable);
                 if res.is_some() {
-                    return res
+                    return res;
                 }
-            } 
+            }
         }
         None
     }
