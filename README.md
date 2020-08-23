@@ -258,7 +258,7 @@ $ y: echo "$x foo;$x bar" | tr ';' '\n'
 
 With the `@ same tags from other cheatsheet` syntax you can reuse the same variable in multiple cheatsheets. 
 
-```
+```sh
 % dirs, common
 
 $ pictures_folder: echo "/my/pictures"
