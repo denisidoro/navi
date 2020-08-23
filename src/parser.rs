@@ -160,7 +160,6 @@ fn read_file(
 
         // duplicate
         if !tags.is_empty() && !comment.is_empty() {}
-
         // blank
         if line.is_empty() {
         }
@@ -175,6 +174,15 @@ fn read_file(
             } else {
                 String::from("")
             };
+        }
+        // depedency
+        else if line.starts_with('@') {
+            let tags_dependency = if line.len() > 2 {
+                String::from(&line[2..])
+            } else {
+                String::from("")
+            };
+            variables.insert_dependency(&tags, &tags_dependency);
         }
         // metacomment
         else if line.starts_with(';') {
@@ -204,7 +212,7 @@ fn read_file(
                     path
                 )
             })?;
-            variables.insert(&tags, &variable, (String::from(command), opts));
+            variables.insert_suggestion(&tags, &variable, (String::from(command), opts));
         }
         // snippet
         else {

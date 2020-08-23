@@ -1,6 +1,6 @@
 ; author: CI/CD
 
-% test, ci/cd
+% test, first
 
 # trivial case -> "foo"
 echo "foo"
@@ -34,9 +34,6 @@ echo "<x> <x2> <y> <x>"
 # variable dependency, we can ignore intermediate values -> "12"
 : <x>; echo "<x2>"
 
-# nested used value -> "path: /my/pictures/wallpapers"
-echo "path: <wallpaper_folder>"
-
 # nested unused value -> "path: /my/pictures"
 echo "path: <pictures_folder>"
 
@@ -47,7 +44,30 @@ $ language: echo '0  rust      rust-lang.org' --- --column 2
 $ language2: echo '1;clojure;clojure.org' --- --column 2 --delimiter ';'
 $ multiword: echo 'foo bar'
 $ pictures_folder: echo "/my/pictures"
-$ wallpaper_folder: echo "<pictures_folder>/wallpapers"
 
 # this should be displayed -> "hi"
 echo hi
+
+
+% test, second
+
+@ test, first
+@ test, third
+
+# nested used value -> "path: /my/pictures/wallpapers"
+echo "path: <wallpaper_folder>"
+
+# same command as before -> "12"
+: <x>; echo "<x2>"
+
+# the order isn't relevant -> "br"
+echo "<country>"
+
+$ wallpaper_folder: echo "<pictures_folder>/wallpapers"
+
+
+
+% test, third
+
+; this cheathsheet doesnt have any commands
+$ country: echo "br"
