@@ -233,7 +233,7 @@ In addition, it's possible to forward the following parameters to `fzf`:
 
 ### Variable dependency
 
-The command for generating possible inputs can implicitly refer previous variables by using the `<varname>` syntax:
+The command for generating possible inputs can implicitly refer other variables by using the `<varname>` syntax:
 ```sh
 # Should print /my/pictures/wallpapers
 echo "<wallpaper_folder>"
