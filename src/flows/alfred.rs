@@ -1,5 +1,5 @@
 use crate::display;
-use crate::parser;
+use crate::filesystem;
 use crate::structures::cheat::Suggestion;
 use crate::structures::{config::Config, error::command::BashSpawnError};
 use anyhow::Context;
@@ -17,7 +17,7 @@ pub fn main(config: Config) -> Result<(), Error> {
 
     display::alfred::print_items_start(None);
 
-    parser::read_all(&config, stdin, &mut writer)
+    filesystem::read_all(&config, stdin, &mut writer)
         .context("Failed to parse variables intended for finder")?;
 
     // make sure everything was printed to stdout before attempting to close the items vector
@@ -57,7 +57,7 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
     let stdin = child.stdin.as_mut().context("Unable to get stdin")?;
     let mut writer = display::alfred::Writer::new();
 
-    let variables = parser::read_all(&config, stdin, &mut writer)
+    let variables = filesystem::read_all(&config, stdin, &mut writer)
         .context("Failed to parse variables intended for finder")?;
 
     let tags = env::var("tags").context(r#"The env var "tags" isn't set"#)?;

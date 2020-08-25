@@ -8,11 +8,9 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::{Path, PathBuf};
 use crate::display::Writer;
-use crate::filesystem;
 use crate::structures::cheat::VariableMap;
 use crate::welcome;
 use crate::parser;
-use regex::Regex;
 use std::collections::HashSet;
 
 fn read_lines<P>(filename: P) -> Result<impl Iterator<Item = Result<String, Error>>, Error>

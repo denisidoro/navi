@@ -4,6 +4,7 @@ use crate::filesystem;
 use crate::finder::Finder;
 use crate::handler;
 use crate::parser;
+use crate::tldr;
 use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::structures::config;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
@@ -190,8 +191,8 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
             let mut writer = display::terminal::Writer::new();
             Ok(Some(
                 // TODO
-                filesystem::read_all(&config, stdin, &mut writer)
-                    .context("Failed to parse variables intended for finder")?,
+                //filesystem::read_all(&config, stdin, &mut writer).context("Failed to parse variables intended for finder")?,
+                tldr::read_all(&config, stdin, &mut writer).context("Failed to parse variables intended for finder")?,
             ))
         })
         .context("Failed getting selection and variables from finder")?;

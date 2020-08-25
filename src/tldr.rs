@@ -1,5 +1,18 @@
 use regex::Regex;
-use anyhow::Error;
+use crate::structures::config::Config;
+use crate::structures::error::filesystem::InvalidPath;
+use crate::structures::error::filesystem::UnreadableDir;
+use anyhow::{Context, Error};
+use core::fmt::Display;
+use std::fs;
+use std::fs::File;
+use std::io::{self, BufRead};
+use std::path::{Path, PathBuf};
+use crate::display::Writer;
+use crate::structures::cheat::VariableMap;
+use crate::welcome;
+use crate::parser;
+use std::collections::HashSet;
 
 lazy_static! {
     pub static ref VAR_TLDR_REGEX: Regex =
@@ -76,9 +89,20 @@ fn convert_tldr(line: &str) -> Result<String, Error> {
     Ok(new_line)
 }
 
-pub fn markdown_lines() -> impl Iterator<Item=Result<String, Error>> {
+fn markdown_lines() -> impl Iterator<Item=Result<String, Error>> {
     let prefix = r#"% markdown, test
     "#.lines().map(|line| convert_tldr(line));
     let lines = MARKDOWN.lines().map(|line| convert_tldr(line.trim()));
     prefix.chain(lines)
+}
+
+pub fn read_all(
+    config: &Config,
+    stdin: &mut std::process::ChildStdin,
+    writer: &mut dyn Writer,
+) -> Result<VariableMap, Error> {
+    let mut variables = VariableMap::new();
+    let mut visited_lines = HashSet::new();
+    parser::read_lines(markdown_lines(), "markdown", &mut variables, &mut visited_lines, writer, stdin)?;
+    Ok(variables) 
 }

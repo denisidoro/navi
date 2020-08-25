@@ -236,14 +236,3 @@ pub fn read_lines(
 
     Ok(())
 }
-
-pub fn read_tldr(
-    config: &Config,
-    stdin: &mut std::process::ChildStdin,
-    writer: &mut dyn Writer,
-) -> Result<VariableMap, Error> {
-    let mut variables = VariableMap::new();
-    let mut visited_lines = HashSet::new();
-    read_lines(tldr::markdown_lines(), "markdown", &mut variables, &mut visited_lines, writer, stdin)?;
-    Ok(variables) 
-}
