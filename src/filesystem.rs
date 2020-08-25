@@ -1,15 +1,21 @@
 use crate::structures::config::Config;
 use crate::structures::error::filesystem::InvalidPath;
 use crate::structures::error::filesystem::UnreadableDir;
-use anyhow::Context;
-use anyhow::Error;
+use anyhow::{Context, Error};
 use core::fmt::Display;
 use std::fs;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::{Path, PathBuf};
+use crate::display::Writer;
+use crate::filesystem;
+use crate::structures::cheat::VariableMap;
+use crate::welcome;
+use crate::parser;
+use regex::Regex;
+use std::collections::HashSet;
 
-pub fn read_lines<P>(filename: P) -> Result<impl Iterator<Item = Result<String, Error>>, Error>
+fn read_lines<P>(filename: P) -> Result<impl Iterator<Item = Result<String, Error>>, Error>
 where
     P: AsRef<Path> + Display + Copy,
 {
@@ -95,7 +101,7 @@ fn cheat_paths_from_config_dir() -> Result<String, Error> {
         })
 }
 
-pub fn cheat_paths(config: &Config) -> Result<String, Error> {
+fn cheat_paths(config: &Config) -> Result<String, Error> {
     config
         .path
         .clone()
@@ -116,4 +122,143 @@ pub fn remove_dir(path: &str) -> Result<(), Error> {
 pub fn tmp_path_str() -> Result<String, Error> {
     let cheat_path_str = pathbuf_to_string(cheat_pathbuf()?)?;
     Ok(format!("{}/tmp", cheat_path_str))
+}
+
+fn paths_from_path_param<'a>(env_var: &'a str) -> impl Iterator<Item = &'a str> + 'a {
+    env_var.split(':').filter(|folder| folder != &"")
+}
+
+// TODO: move
+fn read_file(
+    path: &str,
+    variables: &mut VariableMap,
+    visited_lines: &mut HashSet<u64>,
+    writer: &mut dyn Writer,
+    stdin: &mut std::process::ChildStdin,
+) -> Result<(), Error> {
+    let lines = read_lines(path)?;
+    parser::read_lines(lines, path, variables, visited_lines, writer, stdin)
+}
+
+pub fn read_all(
+    config: &Config,
+    stdin: &mut std::process::ChildStdin,
+    writer: &mut dyn Writer,
+) -> Result<VariableMap, Error> {
+    let mut variables = VariableMap::new();
+    let mut found_something = false;
+    let mut visited_lines = HashSet::new();
+    let paths = cheat_paths(config);
+
+    // TODO: remove
+    // read_lines(tldr::markdown_lines(), "markdown", &mut variables, &mut visited_lines, writer, stdin)?;
+    // return Ok(variables);
+
+    if paths.is_err() {
+        welcome::cheatsheet(writer, stdin);
+        return Ok(variables);
+    }
+
+    let paths = paths.expect("Unable to get paths");
+    let folders = paths_from_path_param(&paths);
+
+    for folder in folders {
+        if let Ok(dir_entries) = fs::read_dir(folder) {
+            for entry in dir_entries {
+                if entry.is_ok() {
+                    let path = entry.expect("Impossible to read an invalid entry").path();
+                    let path_str = path
+                        .to_str()
+                        .ok_or_else(|| InvalidPath(path.to_path_buf()))?;
+                    if path_str.ends_with(".cheat")
+                        && read_file(path_str, &mut variables, &mut visited_lines, writer, stdin)
+                            .is_ok()
+                        && !found_something
+                    {
+                        found_something = true;
+                    }
+                }
+            }
+        }
+    }
+
+    if !found_something {
+        welcome::cheatsheet(writer, stdin);
+    }
+
+    Ok(variables)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_variable_line() {
+        let (variable, command, command_options) =
+            parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --prevent-extra")
+                .unwrap();
+        assert_eq!(command, " echo -e \"$(whoami)\\nroot\" ");
+        assert_eq!(variable, "user");
+        assert_eq!(
+            command_options,
+            Some(FinderOpts {
+                header_lines: 0,
+                column: None,
+                delimiter: None,
+                suggestion_type: SuggestionType::SingleSelection,
+                ..Default::default()
+            })
+        );
+    }
+    use std::process::{Command, Stdio};
+
+    #[test]
+    fn test_read_file() {
+        let path = "tests/cheats/ssh.cheat";
+        let mut variables = VariableMap::new();
+        let mut child = Command::new("cat")
+            .stdin(Stdio::piped())
+            .stdout(Stdio::null())
+            .spawn()
+            .unwrap();
+        let child_stdin = child.stdin.as_mut().unwrap();
+        let mut visited_lines: HashSet<u64> = HashSet::new();
+        let mut writer: Box<dyn Writer> = Box::new(display::terminal::Writer::new());
+        read_file(
+            path,
+            &mut variables,
+            &mut visited_lines,
+            &mut *writer,
+            child_stdin,
+        )
+        .unwrap();
+        let expected_suggestion = (
+            r#" echo -e "$(whoami)\nroot" "#.to_string(),
+            Some(FinderOpts {
+                header_lines: 0,
+                column: None,
+                delimiter: None,
+                suggestion_type: SuggestionType::SingleSelection,
+                ..Default::default()
+            }),
+        );
+        let actual_suggestion = variables.get_suggestion("ssh", "user");
+        assert_eq!(Some(&expected_suggestion), actual_suggestion);
+    }
+
+    #[test]
+    fn splitting_of_dirs_param_may_not_contain_empty_items() {
+        // Trailing colon indicates potential extra path. Split returns an empty item for it. This empty item should be filtered away, which is what this test checks.
+        let given_path_config = "SOME_PATH:ANOTHER_PATH:";
+
+        let found_paths = paths_from_path_param(given_path_config);
+
+        let mut expected_paths = vec!["SOME_PATH", "ANOTHER_PATH"].into_iter();
+
+        for found in found_paths {
+            let expected = expected_paths.next().unwrap();
+            assert_eq!(found, expected)
+        }
+    }
 }
