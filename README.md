@@ -20,6 +20,7 @@ Table of contents
 
    * [Installation](#installation)
       * [Using Homebrew or Linuxbrew](#using-homebrew-or-linuxbrew-)
+      * [Using Gentoo](#using-gentoo)
       * [Using nix](#using-nix-)
       * [Using cargo](#using-cargo)
       * [Using install script](#using-install-script)
@@ -53,6 +54,14 @@ Installation
 
 ```sh
 brew install navi
+```
+
+### Using [Gentoo](https://gentoo.org/)
+
+Be sure to [enable](https://wiki.gentoo.org/wiki/Ebuild_repository) the [GURU overlay](https://gpo.zugaina.org/Overlays/guru/app-misc/navi).
+
+```sh
+emerge -a app-misc/navi
 ```
 
 ### Using [nix](https://nixos.org/)
