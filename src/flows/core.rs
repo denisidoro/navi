@@ -189,6 +189,7 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
         .call(opts, |stdin| {
             let mut writer = display::terminal::Writer::new();
             Ok(Some(
+                // TODO
                 parser::read_all(&config, stdin, &mut writer)
                     .context("Failed to parse variables intended for finder")?,
             ))
