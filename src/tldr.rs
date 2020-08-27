@@ -1,9 +1,9 @@
-use regex::Regex;
-use anyhow::Error;
 use crate::display::Writer;
 use crate::fetcher::Fetcher;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
+use anyhow::Error;
+use regex::Regex;
 use std::collections::HashSet;
 
 lazy_static! {

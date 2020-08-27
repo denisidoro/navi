@@ -2,10 +2,10 @@ pub use crate::common::filesystem::{
     create_dir, exe_string, pathbuf_to_string, remove_dir, InvalidPath, UnreadableDir,
 };
 use crate::display::Writer;
-use crate::structures::cheat::VariableMap;
-use anyhow::Error;
 pub use crate::fetcher::filesystem::{cheat_pathbuf, read_all};
 use crate::fetcher::Fetcher;
+use crate::structures::cheat::VariableMap;
+use anyhow::Error;
 
 pub fn tmp_path_str() -> Result<String, Error> {
     let cheat_path_str = pathbuf_to_string(cheat_pathbuf()?)?;

@@ -114,9 +114,9 @@ pub fn read_all(
 #[cfg(test)]
 mod tests {
     use super::*;
-use std::process::{Command, Stdio};
-use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
-use crate::display;
+    use crate::display;
+    use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
+    use std::process::{Command, Stdio};
 
     #[test]
     fn test_read_file() {

@@ -1,13 +1,13 @@
 mod fzf;
 mod skim;
 
-pub use fzf::FzfFinder;
-pub use skim::SkimFinder;
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::Opts;
 use crate::structures::finder::SuggestionType;
 use anyhow::Context;
 use anyhow::Error;
+pub use fzf::FzfFinder;
+pub use skim::SkimFinder;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
 

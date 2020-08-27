@@ -1,5 +1,5 @@
-use crate::display;
 use crate::common::shell::BashSpawnError;
+use crate::display;
 use crate::structures::cheat::Suggestion;
 use crate::structures::config::Config;
 use anyhow::Context;
