@@ -1,14 +1,11 @@
+use crate::common::hash::fnv;
 use crate::display::{self, Writer};
-use crate::filesystem;
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
-use crate::structures::fnv::HashLine;
-use crate::structures::{config::Config, error::filesystem::InvalidPath, item::Item};
-use crate::welcome;
+use crate::structures::item::Item;
 use anyhow::{Context, Error};
 use regex::Regex;
 use std::collections::HashSet;
-use std::fs;
 use std::io::Write;
 
 lazy_static! {
@@ -138,8 +135,9 @@ fn write_cmd(
     }
 }
 
-fn read_file(
-    path: &str,
+pub fn read_lines(
+    lines: impl Iterator<Item = Result<String, Error>>,
+    id: &str,
     variables: &mut VariableMap,
     visited_lines: &mut HashSet<u64>,
     writer: &mut dyn Writer,
@@ -150,9 +148,9 @@ fn read_file(
     let mut snippet = String::from("");
     let mut should_break = false;
 
-    for (line_nr, line_result) in filesystem::read_lines(path)?.enumerate() {
+    for (line_nr, line_result) in lines.enumerate() {
         let line = line_result
-            .with_context(|| format!("Failed to read line nr.{} from `{}`", line_nr, path))?;
+            .with_context(|| format!("Failed to read line nr.{} from `{}`", line_nr, id))?;
 
         if should_break {
             break;
@@ -209,14 +207,14 @@ fn read_file(
                 format!(
                     "Failed to parse variable line. See line number {} in cheatsheet `{}`",
                     line_nr + 1,
-                    path
+                    id
                 )
             })?;
             variables.insert_suggestion(&tags, &variable, (String::from(command), opts));
         }
         // snippet
         else {
-            let hash = format!("{}{}", &comment, &line).hash_line();
+            let hash = fnv(&format!("{}{}", &comment, &line));
             if visited_lines.contains(&hash) {
                 continue;
             }
@@ -234,55 +232,6 @@ fn read_file(
     }
 
     Ok(())
-}
-
-fn paths_from_path_param<'a>(env_var: &'a str) -> impl Iterator<Item = &'a str> + 'a {
-    env_var.split(':').filter(|folder| folder != &"")
-}
-
-pub fn read_all(
-    config: &Config,
-    stdin: &mut std::process::ChildStdin,
-    writer: &mut dyn Writer,
-) -> Result<VariableMap, Error> {
-    let mut variables = VariableMap::new();
-    let mut found_something = false;
-    let mut visited_lines = HashSet::new();
-    let paths = filesystem::cheat_paths(config);
-
-    if paths.is_err() {
-        welcome::cheatsheet(writer, stdin);
-        return Ok(variables);
-    }
-
-    let paths = paths.expect("Unable to get paths");
-    let folders = paths_from_path_param(&paths);
-
-    for folder in folders {
-        if let Ok(dir_entries) = fs::read_dir(folder) {
-            for entry in dir_entries {
-                if entry.is_ok() {
-                    let path = entry.expect("Impossible to read an invalid entry").path();
-                    let path_str = path
-                        .to_str()
-                        .ok_or_else(|| InvalidPath(path.to_path_buf()))?;
-                    if path_str.ends_with(".cheat")
-                        && read_file(path_str, &mut variables, &mut visited_lines, writer, stdin)
-                            .is_ok()
-                        && !found_something
-                    {
-                        found_something = true;
-                    }
-                }
-            }
-        }
-    }
-
-    if !found_something {
-        welcome::cheatsheet(writer, stdin);
-    }
-
-    Ok(variables)
 }
 
 #[cfg(test)]
@@ -306,55 +255,5 @@ mod tests {
                 ..Default::default()
             })
         );
-    }
-    use std::process::{Command, Stdio};
-
-    #[test]
-    fn test_read_file() {
-        let path = "tests/cheats/ssh.cheat";
-        let mut variables = VariableMap::new();
-        let mut child = Command::new("cat")
-            .stdin(Stdio::piped())
-            .stdout(Stdio::null())
-            .spawn()
-            .unwrap();
-        let child_stdin = child.stdin.as_mut().unwrap();
-        let mut visited_lines: HashSet<u64> = HashSet::new();
-        let mut writer: Box<dyn Writer> = Box::new(display::terminal::Writer::new());
-        read_file(
-            path,
-            &mut variables,
-            &mut visited_lines,
-            &mut *writer,
-            child_stdin,
-        )
-        .unwrap();
-        let expected_suggestion = (
-            r#" echo -e "$(whoami)\nroot" "#.to_string(),
-            Some(FinderOpts {
-                header_lines: 0,
-                column: None,
-                delimiter: None,
-                suggestion_type: SuggestionType::SingleSelection,
-                ..Default::default()
-            }),
-        );
-        let actual_suggestion = variables.get_suggestion("ssh", "user");
-        assert_eq!(Some(&expected_suggestion), actual_suggestion);
-    }
-
-    #[test]
-    fn splitting_of_dirs_param_may_not_contain_empty_items() {
-        // Trailing colon indicates potential extra path. Split returns an empty item for it. This empty item should be filtered away, which is what this test checks.
-        let given_path_config = "SOME_PATH:ANOTHER_PATH:";
-
-        let found_paths = paths_from_path_param(given_path_config);
-
-        let mut expected_paths = vec!["SOME_PATH", "ANOTHER_PATH"].into_iter();
-
-        for found in found_paths {
-            let expected = expected_paths.next().unwrap();
-            assert_eq!(found, expected)
-        }
     }
 }

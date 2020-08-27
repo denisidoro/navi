@@ -1,8 +1,8 @@
-use crate::structures::item::Item;
-use regex::Regex;
-
 pub mod alfred;
 pub mod terminal;
+
+use crate::structures::item::Item;
+use regex::Regex;
 
 const NEWLINE_ESCAPE_CHAR: char = '\x15';
 pub const LINE_SEPARATOR: &str = " \x15 ";

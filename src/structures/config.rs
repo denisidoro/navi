@@ -18,9 +18,8 @@ EXAMPLES:
     navi                                   # default behavior
     navi --print                           # doesn't execute the snippet
     navi --path '/some/dir:/other/dir'     # uses custom cheats
-    navi search docker                     # uses online data
     navi query git                         # filters results by "git"
-    navi best 'sql create db' root mydb    # uses a snippet as a CLI
+    navi best 'sql create db'              # uses a snippet as a CLI
     navi repo add denisidoro/cheats        # imports cheats from github.com/denisidoro/cheats
     source <(navi widget zsh)              # loads the zsh widget
     navi --finder 'skim'                   # set which finder is supposed to be used (fzf [default] / skim)
@@ -37,19 +36,31 @@ pub struct Config {
 
     /// [Experimental] Instead of executing a snippet, saves it to a file
     #[structopt(short, long)]
-    pub save: Option<String>,
+    save: Option<String>,
 
     /// Instead of executing a snippet, prints it to stdout
     #[structopt(long)]
-    pub print: bool,
+    print: bool,
 
     /// Prevents autoselection in case of single entry
     #[structopt(long)]
-    pub no_autoselect: bool,
+    no_autoselect: bool,
 
     /// Hides preview window
     #[structopt(long)]
     pub no_preview: bool,
+
+    /// Returns the best match
+    #[structopt(long)]
+    single: bool,
+
+    /// Search for cheatsheets using the tldr-pages repository
+    #[structopt(long)]
+    tldr: Option<String>,
+
+    /// Query
+    #[structopt(short, long)]
+    query: Option<String>,
 
     /// finder overrides for cheat selection
     #[structopt(long, env = "NAVI_FZF_OVERRIDES")]
@@ -59,7 +70,7 @@ pub struct Config {
     #[structopt(long, env = "NAVI_FZF_OVERRIDES_VAR")]
     pub fzf_overrides_var: Option<String>,
 
-    /// finder overrides for variable selection
+    /// which finder application to use
     #[structopt(long, env = "NAVI_FINDER", default_value = "fzf", parse(try_from_str = parse_finder))]
     pub finder: FinderChoice,
 
@@ -70,16 +81,13 @@ pub struct Config {
 #[derive(Debug, StructOpt)]
 pub enum Command {
     /// Filters results
+    #[structopt(setting = AppSettings::Hidden)]
     Query {
         /// String used as filter (example: "git")
         query: String,
     },
-    /// Uses online repositories for cheatsheets
-    Search {
-        /// String used as filter (example: "git")
-        query: String,
-    },
     /// Autoselects the snippet that best matches the query
+    #[structopt(setting = AppSettings::Hidden)]
     Best {
         /// String used as filter (example: "git remove branch")
         query: String,
@@ -138,6 +146,81 @@ pub enum AlfredCommand {
     Transform,
     /// Checks whether to use free input
     Check,
+}
+
+fn deprecated(syntax: &str) {
+    eprintln!(
+        r"Warning: the following syntax has been DEPRECATED:
+navi {}
+
+Please check navi --help for more info on how to achieve the same result with the new syntax.
+
+The deprecated syntax will be removed in the first version released on 2021!",
+        syntax
+    );
+}
+
+pub enum Source {
+    FILESYSTEM(Option<String>),
+    TLDR(String),
+}
+
+pub enum Action {
+    SAVE(String),
+    PRINT,
+    EXECUTE,
+}
+
+impl Config {
+    pub fn source(&self) -> Source {
+        if let Some(query) = self.tldr.clone() {
+            Source::TLDR(query)
+        } else {
+            Source::FILESYSTEM(self.path.clone())
+        }
+    }
+
+    pub fn action(&self) -> Action {
+        if let Some(filepath) = self.save.clone() {
+            Action::SAVE(filepath)
+        } else if self.print {
+            Action::PRINT
+        } else {
+            Action::EXECUTE
+        }
+    }
+
+    pub fn get_query(&self) -> Option<String> {
+        match &self.cmd {
+            Some(Command::Query { query }) => {
+                deprecated("query <query>");
+                Some(query.clone())
+            }
+            Some(Command::Best { query, .. }) => {
+                deprecated("best <query>");
+                Some(query.clone())
+            }
+            _ => self.query.clone(),
+        }
+    }
+
+    pub fn get_single(&self) -> bool {
+        if let Some(Command::Best { .. }) = &self.cmd {
+            deprecated("best <query>");
+            true
+        } else {
+            self.single
+        }
+    }
+
+    pub fn get_no_autoselect(&self) -> bool {
+        if self.no_autoselect {
+            deprecated("--no-autoselect");
+            true
+        } else {
+            false
+        }
+    }
 }
 
 pub fn config_from_env() -> Config {

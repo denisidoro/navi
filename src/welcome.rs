@@ -19,7 +19,7 @@ fn add_msg(
         .expect("Could not write to fzf's stdin");
 }
 
-pub fn cheatsheet(writer: &mut dyn Writer, stdin: &mut std::process::ChildStdin) {
+pub fn populate_cheatsheet(writer: &mut dyn Writer, stdin: &mut std::process::ChildStdin) {
     add_msg(
         "cheatsheets",
         "Download default cheatsheets",

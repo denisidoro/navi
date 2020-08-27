@@ -1,14 +1,13 @@
 mod fzf;
 mod skim;
 
-pub use fzf::FzfFinder;
-pub use skim::SkimFinder;
-
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::Opts;
 use crate::structures::finder::SuggestionType;
 use anyhow::Context;
 use anyhow::Error;
+pub use fzf::FzfFinder;
+pub use skim::SkimFinder;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
 
@@ -16,6 +15,12 @@ use std::process::{Command, Stdio};
 pub enum FinderChoice {
     Fzf,
     Skim,
+}
+
+pub trait Finder {
+    fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
+    where
+        F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>;
 }
 
 impl Finder for FinderChoice {
@@ -28,12 +33,6 @@ impl Finder for FinderChoice {
             Self::Skim => SkimFinder.call(opts, stdin_fn),
         }
     }
-}
-
-pub trait Finder {
-    fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
-    where
-        F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>;
 }
 
 fn apply_map(text: String, map_fn: Option<String>) -> String {

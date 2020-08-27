@@ -2,25 +2,16 @@ use std::hash::{Hash, Hasher};
 
 const MAGIC_INIT: u64 = 0x811C_9DC5;
 
-pub trait HashLine: Hash {
-    fn hash_line(&self) -> u64;
+pub fn fnv<T: Hash>(x: &T) -> u64 {
+    let mut hasher = FnvHasher::new();
+    x.hash(&mut hasher);
+    hasher.finish()
 }
 
-impl<T> HashLine for T
-where
-    T: Hash,
-{
-    fn hash_line(&self) -> u64 {
-        let mut hasher = FnvHasher::new();
-        self.hash(&mut hasher);
-        hasher.finish()
-    }
-}
-
-pub(crate) struct FnvHasher(u64);
+struct FnvHasher(u64);
 
 impl FnvHasher {
-    pub(crate) fn new() -> Self {
+    fn new() -> Self {
         FnvHasher(MAGIC_INIT)
     }
 }
@@ -29,6 +20,7 @@ impl Hasher for FnvHasher {
     fn finish(&self) -> u64 {
         self.0
     }
+
     fn write(&mut self, bytes: &[u8]) {
         let FnvHasher(mut hash) = *self;
 
