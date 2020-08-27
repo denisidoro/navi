@@ -28,6 +28,7 @@ fn convert_tldr_vars(line: &str) -> String {
 }
 
 fn convert_tldr(line: &str) -> Result<String, Error> {
+    let line = line.trim();
     let new_line = if line.starts_with('-') {
         format!("{}{}", "# ", &line[2..line.len() - 1])
     } else if line.starts_with('`') {
@@ -40,18 +41,17 @@ fn convert_tldr(line: &str) -> Result<String, Error> {
     Ok(new_line)
 }
 
-fn markdown_lines(markdown: &str) -> impl Iterator<Item = Result<String, Error>> {
-    let prefix = r#"% markdown, test
-    "#
+fn markdown_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String, Error>> {
+    format!("% {}, tldr
+    {}", query, markdown)
     .lines()
-    .map(|line| convert_tldr(line));
-
-    let lines = markdown.lines().map(move |line| convert_tldr(line.trim()));
-    let lines: Vec<Result<String, Error>> = lines.collect();
-    prefix.chain(lines)
+    .map(convert_tldr)
+    .collect::<Vec<Result<String, Error>>>()
+    .into_iter()
 }
 
 fn read_all(
+    query: &str,
     markdown: &str,
     stdin: &mut std::process::ChildStdin,
     writer: &mut dyn Writer,
@@ -59,7 +59,7 @@ fn read_all(
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
     parser::read_lines(
-        markdown_lines(markdown),
+        markdown_lines(query, markdown),
         "markdown",
         &mut variables,
         &mut visited_lines,
@@ -110,6 +110,6 @@ impl Fetcher for Foo {
     ) -> Result<Option<VariableMap>, Error> {
         eprintln!("TODO!!!!");
         let markdown = fetch(&self.query)?;
-        read_all(&markdown, stdin, writer)
+        read_all(&self.query, &markdown, stdin, writer)
     }
 }
