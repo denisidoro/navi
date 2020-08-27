@@ -1,9 +1,9 @@
 use anyhow::{Context, Error};
 use core::fmt::Display;
+use std::fmt::Debug;
 use std::fs::{self, create_dir_all, remove_dir_all, File};
 use std::io::{self, BufRead};
 use std::path::{Path, PathBuf};
-use std::fmt::Debug;
 use thiserror::Error;
 
 #[derive(Error, Debug)]

@@ -1,5 +1,5 @@
-use crate::structures::finder::Opts;
 use crate::common::hash::fnv;
+use crate::structures::finder::Opts;
 use std::collections::HashMap;
 
 pub type Suggestion = (String, Option<Opts>);

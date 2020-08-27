@@ -1,21 +1,16 @@
-use crate::fetcher;
-use crate::structures::item::Item;
-use crate::common::terminal_width;
-use std::cmp::max;
-use termion::color;
+use crate::common::filesystem::{pathbuf_to_string, read_lines, InvalidPath, UnreadableDir};
 use crate::display::Writer;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
 use crate::structures::config::Config;
-use crate::common::filesystem::{InvalidPath, UnreadableDir, read_lines, pathbuf_to_string};
 use crate::welcome;
 use anyhow::{Context, Error};
-use core::fmt::Display;
+
 use std::collections::HashSet;
 use std::fs;
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::{Path, PathBuf};
+
+use std::io::BufRead;
+use std::path::PathBuf;
 
 fn paths_from_path_param<'a>(env_var: &'a str) -> impl Iterator<Item = &'a str> + 'a {
     env_var.split(':').filter(|folder| folder != &"")

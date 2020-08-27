@@ -1,14 +1,14 @@
 use crate::common::clipboard;
-use crate::filesystem;
+use crate::common::shell::BashSpawnError;
 use crate::display;
-use crate::fetcher::{self, Fetcher};
+use crate::fetcher::Fetcher;
+use crate::filesystem;
 use crate::finder::Finder;
 use crate::handler;
 use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::structures::config;
-use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use crate::structures::config::Config;
-use crate::common::shell::BashSpawnError;
+use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use anyhow::Context;
 use anyhow::Error;
 use std::env;
@@ -183,14 +183,17 @@ fn replace_variables_from_snippet(
 }
 
 pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Error> {
-    let opts = gen_core_finder_opts(variant, &config).context("Failed to generate finder options")?;
+    let opts =
+        gen_core_finder_opts(variant, &config).context("Failed to generate finder options")?;
 
     let (raw_selection, variables) = config
         .finder
         .call(opts, |stdin| {
             let mut writer = display::terminal::Writer::new();
             let fetcher = filesystem::Foo::new();
-            Ok(Some(fetcher.fetch(&config, stdin, &mut writer).context("Failed to parse variables intended for finder")?))
+            Ok(Some(fetcher.fetch(&config, stdin, &mut writer).context(
+                "Failed to parse variables intended for finder",
+            )?))
         })
         .context("Failed getting selection and variables from finder")?;
 

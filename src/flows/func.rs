@@ -1,6 +1,6 @@
+use crate::common::url;
 use crate::handler;
 use crate::structures::config;
-use crate::common::url;
 use anyhow::Error;
 
 pub fn main(func: String, args: Vec<String>) -> Result<(), Error> {
