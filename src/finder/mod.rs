@@ -18,6 +18,12 @@ pub enum FinderChoice {
     Skim,
 }
 
+pub trait Finder {
+    fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
+    where
+        F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>;
+}
+
 impl Finder for FinderChoice {
     fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
     where
@@ -28,12 +34,6 @@ impl Finder for FinderChoice {
             Self::Skim => SkimFinder.call(opts, stdin_fn),
         }
     }
-}
-
-pub trait Finder {
-    fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
-    where
-        F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>;
 }
 
 fn apply_map(text: String, map_fn: Option<String>) -> String {

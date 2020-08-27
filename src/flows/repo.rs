@@ -1,6 +1,6 @@
 use crate::filesystem;
 use crate::finder::{Finder, FinderChoice};
-use crate::git;
+use crate::common::git;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use anyhow::Context;
 use anyhow::Error;
@@ -11,9 +11,6 @@ use walkdir::WalkDir;
 pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
     let repo_path_str = format!("{}/featured", filesystem::tmp_path_str()?);
 
-    // The dir might not exist which would throw an error. But here we don't care about that
-    // since our purpose is to make space for a new directory. Potential other errors
-    // (e.g due to lack of permission) will cause an error during dir creation.
     let _ = filesystem::remove_dir(&repo_path_str);
     filesystem::create_dir(&repo_path_str)?;
 

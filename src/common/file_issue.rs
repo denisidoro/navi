@@ -2,10 +2,8 @@ use std::fmt::Debug;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-#[error(
-    "\rHey, listen! navi encountered a problem.
-Do you think this is a bug? File an issue at https://github.com/denisidoro/navi."
-)]
+#[error("\rHey, listen! navi encountered a problem.
+Do you think this is a bug? File an issue at https://github.com/denisidoro/navi.")]
 pub struct FileAnIssue {
     #[source]
     source: anyhow::Error,

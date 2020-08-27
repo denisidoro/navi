@@ -1,6 +1,6 @@
 use crate::display;
 use crate::structures::item::Item;
-use crate::terminal_width;
+use crate::common::terminal_width;
 use std::cmp::max;
 use termion::color;
 

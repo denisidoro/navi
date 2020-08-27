@@ -1,5 +1,5 @@
 use crate::structures::finder::Opts;
-use crate::structures::fnv::HashLine;
+use crate::common::hash::fnv;
 use std::collections::HashMap;
 
 pub type Suggestion = (String, Option<Opts>);
@@ -19,18 +19,18 @@ impl VariableMap {
     }
 
     pub fn insert_dependency(&mut self, tags: &str, tags_dependency: &str) {
-        let k = tags.hash_line();
+        let k = fnv(&tags);
         if let Some(v) = self.dependencies.get_mut(&k) {
-            v.push(tags_dependency.hash_line());
+            v.push(fnv(&tags_dependency));
         } else {
             let mut v: Vec<u64> = Vec::new();
-            v.push(tags_dependency.hash_line());
+            v.push(fnv(&tags_dependency));
             self.dependencies.insert(k, v);
         }
     }
 
     pub fn insert_suggestion(&mut self, tags: &str, variable: &str, value: Suggestion) {
-        let k1 = tags.hash_line();
+        let k1 = fnv(&tags);
         let k2 = String::from(variable);
         if let Some(m) = self.variables.get_mut(&k1) {
             m.insert(k2, value);
@@ -42,7 +42,7 @@ impl VariableMap {
     }
 
     pub fn get_suggestion(&self, tags: &str, variable: &str) -> Option<&Suggestion> {
-        let k = tags.hash_line();
+        let k = fnv(&tags);
         let res = self.variables.get(&k)?.get(variable);
         if res.is_some() {
             return res;

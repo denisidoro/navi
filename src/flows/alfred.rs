@@ -1,7 +1,8 @@
 use crate::display;
 use crate::filesystem;
 use crate::structures::cheat::Suggestion;
-use crate::structures::{config::Config, error::command::BashSpawnError};
+use crate::structures::{config::Config};
+use crate::common::shell::BashSpawnError;
 use anyhow::Context;
 use anyhow::Error;
 use std::env;
@@ -17,8 +18,8 @@ pub fn main(config: Config) -> Result<(), Error> {
 
     display::alfred::print_items_start(None);
 
-    filesystem::read_all(&config, stdin, &mut writer)
-        .context("Failed to parse variables intended for finder")?;
+    // filesystem::read_all(&config, stdin, &mut writer)
+    //    .context("Failed to parse variables intended for finder")?;
 
     // make sure everything was printed to stdout before attempting to close the items vector
     let _ = child.wait_with_output().context("Failed to wait for fzf")?;
@@ -57,8 +58,7 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
     let stdin = child.stdin.as_mut().context("Unable to get stdin")?;
     let mut writer = display::alfred::Writer::new();
 
-    let variables = filesystem::read_all(&config, stdin, &mut writer)
-        .context("Failed to parse variables intended for finder")?;
+    // let variables = filesystem::read_all(&config, stdin, &mut writer).context("Failed to parse variables intended for finder")?;
 
     let tags = env::var("tags").context(r#"The env var "tags" isn't set"#)?;
     let snippet = env::var("snippet").context(r#"The env var "snippet" isn't set"#)?;
@@ -66,7 +66,8 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
     let capture = display::VAR_REGEX.captures_iter(&snippet).next();
     let bracketed_varname = &(capture.expect("Invalid capture"))[0];
     let varname = &bracketed_varname[1..bracketed_varname.len() - 1];
-    let command = variables.get_suggestion(&tags, &varname);
+    // let command = variables.get_suggestion(&tags, &varname);
+    let command = None;
 
     if dry_run {
         if command.is_none() {

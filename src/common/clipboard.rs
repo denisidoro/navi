@@ -1,4 +1,4 @@
-use crate::structures::error::command::BashSpawnError;
+use crate::common::shell::BashSpawnError;
 use anyhow::Error;
 use std::process::Command;
 

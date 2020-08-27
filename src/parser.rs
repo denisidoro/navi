@@ -1,14 +1,13 @@
 use crate::display::{self, Writer};
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
-use crate::structures::fnv::HashLine;
-use crate::structures::{config::Config, error::filesystem::InvalidPath, item::Item};
-use crate::welcome;
-use crate::tldr;
+use crate::common::hash::fnv;
+use crate::structures::item::Item;
+
 use anyhow::{Context, Error};
 use regex::Regex;
 use std::collections::HashSet;
-use std::fs;
+
 use std::io::Write;
 
 lazy_static! {
@@ -217,7 +216,7 @@ pub fn read_lines(
         }
         // snippet
         else {
-            let hash = format!("{}{}", &comment, &line).hash_line();
+            let hash = fnv(&format!("{}{}", &comment, &line));
             if visited_lines.contains(&hash) {
                 continue;
             }

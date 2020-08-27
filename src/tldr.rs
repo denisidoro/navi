@@ -1,27 +1,22 @@
-use regex::Regex;
 use crate::structures::config::Config;
-use crate::structures::error::filesystem::InvalidPath;
-use crate::structures::error::filesystem::UnreadableDir;
-use anyhow::{Context, Error};
-use core::fmt::Display;
-use std::fs;
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::{Path, PathBuf};
+use regex::Regex;
+
+use anyhow::Error;
+
+use std::io::BufRead;
+
 use crate::display::Writer;
 use crate::structures::cheat::VariableMap;
-use crate::welcome;
+
 use crate::parser;
 use std::collections::HashSet;
 
 lazy_static! {
-    pub static ref VAR_TLDR_REGEX: Regex =
-        Regex::new(r"\{\{(.*?)\}\}").expect("Invalid regex");
-    pub static ref NON_VAR_CHARS_REGEX: Regex =
-        Regex::new(r"[^\da-zA-Z_]").expect("Invalid regex");
+    pub static ref VAR_TLDR_REGEX: Regex = Regex::new(r"\{\{(.*?)\}\}").expect("Invalid regex");
+    pub static ref NON_VAR_CHARS_REGEX: Regex = Regex::new(r"[^\da-zA-Z_]").expect("Invalid regex");
 }
 
-static MARKDOWN: &'static str = r#"# tar
+static MARKDOWN: &str = r#"# tar
 
 > Archiving utility.
 > Often combined with a compression method, such as gzip or bzip.
@@ -68,7 +63,7 @@ fn convert_tldr_vars(line: &str) -> String {
     let mut new_line: String = line.to_string();
     for cap in caps {
         let braced_var = cap.as_str();
-        let var = &braced_var[2..braced_var.len()-2];
+        let var = &braced_var[2..braced_var.len() - 2];
         let new_var = NON_VAR_CHARS_REGEX.replace_all(var, "_");
         let bracketed_var = format!("<{}>", new_var);
         new_line = new_line.replace(braced_var, &bracketed_var);
@@ -78,9 +73,9 @@ fn convert_tldr_vars(line: &str) -> String {
 
 fn convert_tldr(line: &str) -> Result<String, Error> {
     let new_line = if line.starts_with('-') {
-        format!("{}{}", "# ", &line[2..line.len()-1])
+        format!("{}{}", "# ", &line[2..line.len() - 1])
     } else if line.starts_with('`') {
-        String::from(convert_tldr_vars(&line[1..line.len()-1]))
+        convert_tldr_vars(&line[1..line.len() - 1])
     } else if line.starts_with('%') {
         line.to_string()
     } else {
@@ -89,20 +84,29 @@ fn convert_tldr(line: &str) -> Result<String, Error> {
     Ok(new_line)
 }
 
-fn markdown_lines() -> impl Iterator<Item=Result<String, Error>> {
+fn markdown_lines() -> impl Iterator<Item = Result<String, Error>> {
     let prefix = r#"% markdown, test
-    "#.lines().map(|line| convert_tldr(line));
+    "#
+    .lines()
+    .map(|line| convert_tldr(line));
     let lines = MARKDOWN.lines().map(|line| convert_tldr(line.trim()));
     prefix.chain(lines)
 }
 
 pub fn read_all(
-    config: &Config,
+    _config: &Config,
     stdin: &mut std::process::ChildStdin,
     writer: &mut dyn Writer,
 ) -> Result<VariableMap, Error> {
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
-    parser::read_lines(markdown_lines(), "markdown", &mut variables, &mut visited_lines, writer, stdin)?;
-    Ok(variables) 
+    parser::read_lines(
+        markdown_lines(),
+        "markdown",
+        &mut variables,
+        &mut visited_lines,
+        writer,
+        stdin,
+    )?;
+    Ok(variables)
 }
