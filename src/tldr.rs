@@ -4,9 +4,10 @@ use anyhow::Error;
 
 use std::io::BufRead;
 
+use crate::structures::config::Config;
 use crate::display::Writer;
 use crate::structures::cheat::VariableMap;
-
+use crate::fetcher::Fetcher;
 use crate::parser;
 use std::collections::HashSet;
 
@@ -92,10 +93,10 @@ fn markdown_lines() -> impl Iterator<Item = Result<String, Error>> {
     prefix.chain(lines)
 }
 
-pub fn read_all(
+fn read_all(
     stdin: &mut std::process::ChildStdin,
     writer: &mut dyn Writer,
-) -> Result<VariableMap, Error> {
+) -> Result<Option<VariableMap>, Error> {
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
     parser::read_lines(
@@ -106,5 +107,24 @@ pub fn read_all(
         writer,
         stdin,
     )?;
-    Ok(variables)
+    Ok(Some(variables))
+}
+
+pub struct Foo {}
+
+impl Foo {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
+impl Fetcher for Foo {
+    fn fetch(
+        &self,
+        _config: &Config,
+        stdin: &mut std::process::ChildStdin,
+        writer: &mut dyn Writer,
+    ) -> Result<Option<VariableMap>, Error> {
+        read_all(stdin, writer)
+    }
 }

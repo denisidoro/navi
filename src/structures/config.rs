@@ -59,7 +59,7 @@ pub struct Config {
     #[structopt(long, env = "NAVI_FZF_OVERRIDES_VAR")]
     pub fzf_overrides_var: Option<String>,
 
-    /// finder overrides for variable selection
+    /// which finder application to use
     #[structopt(long, env = "NAVI_FINDER", default_value = "fzf", parse(try_from_str = parse_finder))]
     pub finder: FinderChoice,
 
@@ -67,15 +67,19 @@ pub struct Config {
     pub cmd: Option<Command>,
 }
 
+impl Config {
+    pub fn isTldr(&self) -> bool {
+        match self.cmd.as_ref() {
+            Some(Command::Tldr { query }) => true,
+            _ => false
+        }
+    }
+}
+
 #[derive(Debug, StructOpt)]
 pub enum Command {
     /// Filters results
     Query {
-        /// String used as filter (example: "git")
-        query: String,
-    },
-    /// Uses online repositories for cheatsheets
-    Search {
         /// String used as filter (example: "git")
         query: String,
     },
@@ -108,6 +112,11 @@ pub enum Command {
     Widget {
         /// bash, zsh or fish
         shell: String,
+    },
+    /// Search for cheatsheets using the tldr repository
+    Tldr {
+        /// bash, zsh or fish
+        query: String,
     },
     /// Helper command for Alfred integration
     #[structopt(setting = AppSettings::Hidden)]
