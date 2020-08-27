@@ -110,18 +110,21 @@ fn read_all(
     Ok(Some(variables))
 }
 
-pub struct Foo {}
+pub struct Foo {
+    query: String
+}
 
 impl Foo {
-    pub fn new() -> Self {
-        Self {}
+    pub fn new(query: String) -> Self {
+        Self {
+            query
+        }
     }
 }
 
 impl Fetcher for Foo {
     fn fetch(
         &self,
-        _config: &Config,
         stdin: &mut std::process::ChildStdin,
         writer: &mut dyn Writer,
     ) -> Result<Option<VariableMap>, Error> {

@@ -14,21 +14,24 @@ pub fn tmp_path_str() -> Result<String, Error> {
     Ok(format!("{}/tmp", cheat_path_str))
 }
 
-pub struct Foo {}
+pub struct Foo {
+    path: Option<String>
+}
 
 impl Foo {
-    pub fn new() -> Self {
-        Self {}
+    pub fn new(path: Option<String>) -> Self {
+        Self {
+            path
+        }
     }
 }
 
 impl Fetcher for Foo {
     fn fetch(
         &self,
-        config: &Config,
         stdin: &mut std::process::ChildStdin,
         writer: &mut dyn Writer,
     ) -> Result<Option<VariableMap>, Error> {
-        read_all(config, stdin, writer)
+        read_all(self.path.clone(), stdin, writer)
     }
 }

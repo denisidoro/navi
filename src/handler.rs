@@ -1,5 +1,4 @@
 use crate::cmds;
-use crate::cmds::core::Variant;
 use crate::structures::config::Command::{Alfred, Best, Fn, Preview, Query, Repo, Tldr, Widget};
 use crate::structures::config::{AlfredCommand, Config, RepoCommand};
 use anyhow::Context;
@@ -7,26 +6,10 @@ use anyhow::Error;
 
 pub fn handle_config(config: Config) -> Result<(), Error> {
     match config.cmd.as_ref() {
-        None => cmds::core::main(Variant::Core, config, true),
+        None => cmds::core::main(config),
 
         Some(c) => match c {
             Preview { line } => cmds::preview::main(&line[..]),
-
-            Query { query: _ } => {
-                eprintln!("DEPRECATED");
-                cmds::core::main(Variant::Core, config, true)
-            }
-
-            Tldr { query } => {
-                let query_clone = query.clone();
-                cmds::query::main(query.clone(), config)
-                    .with_context(|| format!("Failed to filter cheatsheets for {}", query_clone))
-            }
-
-            Best { query: _, args: _ } => {
-                eprintln!("DEPRECATED");
-                cmds::core::main(Variant::Core, config, true)
-            }
 
             Widget { shell } => {
                 cmds::shell::main(&shell).context("Failed to print shell widget code")
@@ -54,6 +37,8 @@ pub fn handle_config(config: Config) -> Result<(), Error> {
                         .context("Failed to call Alfred transform function"),
                 }
             }
+
+            _ => cmds::core::main(config),
         },
     }
 }

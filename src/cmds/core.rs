@@ -1,6 +1,7 @@
 use crate::common::clipboard;
 use crate::common::shell::BashSpawnError;
 use crate::display;
+use crate::structures::config::Source;
 use crate::fetcher::Fetcher;
 use crate::filesystem;
 use crate::finder::Finder;
@@ -8,8 +9,8 @@ use crate::handler;
 use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::structures::config;
 use crate::structures::config::Config;
+use crate::structures::config::Action;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
-
 use crate::tldr;
 use crate::welcome;
 use anyhow::Context;
@@ -19,40 +20,30 @@ use std::fs;
 use std::io::Write;
 use std::process::{Command, Stdio};
 
-pub enum Variant {
-    Core,
-    Filter(String),
-    Query(String),
-}
-
-fn gen_core_finder_opts(variant: Variant, config: &Config) -> Result<FinderOpts, Error> {
-    let mut opts = FinderOpts {
+fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
+    let opts = FinderOpts {
         preview: if config.no_preview {
             None
         } else {
             Some(format!("{} preview {{}}", filesystem::exe_string()?))
         },
-        autoselect: !config.no_autoselect,
+        autoselect: !config.get_no_autoselect(),
         overrides: config.fzf_overrides.clone(),
         suggestion_type: SuggestionType::SnippetSelection,
+        query: if config.single { None } else { config.get_query() },
+        filter: if config.single { config.get_query() } else { None },
         ..Default::default()
     };
-
-    match variant {
-        Variant::Core => (),
-        Variant::Filter(f) => opts.filter = Some(f),
-        Variant::Query(q) => opts.query = Some(q),
-    }
 
     Ok(opts)
 }
 
 fn extract_from_selections(
     raw_snippet: &str,
-    contains_key: bool,
+    is_single: bool,
 ) -> Result<(&str, &str, &str), Error> {
     let mut lines = raw_snippet.split('\n');
-    let key = if contains_key {
+    let key = if !is_single {
         lines
             .next()
             .context("Key was promised but not present in `selections`")?
@@ -98,7 +89,7 @@ fn prompt_with_suggestions(
 
     let opts = suggestion_opts.clone().unwrap_or_default();
     let opts = FinderOpts {
-        autoselect: !config.no_autoselect,
+        autoselect: !config.get_no_autoselect(),
         overrides: config.fzf_overrides_var.clone(),
         prompt: Some(display::terminal::variable_prompt(variable_name)),
         ..opts
@@ -185,24 +176,23 @@ fn replace_variables_from_snippet(
     Ok(interpolated_snippet)
 }
 
-pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Error> {
-    let opts =
-        gen_core_finder_opts(variant, &config).context("Failed to generate finder options")?;
+pub fn main(config: Config) -> Result<(), Error> {
+    let opts = gen_core_finder_opts(&config).context("Failed to generate finder options")?;
 
     let (raw_selection, variables) = config
         .finder
         .call(opts, |stdin| {
             let mut writer = display::terminal::Writer::new();
 
-            let fetcher: Box<dyn Fetcher> = if config.isTldr() {
-                Box::new(tldr::Foo::new())
-            } else {
-                Box::new(filesystem::Foo::new())
+            let fetcher: Box<dyn Fetcher> = match config.source() {
+                Source::TLDR(query) => Box::new(tldr::Foo::new(query)),
+                Source::FILESYSTEM(path) => Box::new(filesystem::Foo::new(path)),
             };
 
             let res = fetcher
-                .fetch(&config, stdin, &mut writer)
+                .fetch(stdin, &mut writer)
                 .context("Failed to parse variables intended for finder")?;
+
             if let Some(variables) = res {
                 Ok(Some(variables))
             } else {
@@ -212,7 +202,7 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
         })
         .context("Failed getting selection and variables from finder")?;
 
-    let (key, tags, snippet) = extract_from_selections(&raw_selection[..], contains_key)?;
+    let (key, tags, snippet) = extract_from_selections(&raw_selection[..], config.get_single())?;
 
     let interpolated_snippet = display::with_new_lines(
         replace_variables_from_snippet(
@@ -224,29 +214,27 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
         .context("Failed to replace variables from snippet")?,
     );
 
-    // copy to clipboard
-    if key == "ctrl-y" {
-        clipboard::copy(interpolated_snippet)?;
-    // print to stdout
-    } else if config.print {
-        println!("{}", interpolated_snippet);
-    // save to file
-    } else if let Some(s) = config.save {
-        fs::write(s, interpolated_snippet).context("Unable to save output")?;
-    // call navi (this prevents shelling out to call navi again
-    } else if interpolated_snippet.starts_with("navi") {
-        let new_config = config::config_from_iter(interpolated_snippet.split(' ').collect());
-        handler::handle_config(new_config)?;
-    // shell out and execute snippet
-    } else {
-        Command::new("bash")
-            .arg("-c")
-            .arg(&interpolated_snippet[..])
-            .spawn()
-            .map_err(|e| BashSpawnError::new(&interpolated_snippet[..], e))?
-            .wait()
-            .context("bash was not running")?;
-    }
+    match config.action() {
+        Action::PRINT => {
+            println!("{}", interpolated_snippet);
+        },
+        Action::SAVE(filepath) => {
+            fs::write(filepath, interpolated_snippet).context("Unable to save output")?;
+        }
+    Action::EXECUTE => {
+        if key == "ctrl-y" {
+            clipboard::copy(interpolated_snippet)?;
+        } else {
+            Command::new("bash")
+                .arg("-c")
+                .arg(&interpolated_snippet[..])
+                .spawn()
+                .map_err(|e| BashSpawnError::new(&interpolated_snippet[..], e))?
+                .wait()
+                .context("bash was not running")?;
+        }
+}
+};
 
     Ok(())
 }

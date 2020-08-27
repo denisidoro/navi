@@ -18,9 +18,8 @@ EXAMPLES:
     navi                                   # default behavior
     navi --print                           # doesn't execute the snippet
     navi --path '/some/dir:/other/dir'     # uses custom cheats
-    navi search docker                     # uses online data
     navi query git                         # filters results by "git"
-    navi best 'sql create db' root mydb    # uses a snippet as a CLI
+    navi best 'sql create db'              # uses a snippet as a CLI
     navi repo add denisidoro/cheats        # imports cheats from github.com/denisidoro/cheats
     source <(navi widget zsh)              # loads the zsh widget
     navi --finder 'skim'                   # set which finder is supposed to be used (fzf [default] / skim)
@@ -51,6 +50,14 @@ pub struct Config {
     #[structopt(long)]
     pub no_preview: bool,
 
+    /// Returns the best match
+    #[structopt(long)]
+    pub single: bool,
+
+    /// Query
+    #[structopt(short, long)]
+    pub query: Option<String>,
+
     /// finder overrides for cheat selection
     #[structopt(long, env = "NAVI_FZF_OVERRIDES")]
     pub fzf_overrides: Option<String>,
@@ -67,14 +74,6 @@ pub struct Config {
     pub cmd: Option<Command>,
 }
 
-impl Config {
-    pub fn isTldr(&self) -> bool {
-        match self.cmd.as_ref() {
-            Some(Command::Tldr { query: _ }) => true,
-            _ => false,
-        }
-    }
-}
 
 #[derive(Debug, StructOpt)]
 pub enum Command {
@@ -147,6 +146,77 @@ pub enum AlfredCommand {
     Transform,
     /// Checks whether to use free input
     Check,
+}
+
+fn deprecated(syntax: &str) {
+    eprintln!(r"Warning: the following syntax has been DEPRECATED:
+navi {}
+
+Please check navi --help for more info on how to achieve the same result with the new syntax.
+
+The deprecated syntax will be removed in the first version released on 2021!", syntax);
+}
+
+pub enum Source {
+    FILESYSTEM(Option<String>),
+    TLDR(String)
+}
+
+pub enum Action {
+    SAVE(String),
+    PRINT,
+    EXECUTE
+}
+
+impl Config {
+    pub fn source(&self) -> Source {
+        match self.cmd.as_ref() {
+            Some(Command::Tldr { query }) => Source::TLDR(query.clone()),
+            _ => Source::FILESYSTEM(self.path.clone()),
+        }
+    }
+
+    pub fn action(&self) -> Action {
+        if let Some(filepath) = self.save.clone() {
+            Action::SAVE(filepath)
+        } else if self.print {
+            Action::PRINT
+        } else {
+            Action::EXECUTE
+        }
+    }
+
+    pub fn get_query(&self) -> Option<String> {
+        match &self.cmd {
+            Some(Command::Query{query}) => {
+                deprecated("query <query>");
+                Some(query.clone())
+            },
+            Some(Command::Best{query, ..}) => {
+                deprecated("best <query>");
+                Some(query.clone())
+            },
+            _ => self.query.clone()
+        }
+    }
+
+    pub fn get_single(&self) -> bool {
+        if let Some(Command::Best {..}) = &self.cmd {
+                deprecated("best <query>");
+            true
+        } else {
+            self.single
+        }
+    }
+
+    pub fn get_no_autoselect(&self) -> bool {
+        if self.no_autoselect {
+            deprecated("--no-autoselect");
+            true
+        } else {
+            false
+        }
+    }
 }
 
 pub fn config_from_env() -> Config {

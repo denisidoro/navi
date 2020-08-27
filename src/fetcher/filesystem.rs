@@ -62,9 +62,8 @@ fn cheat_paths_from_config_dir() -> Result<String, Error> {
         })
 }
 
-pub fn cheat_paths(config: &Config) -> Result<String, Error> {
-    config
-        .path
+pub fn cheat_paths(path: Option<String>) -> Result<String, Error> {
+        path
         .clone()
         .ok_or_else(|| anyhow!("No cheat paths"))
         .or_else(|_| {
@@ -73,14 +72,14 @@ pub fn cheat_paths(config: &Config) -> Result<String, Error> {
 }
 
 pub fn read_all(
-    config: &Config,
+    path: Option<String>,
     stdin: &mut std::process::ChildStdin,
     writer: &mut dyn Writer,
 ) -> Result<Option<VariableMap>, Error> {
     let mut variables = VariableMap::new();
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
-    let paths = cheat_paths(config);
+    let paths = cheat_paths(path);
 
     // TODO: remove
     // read_lines(tldr::markdown_lines(), "markdown", &mut variables, &mut visited_lines, writer, stdin)?;
