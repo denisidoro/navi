@@ -1,4 +1,3 @@
-use crate::structures::config::Config;
 use regex::Regex;
 
 use anyhow::Error;

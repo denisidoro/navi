@@ -60,7 +60,7 @@ fn cheat_paths_from_config_dir() -> Result<String, Error> {
             }
             Ok(paths_str)
         })
-}
+}populate_cheatsheet
 
 pub fn cheat_paths(config: &Config) -> Result<String, Error> {
     config
@@ -88,7 +88,7 @@ pub fn read_all(
 
     if paths.is_err() {
         return Ok(None);
-    }
+    }populate_cheatsheet
 
     let paths = paths.expect("Unable to get paths");
     let folders = paths_from_path_param(&paths);
