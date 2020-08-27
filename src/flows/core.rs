@@ -198,7 +198,8 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
             if let Some(variables) = res {
                 Ok(Some(variables))
             } else {
-                Ok(Some(welcome::cheatsheet(&mut writer, stdin))
+welcome::cheatsheet(&mut writer, stdin);
+                Ok(Some(VariableMap::new()))
             }
         })
         .context("Failed getting selection and variables from finder")?;
