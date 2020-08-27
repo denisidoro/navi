@@ -2,11 +2,11 @@ use crate::display::Writer;
 use crate::fetcher::Fetcher;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
-use anyhow::Error;
 use anyhow::Context;
+use anyhow::Error;
 use regex::Regex;
 use std::collections::HashSet;
-use crate::common::shell::BashSpawnError;
+
 use std::process::{self, Command, Stdio};
 
 lazy_static! {
@@ -76,15 +76,18 @@ pub fn fetch(query: &str) -> Result<String, Error> {
         .stdout(Stdio::piped())
         .spawn();
 
-        let child = match child {
-            Ok(x) => x,
-            Err(_) => {
-                eprintln!("navi was unable to call tldr");
-                process::exit(33)
-            }
-        };
+    let child = match child {
+        Ok(x) => x,
+        Err(_) => {
+            eprintln!("navi was unable to call tldr");
+            process::exit(33)
+        }
+    };
 
-    let stdout = child.wait_with_output().context("Failed to wait for tldr")?.stdout;
+    let stdout = child
+        .wait_with_output()
+        .context("Failed to wait for tldr")?
+        .stdout;
 
     String::from_utf8(stdout).context("Suggestions are invalid utf8")
 }
