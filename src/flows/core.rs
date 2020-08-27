@@ -9,6 +9,7 @@ use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::structures::config;
 use crate::structures::config::Config;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
+use crate::welcome;
 use anyhow::Context;
 use anyhow::Error;
 use std::env;
@@ -191,9 +192,14 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
         .call(opts, |stdin| {
             let mut writer = display::terminal::Writer::new();
             let fetcher = filesystem::Foo::new();
-            Ok(Some(fetcher.fetch(&config, stdin, &mut writer).context(
+            let res = fetcher.fetch(&config, stdin, &mut writer).context(
                 "Failed to parse variables intended for finder",
-            )?))
+            )?;
+            if let Some(variables) = res {
+                Ok(Some(variables))
+            } else {
+                Ok(Some(welcome::cheatsheet(&mut writer, stdin))
+            }
         })
         .context("Failed getting selection and variables from finder")?;
 

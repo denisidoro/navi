@@ -28,7 +28,7 @@ impl Fetcher for Foo {
         config: &Config,
         stdin: &mut std::process::ChildStdin,
         writer: &mut dyn Writer,
-    ) -> Result<VariableMap, Error> {
+    ) -> Result<Option<VariableMap>, Error> {
         read_all(config, stdin, writer)
     }
 }

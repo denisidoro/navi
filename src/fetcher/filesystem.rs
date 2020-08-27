@@ -76,7 +76,7 @@ pub fn read_all(
     config: &Config,
     stdin: &mut std::process::ChildStdin,
     writer: &mut dyn Writer,
-) -> Result<VariableMap, Error> {
+) -> Result<Option<VariableMap>, Error> {
     let mut variables = VariableMap::new();
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
@@ -87,8 +87,7 @@ pub fn read_all(
     // return Ok(variables);
 
     if paths.is_err() {
-        welcome::cheatsheet(writer, stdin);
-        return Ok(variables);
+        return Ok(None);
     }
 
     let paths = paths.expect("Unable to get paths");
@@ -115,8 +114,8 @@ pub fn read_all(
     }
 
     if !found_something {
-        welcome::cheatsheet(writer, stdin);
+        return Ok(None);
     }
 
-    Ok(variables)
+    Ok(Some(variables))
 }

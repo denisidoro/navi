@@ -13,5 +13,5 @@ pub trait Fetcher {
         config: &Config,
         stdin: &mut std::process::ChildStdin,
         writer: &mut dyn Writer,
-    ) -> Result<VariableMap, Error>;
+    ) -> Result<Option<VariableMap>, Error>;
 }
