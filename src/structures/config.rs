@@ -70,8 +70,8 @@ pub struct Config {
 impl Config {
     pub fn isTldr(&self) -> bool {
         match self.cmd.as_ref() {
-            Some(Command::Tldr { query }) => true,
-            _ => false
+            Some(Command::Tldr { query: _ }) => true,
+            _ => false,
         }
     }
 }

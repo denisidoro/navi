@@ -4,11 +4,11 @@ use anyhow::Error;
 
 use std::io::BufRead;
 
-use crate::structures::config::Config;
 use crate::display::Writer;
-use crate::structures::cheat::VariableMap;
 use crate::fetcher::Fetcher;
 use crate::parser;
+use crate::structures::cheat::VariableMap;
+use crate::structures::config::Config;
 use std::collections::HashSet;
 
 lazy_static! {

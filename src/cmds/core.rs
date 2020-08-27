@@ -9,7 +9,8 @@ use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::structures::config;
 use crate::structures::config::Config;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
-use crate::structures::config::Command::Tldr;
+
+use crate::tldr;
 use crate::welcome;
 use anyhow::Context;
 use anyhow::Error;
@@ -17,7 +18,6 @@ use std::env;
 use std::fs;
 use std::io::Write;
 use std::process::{Command, Stdio};
-use crate::tldr;
 
 pub enum Variant {
     Core,
@@ -186,7 +186,6 @@ fn replace_variables_from_snippet(
 }
 
 pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), Error> {
-
     let opts =
         gen_core_finder_opts(variant, &config).context("Failed to generate finder options")?;
 
