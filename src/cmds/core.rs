@@ -1,15 +1,15 @@
 use crate::common::clipboard;
 use crate::common::shell::BashSpawnError;
 use crate::display;
-use crate::structures::config::Source;
 use crate::fetcher::Fetcher;
 use crate::filesystem;
 use crate::finder::Finder;
-use crate::handler;
+use crate::structures::config::Source;
+
 use crate::structures::cheat::{Suggestion, VariableMap};
-use crate::structures::config;
-use crate::structures::config::Config;
+
 use crate::structures::config::Action;
+use crate::structures::config::Config;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use crate::tldr;
 use crate::welcome;
@@ -30,8 +30,16 @@ fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
         autoselect: !config.get_no_autoselect(),
         overrides: config.fzf_overrides.clone(),
         suggestion_type: SuggestionType::SnippetSelection,
-        query: if config.single { None } else { config.get_query() },
-        filter: if config.single { config.get_query() } else { None },
+        query: if config.single {
+            None
+        } else {
+            config.get_query()
+        },
+        filter: if config.single {
+            config.get_query()
+        } else {
+            None
+        },
         ..Default::default()
     };
 
@@ -217,24 +225,24 @@ pub fn main(config: Config) -> Result<(), Error> {
     match config.action() {
         Action::PRINT => {
             println!("{}", interpolated_snippet);
-        },
+        }
         Action::SAVE(filepath) => {
             fs::write(filepath, interpolated_snippet).context("Unable to save output")?;
         }
-    Action::EXECUTE => {
-        if key == "ctrl-y" {
-            clipboard::copy(interpolated_snippet)?;
-        } else {
-            Command::new("bash")
-                .arg("-c")
-                .arg(&interpolated_snippet[..])
-                .spawn()
-                .map_err(|e| BashSpawnError::new(&interpolated_snippet[..], e))?
-                .wait()
-                .context("bash was not running")?;
+        Action::EXECUTE => {
+            if key == "ctrl-y" {
+                clipboard::copy(interpolated_snippet)?;
+            } else {
+                Command::new("bash")
+                    .arg("-c")
+                    .arg(&interpolated_snippet[..])
+                    .spawn()
+                    .map_err(|e| BashSpawnError::new(&interpolated_snippet[..], e))?
+                    .wait()
+                    .context("bash was not running")?;
+            }
         }
-}
-};
+    };
 
     Ok(())
 }

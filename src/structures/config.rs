@@ -74,7 +74,6 @@ pub struct Config {
     pub cmd: Option<Command>,
 }
 
-
 #[derive(Debug, StructOpt)]
 pub enum Command {
     /// Filters results
@@ -149,23 +148,26 @@ pub enum AlfredCommand {
 }
 
 fn deprecated(syntax: &str) {
-    eprintln!(r"Warning: the following syntax has been DEPRECATED:
+    eprintln!(
+        r"Warning: the following syntax has been DEPRECATED:
 navi {}
 
 Please check navi --help for more info on how to achieve the same result with the new syntax.
 
-The deprecated syntax will be removed in the first version released on 2021!", syntax);
+The deprecated syntax will be removed in the first version released on 2021!",
+        syntax
+    );
 }
 
 pub enum Source {
     FILESYSTEM(Option<String>),
-    TLDR(String)
+    TLDR(String),
 }
 
 pub enum Action {
     SAVE(String),
     PRINT,
-    EXECUTE
+    EXECUTE,
 }
 
 impl Config {
@@ -188,21 +190,21 @@ impl Config {
 
     pub fn get_query(&self) -> Option<String> {
         match &self.cmd {
-            Some(Command::Query{query}) => {
+            Some(Command::Query { query }) => {
                 deprecated("query <query>");
                 Some(query.clone())
-            },
-            Some(Command::Best{query, ..}) => {
+            }
+            Some(Command::Best { query, .. }) => {
                 deprecated("best <query>");
                 Some(query.clone())
-            },
-            _ => self.query.clone()
+            }
+            _ => self.query.clone(),
         }
     }
 
     pub fn get_single(&self) -> bool {
-        if let Some(Command::Best {..}) = &self.cmd {
-                deprecated("best <query>");
+        if let Some(Command::Best { .. }) = &self.cmd {
+            deprecated("best <query>");
             true
         } else {
             self.single

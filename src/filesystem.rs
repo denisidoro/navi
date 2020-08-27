@@ -3,7 +3,7 @@ pub use crate::common::filesystem::{
 };
 use crate::display::Writer;
 use crate::structures::cheat::VariableMap;
-use crate::structures::config::Config;
+
 use anyhow::Error;
 
 pub use crate::fetcher::filesystem::{cheat_pathbuf, read_all};
@@ -15,14 +15,12 @@ pub fn tmp_path_str() -> Result<String, Error> {
 }
 
 pub struct Foo {
-    path: Option<String>
+    path: Option<String>,
 }
 
 impl Foo {
     pub fn new(path: Option<String>) -> Self {
-        Self {
-            path
-        }
+        Self { path }
     }
 }
 

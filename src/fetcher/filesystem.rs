@@ -2,7 +2,6 @@ use crate::common::filesystem::{pathbuf_to_string, read_lines, InvalidPath, Unre
 use crate::display::Writer;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
-use crate::structures::config::Config;
 
 use anyhow::{Context, Error};
 
@@ -63,12 +62,9 @@ fn cheat_paths_from_config_dir() -> Result<String, Error> {
 }
 
 pub fn cheat_paths(path: Option<String>) -> Result<String, Error> {
-        path
-        .clone()
-        .ok_or_else(|| anyhow!("No cheat paths"))
-        .or_else(|_| {
-            cheat_paths_from_config_dir().context("No directory for cheats in user data directory")
-        })
+    path.ok_or_else(|| anyhow!("No cheat paths")).or_else(|_| {
+        cheat_paths_from_config_dir().context("No directory for cheats in user data directory")
+    })
 }
 
 pub fn read_all(

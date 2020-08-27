@@ -8,7 +8,7 @@ use crate::display::Writer;
 use crate::fetcher::Fetcher;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
-use crate::structures::config::Config;
+
 use std::collections::HashSet;
 
 lazy_static! {
@@ -111,14 +111,12 @@ fn read_all(
 }
 
 pub struct Foo {
-    query: String
+    query: String,
 }
 
 impl Foo {
     pub fn new(query: String) -> Self {
-        Self {
-            query
-        }
+        Self { query }
     }
 }
 
