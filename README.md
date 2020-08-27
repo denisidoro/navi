@@ -19,9 +19,9 @@ Table of contents
 -----------------
 
    * [Installation](#installation)
-      * [Using Homebrew or Linuxbrew](#using-homebrew-or-linuxbrew-)
+      * [Using Homebrew or Linuxbrew](#using-homebrew-or-linuxbrew)
       * [Using Gentoo](#using-gentoo)
-      * [Using nix](#using-nix-)
+      * [Using nix](#using-nix)
       * [Using cargo](#using-cargo)
       * [Using install script](#using-install-script)
       * [Downloading pre-compiled binaries](#downloading-pre-compiled-binaries)
