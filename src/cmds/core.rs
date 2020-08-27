@@ -5,9 +5,7 @@ use crate::fetcher::Fetcher;
 use crate::filesystem;
 use crate::finder::Finder;
 use crate::structures::config::Source;
-
 use crate::structures::cheat::{Suggestion, VariableMap};
-
 use crate::structures::config::Action;
 use crate::structures::config::Config;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};

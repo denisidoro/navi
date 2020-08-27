@@ -3,9 +3,7 @@ pub use crate::common::filesystem::{
 };
 use crate::display::Writer;
 use crate::structures::cheat::VariableMap;
-
 use anyhow::Error;
-
 pub use crate::fetcher::filesystem::{cheat_pathbuf, read_all};
 use crate::fetcher::Fetcher;
 

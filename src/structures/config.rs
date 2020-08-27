@@ -174,10 +174,10 @@ pub enum Action {
 impl Config {
     pub fn source(&self) -> Source {
         if let Some(query) = self.tldr.clone() {
-            Source::TLDR(query.clone())
+            Source::TLDR(query)
         } else {
             Source::FILESYSTEM(self.path.clone())
-}
+        }
     }
 
     pub fn action(&self) -> Action {

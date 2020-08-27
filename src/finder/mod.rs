@@ -3,7 +3,6 @@ mod skim;
 
 pub use fzf::FzfFinder;
 pub use skim::SkimFinder;
-
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::Opts;
 use crate::structures::finder::SuggestionType;

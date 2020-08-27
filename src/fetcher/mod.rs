@@ -1,10 +1,8 @@
-use crate::display::Writer;
-
-use crate::structures::cheat::VariableMap;
-
-use anyhow::Error;
-
 pub mod filesystem;
+
+use crate::display::Writer;
+use crate::structures::cheat::VariableMap;
+use anyhow::Error;
 
 pub trait Fetcher {
     fn fetch(

@@ -1,14 +1,9 @@
 use regex::Regex;
-
 use anyhow::Error;
-
-use std::io::BufRead;
-
 use crate::display::Writer;
 use crate::fetcher::Fetcher;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
-
 use std::collections::HashSet;
 
 lazy_static! {
@@ -111,12 +106,12 @@ fn read_all(
 }
 
 pub struct Foo {
-    query: String,
+    _query: String,
 }
 
 impl Foo {
-    pub fn new(query: String) -> Self {
-        Self { query }
+    pub fn new(_query: String) -> Self {
+        Self { _query }
     }
 }
 
@@ -126,6 +121,7 @@ impl Fetcher for Foo {
         stdin: &mut std::process::ChildStdin,
         writer: &mut dyn Writer,
     ) -> Result<Option<VariableMap>, Error> {
+        eprintln!("TODO!!!!");
         read_all(stdin, writer)
     }
 }

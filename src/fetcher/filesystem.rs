@@ -2,13 +2,9 @@ use crate::common::filesystem::{pathbuf_to_string, read_lines, InvalidPath, Unre
 use crate::display::Writer;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
-
 use anyhow::{Context, Error};
-
 use std::collections::HashSet;
 use std::fs;
-
-use std::io::BufRead;
 use std::path::PathBuf;
 
 fn paths_from_path_param<'a>(env_var: &'a str) -> impl Iterator<Item = &'a str> + 'a {
@@ -113,4 +109,61 @@ pub fn read_all(
     }
 
     Ok(Some(variables))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+use std::process::{Command, Stdio};
+use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
+use crate::display;
+
+    #[test]
+    fn test_read_file() {
+        let path = "tests/cheats/ssh.cheat";
+        let mut variables = VariableMap::new();
+        let mut child = Command::new("cat")
+            .stdin(Stdio::piped())
+            .stdout(Stdio::null())
+            .spawn()
+            .unwrap();
+        let child_stdin = child.stdin.as_mut().unwrap();
+        let mut visited_lines: HashSet<u64> = HashSet::new();
+        let mut writer: Box<dyn Writer> = Box::new(display::terminal::Writer::new());
+        read_file(
+            path,
+            &mut variables,
+            &mut visited_lines,
+            &mut *writer,
+            child_stdin,
+        )
+        .unwrap();
+        let expected_suggestion = (
+            r#" echo -e "$(whoami)\nroot" "#.to_string(),
+            Some(FinderOpts {
+                header_lines: 0,
+                column: None,
+                delimiter: None,
+                suggestion_type: SuggestionType::SingleSelection,
+                ..Default::default()
+            }),
+        );
+        let actual_suggestion = variables.get_suggestion("ssh", "user");
+        assert_eq!(Some(&expected_suggestion), actual_suggestion);
+    }
+
+    #[test]
+    fn splitting_of_dirs_param_may_not_contain_empty_items() {
+        // Trailing colon indicates potential extra path. Split returns an empty item for it. This empty item should be filtered away, which is what this test checks.
+        let given_path_config = "SOME_PATH:ANOTHER_PATH:";
+
+        let found_paths = paths_from_path_param(given_path_config);
+
+        let mut expected_paths = vec!["SOME_PATH", "ANOTHER_PATH"].into_iter();
+
+        for found in found_paths {
+            let expected = expected_paths.next().unwrap();
+            assert_eq!(found, expected)
+        }
+    }
 }

@@ -3,11 +3,9 @@ use crate::display::{self, Writer};
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use crate::structures::item::Item;
-
 use anyhow::{Context, Error};
 use regex::Regex;
 use std::collections::HashSet;
-
 use std::io::Write;
 
 lazy_static! {
@@ -234,4 +232,29 @@ pub fn read_lines(
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_variable_line() {
+        let (variable, command, command_options) =
+            parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --prevent-extra")
+                .unwrap();
+        assert_eq!(command, " echo -e \"$(whoami)\\nroot\" ");
+        assert_eq!(variable, "user");
+        assert_eq!(
+            command_options,
+            Some(FinderOpts {
+                header_lines: 0,
+                column: None,
+                delimiter: None,
+                suggestion_type: SuggestionType::SingleSelection,
+                ..Default::default()
+            })
+        );
+    }
+    use std::process::{Command, Stdio};
 }
