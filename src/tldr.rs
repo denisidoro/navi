@@ -3,55 +3,16 @@ use crate::fetcher::Fetcher;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
 use anyhow::Error;
+use anyhow::Context;
 use regex::Regex;
 use std::collections::HashSet;
+use crate::common::shell::BashSpawnError;
+use std::process::{self, Command, Stdio};
 
 lazy_static! {
     pub static ref VAR_TLDR_REGEX: Regex = Regex::new(r"\{\{(.*?)\}\}").expect("Invalid regex");
     pub static ref NON_VAR_CHARS_REGEX: Regex = Regex::new(r"[^\da-zA-Z_]").expect("Invalid regex");
 }
-
-static MARKDOWN: &str = r#"# tar
-
-> Archiving utility.
-> Often combined with a compression method, such as gzip or bzip.
-> More information: <https://www.gnu.org/software/tar>.
-
-- Create an archive from files:
-
-`tar cf {{target.tar}} {{file1}} {{file2}} {{file3}}`
-
-- Create a gzipped archive:
-
-`tar czf {{target.tar.gz}} {{file1}} {{file2}} {{file3}}`
-
-- Create a gzipped archive from a directory using relative paths:
-
-`tar czf {{target.tar.gz}} -C {{path/to/directory}} .`
-
-- Extract a (compressed) archive into the current directory:
-
-`tar xf {{source.tar[.gz|.bz2|.xz]}}`
-
-- Extract a (compressed) archive into the target directory:
-
-`tar xf {{source.tar[.gz|.bz2|.xz]}} -C {{directory}}`
-
-- Create a compressed archive, using archive suffix to determine the compression program:
-
-`tar caf {{target.tar.xz}} {{file1}} {{file1}} {{file2}} {{file3}}`
-
-- List the contents of a tar file:
-
-`tar tvf {{source.tar}}`
-
-- Extract files matching a pattern:
-
-`tar xf {{source.tar}} --wildcards {{"*.html"}}`
-
-- Extract a specific file without preserving the folder structure:
-
-`tar xf {{source.tar}} {{source.tar/path/to/extract}} --strip-components={{depth_to_strip}}`"#;
 
 fn convert_tldr_vars(line: &str) -> String {
     let caps = VAR_TLDR_REGEX.find_iter(&line);
@@ -79,23 +40,26 @@ fn convert_tldr(line: &str) -> Result<String, Error> {
     Ok(new_line)
 }
 
-fn markdown_lines() -> impl Iterator<Item = Result<String, Error>> {
+fn markdown_lines(markdown: &str) -> impl Iterator<Item = Result<String, Error>> {
     let prefix = r#"% markdown, test
     "#
     .lines()
     .map(|line| convert_tldr(line));
-    let lines = MARKDOWN.lines().map(|line| convert_tldr(line.trim()));
+
+    let lines = markdown.lines().map(move |line| convert_tldr(line.trim()));
+    let lines: Vec<Result<String, Error>> = lines.collect();
     prefix.chain(lines)
 }
 
 fn read_all(
+    markdown: &str,
     stdin: &mut std::process::ChildStdin,
     writer: &mut dyn Writer,
 ) -> Result<Option<VariableMap>, Error> {
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
     parser::read_lines(
-        markdown_lines(),
+        markdown_lines(markdown),
         "markdown",
         &mut variables,
         &mut visited_lines,
@@ -105,13 +69,33 @@ fn read_all(
     Ok(Some(variables))
 }
 
+pub fn fetch(query: &str) -> Result<String, Error> {
+    let child = Command::new("tldr")
+        .args(&[query, "--markdown"])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn();
+
+        let child = match child {
+            Ok(x) => x,
+            Err(_) => {
+                eprintln!("navi was unable to call tldr");
+                process::exit(33)
+            }
+        };
+
+    let stdout = child.wait_with_output().context("Failed to wait for tldr")?.stdout;
+
+    String::from_utf8(stdout).context("Suggestions are invalid utf8")
+}
+
 pub struct Foo {
-    _query: String,
+    query: String,
 }
 
 impl Foo {
-    pub fn new(_query: String) -> Self {
-        Self { _query }
+    pub fn new(query: String) -> Self {
+        Self { query }
     }
 }
 
@@ -122,6 +106,7 @@ impl Fetcher for Foo {
         writer: &mut dyn Writer,
     ) -> Result<Option<VariableMap>, Error> {
         eprintln!("TODO!!!!");
-        read_all(stdin, writer)
+        let markdown = fetch(&self.query)?;
+        read_all(&markdown, stdin, writer)
     }
 }
