@@ -8,7 +8,7 @@ mod display;
 mod fetcher;
 mod filesystem;
 mod finder;
-mod flows;
+mod cmds;
 mod handler;
 mod parser;
 mod structures;

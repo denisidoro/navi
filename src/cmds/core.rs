@@ -192,13 +192,13 @@ pub fn main(variant: Variant, config: Config, contains_key: bool) -> Result<(), 
         .call(opts, |stdin| {
             let mut writer = display::terminal::Writer::new();
             let fetcher = filesystem::Foo::new();
-            let res = fetcher.fetch(&config, stdin, &mut writer).context(
-                "Failed to parse variables intended for finder",
-            )?;
+            let res = fetcher
+                .fetch(&config, stdin, &mut writer)
+                .context("Failed to parse variables intended for finder")?;
             if let Some(variables) = res {
                 Ok(Some(variables))
             } else {
-welcome::cheatsheet(&mut writer, stdin);
+                welcome::cheatsheet(&mut writer, stdin);
                 Ok(Some(VariableMap::new()))
             }
         })

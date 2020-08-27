@@ -3,7 +3,7 @@ use crate::display::Writer;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
 use crate::structures::config::Config;
-use crate::welcome;
+
 use anyhow::{Context, Error};
 
 use std::collections::HashSet;

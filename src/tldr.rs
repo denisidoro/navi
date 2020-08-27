@@ -94,7 +94,6 @@ fn markdown_lines() -> impl Iterator<Item = Result<String, Error>> {
 }
 
 pub fn read_all(
-    _config: &Config,
     stdin: &mut std::process::ChildStdin,
     writer: &mut dyn Writer,
 ) -> Result<VariableMap, Error> {

@@ -1,8 +1,8 @@
-use crate::flows;
-use crate::flows::core::Variant;
+use crate::cmds;
+use crate::cmds::core::Variant;
 use crate::structures::config::Config;
 use anyhow::Error;
 
 pub fn main(query: String, config: Config) -> Result<(), Error> {
-    flows::core::main(Variant::Query(query), config, true)
+    cmds::core::main(Variant::Query(query), config, true)
 }
