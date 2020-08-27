@@ -42,8 +42,11 @@ fn convert_tldr(line: &str) -> Result<String, Error> {
 }
 
 fn markdown_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String, Error>> {
-    format!("% {}, tldr
-    {}", query, markdown)
+    format!(
+        "% {}, tldr
+    {}",
+        query, markdown
+    )
     .lines()
     .map(convert_tldr)
     .collect::<Vec<Result<String, Error>>>()
