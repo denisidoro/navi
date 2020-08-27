@@ -30,12 +30,12 @@ fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
         autoselect: !config.get_no_autoselect(),
         overrides: config.fzf_overrides.clone(),
         suggestion_type: SuggestionType::SnippetSelection,
-        query: if config.single {
+        query: if config.get_single() {
             None
         } else {
             config.get_query()
         },
-        filter: if config.single {
+        filter: if config.get_single() {
             config.get_query()
         } else {
             None

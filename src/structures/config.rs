@@ -36,15 +36,15 @@ pub struct Config {
 
     /// [Experimental] Instead of executing a snippet, saves it to a file
     #[structopt(short, long)]
-    pub save: Option<String>,
+    save: Option<String>,
 
     /// Instead of executing a snippet, prints it to stdout
     #[structopt(long)]
-    pub print: bool,
+    print: bool,
 
     /// Prevents autoselection in case of single entry
     #[structopt(long)]
-    pub no_autoselect: bool,
+    no_autoselect: bool,
 
     /// Hides preview window
     #[structopt(long)]
@@ -52,11 +52,15 @@ pub struct Config {
 
     /// Returns the best match
     #[structopt(long)]
-    pub single: bool,
+    single: bool,
+
+    /// Search for cheatsheets using the tldr-pages repository
+    #[structopt(long)]
+    tldr: Option<String>,
 
     /// Query
     #[structopt(short, long)]
-    pub query: Option<String>,
+    query: Option<String>,
 
     /// finder overrides for cheat selection
     #[structopt(long, env = "NAVI_FZF_OVERRIDES")]
@@ -77,11 +81,13 @@ pub struct Config {
 #[derive(Debug, StructOpt)]
 pub enum Command {
     /// Filters results
+    #[structopt(setting = AppSettings::Hidden)]
     Query {
         /// String used as filter (example: "git")
         query: String,
     },
     /// Autoselects the snippet that best matches the query
+    #[structopt(setting = AppSettings::Hidden)]
     Best {
         /// String used as filter (example: "git remove branch")
         query: String,
@@ -110,11 +116,6 @@ pub enum Command {
     Widget {
         /// bash, zsh or fish
         shell: String,
-    },
-    /// Search for cheatsheets using the tldr repository
-    Tldr {
-        /// bash, zsh or fish
-        query: String,
     },
     /// Helper command for Alfred integration
     #[structopt(setting = AppSettings::Hidden)]
@@ -172,10 +173,11 @@ pub enum Action {
 
 impl Config {
     pub fn source(&self) -> Source {
-        match self.cmd.as_ref() {
-            Some(Command::Tldr { query }) => Source::TLDR(query.clone()),
-            _ => Source::FILESYSTEM(self.path.clone()),
-        }
+        if let Some(query) = self.tldr.clone() {
+            Source::TLDR(query.clone())
+        } else {
+            Source::FILESYSTEM(self.path.clone())
+}
     }
 
     pub fn action(&self) -> Action {

@@ -1,5 +1,5 @@
 use crate::cmds;
-use crate::structures::config::Command::{Alfred, Best, Fn, Preview, Query, Repo, Tldr, Widget};
+use crate::structures::config::Command::{Alfred, Fn, Preview, Repo, Widget};
 use crate::structures::config::{AlfredCommand, Config, RepoCommand};
 use anyhow::Context;
 use anyhow::Error;
