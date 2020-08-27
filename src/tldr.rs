@@ -6,7 +6,6 @@ use anyhow::Context;
 use anyhow::Error;
 use regex::Regex;
 use std::collections::HashSet;
-
 use std::process::{self, Command, Stdio};
 
 lazy_static! {

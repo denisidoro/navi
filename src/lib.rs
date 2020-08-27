@@ -14,6 +14,7 @@ mod parser;
 mod structures;
 mod tldr;
 mod welcome;
+mod cheatsh;
 
 pub use common::file_issue::FileAnIssue;
 pub use handler::handle_config;

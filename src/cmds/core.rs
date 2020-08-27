@@ -10,6 +10,7 @@ use crate::structures::config::Config;
 use crate::structures::config::Source;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use crate::tldr;
+use crate::cheatsh;
 use crate::welcome;
 use anyhow::Context;
 use anyhow::Error;
@@ -191,7 +192,8 @@ pub fn main(config: Config) -> Result<(), Error> {
             let mut writer = display::terminal::Writer::new();
 
             let fetcher: Box<dyn Fetcher> = match config.source() {
-                Source::TLDR(query) => Box::new(tldr::Foo::new(query)),
+                // Source::TLDR(query) => Box::new(tldr::Foo::new(query)),
+                Source::TLDR(query) => Box::new(cheatsh::Foo::new(query)),
                 Source::FILESYSTEM(path) => Box::new(filesystem::Foo::new(path)),
             };
 
