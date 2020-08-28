@@ -29,40 +29,23 @@ fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
         autoselect: !config.get_no_autoselect(),
         overrides: config.fzf_overrides.clone(),
         suggestion_type: SuggestionType::SnippetSelection,
-        query: if config.get_single() {
-            None
-        } else {
-            config.get_query()
-        },
-        filter: if config.get_single() {
-            config.get_query()
-        } else {
-            None
-        },
+        query: if config.get_single() { None } else { config.get_query() },
+        filter: if config.get_single() { config.get_query() } else { None },
         ..Default::default()
     };
 
     Ok(opts)
 }
 
-fn extract_from_selections(
-    raw_snippet: &str,
-    is_single: bool,
-) -> Result<(&str, &str, &str), Error> {
+fn extract_from_selections(raw_snippet: &str, is_single: bool) -> Result<(&str, &str, &str), Error> {
     let mut lines = raw_snippet.split('\n');
     let key = if !is_single {
-        lines
-            .next()
-            .context("Key was promised but not present in `selections`")?
+        lines.next().context("Key was promised but not present in `selections`")?
     } else {
         "enter"
     };
 
-    let mut parts = lines
-        .next()
-        .context("No more parts in `selections`")?
-        .split(display::DELIMITER)
-        .skip(3);
+    let mut parts = lines.next().context("No more parts in `selections`")?.split(display::DELIMITER).skip(3);
 
     let tags = parts.next().unwrap_or("");
     parts.next();
@@ -71,12 +54,7 @@ fn extract_from_selections(
     Ok((key, tags, snippet))
 }
 
-fn prompt_with_suggestions(
-    variable_name: &str,
-    config: &Config,
-    suggestion: &Suggestion,
-    _snippet: String,
-) -> Result<String, Error> {
+fn prompt_with_suggestions(variable_name: &str, config: &Config, suggestion: &Suggestion, _snippet: String) -> Result<String, Error> {
     let (suggestion_command, suggestion_opts) = suggestion;
 
     let child = Command::new("bash")
@@ -86,13 +64,8 @@ fn prompt_with_suggestions(
         .spawn()
         .map_err(|e| BashSpawnError::new(suggestion_command, e))?;
 
-    let suggestions = String::from_utf8(
-        child
-            .wait_with_output()
-            .context("Failed to wait and collect output from bash")?
-            .stdout,
-    )
-    .context("Suggestions are invalid utf8")?;
+    let suggestions = String::from_utf8(child.wait_with_output().context("Failed to wait and collect output from bash")?.stdout)
+        .context("Suggestions are invalid utf8")?;
 
     let opts = suggestion_opts.clone().unwrap_or_default();
     let opts = FinderOpts {
@@ -105,9 +78,7 @@ fn prompt_with_suggestions(
     let (output, _) = config
         .finder
         .call(opts, |stdin| {
-            stdin
-                .write_all(suggestions.as_bytes())
-                .context("Could not write to finder's stdin")?;
+            stdin.write_all(suggestions.as_bytes()).context("Could not write to finder's stdin")?;
             Ok(None)
         })
         .context("finder was unable to prompt with suggestions")?;
@@ -132,12 +103,7 @@ fn prompt_without_suggestions(variable_name: &str, config: &Config) -> Result<St
     Ok(output)
 }
 
-fn replace_variables_from_snippet(
-    snippet: &str,
-    tags: &str,
-    variables: VariableMap,
-    config: &Config,
-) -> Result<String, Error> {
+fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: VariableMap, config: &Config) -> Result<String, Error> {
     let mut interpolated_snippet = String::from(snippet);
 
     for captures in display::VAR_REGEX.captures_iter(snippet) {
@@ -154,19 +120,9 @@ fn replace_variables_from_snippet(
                 .ok_or_else(|| anyhow!("No suggestions"))
                 .and_then(|suggestion| {
                     let mut new_suggestion = suggestion.clone();
-                    new_suggestion.0 = replace_variables_from_snippet(
-                        &new_suggestion.0,
-                        tags,
-                        variables.clone(),
-                        config,
-                    )?;
+                    new_suggestion.0 = replace_variables_from_snippet(&new_suggestion.0, tags, variables.clone(), config)?;
 
-                    prompt_with_suggestions(
-                        variable_name,
-                        &config,
-                        &new_suggestion,
-                        interpolated_snippet.clone(),
-                    )
+                    prompt_with_suggestions(variable_name, &config, &new_suggestion, interpolated_snippet.clone())
                 })
                 .or_else(|_| prompt_without_suggestions(variable_name, &config))?
         };
@@ -213,13 +169,8 @@ pub fn main(config: Config) -> Result<(), Error> {
     let (key, tags, snippet) = extract_from_selections(&raw_selection[..], config.get_single())?;
 
     let interpolated_snippet = display::with_new_lines(
-        replace_variables_from_snippet(
-            snippet,
-            tags,
-            variables.expect("No variables received from finder"),
-            &config,
-        )
-        .context("Failed to replace variables from snippet")?,
+        replace_variables_from_snippet(snippet, tags, variables.expect("No variables received from finder"), &config)
+            .context("Failed to replace variables from snippet")?,
     );
 
     match config.action() {

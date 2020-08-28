@@ -45,12 +45,7 @@ fn cheat_paths_from_config_dir() -> Result<String, Error> {
             let mut paths_str = String::from("");
             for entry in dir_entries {
                 let path = entry.map_err(|e| UnreadableDir::new(path.clone(), e))?;
-                paths_str.push_str(
-                    path.path()
-                        .into_os_string()
-                        .to_str()
-                        .ok_or_else(|| InvalidPath(path.path()))?,
-                );
+                paths_str.push_str(path.path().into_os_string().to_str().ok_or_else(|| InvalidPath(path.path()))?);
                 paths_str.push_str(":");
             }
             Ok(paths_str)
@@ -58,16 +53,11 @@ fn cheat_paths_from_config_dir() -> Result<String, Error> {
 }
 
 pub fn cheat_paths(path: Option<String>) -> Result<String, Error> {
-    path.ok_or_else(|| anyhow!("No cheat paths")).or_else(|_| {
-        cheat_paths_from_config_dir().context("No directory for cheats in user data directory")
-    })
+    path.ok_or_else(|| anyhow!("No cheat paths"))
+        .or_else(|_| cheat_paths_from_config_dir().context("No directory for cheats in user data directory"))
 }
 
-pub fn read_all(
-    path: Option<String>,
-    stdin: &mut std::process::ChildStdin,
-    writer: &mut dyn Writer,
-) -> Result<Option<VariableMap>, Error> {
+pub fn read_all(path: Option<String>, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
     let mut variables = VariableMap::new();
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
@@ -89,12 +79,9 @@ pub fn read_all(
             for entry in dir_entries {
                 if entry.is_ok() {
                     let path = entry.expect("Impossible to read an invalid entry").path();
-                    let path_str = path
-                        .to_str()
-                        .ok_or_else(|| InvalidPath(path.to_path_buf()))?;
+                    let path_str = path.to_str().ok_or_else(|| InvalidPath(path.to_path_buf()))?;
                     if path_str.ends_with(".cheat")
-                        && read_file(path_str, &mut variables, &mut visited_lines, writer, stdin)
-                            .is_ok()
+                        && read_file(path_str, &mut variables, &mut visited_lines, writer, stdin).is_ok()
                         && !found_something
                     {
                         found_something = true;
@@ -122,22 +109,11 @@ mod tests {
     fn test_read_file() {
         let path = "tests/cheats/ssh.cheat";
         let mut variables = VariableMap::new();
-        let mut child = Command::new("cat")
-            .stdin(Stdio::piped())
-            .stdout(Stdio::null())
-            .spawn()
-            .unwrap();
+        let mut child = Command::new("cat").stdin(Stdio::piped()).stdout(Stdio::null()).spawn().unwrap();
         let child_stdin = child.stdin.as_mut().unwrap();
         let mut visited_lines: HashSet<u64> = HashSet::new();
         let mut writer: Box<dyn Writer> = Box::new(display::terminal::Writer::new());
-        read_file(
-            path,
-            &mut variables,
-            &mut visited_lines,
-            &mut *writer,
-            child_stdin,
-        )
-        .unwrap();
+        read_file(path, &mut variables, &mut visited_lines, &mut *writer, child_stdin).unwrap();
         let expected_suggestion = (
             r#" echo -e "$(whoami)\nroot" "#.to_string(),
             Some(FinderOpts {

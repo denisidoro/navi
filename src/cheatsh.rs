@@ -24,22 +24,10 @@ fn lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String, Err
     .into_iter()
 }
 
-fn read_all(
-    query: &str,
-    cheat: &str,
-    stdin: &mut std::process::ChildStdin,
-    writer: &mut dyn Writer,
-) -> Result<Option<VariableMap>, Error> {
+fn read_all(query: &str, cheat: &str, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
-    parser::read_lines(
-        lines(query, cheat),
-        "cheatsh",
-        &mut variables,
-        &mut visited_lines,
-        writer,
-        stdin,
-    )?;
+    parser::read_lines(lines(query, cheat), "cheatsh", &mut variables, &mut visited_lines, writer, stdin)?;
     Ok(Some(variables))
 }
 
@@ -58,10 +46,7 @@ pub fn fetch(query: &str) -> Result<String, Error> {
         }
     };
 
-    let stdout = child
-        .wait_with_output()
-        .context("Failed to wait for curl")?
-        .stdout;
+    let stdout = child.wait_with_output().context("Failed to wait for curl")?.stdout;
 
     let plain_bytes = strip_ansi_escapes::strip(&stdout)?;
 
@@ -79,11 +64,7 @@ impl Foo {
 }
 
 impl Fetcher for Foo {
-    fn fetch(
-        &self,
-        stdin: &mut std::process::ChildStdin,
-        writer: &mut dyn Writer,
-    ) -> Result<Option<VariableMap>, Error> {
+    fn fetch(&self, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
         eprintln!("TODO!!!!");
         let cheat = fetch(&self.query)?;
         dbg!(&cheat);

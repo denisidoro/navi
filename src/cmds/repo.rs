@@ -15,11 +15,9 @@ pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
     filesystem::create_dir(&repo_path_str)?;
 
     let (repo_url, _, _) = git::meta("denisidoro/cheats");
-    git::shallow_clone(repo_url.as_str(), &repo_path_str)
-        .with_context(|| format!("Failed to clone `{}`", repo_url))?;
+    git::shallow_clone(repo_url.as_str(), &repo_path_str).with_context(|| format!("Failed to clone `{}`", repo_url))?;
 
-    let repos = fs::read_to_string(format!("{}/featured_repos.txt", &repo_path_str))
-        .context("Unable to fetch featured repositories")?;
+    let repos = fs::read_to_string(format!("{}/featured_repos.txt", &repo_path_str)).context("Unable to fetch featured repositories")?;
 
     let opts = FinderOpts {
         column: Some(1),
@@ -28,9 +26,7 @@ pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
 
     let (repo, _) = finder
         .call(opts, |stdin| {
-            stdin
-                .write_all(repos.as_bytes())
-                .context("Unable to prompt featured repositories")?;
+            stdin.write_all(repos.as_bytes()).context("Unable to prompt featured repositories")?;
             Ok(None)
         })
         .context("Failed to get repo URL from finder")?;
@@ -52,8 +48,7 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
 
     eprintln!("Cloning {} into {}...\n", &actual_uri, &tmp_path_str);
 
-    git::shallow_clone(actual_uri.as_str(), &tmp_path_str)
-        .with_context(|| format!("Failed to clone `{}`", actual_uri))?;
+    git::shallow_clone(actual_uri.as_str(), &tmp_path_str).with_context(|| format!("Failed to clone `{}`", actual_uri))?;
 
     let all_files = WalkDir::new(&tmp_path_str)
         .into_iter()
@@ -67,18 +62,14 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
     let opts = FinderOpts {
         suggestion_type: SuggestionType::MultipleSelections,
         preview: Some(format!("cat '{}/{{}}'", tmp_path_str)),
-        header: Some(
-            "Select the cheatsheets you want to import with <TAB> then hit <Enter>".to_string(),
-        ),
+        header: Some("Select the cheatsheets you want to import with <TAB> then hit <Enter>".to_string()),
         preview_window: Some("right:30%".to_string()),
         ..Default::default()
     };
 
     let (files, _) = finder
         .call(opts, |stdin| {
-            stdin
-                .write_all(all_files.as_bytes())
-                .context("Unable to prompt cheats to import")?;
+            stdin.write_all(all_files.as_bytes()).context("Unable to prompt cheats to import")?;
             Ok(None)
         })
         .context("Failed to get cheatsheet files from finder")?;
@@ -94,7 +85,10 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
 
     filesystem::remove_dir(&tmp_path_str)?;
 
-    eprintln!("The following .cheat files were imported successfully:\n{}\n\nThey are now located at {}\n\nPlease run navi again to check the results.", files, cheat_path_str);
+    eprintln!(
+        "The following .cheat files were imported successfully:\n{}\n\nThey are now located at {}\n\nPlease run navi again to check the results.",
+        files, cheat_path_str
+    );
 
     Ok(())
 }
