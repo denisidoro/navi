@@ -9,8 +9,7 @@ use std::collections::HashSet;
 use std::io::Write;
 
 lazy_static! {
-    pub static ref VAR_LINE_REGEX: Regex =
-        Regex::new(r"^\$\s*([^:]+):(.*)").expect("Invalid regex");
+    pub static ref VAR_LINE_REGEX: Regex = Regex::new(r"^\$\s*([^:]+):(.*)").expect("Invalid regex");
 }
 
 fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
@@ -19,8 +18,7 @@ fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
     let mut is_global = false;
     let mut opts = FinderOpts::default();
 
-    let parts = shellwords::split(text)
-        .map_err(|_| anyhow!("Given options are missing a closing quote"))?;
+    let parts = shellwords::split(text).map_err(|_| anyhow!("Given options are missing a closing quote"))?;
 
     parts
         .into_iter()
@@ -47,18 +45,8 @@ fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
         .map(|flag_and_value| {
             if let [flag, value] = flag_and_value {
                 match flag.as_str() {
-                    "--headers" | "--header-lines" => {
-                        opts.header_lines = value
-                            .parse::<u8>()
-                            .context("Value for `--headers` is invalid u8")?
-                    }
-                    "--column" => {
-                        opts.column = Some(
-                            value
-                                .parse::<u8>()
-                                .context("Value for `--column` is invalid u8")?,
-                        )
-                    }
+                    "--headers" | "--header-lines" => opts.header_lines = value.parse::<u8>().context("Value for `--headers` is invalid u8")?,
+                    "--column" => opts.column = Some(value.parse::<u8>().context("Value for `--column` is invalid u8")?),
                     "--map" => opts.map = Some(value.to_string()),
                     "--delimiter" => opts.delimiter = Some(value.to_string()),
                     "--query" => opts.query = Some(value.to_string()),
@@ -91,12 +79,9 @@ fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
 }
 
 fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FinderOpts>), Error> {
-    let caps = VAR_LINE_REGEX.captures(line).ok_or_else(|| {
-        anyhow!(
-            "No variables, command, and options found in the line `{}`",
-            line
-        )
-    })?;
+    let caps = VAR_LINE_REGEX
+        .captures(line)
+        .ok_or_else(|| anyhow!("No variables, command, and options found in the line `{}`", line))?;
     let variable = caps
         .get(1)
         .ok_or_else(|| anyhow!("No variable captured in the line `{}`", line))?
@@ -114,13 +99,7 @@ fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FinderOpts>), E
     Ok((variable, command, command_options))
 }
 
-fn write_cmd(
-    tags: &str,
-    comment: &str,
-    snippet: &str,
-    writer: &mut dyn Writer,
-    stdin: &mut std::process::ChildStdin,
-) -> Result<(), Error> {
+fn write_cmd(tags: &str, comment: &str, snippet: &str, writer: &mut dyn Writer, stdin: &mut std::process::ChildStdin) -> Result<(), Error> {
     if snippet.len() <= 1 {
         Ok(())
     } else {
@@ -149,8 +128,7 @@ pub fn read_lines(
     let mut should_break = false;
 
     for (line_nr, line_result) in lines.enumerate() {
-        let line = line_result
-            .with_context(|| format!("Failed to read line nr.{} from `{}`", line_nr, id))?;
+        let line = line_result.with_context(|| format!("Failed to read line nr.{} from `{}`", line_nr, id))?;
 
         if should_break {
             break;
@@ -167,19 +145,11 @@ pub fn read_lines(
                 should_break = true
             }
             snippet = String::from("");
-            tags = if line.len() > 2 {
-                String::from(&line[2..])
-            } else {
-                String::from("")
-            };
+            tags = if line.len() > 2 { String::from(&line[2..]) } else { String::from("") };
         }
         // dependency
         else if line.starts_with('@') {
-            let tags_dependency = if line.len() > 2 {
-                String::from(&line[2..])
-            } else {
-                String::from("")
-            };
+            let tags_dependency = if line.len() > 2 { String::from(&line[2..]) } else { String::from("") };
             variables.insert_dependency(&tags, &tags_dependency);
         }
         // metacomment
@@ -191,11 +161,7 @@ pub fn read_lines(
                 should_break = true
             }
             snippet = String::from("");
-            comment = if line.len() > 2 {
-                String::from(&line[2..])
-            } else {
-                String::from("")
-            };
+            comment = if line.len() > 2 { String::from(&line[2..]) } else { String::from("") };
         }
         // variable
         else if line.starts_with('$') {
@@ -203,13 +169,8 @@ pub fn read_lines(
                 should_break = true
             }
             snippet = String::from("");
-            let (variable, command, opts) = parse_variable_line(&line).with_context(|| {
-                format!(
-                    "Failed to parse variable line. See line number {} in cheatsheet `{}`",
-                    line_nr + 1,
-                    id
-                )
-            })?;
+            let (variable, command, opts) = parse_variable_line(&line)
+                .with_context(|| format!("Failed to parse variable line. See line number {} in cheatsheet `{}`", line_nr + 1, id))?;
             variables.insert_suggestion(&tags, &variable, (String::from(command), opts));
         }
         // snippet
@@ -240,9 +201,7 @@ mod tests {
 
     #[test]
     fn test_parse_variable_line() {
-        let (variable, command, command_options) =
-            parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --prevent-extra")
-                .unwrap();
+        let (variable, command, command_options) = parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --prevent-extra").unwrap();
         assert_eq!(command, " echo -e \"$(whoami)\\nroot\" ");
         assert_eq!(variable, "user");
         assert_eq!(

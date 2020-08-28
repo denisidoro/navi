@@ -57,12 +57,7 @@ fn markdown_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<St
     .into_iter()
 }
 
-fn read_all(
-    query: &str,
-    markdown: &str,
-    stdin: &mut std::process::ChildStdin,
-    writer: &mut dyn Writer,
-) -> Result<Option<VariableMap>, Error> {
+fn read_all(query: &str, markdown: &str, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
     parser::read_lines(
@@ -91,10 +86,7 @@ pub fn fetch(query: &str) -> Result<String, Error> {
         }
     };
 
-    let stdout = child
-        .wait_with_output()
-        .context("Failed to wait for tldr")?
-        .stdout;
+    let stdout = child.wait_with_output().context("Failed to wait for tldr")?.stdout;
 
     String::from_utf8(stdout).context("Suggestions are invalid utf8")
 }
@@ -110,11 +102,7 @@ impl Foo {
 }
 
 impl Fetcher for Foo {
-    fn fetch(
-        &self,
-        stdin: &mut std::process::ChildStdin,
-        writer: &mut dyn Writer,
-    ) -> Result<Option<VariableMap>, Error> {
+    fn fetch(&self, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
         eprintln!("TODO!!!!");
         let markdown = fetch(&self.query)?;
         read_all(&self.query, &markdown, stdin, writer)

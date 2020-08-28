@@ -10,11 +10,7 @@ use std::process::{self, Command, Stdio};
 pub struct FzfFinder;
 
 impl Finder for FzfFinder {
-    fn call<F>(
-        &self,
-        finder_opts: Opts,
-        stdin_fn: F,
-    ) -> Result<(String, Option<VariableMap>), Error>
+    fn call<F>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
     where
         F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>,
     {
@@ -83,13 +79,9 @@ impl Finder for FzfFinder {
         }
 
         if let Some(o) = opts.overrides {
-            o.as_str()
-                .split(' ')
-                .map(|s| s.to_string())
-                .filter(|s| !s.is_empty())
-                .for_each(|s| {
-                    command.arg(s);
-                });
+            o.as_str().split(' ').map(|s| s.to_string()).filter(|s| !s.is_empty()).for_each(|s| {
+                command.arg(s);
+            });
         }
 
         let child = command.stdin(Stdio::piped()).stdout(Stdio::piped()).spawn();
@@ -102,10 +94,7 @@ impl Finder for FzfFinder {
             }
         };
 
-        let stdin = child
-            .stdin
-            .as_mut()
-            .ok_or_else(|| anyhow!("Unable to acquire stdin of fzf"))?;
+        let stdin = child.stdin.as_mut().ok_or_else(|| anyhow!("Unable to acquire stdin of fzf"))?;
         let result_map = stdin_fn(stdin).context("Failed to pass data to fzf")?;
 
         let out = child.wait_with_output().context("Failed to wait for fzf")?;

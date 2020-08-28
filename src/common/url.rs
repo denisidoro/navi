@@ -3,10 +3,7 @@ use anyhow::Error;
 use std::process::Command;
 
 pub fn open(args: Vec<String>) -> Result<(), Error> {
-    let url = args
-        .into_iter()
-        .next()
-        .ok_or_else(|| anyhow!("No URL specified"))?;
+    let url = args.into_iter().next().ok_or_else(|| anyhow!("No URL specified"))?;
     let code = r#"
 exst() {
    type "$1" &>/dev/null

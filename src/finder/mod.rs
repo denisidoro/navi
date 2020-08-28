@@ -73,14 +73,8 @@ fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> Stri
 
 fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> Result<String, Error> {
     Ok(match suggestion_type {
-        SuggestionType::SingleSelection => text
-            .lines()
-            .next()
-            .context("Not sufficient data for single selection")?
-            .to_string(),
-        SuggestionType::MultipleSelections
-        | SuggestionType::Disabled
-        | SuggestionType::SnippetSelection => {
+        SuggestionType::SingleSelection => text.lines().next().context("Not sufficient data for single selection")?.to_string(),
+        SuggestionType::MultipleSelections | SuggestionType::Disabled | SuggestionType::SnippetSelection => {
             let len = text.len();
             if len > 1 {
                 text.truncate(len - 1);
@@ -91,20 +85,14 @@ fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> Res
             let lines: Vec<&str> = text.lines().collect();
 
             match (lines.get(0), lines.get(1), lines.get(2)) {
-                (Some(one), Some(termination), Some(two))
-                    if *termination == "enter" || termination.is_empty() =>
-                {
+                (Some(one), Some(termination), Some(two)) if *termination == "enter" || termination.is_empty() => {
                     if two.is_empty() {
                         (*one).to_string()
                     } else {
                         (*two).to_string()
                     }
                 }
-                (Some(one), Some(termination), None)
-                    if *termination == "enter" || termination.is_empty() =>
-                {
-                    (*one).to_string()
-                }
+                (Some(one), Some(termination), None) if *termination == "enter" || termination.is_empty() => (*one).to_string(),
                 (Some(one), Some(termination), _) if *termination == "tab" => (*one).to_string(),
                 _ => "".to_string(),
             }
@@ -114,13 +102,10 @@ fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> Res
 
 fn parse(out: Output, opts: Opts) -> Result<String, Error> {
     let text = match out.status.code() {
-        Some(0) | Some(1) | Some(2) => {
-            String::from_utf8(out.stdout).context("Invalid utf8 received from finder")?
-        }
+        Some(0) | Some(1) | Some(2) => String::from_utf8(out.stdout).context("Invalid utf8 received from finder")?,
         Some(130) => process::exit(130),
         _ => {
-            let err = String::from_utf8(out.stderr)
-                .unwrap_or_else(|_| "<stderr contains invalid UTF-8>".to_owned());
+            let err = String::from_utf8(out.stderr).unwrap_or_else(|_| "<stderr contains invalid UTF-8>".to_owned());
             panic!("External command failed:\n {}", err)
         }
     };

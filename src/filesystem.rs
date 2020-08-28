@@ -1,6 +1,4 @@
-pub use crate::common::filesystem::{
-    create_dir, exe_string, pathbuf_to_string, remove_dir, InvalidPath, UnreadableDir,
-};
+pub use crate::common::filesystem::{create_dir, exe_string, pathbuf_to_string, remove_dir, InvalidPath, UnreadableDir};
 use crate::display::Writer;
 pub use crate::fetcher::filesystem::{cheat_pathbuf, read_all};
 use crate::fetcher::Fetcher;
@@ -23,11 +21,7 @@ impl Foo {
 }
 
 impl Fetcher for Foo {
-    fn fetch(
-        &self,
-        stdin: &mut std::process::ChildStdin,
-        writer: &mut dyn Writer,
-    ) -> Result<Option<VariableMap>, Error> {
+    fn fetch(&self, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
         read_all(self.path.clone(), stdin, writer)
     }
 }
