@@ -5,7 +5,15 @@ use std::cmp::max;
 use std::env;
 use termion::color;
 
-fn parse_env_var(varname: &str) -> Option<u16> {
+fn parse_env_var_u8(varname: &str) -> Option<u8> {
+    if let Ok(x) = env::var(varname) {
+        x.parse::<u8>().ok()
+    } else {
+        None
+    }
+}
+
+fn parse_env_var_u16(varname: &str) -> Option<u16> {
     if let Ok(x) = env::var(varname) {
         x.parse::<u16>().ok()
     } else {
@@ -14,11 +22,11 @@ fn parse_env_var(varname: &str) -> Option<u16> {
 }
 
 lazy_static! {
-    pub static ref TAG_COLOR: color::AnsiValue = color::AnsiValue(4);
-    pub static ref COMMENT_COLOR: color::AnsiValue = color::AnsiValue(3);
-    pub static ref SNIPPET_COLOR: color::AnsiValue = color::AnsiValue(5);
-    pub static ref TAG_WIDTH_PERCENTAGE: u16 = 20;
-    pub static ref COMMENT_WIDTH_PERCENTAGE: u16 = parse_env_var("NAVI_COMMENT_WIDTH").unwrap_or(40);
+    pub static ref TAG_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var_u8("NAVI_TAG_COLOR").unwrap_or(14));
+    pub static ref COMMENT_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var_u8("NAVI_COMMENT_COLOR").unwrap_or(4));
+    pub static ref SNIPPET_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var_u8("NAVI_SNIPPET_COLOR").unwrap_or(7));
+    pub static ref TAG_WIDTH_PERCENTAGE: u16 = parse_env_var_u16("NAVI_TAG_WIDTH").unwrap_or(20);
+    pub static ref COMMENT_WIDTH_PERCENTAGE: u16 = parse_env_var_u16("NAVI_COMMENT_WIDTH").unwrap_or(40);
 }
 
 pub fn variable_prompt(varname: &str) -> String {
