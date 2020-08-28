@@ -24,7 +24,7 @@ _navi_cases_test() {
 
 _get_all_tests() {
    cat "${TEST_CHEAT_PATH}/cases.cheat" \
-      | grep '#' \
+      | grep '^#' \
       | grep ' ->' \
       | sed 's/\\n/ /g' \
       | sed -E 's/# (.*) -> "(.*)"/\1|\2/g'
