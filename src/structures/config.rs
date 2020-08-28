@@ -52,7 +52,7 @@ pub struct Config {
 
     /// Returns the best match
     #[structopt(long)]
-    single: bool,
+    best_match: bool,
 
     /// Search for cheatsheets using the tldr-pages repository
     #[structopt(long)]
@@ -207,16 +207,30 @@ impl Config {
                 deprecated("best <query>");
                 Some(query.clone())
             }
-            _ => self.query.clone(),
+            _ => {
+                let q = self.query.clone();
+                if q.is_some() {
+                    return q;
+                }
+                if self.get_best_match() {
+                    match self.source() {
+                        Source::TLDR(q) => Some(q),
+                        Source::CHEATSH(q) => Some(q),
+                        _ => Some(String::from("")),
+                    }
+                } else {
+                    None
+                }
+            }
         }
     }
 
-    pub fn get_single(&self) -> bool {
+    pub fn get_best_match(&self) -> bool {
         if let Some(Command::Best { .. }) = &self.cmd {
             deprecated("best <query>");
             true
         } else {
-            self.single
+            self.best_match
         }
     }
 

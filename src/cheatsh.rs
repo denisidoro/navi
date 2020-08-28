@@ -67,7 +67,6 @@ impl Fetcher for Foo {
     fn fetch(&self, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
         eprintln!("TODO!!!!");
         let cheat = fetch(&self.query)?;
-        dbg!(&cheat);
         read_all(&self.query, &cheat, stdin, writer)
     }
 }

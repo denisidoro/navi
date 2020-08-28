@@ -8,19 +8,23 @@ TEST_CHEAT_PATH="${NAVI_HOME}/tests/no_prompt_cheats"
 _navi() {
    stty sane || true
    local -r navi="./target/debug/navi"
-   local filter="$*"
-   local filter="${filter::-2}"
-   RUST_BACKTRACE=1 NAVI_PATH="$TEST_CHEAT_PATH" "$navi" best "$filter"
+   RUST_BACKTRACE=1 NAVI_PATH="$TEST_CHEAT_PATH" "$navi" "$@"
 }
 
-_navi_test() {
-   _navi "$1" \
+_navi_cases() {
+   local filter="$*"
+   filter="${filter::-2}"
+   _navi --query "$filter" --best-match
+}
+
+_navi_cases_test() {
+   _navi_cases "$1" \
       | test::equals "$2"
 }
 
 _get_all_tests() {
    cat "${TEST_CHEAT_PATH}/cases.cheat" \
-      | grep '#' \
+      | grep '^#' \
       | grep ' ->' \
       | sed 's/\\n/ /g' \
       | sed -E 's/# (.*) -> "(.*)"/\1|\2/g'
@@ -52,7 +56,23 @@ for i in $(_get_tests "$filter"); do
    IFS="$ifs"
    query="$(echo "$i" | cut -d'|' -f1)"
    expected="$(echo "$i" | cut -d'|' -f2)"
-   test::run "$query" _navi_test "$query" "$expected"
+   test::run "$query" _navi_cases_test "$query" "$expected"
 done
+
+_navi_tldr() {
+   _navi --tldr docker --query ps --print --best-match \
+      | test::equals "docker ps"
+}
+
+_navi_cheatsh() {
+   _navi --cheatsh docker --query remove --print --best-match \
+      | test::equals "docker rm container_name"
+}
+
+test::set_suite "tldr"
+test::run "$query" _navi_tldr
+
+test::set_suite "cheatsh"
+test::run "$query" _navi_cheatsh
 
 test::finish
