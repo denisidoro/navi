@@ -29,8 +29,8 @@ fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
         autoselect: !config.get_no_autoselect(),
         overrides: config.fzf_overrides.clone(),
         suggestion_type: SuggestionType::SnippetSelection,
-        query: if config.get_single() { None } else { config.get_query() },
-        filter: if config.get_single() { config.get_query() } else { None },
+        query: if config.get_best_match() { None } else { config.get_query() },
+        filter: if config.get_best_match() { config.get_query() } else { None },
         ..Default::default()
     };
 
@@ -166,7 +166,7 @@ pub fn main(config: Config) -> Result<(), Error> {
         })
         .context("Failed getting selection and variables from finder")?;
 
-    let (key, tags, snippet) = extract_from_selections(&raw_selection[..], config.get_single())?;
+    let (key, tags, snippet) = extract_from_selections(&raw_selection[..], config.get_best_match())?;
 
     let interpolated_snippet = display::with_new_lines(
         replace_variables_from_snippet(snippet, tags, variables.expect("No variables received from finder"), &config)
