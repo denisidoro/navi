@@ -31,8 +31,8 @@ echo "lorem <multiword> ipsum"
 # variable dependency, full -> "2 12 a 2"
 echo "<x> <x2> <y> <x>"
 
-# variable dependency, we can ignore intermediate values -> "12"
-: <x>; echo "<x2>"
+# variable dependency, we can ignore intermediate values -> "foo 12"
+printf "foo "; : <x>; echo "<x2>"
 
 # nested unused value -> "path: /my/pictures"
 echo "path: <pictures_folder>"
