@@ -221,7 +221,7 @@ impl Config {
                 } else {
                     None
                 }
-            },
+            }
         }
     }
 
