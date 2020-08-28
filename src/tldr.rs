@@ -19,7 +19,12 @@ fn convert_tldr_vars(line: &str) -> String {
     for cap in caps {
         let braced_var = cap.as_str();
         let var = &braced_var[2..braced_var.len() - 2];
-        let new_var = NON_VAR_CHARS_REGEX.replace_all(var, "_");
+        let mut new_var = NON_VAR_CHARS_REGEX.replace_all(var, "_").to_string();
+        if let Some(c) = new_var.chars().next() {
+            if c.to_string().parse::<u8>().is_ok() {
+                new_var = format!("example_{}", new_var);
+            }
+        }
         let bracketed_var = format!("<{}>", new_var);
         new_line = new_line.replace(braced_var, &bracketed_var);
     }

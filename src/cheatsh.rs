@@ -44,7 +44,7 @@ fn read_all(
 }
 
 pub fn fetch(query: &str) -> Result<String, Error> {
-    let child = Command::new("wget2")
+    let child = Command::new("wget")
         .args(&["-qO-", &format!("cheat.sh/{}", query)])
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -53,14 +53,14 @@ pub fn fetch(query: &str) -> Result<String, Error> {
     let child = match child {
         Ok(x) => x,
         Err(_) => {
-            eprintln!("navi was unable to call tldr");
+            eprintln!("navi was unable to call curl");
             process::exit(33)
         }
     };
 
     let stdout = child
         .wait_with_output()
-        .context("Failed to wait for tldr")?
+        .context("Failed to wait for curl")?
         .stdout;
 
     let plain_bytes = strip_ansi_escapes::strip(&stdout)?;
