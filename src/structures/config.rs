@@ -58,6 +58,10 @@ pub struct Config {
     #[structopt(long)]
     tldr: Option<String>,
 
+    /// Search for cheatsheets using the cheat.sh repository
+    #[structopt(long)]
+    cheatsh: Option<String>,
+
     /// Query
     #[structopt(short, long)]
     query: Option<String>,
@@ -163,6 +167,7 @@ The deprecated syntax will be removed in the first version released on 2021!",
 pub enum Source {
     FILESYSTEM(Option<String>),
     TLDR(String),
+    CHEATSH(String),
 }
 
 pub enum Action {
@@ -175,6 +180,8 @@ impl Config {
     pub fn source(&self) -> Source {
         if let Some(query) = self.tldr.clone() {
             Source::TLDR(query)
+        } else if let Some(query) = self.cheatsh.clone() {
+            Source::CHEATSH(query)
         } else {
             Source::FILESYSTEM(self.path.clone())
         }

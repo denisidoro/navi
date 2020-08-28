@@ -3,6 +3,7 @@ extern crate lazy_static;
 #[macro_use]
 extern crate anyhow;
 
+mod cheatsh;
 mod cmds;
 mod common;
 mod display;

@@ -173,7 +173,7 @@ pub fn read_lines(
                 String::from("")
             };
         }
-        // depedency
+        // dependency
         else if line.starts_with('@') {
             let tags_dependency = if line.len() > 2 {
                 String::from(&line[2..])

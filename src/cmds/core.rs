@@ -1,3 +1,4 @@
+use crate::cheatsh;
 use crate::common::clipboard;
 use crate::common::shell::BashSpawnError;
 use crate::display;
@@ -191,6 +192,7 @@ pub fn main(config: Config) -> Result<(), Error> {
             let mut writer = display::terminal::Writer::new();
 
             let fetcher: Box<dyn Fetcher> = match config.source() {
+                Source::CHEATSH(query) => Box::new(cheatsh::Foo::new(query)),
                 Source::TLDR(query) => Box::new(tldr::Foo::new(query)),
                 Source::FILESYSTEM(path) => Box::new(filesystem::Foo::new(path)),
             };
