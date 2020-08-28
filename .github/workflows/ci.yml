@@ -53,10 +53,10 @@ jobs:
         run: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; yes | ~/.fzf/install;
 
       - name: Install tealdeer
-        run: npm install -g tldr
+        run: sudo npm install -g tldr
 
       - name: Run bash tests
-        run: ./tests/run 'trivial\|multiple'
+        run: ./tests/run
 
   lints:
     name: Lints
