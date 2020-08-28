@@ -8,7 +8,7 @@ use std::collections::HashSet;
 use std::process::{self, Command, Stdio};
 
 fn map_line(line: &str) -> Result<String, Error> {
-    let line = line.trim().trim_end_matches(":");
+    let line = line.trim().trim_end_matches(':');
     Ok(line.to_string())
 }
 

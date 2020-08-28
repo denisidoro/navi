@@ -9,7 +9,7 @@ use crate::structures::config::Action;
 use crate::structures::config::Config;
 use crate::structures::config::Source;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
-use crate::tldr;
+
 use crate::cheatsh;
 use crate::welcome;
 use anyhow::Context;

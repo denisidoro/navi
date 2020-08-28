@@ -22,11 +22,15 @@ fn parse_env_var_u16(varname: &str) -> Option<u16> {
 }
 
 lazy_static! {
-    pub static ref TAG_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var_u8("NAVI_TAG_COLOR").unwrap_or(14));
-    pub static ref COMMENT_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var_u8("NAVI_COMMENT_COLOR").unwrap_or(4));
-    pub static ref SNIPPET_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var_u8("NAVI_SNIPPET_COLOR").unwrap_or(7));
+    pub static ref TAG_COLOR: color::AnsiValue =
+        color::AnsiValue(parse_env_var_u8("NAVI_TAG_COLOR").unwrap_or(14));
+    pub static ref COMMENT_COLOR: color::AnsiValue =
+        color::AnsiValue(parse_env_var_u8("NAVI_COMMENT_COLOR").unwrap_or(4));
+    pub static ref SNIPPET_COLOR: color::AnsiValue =
+        color::AnsiValue(parse_env_var_u8("NAVI_SNIPPET_COLOR").unwrap_or(7));
     pub static ref TAG_WIDTH_PERCENTAGE: u16 = parse_env_var_u16("NAVI_TAG_WIDTH").unwrap_or(20);
-    pub static ref COMMENT_WIDTH_PERCENTAGE: u16 = parse_env_var_u16("NAVI_COMMENT_WIDTH").unwrap_or(40);
+    pub static ref COMMENT_WIDTH_PERCENTAGE: u16 =
+        parse_env_var_u16("NAVI_COMMENT_WIDTH").unwrap_or(40);
 }
 
 pub fn variable_prompt(varname: &str) -> String {
