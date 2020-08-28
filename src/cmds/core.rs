@@ -1,3 +1,4 @@
+use crate::cheatsh;
 use crate::common::clipboard;
 use crate::common::shell::BashSpawnError;
 use crate::display;
@@ -9,7 +10,6 @@ use crate::structures::config::Action;
 use crate::structures::config::Config;
 use crate::structures::config::Source;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
-use crate::cheatsh;
 use crate::tldr;
 use crate::welcome;
 use anyhow::Context;
