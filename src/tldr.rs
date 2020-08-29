@@ -2,11 +2,11 @@ use crate::display::Writer;
 use crate::fetcher::Fetcher;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
+use anyhow::{Context, Error};
 use regex::Regex;
 use std::collections::HashSet;
-use std::process::{self, Command, Stdio};
 use std::fmt::Debug;
-use anyhow::{Context, Error};
+use std::process::{self, Command, Stdio};
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -98,17 +98,19 @@ pub fn fetch(query: &str) -> Result<String, Error> {
 
     if let Some(0) = out.status.code() {
     } else {
-        eprintln!("Failed to call tldr {}.
+        eprintln!(
+            "Failed to call tldr {}.
  
 Output:
 {}
 
 Error:
-{}", 
-args.join(" "), 
-String::from_utf8(out.stdout).unwrap_or("Unable to get output message".to_string()), 
-String::from_utf8(out.stderr).unwrap_or("Unable to get error message".to_string()));
-process::exit(35)
+{}",
+            args.join(" "),
+            String::from_utf8(out.stdout).unwrap_or("Unable to get output message".to_string()),
+            String::from_utf8(out.stderr).unwrap_or("Unable to get error message".to_string())
+        );
+        process::exit(35)
     }
 
     let stdout = out.stdout;
