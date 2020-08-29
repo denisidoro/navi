@@ -1,11 +1,11 @@
 use crate::display::Writer;
-use crate::fetcher::Fetcher;
+use crate::fetcher;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
-use anyhow::Context;
-use anyhow::Error;
+use anyhow::{Context, Error};
 use regex::Regex;
 use std::collections::HashSet;
+
 use std::process::{self, Command, Stdio};
 
 lazy_static! {
@@ -48,7 +48,7 @@ fn convert_tldr(line: &str) -> Result<String, Error> {
 fn markdown_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String, Error>> {
     format!(
         "% {}, tldr
-    {}",
+ {}",
         query, markdown
     )
     .lines()
@@ -72,38 +72,71 @@ fn read_all(query: &str, markdown: &str, stdin: &mut std::process::ChildStdin, w
 }
 
 pub fn fetch(query: &str) -> Result<String, Error> {
+    let args = [query, "--markdown"];
+
     let child = Command::new("tldr")
-        .args(&[query, "--markdown"])
+        .args(&args)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
         .spawn();
 
     let child = match child {
         Ok(x) => x,
         Err(_) => {
-            eprintln!("navi was unable to call tldr");
-            process::exit(33)
+            eprintln!(
+                "navi was unable to call tldr.
+Make sure tldr is correctly installed.
+Refer to https://github.com/tldr-pages/tldr for more info."
+            );
+            process::exit(34)
         }
     };
 
-    let stdout = child.wait_with_output().context("Failed to wait for tldr")?.stdout;
+    let out = child.wait_with_output().context("Failed to wait for tldr")?;
 
-    String::from_utf8(stdout).context("Suggestions are invalid utf8")
+    if let Some(0) = out.status.code() {
+    } else {
+        eprintln!(
+            "Failed to call: 
+tldr {}
+ 
+Output:
+{}
+
+Error:
+{}
+
+Note: 
+The tldr client written in C (the default one in Homebrew) doesn't support markdown files, so navi can't use it. 
+Please make sure you're using a version that supports the --markdown flag. 
+The client written in Rust is recommended. The one available in npm works, too.
+If you are already using a supported version you can ignore this message.
+",
+            args.join(" "),
+            String::from_utf8(out.stdout).unwrap_or_else(|_e| "Unable to get output message".to_string()),
+            String::from_utf8(out.stderr).unwrap_or_else(|_e| "Unable to get error message".to_string())
+        );
+        process::exit(35)
+    }
+
+    let stdout = out.stdout;
+
+    String::from_utf8(stdout).context("Output is invalid utf8")
 }
 
-pub struct Foo {
+pub struct Fetcher {
     query: String,
 }
 
-impl Foo {
+impl Fetcher {
     pub fn new(query: String) -> Self {
         Self { query }
     }
 }
 
-impl Fetcher for Foo {
+impl fetcher::Fetcher for Fetcher {
     fn fetch(&self, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
-        eprintln!("TODO!!!!");
         let markdown = fetch(&self.query)?;
         read_all(&self.query, &markdown, stdin, writer)
     }
