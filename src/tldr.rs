@@ -114,8 +114,8 @@ The client written in Rust is recommended. The one available in npm works, too.
 If you are already using a supported version you can ignore this message.
 ",
             args.join(" "),
-            String::from_utf8(out.stdout).unwrap_or("Unable to get output message".to_string()),
-            String::from_utf8(out.stderr).unwrap_or("Unable to get error message".to_string())
+            String::from_utf8(out.stdout).unwrap_or_else(|_e| "Unable to get output message".to_string()),
+            String::from_utf8(out.stderr).unwrap_or_else(|_e| "Unable to get error message".to_string())
         );
         process::exit(35)
     }
