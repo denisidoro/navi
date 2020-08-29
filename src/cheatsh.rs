@@ -14,7 +14,7 @@ fn map_line(line: &str) -> Result<String, Error> {
 
 fn lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String, Error>> {
     format!(
-        "% {}, tldr
+        "% {}, cheat.sh
 {}",
         query, markdown
     )
