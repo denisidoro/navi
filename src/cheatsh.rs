@@ -1,5 +1,5 @@
 use crate::display::Writer;
-use crate::fetcher::Fetcher;
+use crate::fetcher;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
 use anyhow::Context;
@@ -53,17 +53,17 @@ pub fn fetch(query: &str) -> Result<String, Error> {
     String::from_utf8(plain_bytes).context("Suggestions are invalid utf8")
 }
 
-pub struct Foo {
+pub struct Fetcher {
     query: String,
 }
 
-impl Foo {
+impl Fetcher {
     pub fn new(query: String) -> Self {
         Self { query }
     }
 }
 
-impl Fetcher for Foo {
+impl fetcher::Fetcher for Fetcher {
     fn fetch(&self, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
         eprintln!("TODO!!!!");
         let cheat = fetch(&self.query)?;

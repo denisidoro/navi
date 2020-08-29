@@ -1,5 +1,5 @@
 use crate::display::Writer;
-use crate::fetcher::Fetcher;
+use crate::fetcher;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
 use anyhow::{Context, Error};
@@ -89,7 +89,9 @@ pub fn fetch(query: &str) -> Result<String, Error> {
     let child = match child {
         Ok(x) => x,
         Err(_) => {
-            eprintln!("navi was unable to call tldr");
+            eprintln!("navi was unable to call tldr.
+Make sure tldr is correctly installed.
+Refer to https://github.com/tldr-pages/tldr for more info.");
             process::exit(34)
         }
     };
@@ -99,13 +101,21 @@ pub fn fetch(query: &str) -> Result<String, Error> {
     if let Some(0) = out.status.code() {
     } else {
         eprintln!(
-            "Failed to call tldr {}.
+            "Failed to call: 
+tldr {}
  
 Output:
 {}
 
 Error:
-{}",
+{}
+
+Note: 
+The tldr client written in C (the default one in Homebrew) doesn't support markdown files, so navi can't use it. 
+Please make sure you're using a version that supports the --markdown flag. 
+The client written in Rust is recommended. The one available in npm works, too.
+If you are already using a supported version you can ignore this message.
+",
             args.join(" "),
             String::from_utf8(out.stdout).unwrap_or("Unable to get output message".to_string()),
             String::from_utf8(out.stderr).unwrap_or("Unable to get error message".to_string())
@@ -118,17 +128,17 @@ Error:
     String::from_utf8(stdout).context("Suggestions are invalid utf8")
 }
 
-pub struct Foo {
+pub struct Fetcher {
     query: String,
 }
 
-impl Foo {
+impl Fetcher {
     pub fn new(query: String) -> Self {
         Self { query }
     }
 }
 
-impl Fetcher for Foo {
+impl fetcher::Fetcher for Fetcher {
     fn fetch(&self, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
         let markdown = fetch(&self.query)?;
         read_all(&self.query, &markdown, stdin, writer)

@@ -89,7 +89,9 @@ impl Finder for FzfFinder {
         let mut child = match child {
             Ok(x) => x,
             Err(_) => {
-                eprintln!("navi was unable to call fzf.\nPlease make sure it's correctly installed\nRefer to https://github.com/junegunn/fzf for more info.");
+                eprintln!("navi was unable to call fzf.
+Please make sure it's correctly installed.
+Refer to https://github.com/junegunn/fzf for more info.");
                 process::exit(33)
             }
         };
