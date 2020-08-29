@@ -5,9 +5,8 @@ use crate::structures::cheat::VariableMap;
 use anyhow::{Context, Error};
 use regex::Regex;
 use std::collections::HashSet;
-use std::fmt::Debug;
+
 use std::process::{self, Command, Stdio};
-use thiserror::Error;
 
 lazy_static! {
     pub static ref VAR_TLDR_REGEX: Regex = Regex::new(r"\{\{(.*?)\}\}").expect("Invalid regex");
@@ -85,9 +84,11 @@ pub fn fetch(query: &str) -> Result<String, Error> {
     let child = match child {
         Ok(x) => x,
         Err(_) => {
-            eprintln!("navi was unable to call tldr.
+            eprintln!(
+                "navi was unable to call tldr.
 Make sure tldr is correctly installed.
-Refer to https://github.com/tldr-pages/tldr for more info.");
+Refer to https://github.com/tldr-pages/tldr for more info."
+            );
             process::exit(34)
         }
     };

@@ -1,7 +1,7 @@
 pub use crate::common::filesystem::{create_dir, exe_string, pathbuf_to_string, remove_dir, InvalidPath, UnreadableDir};
 use crate::display::Writer;
-pub use crate::fetcher::filesystem::{cheat_pathbuf, read_all};
 use crate::fetcher;
+pub use crate::fetcher::filesystem::{cheat_pathbuf, read_all};
 use crate::structures::cheat::VariableMap;
 use anyhow::Error;
 
