@@ -18,7 +18,7 @@ Table of contents
 
    * [Installation](#installation)
    * [Usage](#usage)
-   * [Cheatsheet repositories](#cheatsheets-repositories)
+   * [Cheatsheet repositories](#cheatsheet-repositories)
    * [Cheatsheet syntax](#cheatsheet-syntax)
    * [Customization](#customization)
    * [Using it for shell scripting](#using-it-for-shell-scripting)
@@ -60,7 +60,7 @@ You can also:
 - [browse through featured cheatsheets](docs/cheatsheet_repositories.md#browsing-through-cheatsheet-repositories)
 - [import cheatsheets from git repositories](docs/cheatsheet_repositories.md#importing-cheatsheets)
 - [write your own cheatsheets](#cheatsheet-syntax) (and [share them](docs/cheatsheet_repositories.md#submitting-cheatsheets), if you want)
-- [use cheatsheets from other tools](#using-cheatsheets-from-other-tools), such as [tldr](https://github.com/tldr-pages/tldr) and [cheat.sh](https://github.com/chubin/cheat.sh)
+- [use cheatsheets from other tools](docs/cheatsheet_repositories.md#using-cheatsheets-from-other-tools), such as [tldr](https://github.com/tldr-pages/tldr) and [cheat.sh](https://github.com/chubin/cheat.sh)
 
 Cheatsheet syntax
 -----------------
