@@ -9,10 +9,6 @@ use std::fmt::Debug;
 use std::process::{self, Command, Stdio};
 use thiserror::Error;
 
-#[derive(Error, Debug)]
-#[error("Unable to call tldr `{0}`")]
-pub struct TLDRError(pub String);
-
 lazy_static! {
     pub static ref VAR_TLDR_REGEX: Regex = Regex::new(r"\{\{(.*?)\}\}").expect("Invalid regex");
     pub static ref NON_VAR_CHARS_REGEX: Regex = Regex::new(r"[^\da-zA-Z_]").expect("Invalid regex");
