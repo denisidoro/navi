@@ -24,7 +24,7 @@ Table of contents
    * [Using it for shell scripting](#using-it-for-shell-scripting)
    * [More info](#more-info)
    * [Trying out online](#trying-out-online)
-   * [Related projects](#related-projects)
+   * [Similar tools](#similar-tools)
    * [Etymology](#etymology)
 
 Installation
@@ -60,6 +60,7 @@ You can also:
 - [browse through featured cheatsheets](docs/cheatsheet_repositories.md#browsing-through-cheatsheet-repositories)
 - [import cheatsheets from git repositories](docs/cheatsheet_repositories.md#importing-cheatsheets)
 - [write your own cheatsheets](#cheatsheet-syntax) (and [share them](docs/cheatsheet_repositories.md#submitting-cheatsheets), if you want)
+- [use cheatsheets from other tools](#using-cheatsheets-from-other-tools), such as [tldr](https://github.com/tldr-pages/tldr) and [cheat.sh](https://github.com/chubin/cheat.sh)
 
 Cheatsheet syntax
 -----------------
@@ -115,8 +116,8 @@ Trying out online
 
 If you don't have access to a Unix shell at the moment and you want to live preview **navi**, head to [this playground](https://www.katacoda.com/denisidoro/scenarios/navi). It'll start a docker container with instructions for you to install and use the tool. Note: login required.
 
-Related projects
-----------------
+Similar tools
+-------------
 
 There are many similar projects out there ([beavr](https://github.com/denisidoro/beavr), [bro](https://github.com/hubsmoke/bro), [cheat](https://github.com/cheat/cheat), [cheat.sh](https://github.com/chubin/cheat.sh), [cmdmenu](https://github.com/amacfie/cmdmenu), [eg](https://github.com/srsudar/eg), [how2](https://github.com/santinic/how2), [howdoi](https://github.com/gleitz/howdoi) and [tldr](https://github.com/tldr-pages/tldr), to name a few).
 
