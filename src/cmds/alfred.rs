@@ -1,11 +1,11 @@
 use crate::common::shell::BashSpawnError;
 use crate::display;
+use crate::filesystem;
 use crate::structures::cheat::Suggestion;
 use crate::structures::config::Config;
 use anyhow::Context;
 use anyhow::Error;
 use std::env;
-use crate::filesystem;
 use std::process::{Command, Stdio};
 
 pub fn main(_config: Config) -> Result<(), Error> {
@@ -15,8 +15,7 @@ pub fn main(_config: Config) -> Result<(), Error> {
 
     display::alfred::print_items_start(None);
 
-    filesystem::read_all(&config, stdin, &mut writer)
-    .context("Failed to parse variables intended for finder")?;
+    filesystem::read_all(&config, stdin, &mut writer).context("Failed to parse variables intended for finder")?;
 
     // make sure everything was printed to stdout before attempting to close the items vector
     let _ = child.wait_with_output().context("Failed to wait for fzf")?;
