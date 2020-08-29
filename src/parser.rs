@@ -128,7 +128,7 @@ pub fn read_lines(
     let mut should_break = false;
 
     for (line_nr, line_result) in lines.enumerate() {
-        let line = line_result.with_context(|| format!("Failed to read line nr.{} from `{}`", line_nr, id))?;
+        let line = line_result.with_context(|| format!("Failed to read line number {} in cheatsheet `{}`", line_nr, id))?;
 
         if should_break {
             break;

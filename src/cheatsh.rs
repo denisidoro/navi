@@ -41,8 +41,7 @@ pub fn fetch(query: &str) -> Result<String, Error> {
         Err(_) => {
             eprintln!(
                 "navi was unable to call wget.
-Make sure wget is correctly installed."
-            );
+Make sure wget is correctly installed.");
             process::exit(34)
         }
     };
@@ -69,8 +68,9 @@ Error:
     }
 
     let stdout = out.stdout;
+    let plain_bytes = strip_ansi_escapes::strip(&stdout)?;
 
-    String::from_utf8(stdout).context("Output is invalid utf8")
+    String::from_utf8(plain_bytes).context("Output is invalid utf8")
 }
 
 pub struct Fetcher {
@@ -85,7 +85,6 @@ impl Fetcher {
 
 impl fetcher::Fetcher for Fetcher {
     fn fetch(&self, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
-        eprintln!("TODO!!!!");
         let cheat = fetch(&self.query)?;
         read_all(&self.query, &cheat, stdin, writer)
     }
