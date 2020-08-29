@@ -2,6 +2,8 @@ use crate::finder::FinderChoice;
 use anyhow::Error;
 use structopt::{clap::AppSettings, StructOpt};
 
+static mut NOTIFIED_DEPRECATION: bool = false;
+
 fn parse_finder(src: &str) -> Result<FinderChoice, Error> {
     match src {
         "fzf" => Ok(FinderChoice::Fzf),
@@ -153,15 +155,22 @@ pub enum AlfredCommand {
 }
 
 fn deprecated(syntax: &str) {
-    eprintln!(
-        r"Warning: the following syntax has been DEPRECATED:
+    unsafe {
+        if NOTIFIED_DEPRECATION {
+            return;
+        }
+        eprintln!(
+            r"⚠️  The following syntax has been DEPRECATED:
 navi {}
 
-Please check navi --help for more info on how to achieve the same result with the new syntax.
+Please check `navi --help` for more info on how to achieve the same result with the new syntax.
 
-The deprecated syntax will be removed in the first version released on 2021!",
-        syntax
-    );
+The deprecated syntax will be removed in the first version released on 2021! ⚠️
+",
+            syntax
+        );
+        NOTIFIED_DEPRECATION = true;
+    }
 }
 
 pub enum Source {
