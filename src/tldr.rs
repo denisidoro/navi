@@ -122,7 +122,7 @@ If you are already using a supported version you can ignore this message.
 
     let stdout = out.stdout;
 
-    String::from_utf8(stdout).context("Suggestions are invalid utf8")
+    String::from_utf8(stdout).context("Output is invalid utf8")
 }
 
 pub struct Fetcher {

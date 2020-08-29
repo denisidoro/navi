@@ -27,13 +27,15 @@ fn lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String, Err
 fn read_all(query: &str, cheat: &str, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
-    parser::read_lines(lines(query, cheat), "cheatsh", &mut variables, &mut visited_lines, writer, stdin)?;
+    parser::read_lines(lines(query, cheat), "cheat.sh", &mut variables, &mut visited_lines, writer, stdin)?;
     Ok(Some(variables))
 }
 
 pub fn fetch(query: &str) -> Result<String, Error> {
+    let args = ["-qO-", &format!("cheat.sh/{}", query)];
+
     let child = Command::new("wget")
-        .args(&["-qO-", &format!("cheat.sh/{}", query)])
+        .args(&args)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .spawn();
@@ -41,16 +43,38 @@ pub fn fetch(query: &str) -> Result<String, Error> {
     let child = match child {
         Ok(x) => x,
         Err(_) => {
-            eprintln!("navi was unable to call curl");
-            process::exit(33)
+            eprintln!(
+                "navi was unable to call wget.
+Make sure wget is correctly installed."
+            );
+            process::exit(34)
         }
     };
 
-    let stdout = child.wait_with_output().context("Failed to wait for curl")?.stdout;
+    let out = child.wait_with_output().context("Failed to wait for wget")?;
 
-    let plain_bytes = strip_ansi_escapes::strip(&stdout)?;
+    if let Some(0) = out.status.code() {
+    } else {
+        eprintln!(
+            "Failed to call: 
+wget {}
+ 
+Output:
+{}
 
-    String::from_utf8(plain_bytes).context("Suggestions are invalid utf8")
+Error:
+{}
+",
+            args.join(" "),
+            String::from_utf8(out.stdout).unwrap_or("Unable to get output message".to_string()),
+            String::from_utf8(out.stderr).unwrap_or("Unable to get error message".to_string())
+        );
+        process::exit(35)
+    }
+
+    let stdout = out.stdout;
+
+    String::from_utf8(stdout).context("Output is invalid utf8")
 }
 
 pub struct Fetcher {
