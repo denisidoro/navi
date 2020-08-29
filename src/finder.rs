@@ -1,13 +1,9 @@
-mod fzf;
-mod skim;
-
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::Opts;
 use crate::structures::finder::SuggestionType;
 use anyhow::Context;
 use anyhow::Error;
-pub use fzf::FzfFinder;
-pub use skim::SkimFinder;
+use crate::display;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
 
@@ -21,18 +17,6 @@ pub trait Finder {
     fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
     where
         F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>;
-}
-
-impl Finder for FinderChoice {
-    fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
-    where
-        F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>,
-    {
-        match self {
-            Self::Fzf => FzfFinder.call(opts, stdin_fn),
-            Self::Skim => SkimFinder.call(opts, stdin_fn),
-        }
-    }
 }
 
 fn apply_map(text: String, map_fn: Option<String>) -> String {
@@ -115,6 +99,115 @@ fn parse(out: Output, opts: Opts) -> Result<String, Error> {
     let output = apply_map(output, opts.map);
     Ok(output)
 }
+
+impl Finder for FinderChoice {
+    fn call<F>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
+    where
+        F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>,
+    {
+        let finder_str = match self {
+            Self::Fzf => "fzf",
+            Self::Skim => "sk",
+        };
+
+        let mut command = Command::new(&finder_str);
+        let opts = finder_opts.clone();
+
+        command.args(&[
+            "--preview-window",
+            "up:2",
+            "--with-nth",
+            "1,2,3",
+            "--delimiter",
+            display::DELIMITER.to_string().as_str(),
+            "--ansi",
+            "--bind",
+            "ctrl-j:down,ctrl-k:up",
+            "--exact",
+        ]);
+
+        if opts.autoselect {
+            command.arg("--select-1");
+        }
+
+        match opts.suggestion_type {
+            SuggestionType::MultipleSelections => {
+                command.arg("--multi");
+            }
+            SuggestionType::Disabled => {
+                command.args(&["--print-query", "--no-select-1", "--height", "1"]);
+            }
+            SuggestionType::SnippetSelection => {
+                command.args(&["--expect", "ctrl-y,enter"]);
+            }
+            SuggestionType::SingleRecommendation => {
+                command.args(&["--print-query", "--expect", "tab,enter"]);
+            }
+            _ => {}
+        }
+
+        if let Some(p) = opts.preview {
+            command.args(&["--preview", &p]);
+        }
+
+        if let Some(q) = opts.query {
+            command.args(&["--query", &q]);
+        }
+
+        if let Some(f) = opts.filter {
+            command.args(&["--filter", &f]);
+        }
+
+        if let Some(h) = opts.header {
+            command.args(&["--header", &h]);
+        }
+
+        if let Some(p) = opts.prompt {
+            command.args(&["--prompt", &p]);
+        }
+
+        if let Some(pw) = opts.preview_window {
+            command.args(&["--preview-window", &pw]);
+        }
+
+        if opts.header_lines > 0 {
+            command.args(&["--header-lines", format!("{}", opts.header_lines).as_str()]);
+        }
+
+        if let Some(o) = opts.overrides {
+            o.as_str().split(' ').map(|s| s.to_string()).filter(|s| !s.is_empty()).for_each(|s| {
+                command.arg(s);
+            });
+        }
+
+        let child = command.stdin(Stdio::piped()).stdout(Stdio::piped()).spawn();
+
+        let mut child = match child {
+            Ok(x) => x,
+            Err(_) => {
+                let repo = match self {
+            Self::Fzf => "https://github.com/junegunn/fzf",
+            Self::Skim => "https://github.com/lotabout/skim",
+                };
+                eprintln!("navi was unable to call {cmd}.
+                Please make sure it's correctly installed.
+                Refer to {repo} for more info.",
+            cmd = &finder_str,
+           repo = repo);
+                process::exit(33)
+            }
+        };
+
+        let stdin = child.stdin.as_mut().ok_or_else(|| anyhow!("Unable to acquire stdin of finder"))?;
+        let result_map = stdin_fn(stdin).context("Failed to pass data to finder")?;
+
+        let out = child.wait_with_output().context("Failed to wait for finder")?;
+
+        let output = parse(out, finder_opts).context("Unable to get output")?;
+        Ok((output, result_map))
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
