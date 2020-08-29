@@ -41,7 +41,8 @@ pub fn fetch(query: &str) -> Result<String, Error> {
         Err(_) => {
             eprintln!(
                 "navi was unable to call wget.
-Make sure wget is correctly installed.");
+Make sure wget is correctly installed."
+            );
             process::exit(34)
         }
     };
