@@ -17,17 +17,21 @@ fn parse_finder(src: &str) -> Result<FinderChoice, Error> {
     Please refer to https://github.com/denisidoro/navi
 
 EXAMPLES:
-    navi                                   # default behavior
-    navi --print                           # doesn't execute the snippet
-    navi --path '/some/dir:/other/dir'     # uses custom cheats
-    navi query git                         # filters results by "git"
-    navi best 'sql create db'              # uses a snippet as a CLI
-    navi repo add denisidoro/cheats        # imports cheats from github.com/denisidoro/cheats
-    source <(navi widget zsh)              # loads the zsh widget
-    navi --finder 'skim'                   # set which finder is supposed to be used (fzf [default] / skim)
-    navi --fzf-overrides '--with-nth 1,2'  # shows only the comment and tag columns
-    navi --fzf-overrides '--nth 1,2'       # search will consider only the first two columns
-    navi --fzf-overrides '--no-exact'      # looser search algorithm"#)]
+    navi                                     # default behavior
+    navi --print                             # doesn't execute the snippet
+    navi --tldr docker                       # search for docker cheatsheets using tldr
+    navi --cheatsh docker                    # search for docker cheatsheets using cheatsh
+    navi --path '/some/dir:/other/dir'       # uses .cheat files from custom paths
+    navi --query git                         # filters results by "git"
+    navi 'create db' --best-match            # uses a snippet as a CLI
+    name=mydb navi 'create db' --best-match  # same, but set the value for the <name> variable
+    navi repo add denisidoro/cheats          # imports cheats from a git repository
+    source <(navi widget zsh)                # loads the zsh widget
+    navi --finder 'skim'                     # set skim as finder, instead of fzf
+    navi --fzf-overrides '--with-nth 1,2'    # shows only the comment and tag columns
+    navi --fzf-overrides '--no-select-1'     # prevents autoselection in case of single line
+    navi --fzf-overrides '--nth 1,2'         # search will consider only the first two columns
+    navi --fzf-overrides '--no-exact'        # looser search algorithm"#)]
 #[structopt(setting = AppSettings::ColorAuto)]
 #[structopt(setting = AppSettings::ColoredHelp)]
 #[structopt(setting = AppSettings::AllowLeadingHyphen)]
@@ -160,7 +164,7 @@ fn deprecated(syntax: &str) {
             return;
         }
         eprintln!(
-            r"⚠️  The following syntax has been DEPRECATED:
+            r"⚠️ The following syntax has been DEPRECATED:
 navi {}
 
 Please check `navi --help` for more info on how to achieve the same result with the new syntax.
