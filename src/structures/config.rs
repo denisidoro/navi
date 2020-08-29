@@ -156,18 +156,20 @@ pub enum AlfredCommand {
 
 fn deprecated(syntax: &str) {
     unsafe {
-        if NOTIFIED_DEPRECATION { return; }
-    eprintln!(
-        r"⚠️  The following syntax has been DEPRECATED:
+        if NOTIFIED_DEPRECATION {
+            return;
+        }
+        eprintln!(
+            r"⚠️  The following syntax has been DEPRECATED:
 navi {}
 
 Please check `navi --help` for more info on how to achieve the same result with the new syntax.
 
 The deprecated syntax will be removed in the first version released on 2021! ⚠️
 ",
-        syntax
-    );
-    NOTIFIED_DEPRECATION = true;
+            syntax
+        );
+        NOTIFIED_DEPRECATION = true;
     }
 }
 
