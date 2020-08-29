@@ -93,12 +93,12 @@ Let's say you want to write a bash script that, among other things, asks the use
 
 If you already have the [cheatsheet above](#cheatsheet-syntax), then you write the following in your script:
 ```sh
-navi --query "git checkout" --best-match
+navi --query "change branch" --best-match
 ```
 
 If you want to set the `<branch>` beforehand in your script, you could then write:
 ```sh
-branch="master" navi --query "git checkout" --best-match
+branch="master" navi --query "change branch" --best-match
 ```
 
 More info
