@@ -1,5 +1,6 @@
 use crate::common::shell::BashSpawnError;
 use crate::display;
+use crate::fetcher::Fetcher;
 use crate::filesystem;
 use crate::structures::cheat::Suggestion;
 use crate::structures::config::Config;
@@ -7,7 +8,6 @@ use anyhow::Context;
 use anyhow::Error;
 use std::env;
 use std::process::{Command, Stdio};
-use crate::fetcher::Fetcher;
 
 pub fn main(config: Config) -> Result<(), Error> {
     let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().context("Unable to create child")?;
@@ -17,7 +17,9 @@ pub fn main(config: Config) -> Result<(), Error> {
     display::alfred::print_items_start(None);
 
     let fetcher = filesystem::Fetcher::new(config.path);
-    fetcher.fetch(stdin, &mut writer).context("Failed to parse variables intended for finder")?;
+    fetcher
+        .fetch(stdin, &mut writer)
+        .context("Failed to parse variables intended for finder")?;
 
     // make sure everything was printed to stdout before attempting to close the items vector
     let _ = child.wait_with_output().context("Failed to wait for fzf")?;
@@ -52,7 +54,10 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
     let mut writer = display::alfred::Writer::new();
 
     let fetcher = filesystem::Fetcher::new(config.path);
-    let variables = fetcher.fetch(stdin, &mut writer).context("Failed to parse variables intended for finder")?.expect("Empty variable map");
+    let variables = fetcher
+        .fetch(stdin, &mut writer)
+        .context("Failed to parse variables intended for finder")?
+        .expect("Empty variable map");
 
     let tags = env::var("tags").context(r#"The env var "tags" isn't set"#)?;
     let snippet = env::var("snippet").context(r#"The env var "snippet" isn't set"#)?;
