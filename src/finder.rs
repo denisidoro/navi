@@ -1,9 +1,9 @@
+use crate::display;
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::Opts;
 use crate::structures::finder::SuggestionType;
 use anyhow::Context;
 use anyhow::Error;
-use crate::display;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
 
@@ -186,14 +186,16 @@ impl Finder for FinderChoice {
             Ok(x) => x,
             Err(_) => {
                 let repo = match self {
-            Self::Fzf => "https://github.com/junegunn/fzf",
-            Self::Skim => "https://github.com/lotabout/skim",
+                    Self::Fzf => "https://github.com/junegunn/fzf",
+                    Self::Skim => "https://github.com/lotabout/skim",
                 };
-                eprintln!("navi was unable to call {cmd}.
+                eprintln!(
+                    "navi was unable to call {cmd}.
                 Please make sure it's correctly installed.
                 Refer to {repo} for more info.",
-            cmd = &finder_str,
-           repo = repo);
+                    cmd = &finder_str,
+                    repo = repo
+                );
                 process::exit(33)
             }
         };
@@ -207,7 +209,6 @@ impl Finder for FinderChoice {
         Ok((output, result_map))
     }
 }
-
 
 #[cfg(test)]
 mod tests {
