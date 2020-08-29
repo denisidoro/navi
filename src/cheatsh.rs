@@ -34,11 +34,7 @@ fn read_all(query: &str, cheat: &str, stdin: &mut std::process::ChildStdin, writ
 pub fn fetch(query: &str) -> Result<String, Error> {
     let args = ["-qO-", &format!("cheat.sh/{}", query)];
 
-    let child = Command::new("wget")
-        .args(&args)
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .spawn();
+    let child = Command::new("wget").args(&args).stdin(Stdio::piped()).stdout(Stdio::piped()).spawn();
 
     let child = match child {
         Ok(x) => x,
