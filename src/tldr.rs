@@ -2,11 +2,16 @@ use crate::display::Writer;
 use crate::fetcher::Fetcher;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
-use anyhow::Context;
-use anyhow::Error;
 use regex::Regex;
 use std::collections::HashSet;
 use std::process::{self, Command, Stdio};
+use std::fmt::Debug;
+use anyhow::{Context, Error};
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+#[error("Unable to call tldr `{0}`")]
+pub struct TLDRError(pub String);
 
 lazy_static! {
     pub static ref VAR_TLDR_REGEX: Regex = Regex::new(r"\{\{(.*?)\}\}").expect("Invalid regex");
@@ -72,21 +77,41 @@ fn read_all(query: &str, markdown: &str, stdin: &mut std::process::ChildStdin, w
 }
 
 pub fn fetch(query: &str) -> Result<String, Error> {
+    let args = [query, "--markdown"];
+
     let child = Command::new("tldr")
-        .args(&[query, "--markdown"])
+        .args(&args)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
         .spawn();
 
     let child = match child {
         Ok(x) => x,
         Err(_) => {
             eprintln!("navi was unable to call tldr");
-            process::exit(33)
+            process::exit(34)
         }
     };
 
-    let stdout = child.wait_with_output().context("Failed to wait for tldr")?.stdout;
+    let out = child.wait_with_output().context("Failed to wait for tldr")?;
+
+    if let Some(0) = out.status.code() {
+    } else {
+        eprintln!("Failed to call tldr {}.
+ 
+Output:
+{}
+
+Error:
+{}", 
+args.join(" "), 
+String::from_utf8(out.stdout).unwrap_or("Unable to get output message".to_string()), 
+String::from_utf8(out.stderr).unwrap_or("Unable to get error message".to_string()));
+process::exit(35)
+    }
+
+    let stdout = out.stdout;
 
     String::from_utf8(stdout).context("Suggestions are invalid utf8")
 }
@@ -103,7 +128,6 @@ impl Foo {
 
 impl Fetcher for Foo {
     fn fetch(&self, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
-        eprintln!("TODO!!!!");
         let markdown = fetch(&self.query)?;
         read_all(&self.query, &markdown, stdin, writer)
     }

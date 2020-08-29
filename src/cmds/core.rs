@@ -17,7 +17,7 @@ use anyhow::Error;
 use std::env;
 use std::fs;
 use std::io::Write;
-use std::process::{Command, Stdio};
+use std::process::{self, Command, Stdio};
 
 fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
     let opts = FinderOpts {
