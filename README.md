@@ -7,8 +7,9 @@ An interactive cheatsheet tool for the command-line and application launchers.
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands. Suggested values for arguments are dinamically displayed in a list.
 
 #### Pros
-- it will make you type less
 - it will spare you from knowing CLIs by heart
+- it will spare you from copy-pasting output from intermediate commands
+- it will make you type less
 - it will teach you new one-liners
 
 It uses [fzf](https://github.com/junegunn/fzf), [skim](https://github.com/lotabout/skim), or [Alfred](https://www.alfredapp.com/) under the hood and it can be either used as a command or as a shell widget (*à la* Ctrl-R).
@@ -47,8 +48,9 @@ Usage
 There are 3 ways to use **navi**:
 
 - by typing `navi` in the terminal and hitting \<Enter>
+   - pros: you have access to all possible subcommands and flags
 - by invoking it via a [shell widget](docs/installation.md#installing-the-shell-widget) in the terminal
-   - this way, the shell history is correctly populated (e.g. `docker run alpine` instead of `navi`) and you can edit the command as you wish before executing it
+   - pros: the shell history is correctly populated (i.e. the actual command you ran instead of `navi`) and you can edit the command as you wish before executing it
 - as an [Alfred workflow](docs/alfred.md)
 
 Cheatsheet repositories
@@ -91,10 +93,12 @@ Using it for shell scripting
 
 Let's say you want to write a bash script that, among other things, asks the user to write the name of a git branch that should be checked out. 
 
-If you already have the [cheatsheet above](#cheatsheet-syntax), then you write the following in your script:
+If you already have the [cheatsheet above](#cheatsheet-syntax), then you could write the following in your script:
 ```sh
 navi --query "change branch" --best-match
 ```
+
+**navi** will ask the user to fill all arguments needed. 
 
 If you want to set the `<branch>` beforehand in your script, you could then write:
 ```sh
@@ -109,7 +113,7 @@ Please run the following command to read more about all possible options:
 navi --help
 ```
 
-In addition, the [/docs](docs) folder includes more information.
+In addition, please check the [/docs](docs) folder.
 
 Trying out online
 -----------------
