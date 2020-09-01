@@ -33,6 +33,8 @@ In order to add your own repository as a featured cheatsheet repo, please [edit 
 
 ### Using cheatsheets from other tools
 
+![Demo](https://user-images.githubusercontent.com/3226564/91878474-bae27500-ec55-11ea-8b19-17876178e887.gif)
+
 You can use cheatsheets from [tldr](https://github.com/tldr-pages/tldr) by running:
 ```sh
 navi --tldr <query>

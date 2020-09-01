@@ -7,7 +7,7 @@ This is *experimental*. If you face any issues, please report the issue [here](h
 
 ### Instructions
 
-- make sure you have [Alfred Powerpack](https://www.alfredapp.com/powerpack/);
-- make sure **navi** is up to date;
-- make sure that the `navi` binary is in the `$PATH` determined by `~/.bashrc`;
-- download and install the `.alfredworkflow` for the [latest release](https://github.com/denisidoro/navi/releases/latest).
+- make sure you have [Alfred Powerpack](https://www.alfredapp.com/powerpack/)
+- make sure **navi** is up to date
+- make sure that the `navi` binary is in the `$PATH` determined by `~/.bashrc`
+- download and install the `.alfredworkflow` for the [latest release](https://github.com/denisidoro/navi/releases/latest)

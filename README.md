@@ -4,7 +4,7 @@ An interactive cheatsheet tool for the command-line and application launchers.
 
 ![Terminal demo](https://user-images.githubusercontent.com/3226564/76437136-ddc35900-6397-11ea-823c-d2da7615fe60.gif)
 
-**navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands. Suggested values for arguments are dinamically displayed in a list.
+**navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands. Suggested values for arguments are dynamically displayed in a list.
 
 #### Pros
 - it will spare you from knowing CLIs by heart
