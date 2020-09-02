@@ -85,7 +85,7 @@ Customization
 
 You can:
 - [change colors](docs/customization.md#changing-colors)
-- [resize columns](docs/customization.md#changing-colors)
+- [resize columns](docs/customization.md#resizing-colors)
 - [change how search is performed](docs/customization.md#overriding-fzf-options)
 
 Using it for shell scripting
