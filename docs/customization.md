@@ -16,7 +16,7 @@ In addition, you can change the text color for each column by setting the follow
 
 The values go [from 0 to 15](https://github.com/redox-os/termion/blob/189222555ef92a29de366f96d2a067b3a920fc24/src/color.rs#L62-L77).
 
-For example, if you add the following your .bashrc-like file, the comment color will be yellow:
+For example, if you add the following to your .bashrc-like file, the comment color will be yellow:
 ```sh
 export NAVI_COMMENT_COLOR=3
 ```
@@ -29,7 +29,7 @@ You can change the column widths by setting the following environment variables:
 
 The values go from 0 to 100 and represent the percentage the column will occupy.
 
-For example, if you add the following your .bashrc-like file, the comment column will be very small:
+For example, if you add the following to your .bashrc-like file, the comment column will be very small:
 ```sh
 export NAVI_COMMENT_WIDTH=5
 ```
