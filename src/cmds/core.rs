@@ -71,7 +71,8 @@ fn prompt_with_suggestions(variable_name: &str, config: &Config, suggestion: &Su
         autoselect: !config.get_no_autoselect(),
         overrides: config.fzf_overrides_var.clone(),
         // u32prompt: Some(display::terminal::variable_prompt(variable_name)),
-        preview: Some(format!(r#"navi_preview_selection="$(cat <<EOF
+        preview: Some(format!(
+            r#"navi_preview_selection="$(cat <<EOF
 {{}}
 EOF
 )"
@@ -79,7 +80,9 @@ navi_preview_query="$(cat <<EOF
 {{q}}
 EOF
 )"
-navi preview2 "$navi_preview_selection" "$navi_preview_query" "{}""#, variable_name)),
+navi preview2 "$navi_preview_selection" "$navi_preview_query" "{}""#,
+            variable_name
+        )),
         preview_window: Some(format!("up:{}", variable_count + 3)),
         ..opts
     };
@@ -116,9 +119,9 @@ fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: Variable
     let mut interpolated_snippet = String::from(snippet);
     let variable_count = {
         let mut vars: Vec<&str> = display::VAR_REGEX.find_iter(snippet).map(|m| m.as_str()).collect();
-    vars.sort();
-    vars.dedup();
-    vars.len()
+        vars.sort();
+        vars.dedup();
+        vars.len()
     };
 
     for captures in display::VAR_REGEX.captures_iter(snippet) {

@@ -115,7 +115,7 @@ impl Finder for FinderChoice {
 
         let preview_height = match self {
             FinderChoice::Skim => 3,
-            _ => 2
+            _ => 2,
         };
 
         command.args(&[

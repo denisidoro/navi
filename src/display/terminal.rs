@@ -2,9 +2,9 @@ use crate::common::terminal_width;
 use crate::display;
 use crate::structures::item::Item;
 use std::cmp::max;
+use std::collections::HashSet;
 use std::env;
 use termion::color;
-use std::collections::HashSet;
 
 fn parse_env_var_u8(varname: &str) -> Option<u8> {
     if let Ok(x) = env::var(varname) {
@@ -48,8 +48,8 @@ pub fn preview(comment: &str, tags: &str, snippet: &str) {
 
 pub fn preview2(snippet: &str, tags: &str, comment: &str, selection: &str, query: &str, variable: &str) {
     let reset = color::Fg(color::Reset);
-            let active_color = color::Fg(*TAG_COLOR);
-            let inactive_color = color::Fg(*SNIPPET_COLOR);
+    let active_color = color::Fg(*TAG_COLOR);
+    let inactive_color = color::Fg(*SNIPPET_COLOR);
     let mut colored_snippet = String::from(snippet);
     let mut variables = String::from("");
     let mut visited_vars: HashSet<&str> = HashSet::new();
@@ -61,24 +61,36 @@ pub fn preview2(snippet: &str, tags: &str, comment: &str, selection: &str, query
             visited_vars.insert(variable_name);
         }
         let is_current = variable_name == variable;
-        let variable_color = if is_current {
-            active_color
-        } else {
-            inactive_color
-        };
+        let variable_color = if is_current { active_color } else { inactive_color };
         let value = if is_current {
             let v = selection.trim_matches('\'');
-            if v.is_empty() {
-                query.trim_matches('\'')
+            if v.is_empty() { 
+                query.trim_matches('\'') 
             } else {
-                v
+                 v
             }.to_string()
         } else {
-            env::var(&variable_name).unwrap_or("".to_string())
+            if let Ok(v) = env::var(&variable_name) {
+                v
+            } else {
+                "".to_string()
+            }
         };
-        let replacement = format!("{color}{variable}{reset}", color = variable_color, variable = bracketed_variable_name, reset = reset);
+        let replacement = format!(
+            "{color}{variable}{reset}",
+            color = variable_color,
+            variable = bracketed_variable_name,
+            reset = reset
+        );
         colored_snippet = colored_snippet.replacen(bracketed_variable_name, &replacement, 999);
-        variables = format!("{variables}\n{color}{variable}{reset} = {value}", variables = variables, color = variable_color, variable = variable_name, reset = reset, value = value);
+        variables = format!(
+            "{variables}\n{color}{variable}{reset} = {value}",
+            variables = variables,
+            color = variable_color,
+            variable = variable_name,
+            reset = reset,
+            value = value
+        );
     }
     println!(
         "{comment_color}{comment} {tag_color}{tags}{reset} \n{snippet}\n{variables}",
