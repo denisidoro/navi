@@ -37,7 +37,7 @@ pub fn variable_prompt(varname: &str) -> String {
 pub fn preview(comment: &str, tags: &str, snippet: &str) {
     println!(
         "{comment_color}{comment} {tag_color}{tags} \n{snippet_color}{snippet}",
-        comment = format!("{}", comment),
+        comment = comment.to_string(),
         tags = format!("[{}]", tags),
         snippet = display::fix_newlines(snippet),
         comment_color = color::Fg(*COMMENT_COLOR),
@@ -82,7 +82,7 @@ pub fn preview2(snippet: &str, tags: &str, comment: &str, selection: &str, query
     }
     println!(
         "{comment_color}{comment} {tag_color}{tags}{reset} \n{snippet}\n{variables}",
-        comment = format!("{}", comment),
+        comment = comment.to_string(),
         tags = format!("[{}]", tags),
         snippet = display::fix_newlines(&colored_snippet),
         comment_color = color::Fg(*COMMENT_COLOR),

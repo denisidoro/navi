@@ -80,7 +80,7 @@ navi_preview_query="$(cat <<EOF
 EOF
 )"
 navi preview2 "$navi_preview_selection" "$navi_preview_query" "{}""#, variable_name)),
-        preview_window: Some(format!("up:{}", variable_count + 3).to_string()),
+        preview_window: Some(format!("up:{}", variable_count + 3)),
         ..opts
     };
 
