@@ -113,9 +113,14 @@ impl Finder for FinderChoice {
         let mut command = Command::new(&finder_str);
         let opts = finder_opts.clone();
 
+        let preview_height = match self {
+            FinderChoice::Skim => 3,
+            _ => 2
+        };
+
         command.args(&[
             "--preview-window",
-            "up:2",
+            format!("up:{}", preview_height).as_str(),
             "--with-nth",
             "1,2,3",
             "--delimiter",

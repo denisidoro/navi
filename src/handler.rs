@@ -1,5 +1,5 @@
 use crate::cmds;
-use crate::structures::config::Command::{Alfred, Fn, Preview, Repo, Widget};
+use crate::structures::config::Command::{Alfred, Fn, Preview, Preview2, Repo, Widget};
 use crate::structures::config::{AlfredCommand, Config, RepoCommand};
 use anyhow::Context;
 use anyhow::Error;
@@ -9,7 +9,9 @@ pub fn handle_config(config: Config) -> Result<(), Error> {
         None => cmds::core::main(config),
 
         Some(c) => match c {
-            Preview { line } => cmds::preview::main(&line[..]),
+            Preview { line } => cmds::preview::main(&line),
+
+            Preview2 { selection, query, variable } => cmds::preview::main2(&selection, &query, &variable),
 
             Widget { shell } => cmds::shell::main(&shell).context("Failed to print shell widget code"),
 
