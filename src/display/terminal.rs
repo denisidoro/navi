@@ -64,17 +64,11 @@ pub fn preview2(snippet: &str, tags: &str, comment: &str, selection: &str, query
         let variable_color = if is_current { active_color } else { inactive_color };
         let value = if is_current {
             let v = selection.trim_matches('\'');
-            if v.is_empty() { 
-                query.trim_matches('\'') 
-            } else {
-                 v
-            }.to_string()
+            if v.is_empty() { query.trim_matches('\'') } else { v }.to_string()
+        } else if let Ok(v) = env::var(&variable_name) {
+            v
         } else {
-            if let Ok(v) = env::var(&variable_name) {
-                v
-            } else {
-                "".to_string()
-            }
+            "".to_string()
         };
         let replacement = format!(
             "{color}{variable}{reset}",
