@@ -46,7 +46,17 @@ pub fn wrapped_by_map(text: &str, map: Option<&str>) -> String {
     }
 }
 
-pub fn preview_var(snippet: &str, tags: &str, comment: &str, selection: &str, query: &str, variable: &str, column: Option<u8>, delimiter: Option<&str>, map: Option<&str>) {
+pub fn preview_var(
+    snippet: &str,
+    tags: &str,
+    comment: &str,
+    selection: &str,
+    query: &str,
+    variable: &str,
+    column: Option<u8>,
+    delimiter: Option<&str>,
+    map: Option<&str>,
+) {
     let reset = color::Fg(color::Reset);
     let active_color = color::Fg(*TAG_COLOR);
     let inactive_color = color::Fg(*COMMENT_COLOR);

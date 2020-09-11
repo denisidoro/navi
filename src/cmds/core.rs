@@ -86,7 +86,7 @@ fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Sugge
 
         (text, suggestion_opts)
     } else {
-        ( '\n'.to_string(), &None)
+        ('\n'.to_string(), &None)
     };
 
     let mut opts = FinderOpts {
@@ -122,10 +122,10 @@ NAVIEOF
 }
 
 fn unique_result_count(results: &Vec<&str>) -> usize {
-        let mut vars = results.clone();
-        vars.sort();
-        vars.dedup();
-        vars.len()
+    let mut vars = results.clone();
+    vars.sort();
+    vars.dedup();
+    vars.len()
 }
 
 fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: VariableMap, config: &Config) -> Result<String, Error> {
