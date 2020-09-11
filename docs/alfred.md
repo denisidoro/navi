@@ -1,7 +1,7 @@
 Alfred
 ------
 
-This is *experimental*. If you face any issues, please report the issue [here](https://github.com/denisidoro/navi/issues/348).
+This is *experimental*. If you face any issues, please report [here](https://github.com/denisidoro/navi/issues/348).
 
 ![Alfred demo](https://user-images.githubusercontent.com/3226564/80294838-582b1b00-8743-11ea-9eb5-a335d8eed833.gif)
 
