@@ -44,18 +44,23 @@ pub fn preview_var(snippet: &str, tags: &str, comment: &str, selection: &str, qu
     let reset = color::Fg(color::Reset);
     let active_color = color::Fg(*TAG_COLOR);
     let inactive_color = color::Fg(*COMMENT_COLOR);
+
     let mut colored_snippet = String::from(snippet);
     let mut variables = String::from("");
     let mut visited_vars: HashSet<&str> = HashSet::new();
+
     for bracketed_variable_name in display::VAR_REGEX.find_iter(snippet).map(|m| m.as_str()) {
         let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
+
         if visited_vars.contains(variable_name) {
             continue;
         } else {
             visited_vars.insert(variable_name);
         }
+
         let is_current = variable_name == variable;
         let variable_color = if is_current { active_color } else { inactive_color };
+
         let value = if is_current {
             let v = selection.trim_matches('\'');
             if v.is_empty() { query.trim_matches('\'') } else { v }.to_string()
@@ -64,13 +69,16 @@ pub fn preview_var(snippet: &str, tags: &str, comment: &str, selection: &str, qu
         } else {
             "".to_string()
         };
+
         let replacement = format!(
             "{color}{variable}{reset}",
             color = variable_color,
             variable = bracketed_variable_name,
             reset = reset
         );
+
         colored_snippet = colored_snippet.replacen(bracketed_variable_name, &replacement, 999);
+
         variables = format!(
             "{variables}\n{color}{variable}{reset} = {value}",
             variables = variables,
@@ -80,6 +88,7 @@ pub fn preview_var(snippet: &str, tags: &str, comment: &str, selection: &str, qu
             value = value
         );
     }
+
     println!(
         "{comment_color}{comment} {tag_color}{tags}{reset} \n{snippet}\n{variables}",
         comment = comment.to_string(),

@@ -140,7 +140,7 @@ impl Finder for FinderChoice {
                 command.arg("--multi");
             }
             SuggestionType::Disabled => {
-                command.args(&["--print-query", "--no-select-1", "--height", "1"]);
+                command.args(&["--print-query", "--no-select-1"]);
             }
             SuggestionType::SnippetSelection => {
                 command.args(&["--expect", "ctrl-y,enter"]);

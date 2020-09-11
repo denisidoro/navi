@@ -54,8 +54,9 @@ fn extract_from_selections(raw_snippet: &str, is_single: bool) -> Result<(&str, 
     Ok((key, tags, comment, snippet))
 }
 
-fn prompt_with_suggestions(variable_name: &str, config: &Config, suggestion: &Suggestion, variable_count: usize) -> Result<String, Error> {
-    let (suggestion_command, suggestion_opts) = suggestion;
+fn prompt_with_suggestions(variable_name: &str, config: &Config, suggestion: Option<&Suggestion>, variable_count: usize) -> Result<String, Error> {
+    let (suggestions, opts, has_suggestion) = if let Some(s) = suggestion {
+    let (suggestion_command, suggestion_opts) = s;
 
     let child = Command::new("bash")
         .stdout(Stdio::piped())
@@ -64,11 +65,16 @@ fn prompt_with_suggestions(variable_name: &str, config: &Config, suggestion: &Su
         .spawn()
         .map_err(|e| BashSpawnError::new(suggestion_command, e))?;
 
-    let suggestions = String::from_utf8(child.wait_with_output().context("Failed to wait and collect output from bash")?.stdout)
+       let text = String::from_utf8(child.wait_with_output().context("Failed to wait and collect output from bash")?.stdout)
         .context("Suggestions are invalid utf8")?;
 
-    let opts = suggestion_opts.clone().unwrap_or_default();
-    let opts = FinderOpts {
+(text, suggestion_opts, true)
+    } else {
+("
+".to_string(), &None, false)
+    };
+
+    let mut opts = FinderOpts {
         autoselect: !config.get_no_autoselect(),
         overrides: config.fzf_overrides_var.clone(),
         preview: Some(format!(
@@ -82,8 +88,12 @@ NAVIEOF
             variable_name
         )),
         preview_window: Some(format!("up:{}", variable_count + 3)),
-        ..opts
+        ..opts.clone().unwrap_or_default()
     };
+
+    if ! has_suggestion {
+        opts.suggestion_type = SuggestionType::Disabled;
+};
 
     let (output, _) = config
         .finder
@@ -92,23 +102,6 @@ NAVIEOF
             Ok(None)
         })
         .context("finder was unable to prompt with suggestions")?;
-
-    Ok(output)
-}
-
-fn prompt_without_suggestions(variable_name: &str, config: &Config) -> Result<String, Error> {
-    let opts = FinderOpts {
-        autoselect: false,
-        prompt: Some(display::terminal::variable_prompt(variable_name)),
-        suggestion_type: SuggestionType::Disabled,
-        preview_window: Some("up:1".to_string()),
-        ..Default::default()
-    };
-
-    let (output, _) = config
-        .finder
-        .call(opts, |_stdin| Ok(None))
-        .context("finder was unable to prompt without suggestions")?;
 
     Ok(output)
 }
@@ -130,17 +123,12 @@ fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: Variable
 
         let value = if let Ok(e) = env_value {
             e
-        } else {
-            variables
-                .get_suggestion(&tags, &variable_name)
-                .ok_or_else(|| anyhow!("No suggestions"))
-                .and_then(|suggestion| {
+        } else if let Some(suggestion) = variables.get_suggestion(&tags, &variable_name){
                     let mut new_suggestion = suggestion.clone();
                     new_suggestion.0 = replace_variables_from_snippet(&new_suggestion.0, tags, variables.clone(), config)?;
-
-                    prompt_with_suggestions(variable_name, &config, &new_suggestion, variable_count)
-                })
-                .or_else(|_| prompt_without_suggestions(variable_name, &config))?
+                    prompt_with_suggestions(variable_name, &config, Some(&new_suggestion), variable_count)?
+        } else {
+                    prompt_with_suggestions(variable_name, &config, None, variable_count)?
         };
 
         env::set_var(variable_name, &value);
