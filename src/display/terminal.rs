@@ -40,7 +40,7 @@ pub fn preview(comment: &str, tags: &str, snippet: &str) {
     );
 }
 
-pub fn preview2(snippet: &str, tags: &str, comment: &str, selection: &str, query: &str, variable: &str) {
+pub fn preview_var(snippet: &str, tags: &str, comment: &str, selection: &str, query: &str, variable: &str) {
     let reset = color::Fg(color::Reset);
     let active_color = color::Fg(*TAG_COLOR);
     let inactive_color = color::Fg(*COMMENT_COLOR);

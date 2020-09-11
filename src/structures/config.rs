@@ -125,12 +125,12 @@ pub enum Command {
     },
     /// Used for fzf's preview window
     #[structopt(setting = AppSettings::Hidden)]
-    Preview2 {
+    PreviewVar {
         /// Selection line
         selection: String,
-        /// Selection line
+        /// Query match
         query: String,
-        /// Selection line
+        /// Typed text
         variable: String,
     },
     /// Shows the path for shell widget files

@@ -72,7 +72,7 @@ fn prompt_with_suggestions(variable_name: &str, config: &Config, suggestion: &Su
         autoselect: !config.get_no_autoselect(),
         overrides: config.fzf_overrides_var.clone(),
         preview: Some(format!(
-            r#"navi preview2 "$(cat <<NAVIEOF
+            r#"navi preview-var "$(cat <<NAVIEOF
 {{}}
 NAVIEOF
 )" "$(cat <<NAVIEOF

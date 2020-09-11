@@ -26,10 +26,10 @@ fn get_env_var(name: &str) -> String {
     }
 }
 
-pub fn main2(selection: &str, query: &str, variable: &str) -> Result<(), Error> {
+pub fn main_var(selection: &str, query: &str, variable: &str) -> Result<(), Error> {
     let snippet = get_env_var(env_vars::PREVIEW_INITIAL_SNIPPET);
     let tags = get_env_var(env_vars::PREVIEW_TAGS);
     let comment = get_env_var(env_vars::PREVIEW_COMMENT);
-    display::terminal::preview2(&snippet, &tags, &comment, selection, query, variable);
+    display::terminal::preview_var(&snippet, &tags, &comment, selection, query, variable);
     process::exit(0)
 }
