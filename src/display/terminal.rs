@@ -1,12 +1,12 @@
 use crate::common::terminal_width;
-use crate::env_vars;
 use crate::display;
+use crate::env_vars;
 use crate::structures::item::Item;
 use std::cmp::max;
 use std::collections::HashSet;
 use std::env;
-use termion::color;
 use std::str::FromStr;
+use termion::color;
 
 fn parse_env_var<T: FromStr>(varname: &str) -> Option<T> {
     if let Ok(x) = env::var(varname) {

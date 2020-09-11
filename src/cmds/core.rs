@@ -1,8 +1,8 @@
 use crate::cheatsh;
 use crate::common::clipboard;
 use crate::common::shell::BashSpawnError;
-use crate::env_vars;
 use crate::display;
+use crate::env_vars;
 use crate::fetcher::Fetcher;
 use crate::filesystem;
 use crate::finder::Finder;
@@ -78,7 +78,9 @@ NAVIEOF
 )" "$(cat <<NAVIEOF
 {{q}}
 NAVIEOF
-)" "{}""#, variable_name)),
+)" "{}""#,
+            variable_name
+        )),
         preview_window: Some(format!("up:{}", variable_count + 3)),
         ..opts
     };

@@ -1,8 +1,8 @@
 use crate::display;
+use crate::env_vars;
 use anyhow::Error;
 use std::env;
 use std::process;
-use crate::env_vars;
 
 fn extract_elements(argstr: &str) -> (&str, &str, &str) {
     let mut parts = argstr.split(display::DELIMITER).skip(3);
@@ -22,8 +22,8 @@ fn get_env_var(name: &str) -> String {
     if let Ok(v) = env::var(name) {
         v
     } else {
-            panic!(format!("{} not set", name))
-        }
+        panic!(format!("{} not set", name))
+    }
 }
 
 pub fn main2(selection: &str, query: &str, variable: &str) -> Result<(), Error> {

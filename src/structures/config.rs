@@ -1,5 +1,5 @@
-use crate::finder::FinderChoice;
 use crate::env_vars;
+use crate::finder::FinderChoice;
 use anyhow::Error;
 use structopt::{clap::AppSettings, StructOpt};
 

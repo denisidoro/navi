@@ -7,6 +7,7 @@ mod cheatsh;
 mod cmds;
 mod common;
 mod display;
+mod env_vars;
 mod fetcher;
 mod filesystem;
 mod finder;
@@ -15,7 +16,6 @@ mod parser;
 mod structures;
 mod tldr;
 mod welcome;
-mod env_vars;
 
 pub use common::file_issue::FileAnIssue;
 pub use handler::handle_config;
