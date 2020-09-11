@@ -25,9 +25,9 @@ _copy() {
         .arg(
             format!(
                 r#"{} 
-        read -r -d '' x <<'EOF'
+        read -r -d '' x <<'NAVIEOF'
 {}
-EOF
+NAVIEOF
 
 echo -n "$x" | _copy"#,
                 cmd, text

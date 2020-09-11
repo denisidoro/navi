@@ -5,29 +5,22 @@ use std::cmp::max;
 use std::collections::HashSet;
 use std::env;
 use termion::color;
+use std::str::FromStr;
 
-fn parse_env_var_u8(varname: &str) -> Option<u8> {
+fn parse_env_var<T: FromStr>(varname: &str) -> Option<T> {
     if let Ok(x) = env::var(varname) {
-        x.parse::<u8>().ok()
-    } else {
-        None
-    }
-}
-
-fn parse_env_var_u16(varname: &str) -> Option<u16> {
-    if let Ok(x) = env::var(varname) {
-        x.parse::<u16>().ok()
+        x.parse::<T>().ok()
     } else {
         None
     }
 }
 
 lazy_static! {
-    pub static ref TAG_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var_u8("NAVI_TAG_COLOR").unwrap_or(14));
-    pub static ref COMMENT_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var_u8("NAVI_COMMENT_COLOR").unwrap_or(4));
-    pub static ref SNIPPET_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var_u8("NAVI_SNIPPET_COLOR").unwrap_or(7));
-    pub static ref TAG_WIDTH_PERCENTAGE: u16 = parse_env_var_u16("NAVI_TAG_WIDTH").unwrap_or(20);
-    pub static ref COMMENT_WIDTH_PERCENTAGE: u16 = parse_env_var_u16("NAVI_COMMENT_WIDTH").unwrap_or(40);
+    pub static ref TAG_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var("NAVI_TAG_COLOR").unwrap_or(14));
+    pub static ref COMMENT_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var("NAVI_COMMENT_COLOR").unwrap_or(4));
+    pub static ref SNIPPET_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var("NAVI_SNIPPET_COLOR").unwrap_or(7));
+    pub static ref TAG_WIDTH_PERCENTAGE: u16 = parse_env_var("NAVI_TAG_WIDTH").unwrap_or(20);
+    pub static ref COMMENT_WIDTH_PERCENTAGE: u16 = parse_env_var("NAVI_COMMENT_WIDTH").unwrap_or(40);
 }
 
 pub fn variable_prompt(varname: &str) -> String {
@@ -49,7 +42,7 @@ pub fn preview(comment: &str, tags: &str, snippet: &str) {
 pub fn preview2(snippet: &str, tags: &str, comment: &str, selection: &str, query: &str, variable: &str) {
     let reset = color::Fg(color::Reset);
     let active_color = color::Fg(*TAG_COLOR);
-    let inactive_color = color::Fg(*SNIPPET_COLOR);
+    let inactive_color = color::Fg(*COMMENT_COLOR);
     let mut colored_snippet = String::from(snippet);
     let mut variables = String::from("");
     let mut visited_vars: HashSet<&str> = HashSet::new();

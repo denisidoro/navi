@@ -70,19 +70,14 @@ fn prompt_with_suggestions(variable_name: &str, config: &Config, suggestion: &Su
     let opts = FinderOpts {
         autoselect: !config.get_no_autoselect(),
         overrides: config.fzf_overrides_var.clone(),
-        // u32prompt: Some(display::terminal::variable_prompt(variable_name)),
         preview: Some(format!(
-            r#"navi_preview_selection="$(cat <<EOF
+            r#"navi preview2 "$(cat <<NAVIEOF
 {{}}
-EOF
-)"
-navi_preview_query="$(cat <<EOF
+NAVIEOF
+)" "$(cat <<NAVIEOF
 {{q}}
-EOF
-)"
-navi preview2 "$navi_preview_selection" "$navi_preview_query" "{}""#,
-            variable_name
-        )),
+NAVIEOF
+)" "{}""#, variable_name)),
         preview_window: Some(format!("up:{}", variable_count + 3)),
         ..opts
     };
