@@ -112,7 +112,7 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
 
     println!(
         "{comment_color}{comment} {tag_color}{tags}{reset} \n{snippet}\n{variables}",
-        comment = comment.to_string(),
+        comment = comment,
         tags = format!("[{}]", tags),
         snippet = display::fix_newlines(&colored_snippet),
         comment_color = color::Fg(*COMMENT_COLOR),

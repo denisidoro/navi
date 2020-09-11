@@ -1,7 +1,7 @@
 use crate::display;
-use crate::env_vars;
+
 use anyhow::Error;
-use std::env;
+
 use std::process;
 
 fn extract_elements(argstr: &str) -> (&str, &str, &str) {
