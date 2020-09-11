@@ -1,4 +1,5 @@
 use crate::common::terminal_width;
+use crate::env_vars;
 use crate::display;
 use crate::structures::item::Item;
 use std::cmp::max;
@@ -16,11 +17,11 @@ fn parse_env_var<T: FromStr>(varname: &str) -> Option<T> {
 }
 
 lazy_static! {
-    pub static ref TAG_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var("NAVI_TAG_COLOR").unwrap_or(14));
-    pub static ref COMMENT_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var("NAVI_COMMENT_COLOR").unwrap_or(4));
-    pub static ref SNIPPET_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var("NAVI_SNIPPET_COLOR").unwrap_or(7));
-    pub static ref TAG_WIDTH_PERCENTAGE: u16 = parse_env_var("NAVI_TAG_WIDTH").unwrap_or(20);
-    pub static ref COMMENT_WIDTH_PERCENTAGE: u16 = parse_env_var("NAVI_COMMENT_WIDTH").unwrap_or(40);
+    pub static ref TAG_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var(env_vars::TAG_COLOR).unwrap_or(14));
+    pub static ref COMMENT_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var(env_vars::COMMENT_COLOR).unwrap_or(4));
+    pub static ref SNIPPET_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var(env_vars::SNIPPET_COLOR).unwrap_or(7));
+    pub static ref TAG_WIDTH_PERCENTAGE: u16 = parse_env_var(env_vars::TAG_WIDTH).unwrap_or(20);
+    pub static ref COMMENT_WIDTH_PERCENTAGE: u16 = parse_env_var(env_vars::COMMENT_WIDTH).unwrap_or(40);
 }
 
 pub fn variable_prompt(varname: &str) -> String {

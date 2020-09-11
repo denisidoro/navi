@@ -1,6 +1,7 @@
 use crate::cheatsh;
 use crate::common::clipboard;
 use crate::common::shell::BashSpawnError;
+use crate::env_vars;
 use crate::display;
 use crate::fetcher::Fetcher;
 use crate::filesystem;
@@ -181,9 +182,9 @@ pub fn main(config: Config) -> Result<(), Error> {
 
     let (key, tags, comment, snippet) = extract_from_selections(&raw_selection, config.get_best_match())?;
 
-    env::set_var("NAVI_PREVIEW_INITIAL_SNIPPET", &snippet);
-    env::set_var("NAVI_PREVIEW_TAGS", &tags);
-    env::set_var("NAVI_PREVIEW_COMMENT", &comment);
+    env::set_var(env_vars::PREVIEW_INITIAL_SNIPPET, &snippet);
+    env::set_var(env_vars::PREVIEW_TAGS, &tags);
+    env::set_var(env_vars::PREVIEW_COMMENT, &comment);
 
     let interpolated_snippet = display::with_new_lines(
         replace_variables_from_snippet(snippet, tags, variables.expect("No variables received from finder"), &config)
