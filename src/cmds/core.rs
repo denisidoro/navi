@@ -121,8 +121,8 @@ NAVIEOF
     Ok(output)
 }
 
-fn unique_result_count(results: &Vec<&str>) -> usize {
-    let mut vars = results.clone();
+fn unique_result_count(results: &[&str]) -> usize {
+    let mut vars = results.to_owned();
     vars.sort();
     vars.dedup();
     vars.len()
