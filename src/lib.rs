@@ -7,6 +7,7 @@ mod cheatsh;
 mod cmds;
 mod common;
 mod display;
+mod env_vars;
 mod fetcher;
 mod filesystem;
 mod finder;

@@ -22,9 +22,9 @@ _open_url() {
     let cmd = format!(
         r#"{}
                 
-read -r -d '' url <<'EOF'
+read -r -d '' url <<'NAVIEOF'
 {}
-EOF
+NAVIEOF
 
 _open_url "$url""#,
         code, url

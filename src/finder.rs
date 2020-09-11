@@ -35,7 +35,8 @@ fn apply_map(text: String, map_fn: Option<String>) -> String {
     }
 }
 
-fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> String {
+// TODO: extract
+pub fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> String {
     if let Some(c) = column {
         let mut result = String::from("");
         let re = regex::Regex::new(delimiter.unwrap_or(r"\s\s+")).expect("Invalid regex");
@@ -113,9 +114,14 @@ impl Finder for FinderChoice {
         let mut command = Command::new(&finder_str);
         let opts = finder_opts.clone();
 
+        let preview_height = match self {
+            FinderChoice::Skim => 3,
+            _ => 2,
+        };
+
         command.args(&[
             "--preview-window",
-            "up:2",
+            format!("up:{}", preview_height).as_str(),
             "--with-nth",
             "1,2,3",
             "--delimiter",
@@ -135,7 +141,7 @@ impl Finder for FinderChoice {
                 command.arg("--multi");
             }
             SuggestionType::Disabled => {
-                command.args(&["--print-query", "--no-select-1", "--height", "1"]);
+                command.args(&["--print-query", "--no-select-1"]);
             }
             SuggestionType::SnippetSelection => {
                 command.args(&["--expect", "ctrl-y,enter"]);

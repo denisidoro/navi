@@ -2,6 +2,7 @@ use crate::cheatsh;
 use crate::common::clipboard;
 use crate::common::shell::BashSpawnError;
 use crate::display;
+use crate::env_vars;
 use crate::fetcher::Fetcher;
 use crate::filesystem;
 use crate::finder::Finder;
@@ -37,7 +38,7 @@ fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
     Ok(opts)
 }
 
-fn extract_from_selections(raw_snippet: &str, is_single: bool) -> Result<(&str, &str, &str), Error> {
+fn extract_from_selections(raw_snippet: &str, is_single: bool) -> Result<(&str, &str, &str, &str), Error> {
     let mut lines = raw_snippet.split('\n');
     let key = if !is_single {
         lines.next().context("Key was promised but not present in `selections`")?
@@ -48,31 +49,65 @@ fn extract_from_selections(raw_snippet: &str, is_single: bool) -> Result<(&str, 
     let mut parts = lines.next().context("No more parts in `selections`")?.split(display::DELIMITER).skip(3);
 
     let tags = parts.next().unwrap_or("");
-    parts.next();
-
+    let comment = parts.next().unwrap_or("");
     let snippet = parts.next().unwrap_or("");
-    Ok((key, tags, snippet))
+    Ok((key, tags, comment, snippet))
 }
 
-fn prompt_with_suggestions(variable_name: &str, config: &Config, suggestion: &Suggestion, _snippet: String) -> Result<String, Error> {
-    let (suggestion_command, suggestion_opts) = suggestion;
+fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Suggestion>, variable_count: usize) -> Result<String, Error> {
+    env::remove_var(env_vars::PREVIEW_COLUMN);
+    env::remove_var(env_vars::PREVIEW_DELIMITER);
+    env::remove_var(env_vars::PREVIEW_MAP);
 
-    let child = Command::new("bash")
-        .stdout(Stdio::piped())
-        .arg("-c")
-        .arg(&suggestion_command)
-        .spawn()
-        .map_err(|e| BashSpawnError::new(suggestion_command, e))?;
+    let (suggestions, opts) = if let Some(s) = suggestion {
+        let (suggestion_command, suggestion_opts) = s;
 
-    let suggestions = String::from_utf8(child.wait_with_output().context("Failed to wait and collect output from bash")?.stdout)
-        .context("Suggestions are invalid utf8")?;
+        if let Some(sopts) = suggestion_opts {
+            if let Some(c) = &sopts.column {
+                env::set_var(env_vars::PREVIEW_COLUMN, c.to_string());
+            }
+            if let Some(d) = &sopts.delimiter {
+                env::set_var(env_vars::PREVIEW_DELIMITER, d);
+            }
+            if let Some(m) = &sopts.map {
+                env::set_var(env_vars::PREVIEW_MAP, m);
+            }
+        }
 
-    let opts = suggestion_opts.clone().unwrap_or_default();
-    let opts = FinderOpts {
+        let child = Command::new("bash")
+            .stdout(Stdio::piped())
+            .arg("-c")
+            .arg(&suggestion_command)
+            .spawn()
+            .map_err(|e| BashSpawnError::new(suggestion_command, e))?;
+
+        let text = String::from_utf8(child.wait_with_output().context("Failed to wait and collect output from bash")?.stdout)
+            .context("Suggestions are invalid utf8")?;
+
+        (text, suggestion_opts)
+    } else {
+        ('\n'.to_string(), &None)
+    };
+
+    let mut opts = FinderOpts {
         autoselect: !config.get_no_autoselect(),
         overrides: config.fzf_overrides_var.clone(),
-        prompt: Some(display::terminal::variable_prompt(variable_name)),
-        ..opts
+        preview: Some(format!(
+            r#"navi preview-var "$(cat <<NAVIEOF
+{{}}
+NAVIEOF
+)" "$(cat <<NAVIEOF
+{{q}}
+NAVIEOF
+)" "{}""#,
+            variable_name
+        )),
+        preview_window: Some(format!("up:{}", variable_count + 3)),
+        ..opts.clone().unwrap_or_default()
+    };
+
+    if suggestion.is_none() {
+        opts.suggestion_type = SuggestionType::Disabled;
     };
 
     let (output, _) = config
@@ -86,45 +121,31 @@ fn prompt_with_suggestions(variable_name: &str, config: &Config, suggestion: &Su
     Ok(output)
 }
 
-fn prompt_without_suggestions(variable_name: &str, config: &Config) -> Result<String, Error> {
-    let opts = FinderOpts {
-        autoselect: false,
-        prompt: Some(display::terminal::variable_prompt(variable_name)),
-        suggestion_type: SuggestionType::Disabled,
-        preview_window: Some("up:1".to_string()),
-        ..Default::default()
-    };
-
-    let (output, _) = config
-        .finder
-        .call(opts, |_stdin| Ok(None))
-        .context("finder was unable to prompt without suggestions")?;
-
-    Ok(output)
+fn unique_result_count(results: &[&str]) -> usize {
+    let mut vars = results.to_owned();
+    vars.sort();
+    vars.dedup();
+    vars.len()
 }
 
 fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: VariableMap, config: &Config) -> Result<String, Error> {
     let mut interpolated_snippet = String::from(snippet);
+    let variables_found: Vec<&str> = display::VAR_REGEX.find_iter(snippet).map(|m| m.as_str()).collect();
+    let variable_count = unique_result_count(&variables_found);
 
-    for captures in display::VAR_REGEX.captures_iter(snippet) {
-        let bracketed_variable_name = &captures[0];
+    for bracketed_variable_name in variables_found {
         let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
 
         let env_value = env::var(variable_name);
 
         let value = if let Ok(e) = env_value {
             e
+        } else if let Some(suggestion) = variables.get_suggestion(&tags, &variable_name) {
+            let mut new_suggestion = suggestion.clone();
+            new_suggestion.0 = replace_variables_from_snippet(&new_suggestion.0, tags, variables.clone(), config)?;
+            prompt_finder(variable_name, &config, Some(&new_suggestion), variable_count)?
         } else {
-            variables
-                .get_suggestion(&tags, &variable_name)
-                .ok_or_else(|| anyhow!("No suggestions"))
-                .and_then(|suggestion| {
-                    let mut new_suggestion = suggestion.clone();
-                    new_suggestion.0 = replace_variables_from_snippet(&new_suggestion.0, tags, variables.clone(), config)?;
-
-                    prompt_with_suggestions(variable_name, &config, &new_suggestion, interpolated_snippet.clone())
-                })
-                .or_else(|_| prompt_without_suggestions(variable_name, &config))?
+            prompt_finder(variable_name, &config, None, variable_count)?
         };
 
         env::set_var(variable_name, &value);
@@ -166,7 +187,11 @@ pub fn main(config: Config) -> Result<(), Error> {
         })
         .context("Failed getting selection and variables from finder")?;
 
-    let (key, tags, snippet) = extract_from_selections(&raw_selection[..], config.get_best_match())?;
+    let (key, tags, comment, snippet) = extract_from_selections(&raw_selection, config.get_best_match())?;
+
+    env::set_var(env_vars::PREVIEW_INITIAL_SNIPPET, &snippet);
+    env::set_var(env_vars::PREVIEW_TAGS, &tags);
+    env::set_var(env_vars::PREVIEW_COMMENT, &comment);
 
     let interpolated_snippet = display::with_new_lines(
         replace_variables_from_snippet(snippet, tags, variables.expect("No variables received from finder"), &config)

@@ -28,7 +28,7 @@ pub fn main(config: Config) -> Result<(), Error> {
     Ok(())
 }
 
-fn prompt_with_suggestions(suggestion: &Suggestion) -> Result<String, Error> {
+fn prompt_finder(suggestion: &Suggestion) -> Result<String, Error> {
     let (suggestion_command, _suggestion_opts) = suggestion;
 
     let child = Command::new("bash")
@@ -77,7 +77,7 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
     display::alfred::print_items_start(Some(varname));
 
     let command = command.context("Invalid command")?;
-    let lines = prompt_with_suggestions(command).context("Invalid lines")?;
+    let lines = prompt_finder(command).context("Invalid lines")?;
 
     writer.reset();
 

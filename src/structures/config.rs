@@ -1,3 +1,4 @@
+use crate::env_vars;
 use crate::finder::FinderChoice;
 use anyhow::Error;
 use structopt::{clap::AppSettings, StructOpt};
@@ -37,7 +38,7 @@ EXAMPLES:
 #[structopt(setting = AppSettings::AllowLeadingHyphen)]
 pub struct Config {
     /// List of :-separated paths containing .cheat files
-    #[structopt(short, long, env = "NAVI_PATH")]
+    #[structopt(short, long, env = env_vars::PATH)]
     pub path: Option<String>,
 
     /// [Experimental] Instead of executing a snippet, saves it to a file
@@ -73,15 +74,15 @@ pub struct Config {
     query: Option<String>,
 
     /// finder overrides for cheat selection
-    #[structopt(long, env = "NAVI_FZF_OVERRIDES")]
+    #[structopt(long, env = env_vars::FZF_OVERRIDES)]
     pub fzf_overrides: Option<String>,
 
     /// finder overrides for variable selection
-    #[structopt(long, env = "NAVI_FZF_OVERRIDES_VAR")]
+    #[structopt(long, env = env_vars::FZF_OVERRIDES_VAR)]
     pub fzf_overrides_var: Option<String>,
 
     /// which finder application to use
-    #[structopt(long, env = "NAVI_FINDER", default_value = "fzf", parse(try_from_str = parse_finder))]
+    #[structopt(long, env = env_vars::FINDER, default_value = "fzf", parse(try_from_str = parse_finder))]
     pub finder: FinderChoice,
 
     #[structopt(subcommand)]
@@ -121,6 +122,16 @@ pub enum Command {
     Preview {
         /// Selection line
         line: String,
+    },
+    /// Used for fzf's preview window
+    #[structopt(setting = AppSettings::Hidden)]
+    PreviewVar {
+        /// Selection line
+        selection: String,
+        /// Query match
+        query: String,
+        /// Typed text
+        variable: String,
     },
     /// Shows the path for shell widget files
     Widget {

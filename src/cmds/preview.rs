@@ -1,5 +1,7 @@
 use crate::display;
+
 use anyhow::Error;
+
 use std::process;
 
 fn extract_elements(argstr: &str) -> (&str, &str, &str) {
@@ -13,5 +15,10 @@ fn extract_elements(argstr: &str) -> (&str, &str, &str) {
 pub fn main(line: &str) -> Result<(), Error> {
     let (tags, comment, snippet) = extract_elements(line);
     display::terminal::preview(comment, tags, snippet);
+    process::exit(0)
+}
+
+pub fn main_var(selection: &str, query: &str, variable: &str) -> Result<(), Error> {
+    display::terminal::preview_var(selection, query, variable);
     process::exit(0)
 }
