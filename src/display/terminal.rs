@@ -46,17 +46,26 @@ pub fn wrapped_by_map(text: &str, map: Option<&str>) -> String {
     }
 }
 
+fn get_env_var(name: &str) -> String {
+    if let Ok(v) = env::var(name) {
+        v
+    } else {
+        panic!(format!("{} not set", name))
+    }
+}
+
 pub fn preview_var(
-    snippet: &str,
-    tags: &str,
-    comment: &str,
     selection: &str,
     query: &str,
-    variable: &str,
-    column: Option<u8>,
-    delimiter: Option<&str>,
-    map: Option<&str>,
+   variable: &str
 ) {
+    let snippet = get_env_var(env_vars::PREVIEW_INITIAL_SNIPPET);
+    let tags = get_env_var(env_vars::PREVIEW_TAGS);
+    let comment = get_env_var(env_vars::PREVIEW_COMMENT);
+    let column = display::terminal::parse_env_var(env_vars::PREVIEW_COLUMN);
+    let delimiter = env::var(env_vars::PREVIEW_DELIMITER).ok();
+    let map = env::var(env_vars::PREVIEW_MAP).ok();
+
     let reset = color::Fg(color::Reset);
     let active_color = color::Fg(*TAG_COLOR);
     let inactive_color = color::Fg(*COMMENT_COLOR);
@@ -101,7 +110,7 @@ pub fn preview_var(
             color = variable_color,
             variable = variable_name,
             reset = reset,
-            value = wrapped_by_map(&finder::get_column(value, column, delimiter), map)
+            value = wrapped_by_map(&finder::get_column(value, column, delimiter.as_deref()), map.as_deref())
         );
     }
 
