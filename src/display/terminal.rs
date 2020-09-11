@@ -1,6 +1,7 @@
 use crate::common::terminal_width;
 use crate::display;
 use crate::env_vars;
+use crate::finder;
 use crate::structures::item::Item;
 use std::cmp::max;
 use std::collections::HashSet;
@@ -8,7 +9,8 @@ use std::env;
 use std::str::FromStr;
 use termion::color;
 
-fn parse_env_var<T: FromStr>(varname: &str) -> Option<T> {
+// TODO: extract
+pub fn parse_env_var<T: FromStr>(varname: &str) -> Option<T> {
     if let Ok(x) = env::var(varname) {
         x.parse::<T>().ok()
     } else {
@@ -24,10 +26,6 @@ lazy_static! {
     pub static ref COMMENT_WIDTH_PERCENTAGE: u16 = parse_env_var(env_vars::COMMENT_WIDTH).unwrap_or(40);
 }
 
-pub fn variable_prompt(varname: &str) -> String {
-    format!("{}: ", varname)
-}
-
 pub fn preview(comment: &str, tags: &str, snippet: &str) {
     println!(
         "{comment_color}{comment} {tag_color}{tags} \n{snippet_color}{snippet}",
@@ -40,7 +38,15 @@ pub fn preview(comment: &str, tags: &str, snippet: &str) {
     );
 }
 
-pub fn preview_var(snippet: &str, tags: &str, comment: &str, selection: &str, query: &str, variable: &str) {
+pub fn wrapped_by_map(text: &str, map: Option<&str>) -> String {
+    if map.is_none() {
+        text.to_string()
+    } else {
+        format!("map({})", text)
+    }
+}
+
+pub fn preview_var(snippet: &str, tags: &str, comment: &str, selection: &str, query: &str, variable: &str, column: Option<u8>, delimiter: Option<&str>, map: Option<&str>) {
     let reset = color::Fg(color::Reset);
     let active_color = color::Fg(*TAG_COLOR);
     let inactive_color = color::Fg(*COMMENT_COLOR);
@@ -85,7 +91,7 @@ pub fn preview_var(snippet: &str, tags: &str, comment: &str, selection: &str, qu
             color = variable_color,
             variable = variable_name,
             reset = reset,
-            value = value
+            value = wrapped_by_map(&finder::get_column(value, column, delimiter), map)
         );
     }
 

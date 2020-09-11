@@ -30,6 +30,9 @@ pub fn main_var(selection: &str, query: &str, variable: &str) -> Result<(), Erro
     let snippet = get_env_var(env_vars::PREVIEW_INITIAL_SNIPPET);
     let tags = get_env_var(env_vars::PREVIEW_TAGS);
     let comment = get_env_var(env_vars::PREVIEW_COMMENT);
-    display::terminal::preview_var(&snippet, &tags, &comment, selection, query, variable);
+    let column = display::terminal::parse_env_var(env_vars::PREVIEW_COLUMN);
+    let delimiter = env::var(env_vars::PREVIEW_DELIMITER).ok();
+    let map = env::var(env_vars::PREVIEW_MAP).ok();
+    display::terminal::preview_var(&snippet, &tags, &comment, selection, query, variable, column, delimiter.as_deref(), map.as_deref());
     process::exit(0)
 }

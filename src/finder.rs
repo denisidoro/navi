@@ -35,7 +35,8 @@ fn apply_map(text: String, map_fn: Option<String>) -> String {
     }
 }
 
-fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> String {
+// TODO: extract
+pub fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> String {
     if let Some(c) = column {
         let mut result = String::from("");
         let re = regex::Regex::new(delimiter.unwrap_or(r"\s\s+")).expect("Invalid regex");

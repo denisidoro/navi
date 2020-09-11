@@ -54,9 +54,25 @@ fn extract_from_selections(raw_snippet: &str, is_single: bool) -> Result<(&str, 
     Ok((key, tags, comment, snippet))
 }
 
-fn prompt_with_suggestions(variable_name: &str, config: &Config, suggestion: Option<&Suggestion>, variable_count: usize) -> Result<String, Error> {
-    let (suggestions, opts, has_suggestion) = if let Some(s) = suggestion {
+fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Suggestion>, variable_count: usize) -> Result<String, Error> {
+    env::remove_var(env_vars::PREVIEW_COLUMN);
+    env::remove_var(env_vars::PREVIEW_DELIMITER);
+    env::remove_var(env_vars::PREVIEW_MAP);
+
+    let (suggestions, opts) = if let Some(s) = suggestion {
         let (suggestion_command, suggestion_opts) = s;
+
+        if let Some(sopts) = suggestion_opts {
+            if let Some(c) = &sopts.column {
+                env::set_var(env_vars::PREVIEW_COLUMN, c.to_string());
+            }
+            if let Some(d) = &sopts.delimiter {
+                env::set_var(env_vars::PREVIEW_DELIMITER, d);
+            }
+            if let Some(m) = &sopts.map {
+                env::set_var(env_vars::PREVIEW_MAP, m);
+            }
+        }
 
         let child = Command::new("bash")
             .stdout(Stdio::piped())
@@ -68,15 +84,9 @@ fn prompt_with_suggestions(variable_name: &str, config: &Config, suggestion: Opt
         let text = String::from_utf8(child.wait_with_output().context("Failed to wait and collect output from bash")?.stdout)
             .context("Suggestions are invalid utf8")?;
 
-        (text, suggestion_opts, true)
+        (text, suggestion_opts)
     } else {
-        (
-            "
-"
-            .to_string(),
-            &None,
-            false,
-        )
+        ( '\n'.to_string(), &None)
     };
 
     let mut opts = FinderOpts {
@@ -96,7 +106,7 @@ NAVIEOF
         ..opts.clone().unwrap_or_default()
     };
 
-    if !has_suggestion {
+    if suggestion.is_none() {
         opts.suggestion_type = SuggestionType::Disabled;
     };
 
@@ -111,17 +121,19 @@ NAVIEOF
     Ok(output)
 }
 
-fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: VariableMap, config: &Config) -> Result<String, Error> {
-    let mut interpolated_snippet = String::from(snippet);
-    let variable_count = {
-        let mut vars: Vec<&str> = display::VAR_REGEX.find_iter(snippet).map(|m| m.as_str()).collect();
+fn unique_result_count(results: &Vec<&str>) -> usize {
+        let mut vars = results.clone();
         vars.sort();
         vars.dedup();
         vars.len()
-    };
+}
 
-    for captures in display::VAR_REGEX.captures_iter(snippet) {
-        let bracketed_variable_name = &captures[0];
+fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: VariableMap, config: &Config) -> Result<String, Error> {
+    let mut interpolated_snippet = String::from(snippet);
+    let variables_found: Vec<&str> = display::VAR_REGEX.find_iter(snippet).map(|m| m.as_str()).collect();
+    let variable_count = unique_result_count(&variables_found);
+
+    for bracketed_variable_name in variables_found {
         let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
 
         let env_value = env::var(variable_name);
@@ -131,9 +143,9 @@ fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: Variable
         } else if let Some(suggestion) = variables.get_suggestion(&tags, &variable_name) {
             let mut new_suggestion = suggestion.clone();
             new_suggestion.0 = replace_variables_from_snippet(&new_suggestion.0, tags, variables.clone(), config)?;
-            prompt_with_suggestions(variable_name, &config, Some(&new_suggestion), variable_count)?
+            prompt_finder(variable_name, &config, Some(&new_suggestion), variable_count)?
         } else {
-            prompt_with_suggestions(variable_name, &config, None, variable_count)?
+            prompt_finder(variable_name, &config, None, variable_count)?
         };
 
         env::set_var(variable_name, &value);
