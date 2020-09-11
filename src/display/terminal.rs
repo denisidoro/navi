@@ -54,12 +54,8 @@ fn get_env_var(name: &str) -> String {
     }
 }
 
-pub fn preview_var(
-    selection: &str,
-    query: &str,
-   variable: &str
-) {
-    let snippet = get_env_var(env_vars::PREVIEW_INITIAL_SNIPPET);
+pub fn preview_var(selection: &str, query: &str, variable: &str) {
+    let snippet = &get_env_var(env_vars::PREVIEW_INITIAL_SNIPPET);
     let tags = get_env_var(env_vars::PREVIEW_TAGS);
     let comment = get_env_var(env_vars::PREVIEW_COMMENT);
     let column = display::terminal::parse_env_var(env_vars::PREVIEW_COLUMN);

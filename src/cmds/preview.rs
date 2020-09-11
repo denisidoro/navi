@@ -18,12 +18,7 @@ pub fn main(line: &str) -> Result<(), Error> {
     process::exit(0)
 }
 
-
 pub fn main_var(selection: &str, query: &str, variable: &str) -> Result<(), Error> {
-    display::terminal::preview_var(
-        selection,
-        query,
-        variable,
-    );
+    display::terminal::preview_var(selection, query, variable);
     process::exit(0)
 }
