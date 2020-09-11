@@ -47,7 +47,7 @@ Usage
 
 There are 3 ways to use **navi**:
 
-- by typing `navi` in the terminal and hitting \<Enter>
+- by typing `navi` in the terminal
    - pros: you have access to all possible subcommands and flags
 - by invoking it via a [shell widget](docs/installation.md#installing-the-shell-widget) in the terminal
    - pros: the shell history is correctly populated (i.e. with the actual command you ran instead of `navi`) and you can edit the command as you wish before executing it
