@@ -56,22 +56,27 @@ fn extract_from_selections(raw_snippet: &str, is_single: bool) -> Result<(&str, 
 
 fn prompt_with_suggestions(variable_name: &str, config: &Config, suggestion: Option<&Suggestion>, variable_count: usize) -> Result<String, Error> {
     let (suggestions, opts, has_suggestion) = if let Some(s) = suggestion {
-    let (suggestion_command, suggestion_opts) = s;
+        let (suggestion_command, suggestion_opts) = s;
 
-    let child = Command::new("bash")
-        .stdout(Stdio::piped())
-        .arg("-c")
-        .arg(&suggestion_command)
-        .spawn()
-        .map_err(|e| BashSpawnError::new(suggestion_command, e))?;
+        let child = Command::new("bash")
+            .stdout(Stdio::piped())
+            .arg("-c")
+            .arg(&suggestion_command)
+            .spawn()
+            .map_err(|e| BashSpawnError::new(suggestion_command, e))?;
 
-       let text = String::from_utf8(child.wait_with_output().context("Failed to wait and collect output from bash")?.stdout)
-        .context("Suggestions are invalid utf8")?;
+        let text = String::from_utf8(child.wait_with_output().context("Failed to wait and collect output from bash")?.stdout)
+            .context("Suggestions are invalid utf8")?;
 
-(text, suggestion_opts, true)
+        (text, suggestion_opts, true)
     } else {
-("
-".to_string(), &None, false)
+        (
+            "
+"
+            .to_string(),
+            &None,
+            false,
+        )
     };
 
     let mut opts = FinderOpts {
@@ -91,9 +96,9 @@ NAVIEOF
         ..opts.clone().unwrap_or_default()
     };
 
-    if ! has_suggestion {
+    if !has_suggestion {
         opts.suggestion_type = SuggestionType::Disabled;
-};
+    };
 
     let (output, _) = config
         .finder
@@ -123,12 +128,12 @@ fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: Variable
 
         let value = if let Ok(e) = env_value {
             e
-        } else if let Some(suggestion) = variables.get_suggestion(&tags, &variable_name){
-                    let mut new_suggestion = suggestion.clone();
-                    new_suggestion.0 = replace_variables_from_snippet(&new_suggestion.0, tags, variables.clone(), config)?;
-                    prompt_with_suggestions(variable_name, &config, Some(&new_suggestion), variable_count)?
+        } else if let Some(suggestion) = variables.get_suggestion(&tags, &variable_name) {
+            let mut new_suggestion = suggestion.clone();
+            new_suggestion.0 = replace_variables_from_snippet(&new_suggestion.0, tags, variables.clone(), config)?;
+            prompt_with_suggestions(variable_name, &config, Some(&new_suggestion), variable_count)?
         } else {
-                    prompt_with_suggestions(variable_name, &config, None, variable_count)?
+            prompt_with_suggestions(variable_name, &config, None, variable_count)?
         };
 
         env::set_var(variable_name, &value);
