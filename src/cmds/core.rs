@@ -59,10 +59,13 @@ fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Sugge
     env::remove_var(env_vars::PREVIEW_DELIMITER);
     env::remove_var(env_vars::PREVIEW_MAP);
 
+    let mut extra_preview = None;
+
     let (suggestions, opts) = if let Some(s) = suggestion {
         let (suggestion_command, suggestion_opts) = s;
 
         if let Some(sopts) = suggestion_opts {
+            dbg!(sopts);
             if let Some(c) = &sopts.column {
                 env::set_var(env_vars::PREVIEW_COLUMN, c.to_string());
             }
@@ -71,6 +74,9 @@ fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Sugge
             }
             if let Some(m) = &sopts.map {
                 env::set_var(env_vars::PREVIEW_MAP, m);
+            }
+            if let Some(p) = &sopts.preview {
+                extra_preview = Some(format!(";echo;{}", p));
             }
         }
 
@@ -89,7 +95,7 @@ fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Sugge
         ('\n'.to_string(), &None)
     };
 
-    let mut opts = FinderOpts {
+     let mut opts = FinderOpts {
         autoselect: !config.get_no_autoselect(),
         overrides: config.fzf_overrides_var.clone(),
         preview: Some(format!(
@@ -99,12 +105,16 @@ NAVIEOF
 )" "$(cat <<NAVIEOF
 {{q}}
 NAVIEOF
-)" "{}""#,
-            variable_name
+)" "{}"{}"#,
+            variable_name,
+            extra_preview.clone().unwrap_or_default()
         )),
-        preview_window: Some(format!("up:{}", variable_count + 3)),
         ..opts.clone().unwrap_or_default()
     };
+
+    if opts.preview_window.is_none() {
+        opts.preview_window = Some(if extra_preview.is_none() { format!("up:{}", variable_count + 3) } else { "right:50%".to_string() });
+    }
 
     if suggestion.is_none() {
         opts.suggestion_type = SuggestionType::Disabled;
