@@ -119,9 +119,9 @@ impl Finder for FinderChoice {
             _ => 2,
         };
 
-        let bindings = if opts.suggestion_type == SuggestionType::MultipleSelections{
-                ",ctrl-r:toggle-all"
-        } else { 
+        let bindings = if opts.suggestion_type == SuggestionType::MultipleSelections {
+            ",ctrl-r:toggle-all"
+        } else {
             ""
         };
 
