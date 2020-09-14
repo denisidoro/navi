@@ -6,7 +6,6 @@ use anyhow::Context;
 use anyhow::Error;
 use std::fs;
 use std::io::Write;
-use walkdir::WalkDir;
 
 pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
     let repo_path_str = format!("{}/featured", filesystem::tmp_path_str()?);
@@ -39,9 +38,8 @@ pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
 pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
     let (actual_uri, user, repo) = git::meta(uri.as_str());
 
-    let cheat_path_str = filesystem::pathbuf_to_string(filesystem::cheat_pathbuf()?)?;
+    let cheat_path_str = filesystem::pathbuf_to_string(filesystem::default_cheat_pathbuf()?)?;
     let tmp_path_str = filesystem::tmp_path_str()?;
-    let tmp_path_str_with_trailing_slash = format!("{}/", &tmp_path_str);
 
     let _ = filesystem::remove_dir(&tmp_path_str);
     filesystem::create_dir(&tmp_path_str)?;
@@ -50,13 +48,7 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
 
     git::shallow_clone(actual_uri.as_str(), &tmp_path_str).with_context(|| format!("Failed to clone `{}`", actual_uri))?;
 
-    let all_files = WalkDir::new(&tmp_path_str)
-        .into_iter()
-        .filter_map(|e| e.ok())
-        .map(|e| e.path().to_str().unwrap_or("").to_string())
-        .filter(|e| e.ends_with(".cheat"))
-        .map(|e| e.replace(&tmp_path_str_with_trailing_slash, ""))
-        .collect::<Vec<String>>()
+    let all_files = filesystem::all_cheat_files(&tmp_path_str)
         .join("\n");
 
     let opts = FinderOpts {

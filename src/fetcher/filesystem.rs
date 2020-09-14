@@ -1,12 +1,24 @@
-use crate::common::filesystem::{pathbuf_to_string, read_lines, InvalidPath, UnreadableDir};
+use crate::common::filesystem::{pathbuf_to_string, read_lines};
 use crate::display::Writer;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
-use anyhow::{Context, Error};
+use anyhow::Error;
 use directories_next::BaseDirs;
 use std::collections::HashSet;
-use std::fs;
 use std::path::PathBuf;
+use walkdir::WalkDir;
+
+pub fn all_cheat_files(path_str: &str) -> Vec<String> {
+    let path_str_with_trailing_slash = format!("{}/", &path_str);
+
+    WalkDir::new(&path_str)
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .map(|e| e.path().to_str().unwrap_or("").to_string())
+        .filter(|e| e.ends_with(".cheat"))
+        .map(|e| e.replace(&path_str_with_trailing_slash, ""))
+        .collect::<Vec<String>>()
+}
 
 fn paths_from_path_param<'a>(env_var: &'a str) -> impl Iterator<Item = &'a str> + 'a {
     env_var.split(':').filter(|folder| folder != &"")
@@ -24,7 +36,7 @@ fn read_file(
     parser::read_lines(lines, path, variables, visited_lines, writer, stdin)
 }
 
-pub fn cheat_pathbuf() -> Result<PathBuf, Error> {
+pub fn default_cheat_pathbuf() -> Result<PathBuf, Error> {
     let base_dirs = BaseDirs::new().ok_or_else(|| anyhow!("Unable to get base dirs"))?;
 
     let mut pathbuf = PathBuf::from(base_dirs.data_dir());
@@ -33,28 +45,12 @@ pub fn cheat_pathbuf() -> Result<PathBuf, Error> {
     Ok(pathbuf)
 }
 
-fn cheat_paths_from_config_dir() -> Result<String, Error> {
-    cheat_pathbuf()
-        .and_then(pathbuf_to_string)
-        .and_then(|path| {
-            fs::read_dir(path.clone())
-                .map_err(|e| UnreadableDir::new(path.clone(), e).into())
-                .map(|entries| (path, entries))
-        })
-        .and_then(|(path, dir_entries)| {
-            let mut paths_str = String::from("");
-            for entry in dir_entries {
-                let path = entry.map_err(|e| UnreadableDir::new(path.clone(), e))?;
-                paths_str.push_str(path.path().into_os_string().to_str().ok_or_else(|| InvalidPath(path.path()))?);
-                paths_str.push_str(":");
-            }
-            Ok(paths_str)
-        })
-}
-
 pub fn cheat_paths(path: Option<String>) -> Result<String, Error> {
-    path.ok_or_else(|| anyhow!("No cheat paths"))
-        .or_else(|_| cheat_paths_from_config_dir().context("No directory for cheats in user data directory"))
+    if let Some(p) = path {
+        Ok(p)
+    } else {
+pathbuf_to_string(default_cheat_pathbuf()?)
+}
 }
 
 pub fn read_all(path: Option<String>, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
@@ -62,10 +58,6 @@ pub fn read_all(path: Option<String>, stdin: &mut std::process::ChildStdin, writ
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
     let paths = cheat_paths(path);
-
-    // TODO: remove
-    // read_lines(tldr::markdown_lines(), "markdown", &mut variables, &mut visited_lines, writer, stdin)?;
-    // return Ok(variables);
 
     if paths.is_err() {
         return Ok(None);
@@ -75,20 +67,13 @@ pub fn read_all(path: Option<String>, stdin: &mut std::process::ChildStdin, writ
     let folders = paths_from_path_param(&paths);
 
     for folder in folders {
-        if let Ok(dir_entries) = fs::read_dir(folder) {
-            for entry in dir_entries {
-                if entry.is_ok() {
-                    let path = entry.expect("Impossible to read an invalid entry").path();
-                    let path_str = path.to_str().ok_or_else(|| InvalidPath(path.to_path_buf()))?;
-                    if path_str.ends_with(".cheat")
-                        && read_file(path_str, &mut variables, &mut visited_lines, writer, stdin).is_ok()
-                        && !found_something
-                    {
-                        found_something = true;
-                    }
-                }
-            }
-        }
+for file in all_cheat_files(folder) {
+    let full_filename = format!("{}/{}", &folder, &file);
+                        if read_file(&full_filename, &mut variables, &mut visited_lines, writer, stdin).is_ok() && !found_something {
+                            found_something = true
+                        }
+}
+
     }
 
     if !found_something {

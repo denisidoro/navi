@@ -18,19 +18,6 @@ pub struct UnreadableDir {
     source: anyhow::Error,
 }
 
-impl UnreadableDir {
-    pub fn new<DirT, SourceError>(dir: DirT, source: SourceError) -> Self
-    where
-        DirT: Into<PathBuf>,
-        SourceError: std::error::Error + Sync + Send + 'static,
-    {
-        UnreadableDir {
-            dir: dir.into(),
-            source: source.into(),
-        }
-    }
-}
-
 pub fn read_lines<P>(filename: P) -> Result<impl Iterator<Item = Result<String, Error>>, Error>
 where
     P: AsRef<Path> + Display + Copy,
