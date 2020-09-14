@@ -74,7 +74,7 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
         })
         .context("Failed to get cheatsheet files from finder")?;
 
-        let to_folder = format!("{}/{}__{}", cheat_path_str, user, repo).replace("./", "");
+    let to_folder = format!("{}/{}__{}", cheat_path_str, user, repo).replace("./", "");
 
     for f in files.split('\n') {
         let from = format!("{}/{}", tmp_path_str, f).replace("./", "");
