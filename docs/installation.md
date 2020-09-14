@@ -78,10 +78,10 @@ Feel free to be the maintainer of **navi** for any package manager you'd like!
 If you want to use the shell widget, add this line to your `.bashrc`-like file:
 ```sh
 # bash
-source <(echo "$(navi widget bash)")
+eval "$(navi widget bash)"
 
 # zsh
-source <(echo "$(navi widget zsh)")
+eval "$(navi widget zsh)"
 
 # fish
 navi widget fish | source

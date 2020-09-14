@@ -95,7 +95,7 @@ fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Sugge
         ('\n'.to_string(), &None)
     };
 
-    let mut opts = FinderOpts {
+     let mut opts = FinderOpts {
         autoselect: !config.get_no_autoselect(),
         overrides: config.fzf_overrides_var.clone(),
         preview: Some(format!(
