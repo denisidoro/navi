@@ -59,6 +59,8 @@ fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Sugge
     env::remove_var(env_vars::PREVIEW_DELIMITER);
     env::remove_var(env_vars::PREVIEW_MAP);
 
+    let mut extra_preview = None;
+
     let (suggestions, opts) = if let Some(s) = suggestion {
         let (suggestion_command, suggestion_opts) = s;
 
@@ -71,6 +73,9 @@ fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Sugge
             }
             if let Some(m) = &sopts.map {
                 env::set_var(env_vars::PREVIEW_MAP, m);
+            }
+            if let Some(p) = &sopts.preview {
+                extra_preview = Some(format!(";echo;{}", p));
             }
         }
 
@@ -99,12 +104,20 @@ NAVIEOF
 )" "$(cat <<NAVIEOF
 {{q}}
 NAVIEOF
-)" "{}""#,
-            variable_name
+)" "{}"{}"#,
+            variable_name,
+            extra_preview.clone().unwrap_or_default()
         )),
-        preview_window: Some(format!("up:{}", variable_count + 3)),
         ..opts.clone().unwrap_or_default()
     };
+
+    if opts.preview_window.is_none() {
+        opts.preview_window = Some(if extra_preview.is_none() {
+            format!("up:{}", variable_count + 3)
+        } else {
+            "right:50%".to_string()
+        });
+    }
 
     if suggestion.is_none() {
         opts.suggestion_type = SuggestionType::Disabled;
