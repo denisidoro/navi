@@ -44,7 +44,7 @@ If `brew` isn't available, you can check [alternative install instructions](docs
 Usage
 -----
 
-There are 3 ways to use **navi**:
+There are multiple ways to use **navi**:
 
 - by typing `navi` in the terminal
    - pros: you have access to all possible subcommands and flags
