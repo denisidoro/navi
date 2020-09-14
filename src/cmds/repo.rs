@@ -62,7 +62,7 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
     let opts = FinderOpts {
         suggestion_type: SuggestionType::MultipleSelections,
         preview: Some(format!("cat '{}/{{}}'", tmp_path_str)),
-        header: Some("Select the cheatsheets you want to import with <TAB> then hit <Enter>".to_string()),
+        header: Some("Select the cheatsheets you want to import with <TAB> then hit <Enter>\nUse Ctrl-R for (de)selecting all".to_string()),
         preview_window: Some("right:30%".to_string()),
         ..Default::default()
     };
@@ -74,20 +74,21 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
         })
         .context("Failed to get cheatsheet files from finder")?;
 
+        let to_folder = format!("{}/{}__{}", cheat_path_str, user, repo).replace("./", "");
+
     for f in files.split('\n') {
         let from = format!("{}/{}", tmp_path_str, f).replace("./", "");
-        let to_folder = format!("{}/{}__{}", cheat_path_str, user, repo).replace("./", "");
         let filename = f.replace("./", "").replace("/", "__");
-        let to = format!("{}/{}", to_folder, filename);
-        fs::create_dir_all(to_folder).unwrap_or(());
+        let to = format!("{}/{}", &to_folder, filename);
+        fs::create_dir_all(&to_folder).unwrap_or(());
         fs::copy(&from, &to).with_context(|| format!("Failed to copy `{}` to `{}`", from, to))?;
     }
 
     filesystem::remove_dir(&tmp_path_str)?;
 
     eprintln!(
-        "The following .cheat files were imported successfully:\n{}\n\nThey are now located at {}\n\nPlease run navi again to check the results.",
-        files, cheat_path_str
+        "The following .cheat files were imported successfully:\n{}\n\nThey are now located at {}/{}",
+        files, cheat_path_str, to_folder
     );
 
     Ok(())

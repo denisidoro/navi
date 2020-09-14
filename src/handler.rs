@@ -19,9 +19,13 @@ pub fn handle_config(config: Config) -> Result<(), Error> {
 
             Repo { cmd } => match cmd {
                 RepoCommand::Add { uri } => {
-                    cmds::repo::add(uri.clone(), &config.finder).with_context(|| format!("Failed to import cheatsheets from `{}`", uri))
+                    cmds::repo::add(uri.clone(), &config.finder).with_context(|| format!("Failed to import cheatsheets from `{}`", uri))?;
+                    cmds::core::main(config)
                 }
-                RepoCommand::Browse => cmds::repo::browse(&config.finder).context("Failed to browse featured cheatsheets"),
+                RepoCommand::Browse => {
+                    cmds::repo::browse(&config.finder).context("Failed to browse featured cheatsheets")?;
+                    cmds::core::main(config)
+                }
             },
 
             Alfred { cmd } => match cmd {
