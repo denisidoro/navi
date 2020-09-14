@@ -22,7 +22,6 @@ Table of contents
    * [Cheatsheet repositories](#cheatsheet-repositories)
    * [Cheatsheet syntax](#cheatsheet-syntax)
    * [Customization](#customization)
-   * [Using it for shell scripting](#using-it-for-shell-scripting)
    * [More info](#more-info)
    * [Trying out online](#trying-out-online)
    * [Similar tools](#similar-tools)
@@ -51,6 +50,7 @@ There are 3 ways to use **navi**:
    - pros: you have access to all possible subcommands and flags
 - by invoking it via a [shell widget](docs/installation.md#installing-the-shell-widget) in the terminal
    - pros: the shell history is correctly populated (i.e. with the actual command you ran instead of `navi`) and you can edit the command as you wish before executing it
+- as a [shell scripting tool](docs/shell-scripting.md)
 - as an [Alfred workflow](docs/alfred.md)
 
 Cheatsheet repositories
@@ -87,23 +87,6 @@ You can:
 - [change colors](docs/customization.md#changing-colors)
 - [resize columns](docs/customization.md#resizing-columns)
 - [change how search is performed](docs/customization.md#overriding-fzf-options)
-
-Using it for shell scripting
-----------------------------
-
-Let's say you want to write a bash script that, among other things, asks the user to write the name of a git branch that should be checked out. 
-
-If you already have the [cheatsheet above](#cheatsheet-syntax), then you could write the following in your script:
-```sh
-navi --query "change branch" --best-match
-```
-
-**navi** will ask the user to fill all arguments needed. 
-
-If you want to set the `<branch>` beforehand in your script, you could then write:
-```sh
-branch="master" navi --query "change branch" --best-match
-```
 
 More info
 ---------
