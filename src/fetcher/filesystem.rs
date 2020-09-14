@@ -49,8 +49,8 @@ pub fn cheat_paths(path: Option<String>) -> Result<String, Error> {
     if let Some(p) = path {
         Ok(p)
     } else {
-pathbuf_to_string(default_cheat_pathbuf()?)
-}
+        pathbuf_to_string(default_cheat_pathbuf()?)
+    }
 }
 
 pub fn read_all(path: Option<String>, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
@@ -67,13 +67,12 @@ pub fn read_all(path: Option<String>, stdin: &mut std::process::ChildStdin, writ
     let folders = paths_from_path_param(&paths);
 
     for folder in folders {
-for file in all_cheat_files(folder) {
-    let full_filename = format!("{}/{}", &folder, &file);
-                        if read_file(&full_filename, &mut variables, &mut visited_lines, writer, stdin).is_ok() && !found_something {
-                            found_something = true
-                        }
-}
-
+        for file in all_cheat_files(folder) {
+            let full_filename = format!("{}/{}", &folder, &file);
+            if read_file(&full_filename, &mut variables, &mut visited_lines, writer, stdin).is_ok() && !found_something {
+                found_something = true
+            }
+        }
     }
 
     if !found_something {

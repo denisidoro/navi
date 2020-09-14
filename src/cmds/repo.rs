@@ -48,8 +48,7 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
 
     git::shallow_clone(actual_uri.as_str(), &tmp_path_str).with_context(|| format!("Failed to clone `{}`", actual_uri))?;
 
-    let all_files = filesystem::all_cheat_files(&tmp_path_str)
-        .join("\n");
+    let all_files = filesystem::all_cheat_files(&tmp_path_str).join("\n");
 
     let opts = FinderOpts {
         suggestion_type: SuggestionType::MultipleSelections,
