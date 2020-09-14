@@ -119,6 +119,12 @@ impl Finder for FinderChoice {
             _ => 2,
         };
 
+        let bindings = if opts.suggestion_type == SuggestionType::MultipleSelections{
+                ",ctrl-r:toggle-all"
+        } else { 
+            ""
+        };
+
         command.args(&[
             "--preview-window",
             format!("up:{}", preview_height).as_str(),
@@ -128,7 +134,7 @@ impl Finder for FinderChoice {
             display::DELIMITER.to_string().as_str(),
             "--ansi",
             "--bind",
-            "ctrl-j:down,ctrl-k:up",
+            format!("ctrl-j:down,ctrl-k:up{}", bindings).as_str(),
             "--exact",
         ]);
 
