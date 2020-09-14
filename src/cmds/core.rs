@@ -65,7 +65,6 @@ fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Sugge
         let (suggestion_command, suggestion_opts) = s;
 
         if let Some(sopts) = suggestion_opts {
-            dbg!(sopts);
             if let Some(c) = &sopts.column {
                 env::set_var(env_vars::PREVIEW_COLUMN, c.to_string());
             }
