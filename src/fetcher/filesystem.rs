@@ -3,6 +3,7 @@ use crate::display::Writer;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
 use anyhow::{Context, Error};
+use directories_next::BaseDirs;
 use std::collections::HashSet;
 use std::fs;
 use std::path::PathBuf;
@@ -24,13 +25,12 @@ fn read_file(
 }
 
 pub fn cheat_pathbuf() -> Result<PathBuf, Error> {
-    dirs::data_dir()
-        .map(|mut dir| {
-            dir.push("navi");
-            dir.push("cheats");
-            dir
-        })
-        .ok_or_else(|| anyhow!("Unable to acquire user data directory for cheatsheets."))
+    let base_dirs = BaseDirs::new().ok_or_else(|| anyhow!("Unable to get base dirs"))?;
+
+    let mut pathbuf = PathBuf::from(base_dirs.data_dir());
+    pathbuf.push("navi");
+    pathbuf.push("cheats");
+    Ok(pathbuf)
 }
 
 fn cheat_paths_from_config_dir() -> Result<String, Error> {
