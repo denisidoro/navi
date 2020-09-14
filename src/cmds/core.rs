@@ -95,7 +95,7 @@ fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Sugge
         ('\n'.to_string(), &None)
     };
 
-     let mut opts = FinderOpts {
+    let mut opts = FinderOpts {
         autoselect: !config.get_no_autoselect(),
         overrides: config.fzf_overrides_var.clone(),
         preview: Some(format!(
@@ -113,7 +113,11 @@ NAVIEOF
     };
 
     if opts.preview_window.is_none() {
-        opts.preview_window = Some(if extra_preview.is_none() { format!("up:{}", variable_count + 3) } else { "right:50%".to_string() });
+        opts.preview_window = Some(if extra_preview.is_none() {
+            format!("up:{}", variable_count + 3)
+        } else {
+            "right:50%".to_string()
+        });
     }
 
     if suggestion.is_none() {
