@@ -57,7 +57,7 @@ _navi_widget() {
 }
 
 _navi_cheatspath() {
-   _navi info widget-path \
+   _navi info cheats-path \
       | grep -q "/cheats"
 }
 
