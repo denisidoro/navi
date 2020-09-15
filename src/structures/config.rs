@@ -1,8 +1,8 @@
+use crate::cmds::func::Func;
+use crate::cmds::info::Info;
+use crate::common::shell::Shell;
 use crate::env_vars;
 use crate::finder::FinderChoice;
-use crate::common::shell::Shell;
-use crate::cmds::info::Info;
-use crate::cmds::func::Func;
 use anyhow::Error;
 use structopt::{clap::AppSettings, StructOpt};
 

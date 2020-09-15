@@ -1,6 +1,6 @@
-use anyhow::Error;
-use crate::filesystem::default_cheat_pathbuf;
 use crate::common::filesystem::pathbuf_to_string;
+use crate::filesystem::default_cheat_pathbuf;
+use anyhow::Error;
 
 #[derive(Debug)]
 pub enum Info {

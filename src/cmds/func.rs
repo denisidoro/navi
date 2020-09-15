@@ -10,7 +10,7 @@ pub enum Func {
 }
 
 pub fn main(func: &Func, args: Vec<String>) -> Result<(), Error> {
-    match func{
+    match func {
         Func::UrlOpen => url::open(args),
         Func::Welcome => handler::handle_config(config::config_from_iter("navi --path /tmp/navi/irrelevant".split(' ').collect())),
     }

@@ -5,7 +5,7 @@ use thiserror::Error;
 pub enum Shell {
     Bash,
     Zsh,
-    Fish
+    Fish,
 }
 
 #[derive(Error, Debug)]

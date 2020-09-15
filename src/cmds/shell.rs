@@ -1,5 +1,5 @@
-use anyhow::Error;
 use crate::common::shell::Shell;
+use anyhow::Error;
 
 pub fn main(shell: &Shell) -> Result<(), Error> {
     let content = match shell {
