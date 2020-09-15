@@ -7,7 +7,7 @@ However, it should be trivial to create aliases using **navi** + a few conventio
 
 For example, suppose you decide to end some of your commands with `:: <some_alias>`:
 
-```
+```bash
 % aliases
 
 # This is one command :: el
