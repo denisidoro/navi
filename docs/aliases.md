@@ -32,7 +32,7 @@ If you don't want to use these conventions, you can even add full comments in yo
 
 ```bash
 navibestmatch() {
-    navi --query ":: $1" --best-match
+    navi --query "$1" --best-match
 }
 
 alias el="navibastmatch 'This is one command'"
