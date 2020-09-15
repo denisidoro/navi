@@ -35,6 +35,6 @@ navibestmatch() {
     navi --query "$1" --best-match
 }
 
-alias el="navibastmatch 'This is one command'"
-alias ef="navibastmatch 'This is another command'"
+alias el="navibestmatch 'This is one command'"
+alias ef="navibestmatch 'This is another command'"
 ```
