@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 source "${NAVI_HOME}/tests/core.bash"
@@ -67,10 +68,11 @@ _integration() {
    local -r bak_cheats_path="$(mktemp -d "${cheats_path}_XXXXX")"
 
    pkill -f tmux 2>/dev/null || true
+   mkdir -p "$cheats_path" 2>/dev/null || true
    rm "$log_file" 2>/dev/null || true
    mv "$cheats_path" "$bak_cheats_path" 2>/dev/null || true
 
-   tmux new-session -d -s ci "export NAVI_TEST_PATH='${cheats_path}'; $0 _navi |& tee '${log_file}'"
+   tmux new-session -d -s ci "export NAVI_TEST_PATH='${cheats_path}'; ${NAVI_HOME}/tests/run _navi |& tee '${log_file}'"
    sleep 5
    tmux send-key -t ci download; tmux send-key -t ci Enter
    sleep 1
