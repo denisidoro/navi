@@ -3,7 +3,7 @@ Aliases
 
 **navi** doesn't have support for aliases as first-class citizens at the moment.
 
-However, it should be trivial to create aliases using **navi** + a few conventions.
+However, it is trivial to create aliases using **navi** + a few conventions.
 
 For example, suppose you decide to end some of your commands with `:: <some_alias>`:
 
