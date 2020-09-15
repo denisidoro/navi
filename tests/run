@@ -4,11 +4,11 @@ export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 source "${NAVI_HOME}/tests/core.bash"
 
 TEST_CHEAT_PATH="${NAVI_HOME}/tests/no_prompt_cheats"
+NAVI_EXE="${NAVI_HOME}/target/debug/navi"
 
 _navi() {
    stty sane || true
-   local -r navi="./target/debug/navi"
-   RUST_BACKTRACE=1 NAVI_PATH="${NAVI_TEST_PATH:-$TEST_CHEAT_PATH}" "$navi" "$@"
+   RUST_BACKTRACE=1 NAVI_PATH="${NAVI_TEST_PATH:-$TEST_CHEAT_PATH}" "$NAVI_EXE" "$@"
 }
 
 _navi_cases() {
@@ -64,7 +64,7 @@ _navi_cheatspath() {
 _integration() {
    local -r log_file="${NAVI_HOME}/target/ci.log"
 
-   tmux new-session -d -s ci "export NAVI_TEST_PATH='$(navi info cheats-path)'; $0 _navi repo browse |& tee '${log_file}'"
+   tmux new-session -d -s ci "export NAVI_TEST_PATH='$($NAVI_EXE info cheats-path)'; $0 _navi repo browse |& tee '${log_file}'"
    sleep 5
    tmux send-key -t ci denisidoro/cheats; tmux send-key -t ci Enter
    sleep 1
