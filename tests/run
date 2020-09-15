@@ -71,16 +71,20 @@ _integration() {
    rm "$log_file" 2>/dev/null || true
    mv "$cheats_path" "$bak_cheats_path" 2>/dev/null || true
 
+   echoerr "Starting sessions..."
    tmux new-session -d -s ci "export NAVI_TEST_PATH='${cheats_path}'; ${NAVI_HOME}/tests/run _navi |& tee '${log_file}'"
    sleep 5
    if ! tmux list-sessions; then
       cat "$log_file"
       return 1
    fi
+   echoerr "Downloading default cheatsheets..."
    tmux send-key -t ci "download default"; tmux send-key -t ci "Enter"
    sleep 1
+   echoerr "Confirming import..."
    tmux send-key -t ci "y"; tmux send-key -t ci "Enter"
    sleep 6
+   echoerr "Running snippet..."
    tmux send-key -t ci "pwd"
    sleep 1  
    tmux send-key -t ci "Enter"
