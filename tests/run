@@ -8,7 +8,7 @@ TEST_CHEAT_PATH="${NAVI_HOME}/tests/no_prompt_cheats"
 _navi() {
    stty sane || true
    local -r navi="./target/debug/navi"
-   RUST_BACKTRACE=1 NAVI_PATH="$TEST_CHEAT_PATH" "$navi" "$@"
+   RUST_BACKTRACE=1 NAVI_PATH="${NAVI_TEST_PATH:-TEST_CHEAT_PATH}" "$navi" "$@"
 }
 
 _navi_cases() {
@@ -41,24 +41,6 @@ _get_tests() {
    fi
 }
 
-if ! command_exists fzf; then
-   export PATH="$PATH:$HOME/.fzf/bin"
-fi
-
-cd "$NAVI_HOME"
-
-filter="${1:-}"
-
-test::set_suite "cases"
-ifs="$IFS"
-IFS=$'\n'
-for i in $(_get_tests "$filter"); do
-   IFS="$ifs"
-   query="$(echo "$i" | cut -d'|' -f1)"
-   expected="$(echo "$i" | cut -d'|' -f2)"
-   test::run "$query" _navi_cases_test "$query" "$expected"
-done
-
 _navi_tldr() {
    _navi --tldr docker --query ps --print --best-match \
       | test::equals "docker ps"
@@ -79,22 +61,67 @@ _navi_cheatspath() {
       | grep -q "/cheats"
 }
 
-test::set_suite "tldr"
-test::run "$query" _navi_tldr
+_integration() {
+   local -r log_file="${NAVI_HOME}/target/ci.log"
 
-test::set_suite "cheatsh"
-test::run "$query" _navi_cheatsh
+   tmux new-session -d -s ci "export NAVI_TEST_PATH='$(navi info cheats-path)'; $0 _navi repo browse |& tee '${log_file}'"
+   sleep 5
+   tmux send-key -t ci denisidoro/cheats; tmux send-key -t ci Enter
+   sleep 1
+   tmux send-key -t ci y; tmux send-key -t ci Enter
+   sleep 6
+   tmux send-key -t ci pwd
+   sleep 1
+   tmux send-key -t ci Enter
 
-test::set_suite "widget - bash"
-test::run "$query" _navi_widget "bash"
+   sleep 2
+   cat "$log_file" | tail -n10 | grep -q "/navi"
+}
 
-test::set_suite "widget - zsh"
-test::run "$query" _navi_widget "zsh"
+if ! command_exists fzf; then
+   export PATH="$PATH:$HOME/.fzf/bin"
+fi
 
-test::set_suite "widget - fish"
-test::run "$query" _navi_widget "fish"
+cd "$NAVI_HOME"
 
-test::set_suite "info - cheats-path"
-test::run "$query" _navi_cheatspath
+filter="${1:-}"
+
+# TODO: remove this
+if [[ $filter == "_navi" ]]; then
+   shift
+   _navi "$@"
+   exit 0
+fi
+
+test::set_suite "cases"
+ifs="$IFS"
+IFS=$'\n'
+for i in $(_get_tests "$filter"); do
+   IFS="$ifs"
+   query="$(echo "$i" | cut -d'|' -f1)"
+   expected="$(echo "$i" | cut -d'|' -f2)"
+   # test::run "$query" _navi_cases_test "$query" "$expected"
+done
+
+# test::set_suite "tldr"
+# test::run "$query" _navi_tldr
+# 
+# test::set_suite "cheatsh"
+# test::run "$query" _navi_cheatsh
+# 
+# test::set_suite "widget - bash"
+# test::run "$query" _navi_widget "bash"
+# 
+# test::set_suite "widget - zsh"
+# test::run "$query" _navi_widget "zsh"
+# 
+# test::set_suite "widget - fish"
+# test::run "$query" _navi_widget "fish"
+# 
+# test::set_suite "info - cheats-path"
+# test::run "$query" _navi_cheatspath
+# 
+test::set_suite "integration"
+test::run "$query" _integration
 
 test::finish
