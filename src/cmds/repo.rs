@@ -35,7 +35,29 @@ pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
     add(repo, finder)
 }
 
+pub fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool, Error> {
+    let opts = FinderOpts {
+        column: Some(1),
+        header: Some("Do you want to import all files from this repo?".to_string()),
+        ..Default::default()
+    };
+
+    let (response, _) = finder
+        .call(opts, |stdin| {
+            stdin.write_all("Yes\nNo".as_bytes()).context("Unable to writer alternatives")?;
+            Ok(None)
+        })
+        .context("Unable to get response")?;
+
+    if response.to_lowercase().starts_with("y") {
+        Ok(true)
+    } else {
+        Ok(false)
+    }
+}
+
 pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
+    let should_import_all = ask_if_should_import_all(finder).unwrap_or(false);
     let (actual_uri, user, repo) = git::meta(uri.as_str());
 
     let cheat_path_str = filesystem::pathbuf_to_string(filesystem::default_cheat_pathbuf()?)?;
@@ -58,12 +80,17 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
         ..Default::default()
     };
 
-    let (files, _) = finder
-        .call(opts, |stdin| {
-            stdin.write_all(all_files.as_bytes()).context("Unable to prompt cheats to import")?;
-            Ok(None)
-        })
-        .context("Failed to get cheatsheet files from finder")?;
+    let files = if should_import_all {
+        all_files
+    } else {
+        let (files, _) = finder
+            .call(opts, |stdin| {
+                stdin.write_all(all_files.as_bytes()).context("Unable to prompt cheats to import")?;
+                Ok(None)
+            })
+            .context("Failed to get cheatsheet files from finder")?;
+        files
+    };
 
     let to_folder = format!("{}/{}__{}", cheat_path_str, user, repo).replace("./", "");
 
