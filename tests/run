@@ -8,7 +8,7 @@ TEST_CHEAT_PATH="${NAVI_HOME}/tests/no_prompt_cheats"
 _navi() {
    stty sane || true
    local -r navi="./target/debug/navi"
-   RUST_BACKTRACE=1 NAVI_PATH="${NAVI_TEST_PATH:-TEST_CHEAT_PATH}" "$navi" "$@"
+   RUST_BACKTRACE=1 NAVI_PATH="${NAVI_TEST_PATH:-$TEST_CHEAT_PATH}" "$navi" "$@"
 }
 
 _navi_cases() {
