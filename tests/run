@@ -4,8 +4,15 @@ set -euo pipefail
 export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 source "${NAVI_HOME}/tests/core.bash"
 
-TEST_CHEAT_PATH="${NAVI_HOME}/tests/no_prompt_cheats"
-NAVI_EXE="${NAVI_HOME}/target/debug/navi"
+export TEST_CHEAT_PATH="${NAVI_HOME}/tests/no_prompt_cheats"
+export NAVI_EXE="${NAVI_HOME}/target/debug/navi"
+
+if ! command_exists navi; then
+   navi() {
+      "$NAVI_EXE" "$@"
+   }
+   export -f navi
+fi
 
 _navi() {
    stty sane || true
@@ -62,21 +69,26 @@ _navi_cheatspath() {
       | grep -q "/cheats"
 }
 
+_kill_tmux() {
+   pkill -f tmux 2>/dev/null || true
+}
+
 _assert_tmux() {
    local -r log_file="$1"
    local -r sessions="$(tmux list-sessions)"
    if [ -z "$sessions" ]; then
+      _kill_tmux
       cat "$log_file"
       return 1
    fi
 }
 
 _integration() {
+   _kill_tmux
    local -r log_file="${NAVI_HOME}/target/ci.log"
    local -r cheats_path="$($NAVI_EXE info cheats-path)"
    mkdir -p "$cheats_path" 2>/dev/null || true
    local -r bak_cheats_path="$(mktemp -d "${cheats_path}_XXXXX")"
-   pkill -f tmux 2>/dev/null || true
    rm "$log_file" 2>/dev/null || true
    mv "$cheats_path" "$bak_cheats_path" 2>/dev/null || true
 
