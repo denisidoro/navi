@@ -63,15 +63,18 @@ _navi_cheatspath() {
 
 _integration() {
    local -r log_file="${NAVI_HOME}/target/ci.log"
+   local -r cheats_path="$($NAVI_EXE info cheats-path)"
 
-   tmux new-session -d -s ci "export NAVI_TEST_PATH='$($NAVI_EXE info cheats-path)'; $0 _navi repo browse |& tee '${log_file}'"
+   mv "$cheats_path" "$cheats_path_bak" 2>/dev/null || true
+
+   tmux new-session -d -s ci "export NAVI_TEST_PATH='${cheats_path}'; $0 _navi |& tee '${log_file}'"
    sleep 5
-   tmux send-key -t ci denisidoro/cheats; tmux send-key -t ci Enter
+   tmux send-key -t ci download; tmux send-key -t ci Enter
    sleep 1
    tmux send-key -t ci y; tmux send-key -t ci Enter
    sleep 6
    tmux send-key -t ci pwd
-   sleep 1
+   sleep 1  
    tmux send-key -t ci Enter
 
    sleep 2
