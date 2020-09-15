@@ -1,3 +1,6 @@
+use crate::cmds::func::Func;
+use crate::cmds::info::Info;
+use crate::common::shell::Shell;
 use crate::env_vars;
 use crate::finder::FinderChoice;
 use anyhow::Error;
@@ -6,13 +9,36 @@ use structopt::{clap::AppSettings, StructOpt};
 static mut NOTIFIED_DEPRECATION: bool = false;
 
 fn parse_finder(src: &str) -> Result<FinderChoice, Error> {
-    match src {
+    match src.to_lowercase().as_str() {
         "fzf" => Ok(FinderChoice::Fzf),
         "skim" => Ok(FinderChoice::Skim),
         _ => Err(Error::msg(format!("unknown finder '{}'", src))),
     }
 }
 
+fn parse_shell(src: &str) -> Result<Shell, Error> {
+    match src.to_lowercase().as_str() {
+        "bash" => Ok(Shell::Bash),
+        "zsh" => Ok(Shell::Zsh),
+        "fish" => Ok(Shell::Fish),
+        _ => Err(Error::msg(format!("unknown shell '{}'", src))),
+    }
+}
+
+fn parse_func(src: &str) -> Result<Func, Error> {
+    match src.to_lowercase().as_str() {
+        "url::open" => Ok(Func::UrlOpen),
+        "welcome" => Ok(Func::Welcome),
+        _ => Err(Error::msg(format!("unknown shell '{}'", src))),
+    }
+}
+
+fn parse_info(src: &str) -> Result<Info, Error> {
+    match src.to_lowercase().as_str() {
+        "cheats-path" => Ok(Info::CheatsPath),
+        _ => Err(Error::msg(format!("unknown info '{}'", src))),
+    }
+}
 #[derive(Debug, StructOpt)]
 #[structopt(after_help = r#"MORE INFO:
     Please refer to https://github.com/denisidoro/navi
@@ -108,7 +134,8 @@ pub enum Command {
     /// Performs ad-hoc functions provided by navi
     Fn {
         /// Function name (example: "url::open")
-        func: String,
+        #[structopt(parse(try_from_str = parse_func))]
+        func: Func,
         /// List of arguments (example: "https://google.com")
         args: Vec<String>,
     },
@@ -117,13 +144,13 @@ pub enum Command {
         #[structopt(subcommand)]
         cmd: RepoCommand,
     },
-    /// Used for fzf's preview window
+    /// Used for fzf's preview window when selecting snippets
     #[structopt(setting = AppSettings::Hidden)]
     Preview {
         /// Selection line
         line: String,
     },
-    /// Used for fzf's preview window
+    /// Used for fzf's preview window when selecting variable suggestions
     #[structopt(setting = AppSettings::Hidden)]
     PreviewVar {
         /// Selection line
@@ -135,8 +162,13 @@ pub enum Command {
     },
     /// Shows the path for shell widget files
     Widget {
-        /// bash, zsh or fish
-        shell: String,
+        #[structopt(default_value = "bash", parse(try_from_str = parse_shell))]
+        shell: Shell,
+    },
+    /// Shows info
+    Info {
+        #[structopt(parse(try_from_str = parse_info))]
+        info: Info,
     },
     /// Helper command for Alfred integration
     #[structopt(setting = AppSettings::Hidden)]
