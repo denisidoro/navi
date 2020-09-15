@@ -17,7 +17,7 @@ echo lorem ipsum
 echo foo bar
 ```
 
-Then, if you use **navi** as a [shell scripting tool](docs/shell_scripting.md), you could add something similar to this in your `.bashrc`-like file:
+Then, if you use **navi** as a [shell scripting tool](shell_scripting.md), you could add something similar to this in your `.bashrc`-like file:
 
 ```bash
 navialias() {
