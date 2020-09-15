@@ -4,7 +4,7 @@ _call_navi() {
     local selected
 
     if [ -n "${READLINE_LINE}" ]; then
-        if selected="$(printf "%s" "$(navi --print --no-autoselect query "${READLINE_LINE}" </dev/tty)")"; then
+        if selected="$(printf "%s" "$(navi --print --fzf-overrides '--no-select-1' --query "${READLINE_LINE}" </dev/tty)")"; then
             READLINE_LINE="$selected"
             READLINE_POINT=${#READLINE_LINE}
         fi
