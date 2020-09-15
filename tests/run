@@ -69,10 +69,32 @@ _navi_cheatsh() {
       | test::equals "docker rm container_name"
 }
 
+_navi_widget() {
+   _navi widget "$1" \
+      | grep -q "#!/usr/bin/env $1"
+}
+
+_navi_cheatspath() {
+   _navi info widget-path \
+      | grep -q "/cheats"
+}
+
 test::set_suite "tldr"
 test::run "$query" _navi_tldr
 
 test::set_suite "cheatsh"
 test::run "$query" _navi_cheatsh
+
+test::set_suite "widget - bash"
+test::run "$query" _navi_widget "bash"
+
+test::set_suite "widget - zsh"
+test::run "$query" _navi_widget "zsh"
+
+test::set_suite "widget - fish"
+test::run "$query" _navi_widget "fish"
+
+test::set_suite "info - cheats-path"
+test::run "$query" _navi_cheatspath
 
 test::finish
