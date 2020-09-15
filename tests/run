@@ -62,6 +62,15 @@ _navi_cheatspath() {
       | grep -q "/cheats"
 }
 
+_assert_tmux() {
+   local -r log_file="$1"
+   local -r sessions="$(tmux list-sessions)"
+   if [ -z "$sessions" ]; then
+      cat "$log_file"
+      return 1
+   fi
+}
+
 _integration() {
    local -r log_file="${NAVI_HOME}/target/ci.log"
    local -r cheats_path="$($NAVI_EXE info cheats-path)"
@@ -74,16 +83,15 @@ _integration() {
    echoerr "Starting sessions..."
    tmux new-session -d -s ci "export NAVI_TEST_PATH='${cheats_path}'; ${NAVI_HOME}/tests/run _navi |& tee '${log_file}'"
    sleep 5
-   if ! tmux list-sessions; then
-      cat "$log_file"
-      return 1
-   fi
+   _assert_tmux "$log_file"
    echoerr "Downloading default cheatsheets..."
    tmux send-key -t ci "download default"; tmux send-key -t ci "Enter"
    sleep 1
+   _assert_tmux "$log_file"
    echoerr "Confirming import..."
    tmux send-key -t ci "y"; tmux send-key -t ci "Enter"
    sleep 6
+   _assert_tmux "$log_file"
    echoerr "Running snippet..."
    tmux send-key -t ci "pwd"
    sleep 1  
