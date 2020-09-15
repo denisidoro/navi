@@ -65,7 +65,7 @@ _integration() {
    local -r log_file="${NAVI_HOME}/target/ci.log"
    local -r cheats_path="$($NAVI_EXE info cheats-path)"
 
-   mv "$cheats_path" "$cheats_path_bak" 2>/dev/null || true
+   mv "$cheats_path" "${cheats_path}_bak" 2>/dev/null || true
 
    tmux new-session -d -s ci "export NAVI_TEST_PATH='${cheats_path}'; $0 _navi |& tee '${log_file}'"
    sleep 5
@@ -106,25 +106,19 @@ for i in $(_get_tests "$filter"); do
    test::run "$query" _navi_cases_test "$query" "$expected"
 done
 
-test::set_suite "tldr"
-test::run "$query" _navi_tldr
+test::set_suite "3rd party"
+test::run "tldr" _navi_tldr
+test::run "cheatsh" _navi_cheatsh
 
-test::set_suite "cheatsh"
-test::run "$query" _navi_cheatsh
+test::set_suite "widget"
+test::run "bash" _navi_widget "bash"
+test::run "zsh" _navi_widget "zsh"
+test::run "zsh" _navi_widget "fish"
 
-test::set_suite "widget - bash"
-test::run "$query" _navi_widget "bash"
-
-test::set_suite "widget - zsh"
-test::run "$query" _navi_widget "zsh"
-
-test::set_suite "widget - fish"
-test::run "$query" _navi_widget "fish"
-
-test::set_suite "info - cheats-path"
-test::run "$query" _navi_cheatspath
+test::set_suite "info"
+test::run "cheats_path" _navi_cheatspath
 
 test::set_suite "integration"
-test::run "$query" _integration
+test::run "welcome->pwd" _integration
 
 test::finish
