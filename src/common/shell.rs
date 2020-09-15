@@ -1,6 +1,13 @@
 use std::fmt::Debug;
 use thiserror::Error;
 
+#[derive(Debug)]
+pub enum Shell {
+    Bash,
+    Zsh,
+    Fish
+}
+
 #[derive(Error, Debug)]
 #[error("Failed to spawn child process `bash` to execute `{command}`")]
 pub struct BashSpawnError {
