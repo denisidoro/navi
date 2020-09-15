@@ -44,12 +44,12 @@ pub fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool, Error> {
 
     let (response, _) = finder
         .call(opts, |stdin| {
-            stdin.write_all("Yes\nNo".as_bytes()).context("Unable to writer alternatives")?;
+            stdin.write_all(b"Yes\nNo").context("Unable to writer alternatives")?;
             Ok(None)
         })
         .context("Unable to get response")?;
 
-    if response.to_lowercase().starts_with("y") {
+    if response.to_lowercase().starts_with('y') {
         Ok(true)
     } else {
         Ok(false)
