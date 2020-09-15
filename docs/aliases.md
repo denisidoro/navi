@@ -1,7 +1,7 @@
 Aliases
 ----------------------------
 
-**navi** doesn't have support for aliases as first-class citizens.
+**navi** doesn't have support for aliases as first-class citizens at the moment.
 
 However, it should be trivial to create aliases using **navi** + a few conventions.
 
