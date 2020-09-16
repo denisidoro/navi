@@ -4,7 +4,7 @@ DOTFILES_COMMIT_HASH="bc74f8"
 
 dot::clone() {
    git clone "https://github.com/denisidoro/dotfiles.git" "$DOTFILES"
-   cd "$DOTFILES" && git checkout "$DOTFILES_COMMIT_HASH"
+   # cd "$DOTFILES" && git checkout "$DOTFILES_COMMIT_HASH"
 }
 
 dot::install_if_necessary() {
