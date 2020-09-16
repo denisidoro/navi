@@ -19,13 +19,13 @@ fzf::export_if_necessary() {
    fi
 }
 
-dot::install_if_necessary
-source "${DOTFILES}/scripts/core/main.sh"
-source "${DOTFILES}/scripts/core/log.sh"
-
 export PROJ_NAME="navi"
 export NAVI_HOME="${NAVI_HOME:-$(cd "$(dirname "$0")/.." && pwd)}"
 export PROJ_HOME="$NAVI_HOME"
+
+dot::install_if_necessary
+source "${DOTFILES}/scripts/core/main.sh"
+source "${DOTFILES}/scripts/core/log.sh"
 
 fzf::export_if_necessary
 export PATH="${NAVI_HOME}/scripts:${DOTFILES}/bin:${PATH}"
