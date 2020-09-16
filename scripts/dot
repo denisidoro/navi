@@ -3,4 +3,4 @@ set -euo pipefail
 
 source "$(dirname "$0")/aux/core.sh"
 
-dot sh scripting test "${NAVI_HOME}/tests"
+dot "$@"

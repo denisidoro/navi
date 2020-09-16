@@ -13,16 +13,23 @@ dot::install_if_necessary() {
    $(dot::clone 2>/dev/null || true)
 }
 
+fzf::export_if_necessary() {
+   if ! has fzf; then
+      export PATH="$PATH:$HOME/.fzf/bin"
+   fi
+}
+
 export NAVI_HOME="${NAVI_HOME:-$(cd "$(dirname "$0")/.." && pwd)}"
 
 export PROJ_HOME="$NAVI_HOME"
 export PROJ_NAME="navi"
 
 dot::install_if_necessary
-export PATH="${DOTFILES}/bin:${PATH}"
 
 source "${DOTFILES}/scripts/core/main.sh"
+source "${DOTFILES}/scripts/core/log.sh"
 
-export NAVI_BIN="${NAVI_HOME}/target/release/NAVI"
-[ -f "$NAVI_BIN" ] || export NAVI_BIN="${NAVI_HOME}/target/debug/navi"
-[ -f "$NAVI_BIN" ] || export NAVI_BIN="${NAVI_HOME}/scripts/run"
+fzf::export_if_necessary
+export PATH="${NAVI_HOME}/scripts:${DOTFILES}/bin:${PATH}"
+
+cd "$NAVI_HOME"

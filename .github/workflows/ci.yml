@@ -49,17 +49,11 @@ jobs:
         with:
           command: test
 
-      - name: Install fzf
-        run: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; yes | ~/.fzf/install;
-
-      - name: Install tmux
-        run: sudo apt-get install tmux || sudo apt install tmux || brew install tmux
-
-      - name: Install tealdeer
-        run: sudo npm install -g tldr
+      - name: Install dependencies
+        run: ./scripts/dot pkg add fzf tmux tealdeer
 
       - name: Run bash tests
-        run: ./tests/run
+        run: ./scripts/test
 
   lints:
     name: Lints

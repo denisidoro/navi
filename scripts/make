@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+##? make install
+##? make uninstall
+
+source "$(dirname "$0")/aux/core.sh"
+
+install() {
+   echoerr "TODO"
+   exit 1
+}
+
+uninstall() {
+   echoerr "TODO"
+   exit 1
+}
+
+cmd="$1"
+shift
+
+case "$cmd" in
+   "install") install "$@" ;;
+   "uninstall") uninstall "$@" ;;
+   *) exit 2 ;;
+esac
