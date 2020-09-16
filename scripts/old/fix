@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
+source "${NAVI_HOME}/scripts/install"
+
+cd "$NAVI_HOME"
+
+header "Cargo nighly fix..."
+cargo +nightly clippy --fix -Z unstable-options || true
+
+header "Cargo fix..."
+cargo fix || true
+
+header "Cargo fmt..."
+cargo fmt || true
+
+header "dot code beautify..."
+find scripts -type f | xargs -I% dot code beautify % || true
+dot code beautify "${NAVI_HOME}/alfred/alfred.bash" || true
+dot code beautify "${NAVI_HOME}/alfred/alfred2.bash" || true
+dot code beautify "${NAVI_HOME}/tests/core.bash" || true
+dot code beautify "${NAVI_HOME}/tests/run" || true
+
+header "clippy..."
+cargo clippy || true
