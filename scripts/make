@@ -8,7 +8,6 @@ source "$(dirname "$0")/aux/core.sh"
 
 _install() {
    "${NAVI_HOME}/scripts/install" "$@"
-   exit 1
 }
 
 _uninstall() {

@@ -3,4 +3,5 @@ set -euo pipefail
 
 source "$(dirname "$0")/aux/core.sh"
 
-dot "$@"
+echoerr "dot $@"
+"${DOTFILES}/bin/dot" "$@"

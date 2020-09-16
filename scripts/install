@@ -14,4 +14,8 @@ _binary() {
 
 navi::clone_if_necessary
 
-_binary download || _binary install
+case "${FORCE_METHOD:-none}" in
+   build) _binary install ;;
+   download) _binary download ;;
+   *) _binary download || _binary install ;;
+esac
