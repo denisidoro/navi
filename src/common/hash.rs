@@ -22,13 +22,9 @@ impl Hasher for FnvHasher {
     }
 
     fn write(&mut self, bytes: &[u8]) {
-        let FnvHasher(mut hash) = *self;
-
         for byte in bytes.iter() {
-            hash ^= u64::from(*byte);
-            hash = hash.wrapping_mul(0x0100_0000_01b3);
+            self.0 ^= u64::from(*byte);
+            self.0 = self.0.wrapping_mul(0x0100_0000_01b3);
         }
-
-        *self = FnvHasher(hash);
     }
 }
