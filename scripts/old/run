@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
-
-cd "$NAVI_HOME"
-rm -rf "target/release/navi" 2> /dev/null || true
-rm -rf "target/debug/navi" 2> /dev/null || true
-cargo run -- "$@"

@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+source "$(dirname "$0")/aux/core.sh"
+
+release() {
+   dot rust binary symlink
+   dot rust binary build
+   dot rust binary tar
+}
+
+workflow() {
+   WORKFLOW_DIR="${NAVI_HOME}/target/workflow"
+
+   cd "$NAVI_HOME"
+
+   rm -rf "${NAVI_HOME}/target" 2> /dev/null || true
+
+   mkdir -p "$WORKFLOW_DIR" 2> /dev/null || true
+
+   cp ${NAVI_HOME}/alfred/* "$WORKFLOW_DIR"
+   cd "$WORKFLOW_DIR"
+   zip -j -r navi.zip *
+}
+
+cmd="$1"
+shift
+
+case "$cmd" in
+   "release") release "$@" ;;
+   "workflow") workflow "$@" ;;
+   *) exit 2 ;;
+esac

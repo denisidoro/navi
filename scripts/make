@@ -6,12 +6,12 @@ set -euo pipefail
 
 source "$(dirname "$0")/aux/core.sh"
 
-install() {
-   echoerr "TODO"
+_install() {
+   "${NAVI_HOME}/scripts/install" "$@"
    exit 1
 }
 
-uninstall() {
+_uninstall() {
    echoerr "TODO"
    exit 1
 }
@@ -20,7 +20,7 @@ cmd="$1"
 shift
 
 case "$cmd" in
-   "install") install "$@" ;;
-   "uninstall") uninstall "$@" ;;
+   "install") _install "$@" ;;
+   "uninstall") _uninstall "$@" ;;
    *) exit 2 ;;
 esac
