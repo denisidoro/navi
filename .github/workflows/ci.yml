@@ -50,7 +50,7 @@ jobs:
           command: test
 
       - name: Install dependencies
-        run: ./scripts/dot pkg add fzf tmux tealdeer
+        run: ./scripts/dot pkg add fzf tmux && npm install -g tldr 
 
       - name: Run bash tests
         run: ./scripts/test
