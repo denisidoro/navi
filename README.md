@@ -64,7 +64,7 @@ You can also:
 - [import cheatsheets from git repositories](docs/cheatsheet_repositories.md#importing-cheatsheets)
 - [write your own cheatsheets](#cheatsheet-syntax) (and [share them](docs/cheatsheet_repositories.md#submitting-cheatsheets), if you want)
 - [use cheatsheets from other tools](docs/cheatsheet_repositories.md#using-cheatsheets-from-other-tools), such as [tldr](https://github.com/tldr-pages/tldr) and [cheat.sh](https://github.com/chubin/cheat.sh)
-- [auto-update repositories](#auto-updating-repositories)
+- [auto-update repositories](docs/cheatsheet_repositories.md#auto-updating-repositories)
 
 Cheatsheet syntax
 -----------------
