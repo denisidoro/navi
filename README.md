@@ -2,7 +2,7 @@
   
 An interactive cheatsheet tool for the command-line and application launchers.
 
-![Terminal demo](https://user-images.githubusercontent.com/3226564/76437136-ddc35900-6397-11ea-823c-d2da7615fe60.gif)
+![Terminal demo](https://user-images.githubusercontent.com/3226564/94310428-fff58080-ff4f-11ea-8c1c-29fac351340a.gif)
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands. Suggested values for arguments are dynamically displayed in a list.
 
