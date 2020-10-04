@@ -114,6 +114,14 @@ fn write_cmd(tags: &str, comment: &str, snippet: &str, writer: &mut dyn Writer, 
     }
 }
 
+fn without_prefix(line: &str) -> String {
+    if line.len() > 2 {
+        String::from(line[2..].trim())
+    } else {
+        String::from("")
+    }
+}
+
 pub fn read_lines(
     lines: impl Iterator<Item = Result<String, Error>>,
     id: &str,
@@ -145,11 +153,11 @@ pub fn read_lines(
                 should_break = true
             }
             snippet = String::from("");
-            tags = if line.len() > 2 { String::from(&line[2..]) } else { String::from("") };
+            tags = without_prefix(&line);
         }
         // dependency
         else if line.starts_with('@') {
-            let tags_dependency = if line.len() > 2 { String::from(&line[2..]) } else { String::from("") };
+            let tags_dependency = without_prefix(&line);
             variables.insert_dependency(&tags, &tags_dependency);
         }
         // metacomment
@@ -161,7 +169,7 @@ pub fn read_lines(
                 should_break = true
             }
             snippet = String::from("");
-            comment = if line.len() > 2 { String::from(&line[2..]) } else { String::from("") };
+            comment = without_prefix(&line);
         }
         // variable
         else if line.starts_with('$') {

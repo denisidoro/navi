@@ -1,6 +1,6 @@
 use crate::cheatsh;
 use crate::common::clipboard;
-use crate::common::shell::BashSpawnError;
+use crate::common::shell::{BashSpawnError, IS_FISH};
 use crate::display;
 use crate::env_vars;
 use crate::fetcher::Fetcher;
@@ -98,15 +98,17 @@ fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Sugge
         autoselect: !config.get_no_autoselect(),
         overrides: config.fzf_overrides_var.clone(),
         preview: Some(format!(
-            r#"navi preview-var "$(cat <<NAVIEOF
+            r#"{prefix}navi preview-var "$(cat <<NAVIEOF
 {{}}
 NAVIEOF
 )" "$(cat <<NAVIEOF
 {{q}}
 NAVIEOF
-)" "{}"{}"#,
-            variable_name,
-            extra_preview.clone().unwrap_or_default()
+)" "{name}"; {extra}{suffix}"#,
+            prefix = if *IS_FISH { "bash -c '"} else { "" },
+            suffix = if *IS_FISH { "'" } else { "" },
+            name = variable_name,
+            extra = extra_preview.clone().unwrap_or_default()
         )),
         ..opts.clone().unwrap_or_default()
     };
