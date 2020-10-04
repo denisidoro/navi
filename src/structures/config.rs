@@ -290,12 +290,12 @@ impl Config {
         }
     }
 
-    pub fn get_no_autoselect(&self) -> bool {
+    pub fn autoselect(&self) -> bool {
         if self.no_autoselect {
             deprecated("--no-autoselect");
-            true
-        } else {
             false
+        } else {
+            true
         }
     }
 }
