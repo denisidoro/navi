@@ -94,7 +94,9 @@ Refer to https://github.com/tldr-pages/tldr for more info.
 
 Note:
 {}
-", VERSION_DISCLAIMER);
+",
+                VERSION_DISCLAIMER
+            );
             process::exit(34)
         }
     };

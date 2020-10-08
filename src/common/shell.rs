@@ -1,6 +1,6 @@
+use std::env;
 use std::fmt::Debug;
 use thiserror::Error;
-use std::env;
 
 lazy_static! {
     pub static ref IS_FISH: bool = env::var("SHELL").unwrap_or("".to_string()).contains(&"fish");

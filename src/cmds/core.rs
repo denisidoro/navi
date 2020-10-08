@@ -105,7 +105,7 @@ NAVIEOF
 {{q}}
 NAVIEOF
 )" "{name}"; {extra}{suffix}"#,
-            prefix = if *IS_FISH { "bash -c '"} else { "" },
+            prefix = if *IS_FISH { "bash -c '" } else { "" },
             suffix = if *IS_FISH { "'" } else { "" },
             name = variable_name,
             extra = extra_preview.clone().unwrap_or_default()
@@ -138,7 +138,7 @@ NAVIEOF
 
 fn unique_result_count(results: &[&str]) -> usize {
     let mut vars = results.to_owned();
-    vars.sort();
+    vars.sort_unstable();
     vars.dedup();
     vars.len()
 }
