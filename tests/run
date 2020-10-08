@@ -109,7 +109,7 @@ _integration() {
 
    echoerr "Running snippet..."
    tmux send-key -t ci "pwd"
-   sleep 1  
+   sleep 1
    tmux send-key -t ci "Enter"
 
    sleep 2

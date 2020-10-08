@@ -1,6 +1,6 @@
 use crate::cheatsh;
 use crate::common::clipboard;
-use crate::common::shell::BashSpawnError;
+use crate::common::shell::{BashSpawnError, IS_FISH};
 use crate::display;
 use crate::env_vars;
 use crate::fetcher::Fetcher;
@@ -27,7 +27,7 @@ fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
         } else {
             Some(format!("{} preview {{}}", filesystem::exe_string()?))
         },
-        autoselect: !config.get_no_autoselect(),
+        autoselect: config.autoselect(),
         overrides: config.fzf_overrides.clone(),
         suggestion_type: SuggestionType::SnippetSelection,
         query: if config.get_best_match() { None } else { config.get_query() },
@@ -95,18 +95,20 @@ fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Sugge
     };
 
     let mut opts = FinderOpts {
-        autoselect: !config.get_no_autoselect(),
+        autoselect: config.autoselect(),
         overrides: config.fzf_overrides_var.clone(),
         preview: Some(format!(
-            r#"navi preview-var "$(cat <<NAVIEOF
+            r#"{prefix}navi preview-var "$(cat <<NAVIEOF
 {{}}
 NAVIEOF
 )" "$(cat <<NAVIEOF
 {{q}}
 NAVIEOF
-)" "{}"{}"#,
-            variable_name,
-            extra_preview.clone().unwrap_or_default()
+)" "{name}"; {extra}{suffix}"#,
+            prefix = if *IS_FISH { "bash -c '" } else { "" },
+            suffix = if *IS_FISH { "'" } else { "" },
+            name = variable_name,
+            extra = extra_preview.clone().unwrap_or_default()
         )),
         ..opts.clone().unwrap_or_default()
     };
@@ -136,7 +138,7 @@ NAVIEOF
 
 fn unique_result_count(results: &[&str]) -> usize {
     let mut vars = results.to_owned();
-    vars.sort();
+    vars.sort_unstable();
     vars.dedup();
     vars.len()
 }

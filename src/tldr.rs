@@ -13,6 +13,9 @@ lazy_static! {
     pub static ref NON_VAR_CHARS_REGEX: Regex = Regex::new(r"[^\da-zA-Z_]").expect("Invalid regex");
 }
 
+static VERSION_DISCLAIMER: &str = "The tldr client written in C (the default one in Homebrew) doesn't support markdown files, so navi can't use it.
+The client written in Rust is recommended. The one available in npm works, too.";
+
 fn convert_tldr_vars(line: &str) -> String {
     let caps = VAR_TLDR_REGEX.find_iter(&line);
     let mut new_line: String = line.to_string();
@@ -87,7 +90,12 @@ pub fn fetch(query: &str) -> Result<String, Error> {
             eprintln!(
                 "navi was unable to call tldr.
 Make sure tldr is correctly installed.
-Refer to https://github.com/tldr-pages/tldr for more info."
+Refer to https://github.com/tldr-pages/tldr for more info.
+
+Note:
+{}
+",
+                VERSION_DISCLAIMER
             );
             process::exit(34)
         }
@@ -107,15 +115,15 @@ Output:
 Error:
 {}
 
-Note: 
-The tldr client written in C (the default one in Homebrew) doesn't support markdown files, so navi can't use it. 
-Please make sure you're using a version that supports the --markdown flag. 
-The client written in Rust is recommended. The one available in npm works, too.
-If you are already using a supported version you can ignore this message.
+Note:
+Please make sure you're using a version that supports the --markdown flag.
+If you are already using a supported version you can ignore this message. 
+{}
 ",
             args.join(" "),
             String::from_utf8(out.stdout).unwrap_or_else(|_e| "Unable to get output message".to_string()),
-            String::from_utf8(out.stderr).unwrap_or_else(|_e| "Unable to get error message".to_string())
+            String::from_utf8(out.stderr).unwrap_or_else(|_e| "Unable to get error message".to_string()),
+            VERSION_DISCLAIMER
         );
         process::exit(35)
     }

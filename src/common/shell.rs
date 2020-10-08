@@ -1,5 +1,10 @@
+use std::env;
 use std::fmt::Debug;
 use thiserror::Error;
+
+lazy_static! {
+    pub static ref IS_FISH: bool = env::var("SHELL").unwrap_or_else(|_| "".to_string()).contains(&"fish");
+}
 
 #[derive(Debug)]
 pub enum Shell {
