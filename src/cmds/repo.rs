@@ -20,6 +20,7 @@ pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
 
     let opts = FinderOpts {
         column: Some(1),
+        suggestion_type: SuggestionType::SingleSelection,
         ..Default::default()
     };
 
