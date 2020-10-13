@@ -9,7 +9,11 @@ use std::path::PathBuf;
 use walkdir::WalkDir;
 
 pub fn all_cheat_files(path_str: &str) -> Vec<String> {
-    let path_str_with_trailing_slash = format!("{}/", &path_str);
+    let path_str_with_trailing_slash = if path_str.ends_with('/') {
+        path_str.to_string()
+    } else {
+        format!("{}/", &path_str)
+    };
 
     WalkDir::new(&path_str)
         .into_iter()
