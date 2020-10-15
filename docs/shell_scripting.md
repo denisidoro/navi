@@ -10,7 +10,23 @@ navi --query "change branch" --best-match
 
 **navi** will ask the user to fill all arguments needed. 
 
-If you want to set the `<branch>` beforehand in your script, you could then write:
+If you want to set the `<branch>` beforehand in your script:
 ```sh
 branch="master" navi --query "change branch" --best-match
 ```
+- no interactive input will be shown
+- the value for `<branch>` will be exactly the one passed as argument
+
+If you want to filter some results for `<branch>`:
+```sh
+branch__query="master" navi --query "change branch" --best-match
+```
+- an interactive input will be shown, unless a single entry is autoselected
+- the value for `<branch>` will be the one selected
+
+If you want to select the best match for `<branch>`:
+```sh
+branch__best="master" navi --query "change branch" --best-match
+```
+- no interactive input will be shown
+- the value for `<branch>` will be the one that best matches the one passed as argument

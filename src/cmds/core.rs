@@ -40,10 +40,10 @@ fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
 
 fn extract_from_selections(raw_snippet: &str, is_single: bool) -> Result<(&str, &str, &str, &str), Error> {
     let mut lines = raw_snippet.split('\n');
-    let key = if !is_single {
-        lines.next().context("Key was promised but not present in `selections`")?
-    } else {
+    let key = if is_single {
         "enter"
+    } else {
+        lines.next().context("Key was promised but not present in `selections`")?
     };
 
     let mut parts = lines.next().context("No more parts in `selections`")?.split(display::DELIMITER).skip(3);
@@ -112,6 +112,13 @@ NAVIEOF
         )),
         ..opts.clone().unwrap_or_default()
     };
+
+    opts.query = env::var(format!("{}__query", variable_name)).ok();
+
+    if let Ok(f) = env::var(format!("{}__best", variable_name)) {
+        opts.filter = Some(f);
+        opts.suggestion_type = SuggestionType::SingleSelection;
+    }
 
     if opts.preview_window.is_none() {
         opts.preview_window = Some(if extra_preview.is_none() {

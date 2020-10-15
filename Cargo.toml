@@ -1,6 +1,6 @@
 [package]
 name = "navi"
-version = "2.12.2"
+version = "2.13.0"
 authors = ["Denis Isidoro <denis_isidoro@live.com>"]
 edition = "2018"
 description = "An interactive cheatsheet tool for the command-line"
