@@ -46,16 +46,6 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
-			<dict>
-				<key>destinationuid</key>
-				<string>4B245423-CD5B-4FB1-A819-4214E93BC683</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
 		</array>
 		<key>2B0EE026-57A9-4097-ACE7-FE4E78F20EC0</key>
 		<array>
@@ -117,11 +107,37 @@
 				<false/>
 			</dict>
 		</array>
+		<key>446FD3F8-2027-45CA-A156-A7F2C2B2C501</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C49EE1A3-92A1-4734-9B4F-E399299197AA</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>55C46852-4807-4374-95AB-CC055F4ECB7C</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>E8FC4B20-3DD5-4684-97C0-FBBC2FC1AD45</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>7BBCBB25-8B82-40B8-BA37-B0C3894AFA98</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>282E2B68-29A1-4EF0-B328-2BE38CBF67F0</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -210,7 +226,20 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>282E2B68-29A1-4EF0-B328-2BE38CBF67F0</string>
+				<string>446FD3F8-2027-45CA-A156-A7F2C2B2C501</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>C49EE1A3-92A1-4734-9B4F-E399299197AA</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>7BBCBB25-8B82-40B8-BA37-B0C3894AFA98</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -294,7 +323,7 @@
 				<key>alfredfiltersresults</key>
 				<true/>
 				<key>alfredfiltersresultsmatchmode</key>
-				<integer>0</integer>
+				<integer>2</integer>
 				<key>argumenttreatemptyqueryasnil</key>
 				<false/>
 				<key>argumenttrimmode</key>
@@ -437,6 +466,21 @@ fi
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>variables</key>
+				<dict/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>EB668A02-2BBA-4539-B4C0-20F2498ECD71</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -467,21 +511,6 @@ fi
 			<string>alfred.workflow.trigger.external</string>
 			<key>uid</key>
 			<string>55C46852-4807-4374-95AB-CC055F4ECB7C</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argument</key>
-				<string></string>
-				<key>variables</key>
-				<dict/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.argument</string>
-			<key>uid</key>
-			<string>EB668A02-2BBA-4539-B4C0-20F2498ECD71</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -671,6 +700,56 @@ fi
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>matchmode</key>
+				<integer>0</integer>
+				<key>matchstring</key>
+				<string>“</string>
+				<key>replacestring</key>
+				<string>"</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.replace</string>
+			<key>uid</key>
+			<string>C49EE1A3-92A1-4734-9B4F-E399299197AA</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>variables</key>
+				<dict>
+					<key>snippet</key>
+					<string>{query}</string>
+				</dict>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>7BBCBB25-8B82-40B8-BA37-B0C3894AFA98</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>{var:snippet}</string>
+				<key>variables</key>
+				<dict/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>446FD3F8-2027-45CA-A156-A7F2C2B2C501</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>action</key>
 				<integer>0</integer>
 				<key>argument</key>
@@ -797,23 +876,6 @@ eval "$snippet"</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argument</key>
-				<string>'{query}', {allvars}</string>
-				<key>cleardebuggertext</key>
-				<false/>
-				<key>processoutputs</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.debug</string>
-			<key>uid</key>
-			<string>4B245423-CD5B-4FB1-A819-4214E93BC683</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
 	</array>
 	<key>readme</key>
 	<string></string>
@@ -836,9 +898,9 @@ eval "$snippet"</string>
 		<key>282E2B68-29A1-4EF0-B328-2BE38CBF67F0</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1185</integer>
+			<integer>1445</integer>
 			<key>ypos</key>
-			<integer>275</integer>
+			<integer>255</integer>
 		</dict>
 		<key>2B0EE026-57A9-4097-ACE7-FE4E78F20EC0</key>
 		<dict>
@@ -854,17 +916,17 @@ eval "$snippet"</string>
 			<key>ypos</key>
 			<integer>165</integer>
 		</dict>
-		<key>4B245423-CD5B-4FB1-A819-4214E93BC683</key>
+		<key>446FD3F8-2027-45CA-A156-A7F2C2B2C501</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1355</integer>
+			<integer>1225</integer>
 			<key>ypos</key>
-			<integer>455</integer>
+			<integer>285</integer>
 		</dict>
 		<key>529BC67C-C77D-41CA-B095-996CC1317556</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1490</integer>
+			<integer>1720</integer>
 			<key>ypos</key>
 			<integer>340</integer>
 		</dict>
@@ -878,21 +940,28 @@ eval "$snippet"</string>
 		<key>5E378616-C00A-4608-9313-8D7DCF421BC5</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1485</integer>
+			<integer>1715</integer>
 			<key>ypos</key>
-			<integer>205</integer>
+			<integer>220</integer>
+		</dict>
+		<key>7BBCBB25-8B82-40B8-BA37-B0C3894AFA98</key>
+		<dict>
+			<key>xpos</key>
+			<integer>1370</integer>
+			<key>ypos</key>
+			<integer>285</integer>
 		</dict>
 		<key>7DD3BDE5-A157-42E5-9376-F681FB50A4EE</key>
 		<dict>
 			<key>xpos</key>
-			<integer>615</integer>
+			<integer>605</integer>
 			<key>ypos</key>
 			<integer>80</integer>
 		</dict>
 		<key>93437EDA-0308-467D-BE3F-6855C638D49D</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1230</integer>
+			<integer>1225</integer>
 			<key>ypos</key>
 			<integer>60</integer>
 		</dict>
@@ -906,9 +975,9 @@ eval "$snippet"</string>
 		<key>ABA74294-992D-4528-A609-964B0ACA9346</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1375</integer>
+			<integer>1590</integer>
 			<key>ypos</key>
-			<integer>290</integer>
+			<integer>275</integer>
 		</dict>
 		<key>B3B967BC-EC30-47DE-B233-2F3F97568857</key>
 		<dict>
@@ -931,10 +1000,17 @@ eval "$snippet"</string>
 			<key>ypos</key>
 			<integer>340</integer>
 		</dict>
+		<key>C49EE1A3-92A1-4734-9B4F-E399299197AA</key>
+		<dict>
+			<key>xpos</key>
+			<integer>1295</integer>
+			<key>ypos</key>
+			<integer>285</integer>
+		</dict>
 		<key>E8FC4B20-3DD5-4684-97C0-FBBC2FC1AD45</key>
 		<dict>
 			<key>xpos</key>
-			<integer>200</integer>
+			<integer>210</integer>
 			<key>ypos</key>
 			<integer>165</integer>
 		</dict>
