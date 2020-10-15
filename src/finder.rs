@@ -138,8 +138,10 @@ impl Finder for FinderChoice {
             "--exact",
         ]);
 
-        if opts.autoselect {
-            command.arg("--select-1");
+        if let Self::Fzf = self {
+            if opts.autoselect {
+                command.arg("--select-1");
+            }
         }
 
         match opts.suggestion_type {
