@@ -149,9 +149,7 @@ pub fn read_lines(
         }
         // tag
         else if line.starts_with('%') {
-            if write_cmd(&tags, &comment, &snippet, writer, stdin).is_err() {
-                should_break = true
-            }
+            should_break = write_cmd(&tags, &comment, &snippet, writer, stdin).is_err();
             snippet = String::from("");
             tags = without_prefix(&line);
         }
@@ -165,17 +163,13 @@ pub fn read_lines(
         }
         // comment
         else if line.starts_with('#') {
-            if write_cmd(&tags, &comment, &snippet, writer, stdin).is_err() {
-                should_break = true
-            }
+            should_break = write_cmd(&tags, &comment, &snippet, writer, stdin).is_err();
             snippet = String::from("");
             comment = without_prefix(&line);
         }
         // variable
         else if line.starts_with('$') {
-            if write_cmd(&tags, &comment, &snippet, writer, stdin).is_err() {
-                should_break = true
-            }
+            should_break = write_cmd(&tags, &comment, &snippet, writer, stdin).is_err();
             snippet = String::from("");
             let (variable, command, opts) = parse_variable_line(&line)
                 .with_context(|| format!("Failed to parse variable line. See line number {} in cheatsheet `{}`", line_nr + 1, id))?;
