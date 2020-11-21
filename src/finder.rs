@@ -152,7 +152,7 @@ impl Finder for FinderChoice {
                 command.args(&["--print-query", "--no-select-1"]);
             }
             SuggestionType::SnippetSelection => {
-                command.args(&["--expect", "ctrl-y,enter"]);
+                command.args(&["--expect", "ctrl-y,ctrl-o,enter"]);
             }
             SuggestionType::SingleRecommendation => {
                 command.args(&["--print-query", "--expect", "tab,enter"]);

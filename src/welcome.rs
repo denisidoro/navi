@@ -7,6 +7,7 @@ fn add_msg(tags: &str, comment: &str, snippet: &str, writer: &mut dyn Writer, st
         tags: &tags,
         comment: &comment,
         snippet: &snippet,
+        file: "",
     };
     stdin.write_all(writer.write(item).as_bytes()).expect("Could not write to fzf's stdin");
 }

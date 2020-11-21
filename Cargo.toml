@@ -27,6 +27,7 @@ shellwords = "1.1.0"
 anyhow = "1.0.32"
 thiserror = "1.0.20"
 strip-ansi-escapes = "0.1.0"
+edit = "0.1.2"
 
 [lib]
 name = "navi"

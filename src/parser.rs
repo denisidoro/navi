@@ -99,7 +99,14 @@ fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FinderOpts>), E
     Ok((variable, command, command_options))
 }
 
-fn write_cmd(tags: &str, comment: &str, snippet: &str, writer: &mut dyn Writer, stdin: &mut std::process::ChildStdin) -> Result<(), Error> {
+fn write_cmd(
+    tags: &str,
+    comment: &str,
+    snippet: &str,
+    file: &str,
+    writer: &mut dyn Writer,
+    stdin: &mut std::process::ChildStdin,
+) -> Result<(), Error> {
     if snippet.len() <= 1 {
         Ok(())
     } else {
@@ -107,6 +114,7 @@ fn write_cmd(tags: &str, comment: &str, snippet: &str, writer: &mut dyn Writer, 
             tags: &tags,
             comment: &comment,
             snippet: &snippet,
+            file: &file,
         };
         stdin
             .write_all(writer.write(item).as_bytes())
@@ -149,7 +157,7 @@ pub fn read_lines(
         }
         // tag
         else if line.starts_with('%') {
-            should_break = write_cmd(&tags, &comment, &snippet, writer, stdin).is_err();
+            should_break = write_cmd(&tags, &comment, &snippet, &id, writer, stdin).is_err();
             snippet = String::from("");
             tags = without_prefix(&line);
         }
@@ -163,13 +171,13 @@ pub fn read_lines(
         }
         // comment
         else if line.starts_with('#') {
-            should_break = write_cmd(&tags, &comment, &snippet, writer, stdin).is_err();
+            should_break = write_cmd(&tags, &comment, &snippet, &id, writer, stdin).is_err();
             snippet = String::from("");
             comment = without_prefix(&line);
         }
         // variable
         else if line.starts_with('$') {
-            should_break = write_cmd(&tags, &comment, &snippet, writer, stdin).is_err();
+            should_break = write_cmd(&tags, &comment, &snippet, &id, writer, stdin).is_err();
             snippet = String::from("");
             let (variable, command, opts) = parse_variable_line(&line)
                 .with_context(|| format!("Failed to parse variable line. See line number {} in cheatsheet `{}`", line_nr + 1, id))?;
@@ -191,7 +199,7 @@ pub fn read_lines(
     }
 
     if !should_break {
-        let _ = write_cmd(&tags, &comment, &snippet, writer, stdin);
+        let _ = write_cmd(&tags, &comment, &snippet, &id, writer, stdin);
     }
 
     Ok(())
