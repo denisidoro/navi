@@ -14,9 +14,9 @@ pub enum FinderChoice {
 }
 
 pub trait Finder {
-    fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
+    fn call<F>(&self, opts: Opts, files: &mut Vec<String>, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
     where
-        F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>;
+        F: Fn(&mut process::ChildStdin, &mut Vec<String>) -> Result<Option<VariableMap>, Error>;
 }
 
 fn apply_map(text: String, map_fn: Option<String>) -> String {
@@ -102,9 +102,9 @@ fn parse(out: Output, opts: Opts) -> Result<String, Error> {
 }
 
 impl Finder for FinderChoice {
-    fn call<F>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
+    fn call<F>(&self, finder_opts: Opts, files: &mut Vec<String>, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
     where
-        F: Fn(&mut process::ChildStdin) -> Result<Option<VariableMap>, Error>,
+        F: Fn(&mut process::ChildStdin, &mut Vec<String>) -> Result<Option<VariableMap>, Error>,
     {
         let finder_str = match self {
             Self::Fzf => "fzf",
@@ -215,7 +215,7 @@ impl Finder for FinderChoice {
         };
 
         let stdin = child.stdin.as_mut().ok_or_else(|| anyhow!("Unable to acquire stdin of finder"))?;
-        let result_map = stdin_fn(stdin).context("Failed to pass data to finder")?;
+        let result_map = stdin_fn(stdin, files).context("Failed to pass data to finder")?;
 
         let out = child.wait_with_output().context("Failed to wait for finder")?;
 

@@ -103,7 +103,7 @@ fn write_cmd(
     tags: &str,
     comment: &str,
     snippet: &str,
-    file: &str,
+    file_index: &usize,
     writer: &mut dyn Writer,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
@@ -114,7 +114,7 @@ fn write_cmd(
             tags: &tags,
             comment: &comment,
             snippet: &snippet,
-            file: &file,
+            file_index: &file_index,
         };
         stdin
             .write_all(writer.write(item).as_bytes())
@@ -133,6 +133,7 @@ fn without_prefix(line: &str) -> String {
 pub fn read_lines(
     lines: impl Iterator<Item = Result<String, Error>>,
     id: &str,
+    file_index: usize,
     variables: &mut VariableMap,
     visited_lines: &mut HashSet<u64>,
     writer: &mut dyn Writer,
@@ -157,7 +158,7 @@ pub fn read_lines(
         }
         // tag
         else if line.starts_with('%') {
-            should_break = write_cmd(&tags, &comment, &snippet, &id, writer, stdin).is_err();
+            should_break = write_cmd(&tags, &comment, &snippet, &file_index, writer, stdin).is_err();
             snippet = String::from("");
             tags = without_prefix(&line);
         }
@@ -171,13 +172,13 @@ pub fn read_lines(
         }
         // comment
         else if line.starts_with('#') {
-            should_break = write_cmd(&tags, &comment, &snippet, &id, writer, stdin).is_err();
+            should_break = write_cmd(&tags, &comment, &snippet, &file_index, writer, stdin).is_err();
             snippet = String::from("");
             comment = without_prefix(&line);
         }
         // variable
         else if line.starts_with('$') {
-            should_break = write_cmd(&tags, &comment, &snippet, &id, writer, stdin).is_err();
+            should_break = write_cmd(&tags, &comment, &snippet, &file_index, writer, stdin).is_err();
             snippet = String::from("");
             let (variable, command, opts) = parse_variable_line(&line)
                 .with_context(|| format!("Failed to parse variable line. See line number {} in cheatsheet `{}`", line_nr + 1, id))?;
@@ -199,7 +200,7 @@ pub fn read_lines(
     }
 
     if !should_break {
-        let _ = write_cmd(&tags, &comment, &snippet, &id, writer, stdin);
+        let _ = write_cmd(&tags, &comment, &snippet, &file_index, writer, stdin);
     }
 
     Ok(())

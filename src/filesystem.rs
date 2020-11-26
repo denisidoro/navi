@@ -21,7 +21,7 @@ impl Fetcher {
 }
 
 impl fetcher::Fetcher for Fetcher {
-    fn fetch(&self, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
-        read_all(self.path.clone(), stdin, writer)
+    fn fetch(&self, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer, files: &mut Vec<String>) -> Result<Option<VariableMap>, Error> {
+        read_all(self.path.clone(), files, stdin, writer)
     }
 }

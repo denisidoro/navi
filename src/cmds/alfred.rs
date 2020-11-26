@@ -18,7 +18,7 @@ pub fn main(config: Config) -> Result<(), Error> {
 
     let fetcher = filesystem::Fetcher::new(config.path);
     fetcher
-        .fetch(stdin, &mut writer)
+        .fetch(stdin, &mut writer, &mut Vec::new())
         .context("Failed to parse variables intended for finder")?;
 
     // make sure everything was printed to stdout before attempting to close the items vector
@@ -55,7 +55,7 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
 
     let fetcher = filesystem::Fetcher::new(config.path);
     let variables = fetcher
-        .fetch(stdin, &mut writer)
+        .fetch(stdin, &mut writer, &mut Vec::new())
         .context("Failed to parse variables intended for finder")?
         .expect("Empty variable map");
 

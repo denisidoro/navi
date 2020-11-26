@@ -31,13 +31,14 @@ fn paths_from_path_param<'a>(env_var: &'a str) -> impl Iterator<Item = &'a str> 
 // TODO: move
 fn read_file(
     path: &str,
+    file_index: usize,
     variables: &mut VariableMap,
     visited_lines: &mut HashSet<u64>,
     writer: &mut dyn Writer,
     stdin: &mut std::process::ChildStdin,
 ) -> Result<(), Error> {
     let lines = read_lines(path)?;
-    parser::read_lines(lines, path, variables, visited_lines, writer, stdin)
+    parser::read_lines(lines, path, file_index, variables, visited_lines, writer, stdin)
 }
 
 pub fn default_cheat_pathbuf() -> Result<PathBuf, Error> {
@@ -57,7 +58,7 @@ pub fn cheat_paths(path: Option<String>) -> Result<String, Error> {
     }
 }
 
-pub fn read_all(path: Option<String>, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
+pub fn read_all(path: Option<String>, files: &mut Vec<String>, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
     let mut variables = VariableMap::new();
     let mut found_something = false;
     let mut visited_lines = HashSet::new();
@@ -73,7 +74,8 @@ pub fn read_all(path: Option<String>, stdin: &mut std::process::ChildStdin, writ
     for folder in folders {
         for file in all_cheat_files(folder) {
             let full_filename = format!("{}/{}", &folder, &file);
-            if read_file(&full_filename, &mut variables, &mut visited_lines, writer, stdin).is_ok() && !found_something {
+            files.push(full_filename.clone());
+            if read_file(&full_filename, files.len()-1, &mut variables, &mut visited_lines, writer, stdin).is_ok() && !found_something {
                 found_something = true
             }
         }
@@ -101,7 +103,7 @@ mod tests {
         let child_stdin = child.stdin.as_mut().unwrap();
         let mut visited_lines: HashSet<u64> = HashSet::new();
         let mut writer: Box<dyn Writer> = Box::new(display::terminal::Writer::new());
-        read_file(path, &mut variables, &mut visited_lines, &mut *writer, child_stdin).unwrap();
+        read_file(path, 0, &mut variables, &mut visited_lines, &mut *writer, child_stdin).unwrap();
         let expected_suggestion = (
             r#" echo -e "$(whoami)\nroot" "#.to_string(),
             Some(FinderOpts {

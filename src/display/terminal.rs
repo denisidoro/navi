@@ -152,7 +152,7 @@ impl Writer {
 impl display::Writer for Writer {
     fn write(&mut self, item: Item) -> String {
         format!(
-            "{tag_color}{tags_short}{delimiter}{comment_color}{comment_short}{delimiter}{snippet_color}{snippet_short}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}{file}{delimiter}\n",
+            "{tag_color}{tags_short}{delimiter}{comment_color}{comment_short}{delimiter}{snippet_color}{snippet_short}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}{file_index}{delimiter}\n",
             tags_short = limit_str(item.tags, self.tag_width),
             comment_short = limit_str(item.comment, self.comment_width),
             snippet_short = display::fix_newlines(item.snippet),
@@ -163,7 +163,7 @@ impl display::Writer for Writer {
             comment = item.comment,
             delimiter = display::DELIMITER,
             snippet = &item.snippet,
-            file = item.file,
+            file_index = item.file_index,
         )
     }
 }
