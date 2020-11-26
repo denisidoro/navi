@@ -15,9 +15,11 @@ use crate::tldr;
 use crate::welcome;
 use anyhow::Context;
 use anyhow::Error;
+use edit;
 use std::env;
 use std::fs;
 use std::io::Write;
+use std::path::Path;
 use std::process::{Command, Stdio};
 
 fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
@@ -38,7 +40,7 @@ fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
     Ok(opts)
 }
 
-fn extract_from_selections(raw_snippet: &str, is_single: bool) -> Result<(&str, &str, &str, &str), Error> {
+fn extract_from_selections(raw_snippet: &str, is_single: bool) -> Result<(&str, &str, &str, &str, Option<usize>), Error> {
     let mut lines = raw_snippet.split('\n');
     let key = if is_single {
         "enter"
@@ -51,7 +53,8 @@ fn extract_from_selections(raw_snippet: &str, is_single: bool) -> Result<(&str, 
     let tags = parts.next().unwrap_or("");
     let comment = parts.next().unwrap_or("");
     let snippet = parts.next().unwrap_or("");
-    Ok((key, tags, comment, snippet))
+    let file_index = parts.next().unwrap_or("").parse().ok();
+    Ok((key, tags, comment, snippet, file_index))
 }
 
 fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Suggestion>, variable_count: usize) -> Result<String, Error> {
@@ -134,7 +137,7 @@ NAVIEOF
 
     let (output, _) = config
         .finder
-        .call(opts, |stdin| {
+        .call(opts, &mut Vec::new(), |stdin, _| {
             stdin.write_all(suggestions.as_bytes()).context("Could not write to finder's stdin")?;
             Ok(None)
         })
@@ -185,9 +188,11 @@ fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: Variable
 pub fn main(config: Config) -> Result<(), Error> {
     let opts = gen_core_finder_opts(&config).context("Failed to generate finder options")?;
 
+    let mut files = Vec::new();
+
     let (raw_selection, variables) = config
         .finder
-        .call(opts, |stdin| {
+        .call(opts, &mut files, |stdin, files| {
             let mut writer = display::terminal::Writer::new();
 
             let fetcher: Box<dyn Fetcher> = match config.source() {
@@ -197,7 +202,7 @@ pub fn main(config: Config) -> Result<(), Error> {
             };
 
             let res = fetcher
-                .fetch(stdin, &mut writer)
+                .fetch(stdin, &mut writer, files)
                 .context("Failed to parse variables intended for finder")?;
 
             if let Some(variables) = res {
@@ -209,7 +214,7 @@ pub fn main(config: Config) -> Result<(), Error> {
         })
         .context("Failed getting selection and variables from finder")?;
 
-    let (key, tags, comment, snippet) = extract_from_selections(&raw_selection, config.get_best_match())?;
+    let (key, tags, comment, snippet, file_index) = extract_from_selections(&raw_selection, config.get_best_match())?;
 
     env::set_var(env_vars::PREVIEW_INITIAL_SNIPPET, &snippet);
     env::set_var(env_vars::PREVIEW_TAGS, &tags);
@@ -230,6 +235,8 @@ pub fn main(config: Config) -> Result<(), Error> {
         Action::EXECUTE => {
             if key == "ctrl-y" {
                 clipboard::copy(interpolated_snippet)?;
+            } else if key == "ctrl-o" {
+                edit::edit_file(Path::new(&files[file_index.expect("No files found")])).expect("Cound not open file in external editor");
             } else {
                 Command::new("bash")
                     .arg("-c")

@@ -66,6 +66,7 @@ fn read_all(query: &str, markdown: &str, stdin: &mut std::process::ChildStdin, w
     parser::read_lines(
         markdown_lines(query, markdown),
         "markdown",
+        0,
         &mut variables,
         &mut visited_lines,
         writer,
@@ -144,7 +145,7 @@ impl Fetcher {
 }
 
 impl fetcher::Fetcher for Fetcher {
-    fn fetch(&self, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
+    fn fetch(&self, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer, _files: &mut Vec<String>) -> Result<Option<VariableMap>, Error> {
         let markdown = fetch(&self.query)?;
         read_all(&self.query, &markdown, stdin, writer)
     }
