@@ -252,8 +252,13 @@ pub fn main(config: Config) -> Result<(), Error> {
         })
         .context("Failed getting selection and variables from finder")?;
 
-    let (key, tags, comment, snippet, file_index) =
-        extract_from_selections(&raw_selection, config.get_best_match())?;
+    let extractions = extract_from_selections(&raw_selection, config.get_best_match());
+
+    if extractions.is_err() {
+        return main(config);
+    }
+
+    let (key, tags, comment, snippet, file_index) = extractions.unwrap();
 
     if key == "ctrl-o" {
         edit::edit_file(Path::new(&files[file_index.expect("No files found")]))
