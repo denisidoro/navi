@@ -15,7 +15,7 @@ use crate::tldr;
 use crate::welcome;
 use anyhow::Context;
 use anyhow::Error;
-use edit;
+
 use std::env;
 use std::fs;
 use std::io::Write;
