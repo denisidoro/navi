@@ -14,7 +14,12 @@ pub enum FinderChoice {
 }
 
 pub trait Finder {
-    fn call<F>(&self, opts: Opts, files: &mut Vec<String>, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
+    fn call<F>(
+        &self,
+        opts: Opts,
+        files: &mut Vec<String>,
+        stdin_fn: F,
+    ) -> Result<(String, Option<VariableMap>), Error>
     where
         F: Fn(&mut process::ChildStdin, &mut Vec<String>) -> Result<Option<VariableMap>, Error>;
 }
@@ -58,7 +63,11 @@ pub fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> 
 
 fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> Result<String, Error> {
     Ok(match suggestion_type {
-        SuggestionType::SingleSelection => text.lines().next().context("Not sufficient data for single selection")?.to_string(),
+        SuggestionType::SingleSelection => text
+            .lines()
+            .next()
+            .context("Not sufficient data for single selection")?
+            .to_string(),
         SuggestionType::MultipleSelections | SuggestionType::Disabled | SuggestionType::SnippetSelection => {
             let len = text.len();
             if len > 1 {
@@ -70,14 +79,18 @@ fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> Res
             let lines: Vec<&str> = text.lines().collect();
 
             match (lines.get(0), lines.get(1), lines.get(2)) {
-                (Some(one), Some(termination), Some(two)) if *termination == "enter" || termination.is_empty() => {
+                (Some(one), Some(termination), Some(two))
+                    if *termination == "enter" || termination.is_empty() =>
+                {
                     if two.is_empty() {
                         (*one).to_string()
                     } else {
                         (*two).to_string()
                     }
                 }
-                (Some(one), Some(termination), None) if *termination == "enter" || termination.is_empty() => (*one).to_string(),
+                (Some(one), Some(termination), None) if *termination == "enter" || termination.is_empty() => {
+                    (*one).to_string()
+                }
                 (Some(one), Some(termination), _) if *termination == "tab" => (*one).to_string(),
                 _ => "".to_string(),
             }
@@ -87,10 +100,13 @@ fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> Res
 
 fn parse(out: Output, opts: Opts) -> Result<String, Error> {
     let text = match out.status.code() {
-        Some(0) | Some(1) | Some(2) => String::from_utf8(out.stdout).context("Invalid utf8 received from finder")?,
+        Some(0) | Some(1) | Some(2) => {
+            String::from_utf8(out.stdout).context("Invalid utf8 received from finder")?
+        }
         Some(130) => process::exit(130),
         _ => {
-            let err = String::from_utf8(out.stderr).unwrap_or_else(|_| "<stderr contains invalid UTF-8>".to_owned());
+            let err = String::from_utf8(out.stderr)
+                .unwrap_or_else(|_| "<stderr contains invalid UTF-8>".to_owned());
             panic!("External command failed:\n {}", err)
         }
     };
@@ -102,7 +118,12 @@ fn parse(out: Output, opts: Opts) -> Result<String, Error> {
 }
 
 impl Finder for FinderChoice {
-    fn call<F>(&self, finder_opts: Opts, files: &mut Vec<String>, stdin_fn: F) -> Result<(String, Option<VariableMap>), Error>
+    fn call<F>(
+        &self,
+        finder_opts: Opts,
+        files: &mut Vec<String>,
+        stdin_fn: F,
+    ) -> Result<(String, Option<VariableMap>), Error>
     where
         F: Fn(&mut process::ChildStdin, &mut Vec<String>) -> Result<Option<VariableMap>, Error>,
     {
@@ -189,9 +210,13 @@ impl Finder for FinderChoice {
         }
 
         if let Some(o) = opts.overrides {
-            o.as_str().split(' ').map(|s| s.to_string()).filter(|s| !s.is_empty()).for_each(|s| {
-                command.arg(s);
-            });
+            o.as_str()
+                .split(' ')
+                .map(|s| s.to_string())
+                .filter(|s| !s.is_empty())
+                .for_each(|s| {
+                    command.arg(s);
+                });
         }
 
         let child = command.stdin(Stdio::piped()).stdout(Stdio::piped()).spawn();
@@ -214,7 +239,10 @@ impl Finder for FinderChoice {
             }
         };
 
-        let stdin = child.stdin.as_mut().ok_or_else(|| anyhow!("Unable to acquire stdin of finder"))?;
+        let stdin = child
+            .stdin
+            .as_mut()
+            .ok_or_else(|| anyhow!("Unable to acquire stdin of finder"))?;
         let result_map = stdin_fn(stdin, files).context("Failed to pass data to finder")?;
 
         let out = child.wait_with_output().context("Failed to wait for finder")?;

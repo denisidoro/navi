@@ -16,6 +16,8 @@ impl FileAnIssue {
     where
         SourceError: Into<anyhow::Error>,
     {
-        FileAnIssue { source: source.into() }
+        FileAnIssue {
+            source: source.into(),
+        }
     }
 }

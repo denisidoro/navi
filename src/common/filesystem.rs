@@ -23,7 +23,9 @@ where
     P: AsRef<Path> + Display + Copy,
 {
     let file = File::open(filename).with_context(|| format!("Failed to open file {}", filename))?;
-    Ok(io::BufReader::new(file).lines().map(|line| line.map_err(Error::from)))
+    Ok(io::BufReader::new(file)
+        .lines()
+        .map(|line| line.map_err(Error::from)))
 }
 
 pub fn pathbuf_to_string(pathbuf: PathBuf) -> Result<String, Error> {
@@ -37,10 +39,18 @@ pub fn pathbuf_to_string(pathbuf: PathBuf) -> Result<String, Error> {
 fn follow_symlink(pathbuf: PathBuf) -> Result<PathBuf, Error> {
     fs::read_link(pathbuf.clone())
         .map(|o| {
-            let o_str = o.as_os_str().to_str().ok_or_else(|| InvalidPath(o.to_path_buf()))?;
+            let o_str = o
+                .as_os_str()
+                .to_str()
+                .ok_or_else(|| InvalidPath(o.to_path_buf()))?;
             if o_str.starts_with('.') {
-                let parent = pathbuf.parent().ok_or_else(|| anyhow!("`{}` has no parent", pathbuf.display()))?;
-                let parent_str = parent.as_os_str().to_str().ok_or_else(|| InvalidPath(parent.to_path_buf()))?;
+                let parent = pathbuf
+                    .parent()
+                    .ok_or_else(|| anyhow!("`{}` has no parent", pathbuf.display()))?;
+                let parent_str = parent
+                    .as_os_str()
+                    .to_str()
+                    .ok_or_else(|| InvalidPath(parent.to_path_buf()))?;
                 let path_str = format!("{}/{}", parent_str, o_str);
                 let p = PathBuf::from(path_str);
                 follow_symlink(p)
