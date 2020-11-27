@@ -19,9 +19,12 @@ pub fn parse_env_var<T: FromStr>(varname: &str) -> Option<T> {
 }
 
 lazy_static! {
-    pub static ref TAG_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var(env_vars::TAG_COLOR).unwrap_or(14));
-    pub static ref COMMENT_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var(env_vars::COMMENT_COLOR).unwrap_or(4));
-    pub static ref SNIPPET_COLOR: color::AnsiValue = color::AnsiValue(parse_env_var(env_vars::SNIPPET_COLOR).unwrap_or(7));
+    pub static ref TAG_COLOR: color::AnsiValue =
+        color::AnsiValue(parse_env_var(env_vars::TAG_COLOR).unwrap_or(14));
+    pub static ref COMMENT_COLOR: color::AnsiValue =
+        color::AnsiValue(parse_env_var(env_vars::COMMENT_COLOR).unwrap_or(4));
+    pub static ref SNIPPET_COLOR: color::AnsiValue =
+        color::AnsiValue(parse_env_var(env_vars::SNIPPET_COLOR).unwrap_or(7));
     pub static ref TAG_WIDTH_PERCENTAGE: u16 = parse_env_var(env_vars::TAG_WIDTH).unwrap_or(20);
     pub static ref COMMENT_WIDTH_PERCENTAGE: u16 = parse_env_var(env_vars::COMMENT_WIDTH).unwrap_or(40);
 }
@@ -106,7 +109,10 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
             color = variable_color,
             variable = variable_name,
             reset = reset,
-            value = wrapped_by_map(&finder::get_column(value, column, delimiter.as_deref()), map.as_deref())
+            value = wrapped_by_map(
+                &finder::get_column(value, column, delimiter.as_deref()),
+                map.as_deref()
+            )
         );
     }
 
@@ -145,23 +151,28 @@ pub struct Writer {
 impl Writer {
     pub fn new() -> Writer {
         let (tag_width, comment_width) = get_widths();
-        display::terminal::Writer { tag_width, comment_width }
+        display::terminal::Writer {
+            tag_width,
+            comment_width,
+        }
     }
 }
 
 impl display::Writer for Writer {
     fn write(&mut self, item: Item) -> String {
         format!(
-       "{tag_color}{tags_short}{delimiter}{comment_color}{comment_short}{delimiter}{snippet_color}{snippet_short}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}\n",
-       tags_short = limit_str(item.tags, self.tag_width),
-       comment_short = limit_str(item.comment, self.comment_width),
-       snippet_short = display::fix_newlines(item.snippet),
-       comment_color = color::Fg(*COMMENT_COLOR),
-       tag_color = color::Fg(*TAG_COLOR),
-       snippet_color = color::Fg(*SNIPPET_COLOR),
-       tags = item.tags,
-       comment = item.comment,
-       delimiter = display::DELIMITER,
-       snippet = &item.snippet)
+            "{tag_color}{tags_short}{delimiter}{comment_color}{comment_short}{delimiter}{snippet_color}{snippet_short}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}{file_index}{delimiter}\n",
+            tags_short = limit_str(item.tags, self.tag_width),
+            comment_short = limit_str(item.comment, self.comment_width),
+            snippet_short = display::fix_newlines(item.snippet),
+            comment_color = color::Fg(*COMMENT_COLOR),
+            tag_color = color::Fg(*TAG_COLOR),
+            snippet_color = color::Fg(*SNIPPET_COLOR),
+            tags = item.tags,
+            comment = item.comment,
+            delimiter = display::DELIMITER,
+            snippet = &item.snippet,
+            file_index = item.file_index,
+        )
     }
 }

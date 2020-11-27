@@ -43,18 +43,25 @@ impl VariableMap {
 
     pub fn get_suggestion(&self, tags: &str, variable: &str) -> Option<&Suggestion> {
         let k = fnv(&tags);
-        let res = self.variables.get(&k)?.get(variable);
-        if res.is_some() {
-            return res;
+
+        if let Some(vm) = self.variables.get(&k) {
+            let res = vm.get(variable);
+            if res.is_some() {
+                return res;
+            }
         }
+
         if let Some(dependency_keys) = self.dependencies.get(&k) {
             for dependency_key in dependency_keys {
-                let res = self.variables.get(&dependency_key)?.get(variable);
-                if res.is_some() {
-                    return res;
+                if let Some(vm) = self.variables.get(&dependency_key) {
+                    let res = vm.get(variable);
+                    if res.is_some() {
+                        return res;
+                    }
                 }
             }
         }
+
         None
     }
 }

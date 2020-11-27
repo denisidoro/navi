@@ -1,6 +1,6 @@
 use crate::cheatsh;
 use crate::common::clipboard;
-use crate::common::shell::BashSpawnError;
+use crate::common::shell::{BashSpawnError, IS_FISH};
 use crate::display;
 use crate::env_vars;
 use crate::fetcher::Fetcher;
@@ -15,9 +15,11 @@ use crate::tldr;
 use crate::welcome;
 use anyhow::Context;
 use anyhow::Error;
+
 use std::env;
 use std::fs;
 use std::io::Write;
+use std::path::Path;
 use std::process::{Command, Stdio};
 
 fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
@@ -27,34 +29,57 @@ fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
         } else {
             Some(format!("{} preview {{}}", filesystem::exe_string()?))
         },
-        autoselect: !config.get_no_autoselect(),
+        autoselect: config.autoselect(),
         overrides: config.fzf_overrides.clone(),
         suggestion_type: SuggestionType::SnippetSelection,
-        query: if config.get_best_match() { None } else { config.get_query() },
-        filter: if config.get_best_match() { config.get_query() } else { None },
+        query: if config.get_best_match() {
+            None
+        } else {
+            config.get_query()
+        },
+        filter: if config.get_best_match() {
+            config.get_query()
+        } else {
+            None
+        },
         ..Default::default()
     };
 
     Ok(opts)
 }
 
-fn extract_from_selections(raw_snippet: &str, is_single: bool) -> Result<(&str, &str, &str, &str), Error> {
+fn extract_from_selections(
+    raw_snippet: &str,
+    is_single: bool,
+) -> Result<(&str, &str, &str, &str, Option<usize>), Error> {
     let mut lines = raw_snippet.split('\n');
-    let key = if !is_single {
-        lines.next().context("Key was promised but not present in `selections`")?
-    } else {
+    let key = if is_single {
         "enter"
+    } else {
+        lines
+            .next()
+            .context("Key was promised but not present in `selections`")?
     };
 
-    let mut parts = lines.next().context("No more parts in `selections`")?.split(display::DELIMITER).skip(3);
+    let mut parts = lines
+        .next()
+        .context("No more parts in `selections`")?
+        .split(display::DELIMITER)
+        .skip(3);
 
     let tags = parts.next().unwrap_or("");
     let comment = parts.next().unwrap_or("");
     let snippet = parts.next().unwrap_or("");
-    Ok((key, tags, comment, snippet))
+    let file_index = parts.next().unwrap_or("").parse().ok();
+    Ok((key, tags, comment, snippet, file_index))
 }
 
-fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Suggestion>, variable_count: usize) -> Result<String, Error> {
+fn prompt_finder(
+    variable_name: &str,
+    config: &Config,
+    suggestion: Option<&Suggestion>,
+    variable_count: usize,
+) -> Result<String, Error> {
     env::remove_var(env_vars::PREVIEW_COLUMN);
     env::remove_var(env_vars::PREVIEW_DELIMITER);
     env::remove_var(env_vars::PREVIEW_MAP);
@@ -86,8 +111,13 @@ fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Sugge
             .spawn()
             .map_err(|e| BashSpawnError::new(suggestion_command, e))?;
 
-        let text = String::from_utf8(child.wait_with_output().context("Failed to wait and collect output from bash")?.stdout)
-            .context("Suggestions are invalid utf8")?;
+        let text = String::from_utf8(
+            child
+                .wait_with_output()
+                .context("Failed to wait and collect output from bash")?
+                .stdout,
+        )
+        .context("Suggestions are invalid utf8")?;
 
         (text, suggestion_opts)
     } else {
@@ -95,21 +125,30 @@ fn prompt_finder(variable_name: &str, config: &Config, suggestion: Option<&Sugge
     };
 
     let mut opts = FinderOpts {
-        autoselect: !config.get_no_autoselect(),
+        autoselect: config.autoselect(),
         overrides: config.fzf_overrides_var.clone(),
         preview: Some(format!(
-            r#"navi preview-var "$(cat <<NAVIEOF
+            r#"{prefix}navi preview-var "$(cat <<NAVIEOF
 {{}}
 NAVIEOF
 )" "$(cat <<NAVIEOF
 {{q}}
 NAVIEOF
-)" "{}"{}"#,
-            variable_name,
-            extra_preview.clone().unwrap_or_default()
+)" "{name}"; {extra}{suffix}"#,
+            prefix = if *IS_FISH { "bash -c '" } else { "" },
+            suffix = if *IS_FISH { "'" } else { "" },
+            name = variable_name,
+            extra = extra_preview.clone().unwrap_or_default()
         )),
         ..opts.clone().unwrap_or_default()
     };
+
+    opts.query = env::var(format!("{}__query", variable_name)).ok();
+
+    if let Ok(f) = env::var(format!("{}__best", variable_name)) {
+        opts.filter = Some(f);
+        opts.suggestion_type = SuggestionType::SingleSelection;
+    }
 
     if opts.preview_window.is_none() {
         opts.preview_window = Some(if extra_preview.is_none() {
@@ -125,8 +164,10 @@ NAVIEOF
 
     let (output, _) = config
         .finder
-        .call(opts, |stdin| {
-            stdin.write_all(suggestions.as_bytes()).context("Could not write to finder's stdin")?;
+        .call(opts, &mut Vec::new(), |stdin, _| {
+            stdin
+                .write_all(suggestions.as_bytes())
+                .context("Could not write to finder's stdin")?;
             Ok(None)
         })
         .context("finder was unable to prompt with suggestions")?;
@@ -136,14 +177,22 @@ NAVIEOF
 
 fn unique_result_count(results: &[&str]) -> usize {
     let mut vars = results.to_owned();
-    vars.sort();
+    vars.sort_unstable();
     vars.dedup();
     vars.len()
 }
 
-fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: VariableMap, config: &Config) -> Result<String, Error> {
+fn replace_variables_from_snippet(
+    snippet: &str,
+    tags: &str,
+    variables: VariableMap,
+    config: &Config,
+) -> Result<String, Error> {
     let mut interpolated_snippet = String::from(snippet);
-    let variables_found: Vec<&str> = display::VAR_REGEX.find_iter(snippet).map(|m| m.as_str()).collect();
+    let variables_found: Vec<&str> = display::VAR_REGEX
+        .find_iter(snippet)
+        .map(|m| m.as_str())
+        .collect();
     let variable_count = unique_result_count(&variables_found);
 
     for bracketed_variable_name in variables_found {
@@ -155,7 +204,8 @@ fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: Variable
             e
         } else if let Some(suggestion) = variables.get_suggestion(&tags, &variable_name) {
             let mut new_suggestion = suggestion.clone();
-            new_suggestion.0 = replace_variables_from_snippet(&new_suggestion.0, tags, variables.clone(), config)?;
+            new_suggestion.0 =
+                replace_variables_from_snippet(&new_suggestion.0, tags, variables.clone(), config)?;
             prompt_finder(variable_name, &config, Some(&new_suggestion), variable_count)?
         } else {
             prompt_finder(variable_name, &config, None, variable_count)?
@@ -176,9 +226,11 @@ fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: Variable
 pub fn main(config: Config) -> Result<(), Error> {
     let opts = gen_core_finder_opts(&config).context("Failed to generate finder options")?;
 
+    let mut files = Vec::new();
+
     let (raw_selection, variables) = config
         .finder
-        .call(opts, |stdin| {
+        .call(opts, &mut files, |stdin, files| {
             let mut writer = display::terminal::Writer::new();
 
             let fetcher: Box<dyn Fetcher> = match config.source() {
@@ -188,7 +240,7 @@ pub fn main(config: Config) -> Result<(), Error> {
             };
 
             let res = fetcher
-                .fetch(stdin, &mut writer)
+                .fetch(stdin, &mut writer, files)
                 .context("Failed to parse variables intended for finder")?;
 
             if let Some(variables) = res {
@@ -200,15 +252,27 @@ pub fn main(config: Config) -> Result<(), Error> {
         })
         .context("Failed getting selection and variables from finder")?;
 
-    let (key, tags, comment, snippet) = extract_from_selections(&raw_selection, config.get_best_match())?;
+    let (key, tags, comment, snippet, file_index) =
+        extract_from_selections(&raw_selection, config.get_best_match())?;
+
+    if key == "ctrl-o" {
+        edit::edit_file(Path::new(&files[file_index.expect("No files found")]))
+            .expect("Cound not open file in external editor");
+        return Ok(());
+    }
 
     env::set_var(env_vars::PREVIEW_INITIAL_SNIPPET, &snippet);
     env::set_var(env_vars::PREVIEW_TAGS, &tags);
     env::set_var(env_vars::PREVIEW_COMMENT, &comment);
 
     let interpolated_snippet = display::with_new_lines(
-        replace_variables_from_snippet(snippet, tags, variables.expect("No variables received from finder"), &config)
-            .context("Failed to replace variables from snippet")?,
+        replace_variables_from_snippet(
+            snippet,
+            tags,
+            variables.expect("No variables received from finder"),
+            &config,
+        )
+        .context("Failed to replace variables from snippet")?,
     );
 
     match config.action() {
@@ -218,10 +282,11 @@ pub fn main(config: Config) -> Result<(), Error> {
         Action::SAVE(filepath) => {
             fs::write(filepath, interpolated_snippet).context("Unable to save output")?;
         }
-        Action::EXECUTE => {
-            if key == "ctrl-y" {
+        Action::EXECUTE => match key {
+            "ctrl-y" => {
                 clipboard::copy(interpolated_snippet)?;
-            } else {
+            }
+            _ => {
                 Command::new("bash")
                     .arg("-c")
                     .arg(&interpolated_snippet[..])
@@ -230,7 +295,7 @@ pub fn main(config: Config) -> Result<(), Error> {
                     .wait()
                     .context("bash was not running")?;
             }
-        }
+        },
     };
 
     Ok(())

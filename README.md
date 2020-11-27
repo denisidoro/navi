@@ -2,7 +2,7 @@
   
 An interactive cheatsheet tool for the command-line and application launchers.
 
-![Terminal demo](https://user-images.githubusercontent.com/3226564/76437136-ddc35900-6397-11ea-823c-d2da7615fe60.gif)
+![Terminal demo](https://user-images.githubusercontent.com/3226564/94310428-fff58080-ff4f-11ea-8c1c-29fac351340a.gif)
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands. Suggested values for arguments are dynamically displayed in a list.
 
@@ -64,6 +64,7 @@ You can also:
 - [import cheatsheets from git repositories](docs/cheatsheet_repositories.md#importing-cheatsheets)
 - [write your own cheatsheets](#cheatsheet-syntax) (and [share them](docs/cheatsheet_repositories.md#submitting-cheatsheets), if you want)
 - [use cheatsheets from other tools](docs/cheatsheet_repositories.md#using-cheatsheets-from-other-tools), such as [tldr](https://github.com/tldr-pages/tldr) and [cheat.sh](https://github.com/chubin/cheat.sh)
+- [auto-update repositories](docs/cheatsheet_repositories.md#auto-updating-repositories)
 
 Cheatsheet syntax
 -----------------

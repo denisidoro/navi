@@ -10,7 +10,10 @@ use std::env;
 use std::process::{Command, Stdio};
 
 pub fn main(config: Config) -> Result<(), Error> {
-    let mut child = Command::new("cat").stdin(Stdio::piped()).spawn().context("Unable to create child")?;
+    let mut child = Command::new("cat")
+        .stdin(Stdio::piped())
+        .spawn()
+        .context("Unable to create child")?;
     let stdin = child.stdin.as_mut().context("Unable to get stdin")?;
     let mut writer = display::alfred::Writer::new();
 
@@ -18,7 +21,7 @@ pub fn main(config: Config) -> Result<(), Error> {
 
     let fetcher = filesystem::Fetcher::new(config.path);
     fetcher
-        .fetch(stdin, &mut writer)
+        .fetch(stdin, &mut writer, &mut Vec::new())
         .context("Failed to parse variables intended for finder")?;
 
     // make sure everything was printed to stdout before attempting to close the items vector
@@ -38,8 +41,13 @@ fn prompt_finder(suggestion: &Suggestion) -> Result<String, Error> {
         .spawn()
         .map_err(|e| BashSpawnError::new(suggestion_command, e))?;
 
-    let suggestions = String::from_utf8(child.wait_with_output().context("Failed to wait and collect output from bash")?.stdout)
-        .context("Suggestions are invalid utf8")?;
+    let suggestions = String::from_utf8(
+        child
+            .wait_with_output()
+            .context("Failed to wait and collect output from bash")?
+            .stdout,
+    )
+    .context("Suggestions are invalid utf8")?;
 
     Ok(suggestions)
 }
@@ -55,7 +63,7 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
 
     let fetcher = filesystem::Fetcher::new(config.path);
     let variables = fetcher
-        .fetch(stdin, &mut writer)
+        .fetch(stdin, &mut writer, &mut Vec::new())
         .context("Failed to parse variables intended for finder")?
         .expect("Empty variable map");
 
