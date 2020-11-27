@@ -24,17 +24,34 @@ fn lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String, Err
     .into_iter()
 }
 
-fn read_all(query: &str, cheat: &str, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer) -> Result<Option<VariableMap>, Error> {
+fn read_all(
+    query: &str,
+    cheat: &str,
+    stdin: &mut std::process::ChildStdin,
+    writer: &mut dyn Writer,
+) -> Result<Option<VariableMap>, Error> {
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
-    parser::read_lines(lines(query, cheat), "cheat.sh", 0, &mut variables, &mut visited_lines, writer, stdin)?;
+    parser::read_lines(
+        lines(query, cheat),
+        "cheat.sh",
+        0,
+        &mut variables,
+        &mut visited_lines,
+        writer,
+        stdin,
+    )?;
     Ok(Some(variables))
 }
 
 pub fn fetch(query: &str) -> Result<String, Error> {
     let args = ["-qO-", &format!("cheat.sh/{}", query)];
 
-    let child = Command::new("wget").args(&args).stdin(Stdio::piped()).stdout(Stdio::piped()).spawn();
+    let child = Command::new("wget")
+        .args(&args)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn();
 
     let child = match child {
         Ok(x) => x,
@@ -85,7 +102,12 @@ impl Fetcher {
 }
 
 impl fetcher::Fetcher for Fetcher {
-    fn fetch(&self, stdin: &mut std::process::ChildStdin, writer: &mut dyn Writer, _files: &mut Vec<String>) -> Result<Option<VariableMap>, Error> {
+    fn fetch(
+        &self,
+        stdin: &mut std::process::ChildStdin,
+        writer: &mut dyn Writer,
+        _files: &mut Vec<String>,
+    ) -> Result<Option<VariableMap>, Error> {
         let cheat = fetch(&self.query)?;
         read_all(&self.query, &cheat, stdin, writer)
     }

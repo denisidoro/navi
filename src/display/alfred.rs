@@ -6,7 +6,9 @@ pub struct Writer {
 }
 
 fn escape_for_json(txt: &str) -> String {
-    txt.replace('\\', "\\\\").replace('"', "“").replace(display::NEWLINE_ESCAPE_CHAR, " ")
+    txt.replace('\\', "\\\\")
+        .replace('"', "“")
+        .replace(display::NEWLINE_ESCAPE_CHAR, " ")
 }
 
 pub fn print_items_start(varname: Option<&str>) {

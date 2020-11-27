@@ -45,8 +45,18 @@ fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
         .map(|flag_and_value| {
             if let [flag, value] = flag_and_value {
                 match flag.as_str() {
-                    "--headers" | "--header-lines" => opts.header_lines = value.parse::<u8>().context("Value for `--headers` is invalid u8")?,
-                    "--column" => opts.column = Some(value.parse::<u8>().context("Value for `--column` is invalid u8")?),
+                    "--headers" | "--header-lines" => {
+                        opts.header_lines = value
+                            .parse::<u8>()
+                            .context("Value for `--headers` is invalid u8")?
+                    }
+                    "--column" => {
+                        opts.column = Some(
+                            value
+                                .parse::<u8>()
+                                .context("Value for `--column` is invalid u8")?,
+                        )
+                    }
                     "--map" => opts.map = Some(value.to_string()),
                     "--delimiter" => opts.delimiter = Some(value.to_string()),
                     "--query" => opts.query = Some(value.to_string()),
@@ -145,7 +155,8 @@ pub fn read_lines(
     let mut should_break = false;
 
     for (line_nr, line_result) in lines.enumerate() {
-        let line = line_result.with_context(|| format!("Failed to read line number {} in cheatsheet `{}`", line_nr, id))?;
+        let line = line_result
+            .with_context(|| format!("Failed to read line number {} in cheatsheet `{}`", line_nr, id))?;
 
         if should_break {
             break;
@@ -180,8 +191,13 @@ pub fn read_lines(
         else if line.starts_with('$') {
             should_break = write_cmd(&tags, &comment, &snippet, &file_index, writer, stdin).is_err();
             snippet = String::from("");
-            let (variable, command, opts) = parse_variable_line(&line)
-                .with_context(|| format!("Failed to parse variable line. See line number {} in cheatsheet `{}`", line_nr + 1, id))?;
+            let (variable, command, opts) = parse_variable_line(&line).with_context(|| {
+                format!(
+                    "Failed to parse variable line. See line number {} in cheatsheet `{}`",
+                    line_nr + 1,
+                    id
+                )
+            })?;
             variables.insert_suggestion(&tags, &variable, (String::from(command), opts));
         }
         // snippet
@@ -212,7 +228,8 @@ mod tests {
 
     #[test]
     fn test_parse_variable_line() {
-        let (variable, command, command_options) = parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --prevent-extra").unwrap();
+        let (variable, command, command_options) =
+            parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --prevent-extra").unwrap();
         assert_eq!(command, " echo -e \"$(whoami)\\nroot\" ");
         assert_eq!(variable, "user");
         assert_eq!(
