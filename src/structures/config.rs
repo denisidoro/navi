@@ -44,21 +44,21 @@ fn parse_info(src: &str) -> Result<Info, Error> {
     Please refer to https://github.com/denisidoro/navi
 
 EXAMPLES:
-    navi                                     # default behavior
-    navi --print                             # doesn't execute the snippet
-    navi --tldr docker                       # search for docker cheatsheets using tldr
-    navi --cheatsh docker                    # search for docker cheatsheets using cheatsh
-    navi --path '/some/dir:/other/dir'       # uses .cheat files from custom paths
-    navi --query git                         # filters results by "git"
-    navi 'create db' --best-match            # uses a snippet as a CLI
-    name=mydb navi 'create db' --best-match  # same, but set the value for the <name> variable
-    navi repo add denisidoro/cheats          # imports cheats from a git repository
-    source <(navi widget zsh)                # loads the zsh widget
-    navi --finder 'skim'                     # set skim as finder, instead of fzf
-    navi --fzf-overrides '--with-nth 1,2'    # shows only the comment and tag columns
-    navi --fzf-overrides '--no-select-1'     # prevents autoselection in case of single line
-    navi --fzf-overrides '--nth 1,2'         # search will consider only the first two columns
-    navi --fzf-overrides '--no-exact'        # looser search algorithm"#)]
+    navi                                             # default behavior
+    navi --print                                     # doesn't execute the snippet
+    navi --tldr docker                               # search for docker cheatsheets using tldr
+    navi --cheatsh docker                            # search for docker cheatsheets using cheatsh
+    navi --path '/some/dir:/other/dir'               # use .cheat files from custom paths
+    navi --query git                                 # filter results by "git"
+    navi --query 'create db' --best-match            # autoselect the snippet that best matches a query
+    name=mydb navi --query 'create db' --best-match  # same, but set the value for the <name> variable
+    navi repo add denisidoro/cheats                  # import cheats from a git repository
+    eval "$(navi widget zsh)"                        # load the zsh widget
+    navi --finder 'skim'                             # set skim as finder, instead of fzf
+    navi --fzf-overrides '--with-nth 1,2'            # show only the comment and tag columns
+    navi --fzf-overrides '--no-select-1'             # prevent autoselection in case of single line
+    navi --fzf-overrides '--nth 1,2'                 # only consider the first two columns for search
+    navi --fzf-overrides '--no-exact'                # use looser search algorithm"#)]
 #[structopt(setting = AppSettings::ColorAuto)]
 #[structopt(setting = AppSettings::ColoredHelp)]
 #[structopt(setting = AppSettings::AllowLeadingHyphen)]
