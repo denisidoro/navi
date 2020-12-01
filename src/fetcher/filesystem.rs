@@ -16,8 +16,12 @@ pub fn all_cheat_files(path_str: &str) -> Vec<String> {
     };
 
     WalkDir::new(&path_str)
+        .follow_links(true)
         .into_iter()
-        .filter_map(|e| e.ok())
+        .filter_map(|e| {
+            dbg!(&e);
+            e.ok()
+        })
         .map(|e| e.path().to_str().unwrap_or("").to_string())
         .filter(|e| e.ends_with(".cheat"))
         .map(|e| e.replace(&path_str_with_trailing_slash, ""))
