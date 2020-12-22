@@ -147,8 +147,10 @@ impl Finder for FinderChoice {
         };
 
         command.args(&[
+            "--preview",
+            "",
             "--preview-window",
-            format!("up:{}", preview_height).as_str(),
+            format!("up:{}:nohidden", preview_height).as_str(),
             "--with-nth",
             "1,2,3",
             "--delimiter",
@@ -170,7 +172,9 @@ impl Finder for FinderChoice {
                 command.arg("--multi");
             }
             SuggestionType::Disabled => {
-                command.args(&["--print-query", "--no-select-1"]);
+                if let Self::Fzf = self {
+                    command.args(&["--print-query", "--no-select-1"]);
+                };
             }
             SuggestionType::SnippetSelection => {
                 command.args(&["--expect", "ctrl-y,ctrl-o,enter"]);
