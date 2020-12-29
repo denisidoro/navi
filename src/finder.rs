@@ -150,7 +150,7 @@ impl Finder for FinderChoice {
             "--preview",
             "",
             "--preview-window",
-            format!("up:{}:nohidden", preview_height).as_str(),
+            "up:30%:nohidden", // format!("up:{}:nohidden", preview_height).as_str(),
             "--with-nth",
             "1,2,3",
             "--delimiter",

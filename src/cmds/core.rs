@@ -271,7 +271,7 @@ pub fn main(config: Config) -> Result<(), Error> {
     env::set_var(env_vars::PREVIEW_COMMENT, &comment);
 
     let interpolated_snippet = display::with_new_lines(
-        replace_variables_from_snippet(
+        &replace_variables_from_snippet(
             snippet,
             tags,
             variables.expect("No variables received from finder"),

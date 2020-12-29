@@ -6,6 +6,8 @@ use crate::structures::item::Item;
 use std::cmp::max;
 use std::collections::HashSet;
 use std::env;
+use std::io::prelude::*;
+use std::process::{Command, Stdio};
 use std::str::FromStr;
 use termion::color;
 
@@ -30,14 +32,42 @@ lazy_static! {
 }
 
 pub fn preview(comment: &str, tags: &str, snippet: &str) {
+    let snippet = {
+        let base = display::with_new_lines(snippet).replace('\\', "");
+
+        let process = match Command::new("bat")
+            .arg("-p")
+            .arg("-l")
+            .arg("cs")
+            .arg("--color")
+            .arg("always")
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .spawn()
+        {
+            Err(why) => panic!("couldn't spawn wc: {}", why),
+            Ok(process) => process,
+        };
+
+        if let Err(why) = process.stdin.unwrap().write_all(base.as_bytes()) {
+            panic!("couldn't write to bat stdin: {}", why);
+        }
+
+        let mut s = String::new();
+        if let Err(why) = process.stdout.unwrap().read_to_string(&mut s) {
+            panic!("couldn't read bat stdout: {}", why);
+        }
+
+        s
+    };
+
     println!(
-        "{comment_color}{comment} {tag_color}{tags} \n{snippet_color}{snippet}",
+        "{comment_color}{comment} {tag_color}{tags} \n\n{snippet}",
         comment = comment.to_string(),
         tags = format!("[{}]", tags),
-        snippet = display::fix_newlines(snippet),
+        snippet = snippet,
         comment_color = color::Fg(*COMMENT_COLOR),
         tag_color = color::Fg(*TAG_COLOR),
-        snippet_color = color::Fg(*SNIPPET_COLOR),
     );
 }
 
