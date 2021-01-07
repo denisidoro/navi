@@ -25,7 +25,7 @@ pub fn all_cheat_files(path_str: &str) -> Vec<String> {
         .collect::<Vec<String>>()
 }
 
-fn paths_from_path_param<'a>(env_var: &'a str) -> impl Iterator<Item = &'a str> + 'a {
+fn paths_from_path_param(env_var: &str) -> impl Iterator<Item = &str> {
     env_var.split(':').filter(|folder| folder != &"")
 }
 
