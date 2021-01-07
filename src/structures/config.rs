@@ -6,8 +6,6 @@ use crate::finder::FinderChoice;
 use clap::{crate_version, AppSettings, Clap};
 use std::str::FromStr;
 
-static mut NOTIFIED_DEPRECATION: bool = false;
-
 impl FromStr for FinderChoice {
     type Err = &'static str;
 
@@ -219,25 +217,6 @@ pub enum AlfredCommand {
     Check,
 }
 
-fn deprecated(syntax: &str) {
-    unsafe {
-        if NOTIFIED_DEPRECATION {
-            return;
-        }
-        eprintln!(
-            r"⚠️ The following syntax has been DEPRECATED:
-navi {}
-
-Please check `navi --help` for more info on how to achieve the same result with the new syntax.
-
-The deprecated syntax will be removed in the first version released on 2021! ⚠️
-",
-            syntax
-        );
-        NOTIFIED_DEPRECATION = true;
-    }
-}
-
 pub enum Source {
     FILESYSTEM(Option<String>),
     TLDR(String),
@@ -272,49 +251,27 @@ impl Config {
     }
 
     pub fn get_query(&self) -> Option<String> {
-        match &self.cmd {
-            Some(Command::Query { query }) => {
-                deprecated("query <query>");
-                Some(query.clone())
+        let q = self.query.clone();
+        if q.is_some() {
+            return q;
+        }
+        if self.get_best_match() {
+            match self.source() {
+                Source::TLDR(q) => Some(q),
+                Source::CHEATSH(q) => Some(q),
+                _ => Some(String::from("")),
             }
-            Some(Command::Best { query, .. }) => {
-                deprecated("best <query>");
-                Some(query.clone())
-            }
-            _ => {
-                let q = self.query.clone();
-                if q.is_some() {
-                    return q;
-                }
-                if self.get_best_match() {
-                    match self.source() {
-                        Source::TLDR(q) => Some(q),
-                        Source::CHEATSH(q) => Some(q),
-                        _ => Some(String::from("")),
-                    }
-                } else {
-                    None
-                }
-            }
+        } else {
+            None
         }
     }
 
     pub fn get_best_match(&self) -> bool {
-        if let Some(Command::Best { .. }) = &self.cmd {
-            deprecated("best <query>");
-            true
-        } else {
-            self.best_match
-        }
+        self.best_match
     }
 
     pub fn autoselect(&self) -> bool {
-        if self.no_autoselect {
-            deprecated("--no-autoselect");
-            false
-        } else {
-            true
-        }
+        self.no_autoselect
     }
 }
 
