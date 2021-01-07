@@ -42,7 +42,7 @@ fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
         })
         .collect::<Vec<_>>()
         .chunks(2)
-        .map(|flag_and_value| {
+        .try_for_each(|flag_and_value| {
             if let [flag, value] = flag_and_value {
                 match flag.as_str() {
                     "--headers" | "--header-lines" => {
@@ -74,7 +74,6 @@ fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
                 unreachable!() // Chunking by 2 allows only for tuples of 1 or 2 items...
             }
         })
-        .collect::<Result<_, _>>()
         .context("Failed to parse finder options")?;
 
     let suggestion_type = match (multi, prevent_extra) {

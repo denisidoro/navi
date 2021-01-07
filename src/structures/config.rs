@@ -3,42 +3,59 @@ use crate::cmds::info::Info;
 use crate::common::shell::Shell;
 use crate::env_vars;
 use crate::finder::FinderChoice;
-use anyhow::Error;
 use clap::{crate_version, AppSettings, Clap};
+use std::str::FromStr;
 
 static mut NOTIFIED_DEPRECATION: bool = false;
 
-fn parse_finder(src: &str) -> Result<FinderChoice, Error> {
-    match src.to_lowercase().as_str() {
-        "fzf" => Ok(FinderChoice::Fzf),
-        "skim" => Ok(FinderChoice::Skim),
-        _ => Err(Error::msg(format!("unknown finder '{}'", src))),
+impl FromStr for FinderChoice {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "fzf" => Ok(FinderChoice::Fzf),
+            "skim" => Ok(FinderChoice::Skim),
+            _ => Err("no match"),
+        }
     }
 }
 
-fn parse_shell(src: &str) -> Result<Shell, Error> {
-    match src.to_lowercase().as_str() {
-        "bash" => Ok(Shell::Bash),
-        "zsh" => Ok(Shell::Zsh),
-        "fish" => Ok(Shell::Fish),
-        _ => Err(Error::msg(format!("unknown shell '{}'", src))),
+impl FromStr for Shell {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "bash" => Ok(Shell::Bash),
+            "zsh" => Ok(Shell::Zsh),
+            "fish" => Ok(Shell::Fish),
+            _ => Err("no match"),
+        }
     }
 }
 
-fn parse_func(src: &str) -> Result<Func, Error> {
-    match src.to_lowercase().as_str() {
-        "url::open" => Ok(Func::UrlOpen),
-        "welcome" => Ok(Func::Welcome),
-        _ => Err(Error::msg(format!("unknown shell '{}'", src))),
+impl FromStr for Func {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "url::open" => Ok(Func::UrlOpen),
+            "welcome" => Ok(Func::Welcome),
+            _ => Err("no match"),
+        }
     }
 }
 
-fn parse_info(src: &str) -> Result<Info, Error> {
-    match src.to_lowercase().as_str() {
-        "cheats-path" => Ok(Info::CheatsPath),
-        _ => Err(Error::msg(format!("unknown info '{}'", src))),
+impl FromStr for Info {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "cheats-path" => Ok(Info::CheatsPath),
+            _ => Err("no match"),
+        }
     }
 }
+
 #[derive(Debug, Clap)]
 #[clap(after_help = r#"MORE INFO:
     Please refer to https://github.com/denisidoro/navi
@@ -109,7 +126,7 @@ pub struct Config {
     pub fzf_overrides_var: Option<String>,
 
     /// which finder application to use
-    #[clap(long, env = env_vars::FINDER, default_value = "fzf", parse(try_from_str = parse_finder))]
+    #[clap(long, env = env_vars::FINDER, default_value = "fzf", possible_values = &["fzf", "skim"], case_insensitive = true)]
     pub finder: FinderChoice,
 
     #[clap(subcommand)]
@@ -135,7 +152,7 @@ pub enum Command {
     /// Performs ad-hoc functions provided by navi
     Fn {
         /// Function name (example: "url::open")
-        #[clap(parse(try_from_str = parse_func))]
+        #[clap(possible_values = &["url::welcome", "open"], case_insensitive = true)]
         func: Func,
         /// List of arguments (example: "https://google.com")
         args: Vec<String>,
@@ -163,12 +180,12 @@ pub enum Command {
     },
     /// Shows the path for shell widget files
     Widget {
-        #[clap(default_value = "bash", parse(try_from_str = parse_shell))]
+        #[clap(possible_values = &["bash", "zsh", "fish"], case_insensitive = true, default_value = "bash")]
         shell: Shell,
     },
     /// Shows info
     Info {
-        #[clap(parse(try_from_str = parse_info))]
+        #[clap(possible_values = &["cheats-path"], case_insensitive = true)]
         info: Info,
     },
     /// Helper command for Alfred integration
