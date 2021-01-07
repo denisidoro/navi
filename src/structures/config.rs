@@ -4,7 +4,7 @@ use crate::common::shell::Shell;
 use crate::env_vars;
 use crate::finder::FinderChoice;
 use anyhow::Error;
-use structopt::{clap::AppSettings, StructOpt};
+use clap::{crate_version, AppSettings, Clap};
 
 static mut NOTIFIED_DEPRECATION: bool = false;
 
@@ -39,8 +39,8 @@ fn parse_info(src: &str) -> Result<Info, Error> {
         _ => Err(Error::msg(format!("unknown info '{}'", src))),
     }
 }
-#[derive(Debug, StructOpt)]
-#[structopt(after_help = r#"MORE INFO:
+#[derive(Debug, Clap)]
+#[clap(after_help = r#"MORE INFO:
     Please refer to https://github.com/denisidoro/navi
 
 EXAMPLES:
@@ -59,72 +59,73 @@ EXAMPLES:
     navi --fzf-overrides '--no-select-1'             # prevent autoselection in case of single line
     navi --fzf-overrides '--nth 1,2'                 # only consider the first two columns for search
     navi --fzf-overrides '--no-exact'                # use looser search algorithm"#)]
-#[structopt(setting = AppSettings::ColorAuto)]
-#[structopt(setting = AppSettings::ColoredHelp)]
-#[structopt(setting = AppSettings::AllowLeadingHyphen)]
+#[clap(setting = AppSettings::ColorAuto)]
+#[clap(setting = AppSettings::ColoredHelp)]
+#[clap(setting = AppSettings::AllowLeadingHyphen)]
+#[clap(version = crate_version!())]
 pub struct Config {
     /// List of :-separated paths containing .cheat files
-    #[structopt(short, long, env = env_vars::PATH)]
+    #[clap(short, long, env = env_vars::PATH)]
     pub path: Option<String>,
 
     /// [Experimental] Instead of executing a snippet, saves it to a file
-    #[structopt(short, long)]
+    #[clap(short, long)]
     save: Option<String>,
 
     /// Instead of executing a snippet, prints it to stdout
-    #[structopt(long)]
+    #[clap(long)]
     print: bool,
 
     /// Prevents autoselection in case of single entry
-    #[structopt(long)]
+    #[clap(long)]
     no_autoselect: bool,
 
     /// Hides preview window
-    #[structopt(long)]
+    #[clap(long)]
     pub no_preview: bool,
 
     /// Returns the best match
-    #[structopt(long)]
+    #[clap(long)]
     best_match: bool,
 
     /// Search for cheatsheets using the tldr-pages repository
-    #[structopt(long)]
+    #[clap(long)]
     tldr: Option<String>,
 
     /// Search for cheatsheets using the cheat.sh repository
-    #[structopt(long)]
+    #[clap(long)]
     cheatsh: Option<String>,
 
     /// Query
-    #[structopt(short, long)]
+    #[clap(short, long)]
     query: Option<String>,
 
     /// finder overrides for cheat selection
-    #[structopt(long, env = env_vars::FZF_OVERRIDES)]
+    #[clap(long, env = env_vars::FZF_OVERRIDES)]
     pub fzf_overrides: Option<String>,
 
     /// finder overrides for variable selection
-    #[structopt(long, env = env_vars::FZF_OVERRIDES_VAR)]
+    #[clap(long, env = env_vars::FZF_OVERRIDES_VAR)]
     pub fzf_overrides_var: Option<String>,
 
     /// which finder application to use
-    #[structopt(long, env = env_vars::FINDER, default_value = "fzf", parse(try_from_str = parse_finder))]
+    #[clap(long, env = env_vars::FINDER, default_value = "fzf", parse(try_from_str = parse_finder))]
     pub finder: FinderChoice,
 
-    #[structopt(subcommand)]
+    #[clap(subcommand)]
     pub cmd: Option<Command>,
 }
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Clap)]
 pub enum Command {
     /// Filters results
-    #[structopt(setting = AppSettings::Hidden)]
+    #[clap(setting = AppSettings::Hidden)]
     Query {
         /// String used as filter (example: "git")
         query: String,
     },
     /// Autoselects the snippet that best matches the query
-    #[structopt(setting = AppSettings::Hidden)]
+    #[clap(setting = AppSettings::Hidden)]
     Best {
         /// String used as filter (example: "git remove branch")
         query: String,
@@ -134,24 +135,24 @@ pub enum Command {
     /// Performs ad-hoc functions provided by navi
     Fn {
         /// Function name (example: "url::open")
-        #[structopt(parse(try_from_str = parse_func))]
+        #[clap(parse(try_from_str = parse_func))]
         func: Func,
         /// List of arguments (example: "https://google.com")
         args: Vec<String>,
     },
     /// Manages cheatsheet repositories
     Repo {
-        #[structopt(subcommand)]
+        #[clap(subcommand)]
         cmd: RepoCommand,
     },
     /// Used for fzf's preview window when selecting snippets
-    #[structopt(setting = AppSettings::Hidden)]
+    #[clap(setting = AppSettings::Hidden)]
     Preview {
         /// Selection line
         line: String,
     },
     /// Used for fzf's preview window when selecting variable suggestions
-    #[structopt(setting = AppSettings::Hidden)]
+    #[clap(setting = AppSettings::Hidden)]
     PreviewVar {
         /// Selection line
         selection: String,
@@ -162,23 +163,23 @@ pub enum Command {
     },
     /// Shows the path for shell widget files
     Widget {
-        #[structopt(default_value = "bash", parse(try_from_str = parse_shell))]
+        #[clap(default_value = "bash", parse(try_from_str = parse_shell))]
         shell: Shell,
     },
     /// Shows info
     Info {
-        #[structopt(parse(try_from_str = parse_info))]
+        #[clap(parse(try_from_str = parse_info))]
         info: Info,
     },
     /// Helper command for Alfred integration
-    #[structopt(setting = AppSettings::Hidden)]
+    #[clap(setting = AppSettings::Hidden)]
     Alfred {
-        #[structopt(subcommand)]
+        #[clap(subcommand)]
         cmd: AlfredCommand,
     },
 }
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Clap)]
 pub enum RepoCommand {
     /// Imports cheatsheets from a repo
     Add {
@@ -189,7 +190,7 @@ pub enum RepoCommand {
     Browse,
 }
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Clap)]
 pub enum AlfredCommand {
     /// Outputs a JSON with commands
     Start,
@@ -301,9 +302,9 @@ impl Config {
 }
 
 pub fn config_from_env() -> Config {
-    Config::from_args()
+    Config::parse()
 }
 
 pub fn config_from_iter(args: Vec<&str>) -> Config {
-    Config::from_iter(args)
+    Config::parse_from(args)
 }
