@@ -198,7 +198,8 @@ fn replace_variables_from_snippet(
     for bracketed_variable_name in variables_found {
         let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
 
-        let env_value = env::var(variable_name);
+        let env_variable_name = variable_name.replace('-', "_");
+        let env_value = env::var(env_variable_name);
 
         let value = if let Ok(e) = env_value {
             e

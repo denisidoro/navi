@@ -84,11 +84,12 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
 
         let is_current = variable_name == variable;
         let variable_color = if is_current { active_color } else { inactive_color };
+        let env_variable_name = variable_name.replace('-', "_");
 
         let value = if is_current {
             let v = selection.trim_matches('\'');
             if v.is_empty() { query.trim_matches('\'') } else { v }.to_string()
-        } else if let Ok(v) = env::var(&variable_name) {
+        } else if let Ok(v) = env::var(&env_variable_name) {
             v
         } else {
             "".to_string()
