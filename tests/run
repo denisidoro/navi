@@ -20,13 +20,12 @@ _navi() {
 }
 
 _navi_cases() {
-   local filter="$*"
-   filter="${filter::-2}"
+   local -r filter="$*"
    _navi --query "$filter" --best-match
 }
 
 _navi_cases_test() {
-   echo "$(_navi_cases "$1"_)" \
+   echo "$(_navi_cases "$1")" \
       | test::equals "$2"
 }
 
