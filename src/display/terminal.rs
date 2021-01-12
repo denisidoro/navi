@@ -102,7 +102,7 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
             reset = reset
         );
 
-        colored_snippet = colored_snippet.replacen(bracketed_variable_name, &replacement, 999);
+        colored_snippet = colored_snippet.replace(bracketed_variable_name, &replacement);
 
         variables = format!(
             "{variables}\n{color}{variable}{reset} = {value}",

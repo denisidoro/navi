@@ -199,7 +199,7 @@ fn replace_variables_from_snippet(
         let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
 
         let env_variable_name = variable_name.replace('-', "_");
-        let env_value = env::var(env_variable_name);
+        let env_value = env::var(&env_variable_name);
 
         let value = if let Ok(e) = env_value {
             e
@@ -212,7 +212,7 @@ fn replace_variables_from_snippet(
             prompt_finder(variable_name, &config, None, variable_count)?
         };
 
-        env::set_var(variable_name, &value);
+        env::set_var(env_variable_name, &value);
 
         interpolated_snippet = if value.as_str() == "\n" {
             interpolated_snippet.replacen(bracketed_variable_name, "", 1)
