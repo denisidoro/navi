@@ -84,11 +84,12 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
 
         let is_current = variable_name == variable;
         let variable_color = if is_current { active_color } else { inactive_color };
+        let env_variable_name = variable_name.replace('-', "_");
 
         let value = if is_current {
             let v = selection.trim_matches('\'');
             if v.is_empty() { query.trim_matches('\'') } else { v }.to_string()
-        } else if let Ok(v) = env::var(&variable_name) {
+        } else if let Ok(v) = env::var(&env_variable_name) {
             v
         } else {
             "".to_string()
@@ -101,7 +102,7 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
             reset = reset
         );
 
-        colored_snippet = colored_snippet.replacen(bracketed_variable_name, &replacement, 999);
+        colored_snippet = colored_snippet.replace(bracketed_variable_name, &replacement);
 
         variables = format!(
             "{variables}\n{color}{variable}{reset} = {value}",
