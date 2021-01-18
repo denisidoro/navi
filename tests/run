@@ -24,6 +24,7 @@ _navi_cases() {
 }
 
 _navi_cases_test() {
+   sleep 2
    echo "$(_navi_cases "$1")" \
       | test::equals "$2"
 }
