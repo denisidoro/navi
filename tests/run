@@ -21,7 +21,7 @@ _navi() {
 
 _navi_cases() {
    local -r filter="$*"
-   _navi '--no-select-1' --query "$filter" --best-match
+   _navi --query "$filter" --best-match
 }
 
 _navi_cases_test() {
