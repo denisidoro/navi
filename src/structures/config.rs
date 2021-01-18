@@ -72,6 +72,7 @@ EXAMPLES:
     navi --finder 'skim'                             # set skim as finder, instead of fzf
     navi --fzf-overrides '--with-nth 1,2'            # show only the comment and tag columns
     navi --fzf-overrides '--no-select-1'             # prevent autoselection in case of single line
+    navi --fzf-overrides-var '--no-select-1'         # same, but for variable selection
     navi --fzf-overrides '--nth 1,2'                 # only consider the first two columns for search
     navi --fzf-overrides '--no-exact'                # use looser search algorithm"#)]
 #[clap(setting = AppSettings::ColorAuto)]
@@ -90,10 +91,6 @@ pub struct Config {
     /// Instead of executing a snippet, prints it to stdout
     #[clap(long)]
     print: bool,
-
-    /// Prevents autoselection in case of single entry
-    #[clap(long)]
-    no_autoselect: bool,
 
     /// Hides preview window
     #[clap(long)]
@@ -176,7 +173,7 @@ pub enum Command {
         /// Typed text
         variable: String,
     },
-    /// Shows the path for shell widget files
+    /// Outputs shell widget source code
     Widget {
         #[clap(possible_values = &["bash", "zsh", "fish"], case_insensitive = true, default_value = "bash")]
         shell: Shell,
@@ -268,10 +265,6 @@ impl Config {
 
     pub fn get_best_match(&self) -> bool {
         self.best_match
-    }
-
-    pub fn autoselect(&self) -> bool {
-        self.no_autoselect
     }
 }
 

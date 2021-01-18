@@ -29,7 +29,6 @@ fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
         } else {
             Some(format!("{} preview {{}}", filesystem::exe_string()?))
         },
-        autoselect: config.autoselect(),
         overrides: config.fzf_overrides.clone(),
         suggestion_type: SuggestionType::SnippetSelection,
         query: if config.get_best_match() {
@@ -125,7 +124,6 @@ fn prompt_finder(
     };
 
     let mut opts = FinderOpts {
-        autoselect: config.autoselect(),
         overrides: config.fzf_overrides_var.clone(),
         preview: Some(format!(
             r#"{prefix}navi preview-var "$(cat <<NAVIEOF
