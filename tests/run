@@ -20,7 +20,7 @@ _navi() {
 
 _navi_cases() {
    local -r filter="$*"
-   _navi --query "$filter" --best-match
+   echo "$(_navi --query "$filter" --best-match)"
 }
 
 _navi_cases_test() {
