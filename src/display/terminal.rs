@@ -6,6 +6,7 @@ use crate::structures::item::Item;
 use std::cmp::max;
 use std::collections::HashSet;
 use std::env;
+use std::iter;
 use std::str::FromStr;
 use termion::color;
 
@@ -73,7 +74,22 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
     let mut variables = String::from("");
     let mut visited_vars: HashSet<&str> = HashSet::new();
 
-    for bracketed_variable_name in display::VAR_REGEX.find_iter(snippet).map(|m| m.as_str()) {
+    let bracketed_current_variable = format!("<{}>", variable);
+
+    let bracketed_variables: Vec<&str> = {
+        if snippet.contains(&bracketed_current_variable) {
+            display::VAR_REGEX
+                .find_iter(snippet)
+                .map(|m| m.as_str())
+                .collect()
+        } else {
+            iter::once(&bracketed_current_variable)
+                .map(|s| s.as_str())
+                .collect()
+        }
+    };
+
+    for bracketed_variable_name in bracketed_variables {
         let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
 
         if visited_vars.contains(variable_name) {
