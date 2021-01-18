@@ -60,7 +60,7 @@ _navi_cheatsh() {
 }
 
 _navi_widget() {
-   _navi widget "$1" \
+   echo "$(_navi widget "$1")" \
       | grep -q "#!/usr/bin/env $1"
 }
 
