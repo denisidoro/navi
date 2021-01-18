@@ -59,7 +59,7 @@ jobs:
         run: sudo npm install -g tldr
 
       - name: Run bash tests
-        run: ./scripts/faketty bash ./tests/run
+        run: ./tests/run
 
   lints:
     name: Lints

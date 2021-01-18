@@ -15,17 +15,17 @@ if ! command_exists navi; then
 fi
 
 _navi() {
-   tty -s && mesg n || true
+   stty sane
    RUST_BACKTRACE=1 NAVI_PATH="${NAVI_TEST_PATH:-$TEST_CHEAT_PATH}" "$NAVI_EXE" "$@"
 }
 
 _navi_cases() {
    local -r filter="$*"
-   echo "$(_navi --query "$filter" --best-match)"
+   _navi --query "$filter" --best-match
 }
 
 _navi_cases_test() {
-   echo "$(_navi_cases "$1")" \
+   _navi_cases "$1" \
       | test::equals "$2"
 }
 
@@ -152,7 +152,7 @@ test::run "zsh" _navi_widget "fish"
 test::set_suite "info"
 test::run "cheats_path" _navi_cheatspath
 
-test::set_suite "integration"
-test::run "welcome->pwd" _integration
+# test::set_suite "integration"
+# test::run "welcome->pwd" _integration
 
 test::finish
