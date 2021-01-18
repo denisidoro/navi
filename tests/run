@@ -137,6 +137,7 @@ for i in $(_get_tests "$filter"); do
    query="$(echo "$i" | cut -d'|' -f1)"
    expected="$(echo "$i" | cut -d'|' -f2)"
    test::run "$query" _navi_cases_test "$query" "$expected"
+   sleep 2
 done
 
 test::set_suite "3rd party"
