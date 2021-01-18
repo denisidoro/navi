@@ -8,17 +8,6 @@ echo "foo"
 # sed with replacement -> "172.17.0.2"
 echo "8.8.8.8 via 172.17.0.1 dev eth0  src 172.17.0.2" | sed -E 's/.*src ([0-9.]+).*/\1/p' | head -n1
 
-# multiline command: no backslash -> "foo\nbar"
-echo "foo"
-echo "bar"
-
-# multiline command: with backslash -> "lorem ipsum\nno match"
-echo 'lorem ipsum'
-echo "foo" \
-    | grep -q "bar" \
-    && echo "match" \
-    || echo "no match"
-
 # 2nd column with default delimiter -> "rust is cool"
 echo "<language> is cool"
 
@@ -36,6 +25,17 @@ echo "<x> <x2> <y> <x>"
 
 # nested unused value -> "path: /my/pictures"
 echo "path: <pictures_folder>"
+
+# multiline command: no backslash -> "foo\nbar"
+echo "foo"
+echo "bar"
+
+# multiline command: with backslash -> "lorem ipsum\nno match"
+echo 'lorem ipsum'
+echo "foo" \
+    | grep -q "bar" \
+    && echo "match" \
+    || echo "no match"
 
 $ x: echo '2'
 $ x2: echo "$((x+10))"
