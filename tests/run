@@ -15,6 +15,7 @@ if ! command_exists navi; then
 fi
 
 _navi() {
+   stty -ixon
    RUST_BACKTRACE=1 NAVI_PATH="${NAVI_TEST_PATH:-$TEST_CHEAT_PATH}" "$NAVI_EXE" "$@"
 }
 
@@ -24,7 +25,6 @@ _navi_cases() {
 }
 
 _navi_cases_test() {
-   sleep 2
    echo "$(_navi_cases "$1")" \
       | test::equals "$2"
 }
