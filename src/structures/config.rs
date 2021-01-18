@@ -6,8 +6,6 @@ use crate::finder::FinderChoice;
 use clap::{crate_version, AppSettings, Clap};
 use std::str::FromStr;
 
-static mut NOTIFIED_DEPRECATION: bool = false;
-
 impl FromStr for FinderChoice {
     type Err = &'static str;
 
@@ -74,6 +72,7 @@ EXAMPLES:
     navi --finder 'skim'                             # set skim as finder, instead of fzf
     navi --fzf-overrides '--with-nth 1,2'            # show only the comment and tag columns
     navi --fzf-overrides '--no-select-1'             # prevent autoselection in case of single line
+    navi --fzf-overrides-var '--no-select-1'         # same, but for variable selection
     navi --fzf-overrides '--nth 1,2'                 # only consider the first two columns for search
     navi --fzf-overrides '--no-exact'                # use looser search algorithm"#)]
 #[clap(setting = AppSettings::ColorAuto)]
@@ -93,17 +92,13 @@ pub struct Config {
     #[clap(long)]
     print: bool,
 
-    /// Prevents autoselection in case of single entry
-    #[clap(long)]
-    no_autoselect: bool,
-
     /// Hides preview window
     #[clap(long)]
     pub no_preview: bool,
 
     /// Returns the best match
     #[clap(long)]
-    best_match: bool,
+    pub best_match: bool,
 
     /// Search for cheatsheets using the tldr-pages repository
     #[clap(long)]
@@ -178,7 +173,7 @@ pub enum Command {
         /// Typed text
         variable: String,
     },
-    /// Shows the path for shell widget files
+    /// Outputs shell widget source code
     Widget {
         #[clap(possible_values = &["bash", "zsh", "fish"], case_insensitive = true, default_value = "bash")]
         shell: Shell,
@@ -219,25 +214,6 @@ pub enum AlfredCommand {
     Check,
 }
 
-fn deprecated(syntax: &str) {
-    unsafe {
-        if NOTIFIED_DEPRECATION {
-            return;
-        }
-        eprintln!(
-            r"⚠️ The following syntax has been DEPRECATED:
-navi {}
-
-Please check `navi --help` for more info on how to achieve the same result with the new syntax.
-
-The deprecated syntax will be removed in the first version released on 2021! ⚠️
-",
-            syntax
-        );
-        NOTIFIED_DEPRECATION = true;
-    }
-}
-
 pub enum Source {
     FILESYSTEM(Option<String>),
     TLDR(String),
@@ -272,48 +248,18 @@ impl Config {
     }
 
     pub fn get_query(&self) -> Option<String> {
-        match &self.cmd {
-            Some(Command::Query { query }) => {
-                deprecated("query <query>");
-                Some(query.clone())
-            }
-            Some(Command::Best { query, .. }) => {
-                deprecated("best <query>");
-                Some(query.clone())
-            }
-            _ => {
-                let q = self.query.clone();
-                if q.is_some() {
-                    return q;
-                }
-                if self.get_best_match() {
-                    match self.source() {
-                        Source::TLDR(q) => Some(q),
-                        Source::CHEATSH(q) => Some(q),
-                        _ => Some(String::from("")),
-                    }
-                } else {
-                    None
-                }
-            }
+        let q = self.query.clone();
+        if q.is_some() {
+            return q;
         }
-    }
-
-    pub fn get_best_match(&self) -> bool {
-        if let Some(Command::Best { .. }) = &self.cmd {
-            deprecated("best <query>");
-            true
+        if self.best_match {
+            match self.source() {
+                Source::TLDR(q) => Some(q),
+                Source::CHEATSH(q) => Some(q),
+                _ => Some(String::from("")),
+            }
         } else {
-            self.best_match
-        }
-    }
-
-    pub fn autoselect(&self) -> bool {
-        if self.no_autoselect {
-            deprecated("--no-autoselect");
-            false
-        } else {
-            true
+            None
         }
     }
 }

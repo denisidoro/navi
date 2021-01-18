@@ -5,7 +5,6 @@ pub struct Opts {
     pub prompt: Option<String>,
     pub preview: Option<String>,
     pub preview_window: Option<String>,
-    pub autoselect: bool,
     pub overrides: Option<String>,
     pub global: bool,
     pub header_lines: u8,
@@ -21,7 +20,6 @@ impl Default for Opts {
         Self {
             query: None,
             filter: None,
-            autoselect: true,
             preview: None,
             preview_window: None,
             global: false,

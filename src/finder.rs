@@ -162,9 +162,7 @@ impl Finder for FinderChoice {
         ]);
 
         if let Self::Fzf = self {
-            if opts.autoselect {
-                command.arg("--select-1");
-            }
+            command.arg("--select-1");
         }
 
         match opts.suggestion_type {

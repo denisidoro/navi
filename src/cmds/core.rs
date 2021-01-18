@@ -29,15 +29,14 @@ fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
         } else {
             Some(format!("{} preview {{}}", filesystem::exe_string()?))
         },
-        autoselect: config.autoselect(),
         overrides: config.fzf_overrides.clone(),
         suggestion_type: SuggestionType::SnippetSelection,
-        query: if config.get_best_match() {
+        query: if config.best_match {
             None
         } else {
             config.get_query()
         },
-        filter: if config.get_best_match() {
+        filter: if config.best_match {
             config.get_query()
         } else {
             None
@@ -125,7 +124,6 @@ fn prompt_finder(
     };
 
     let mut opts = FinderOpts {
-        autoselect: config.autoselect(),
         overrides: config.fzf_overrides_var.clone(),
         preview: Some(format!(
             r#"{prefix}navi preview-var "$(cat <<NAVIEOF
@@ -253,7 +251,7 @@ pub fn main(config: Config) -> Result<(), Error> {
         })
         .context("Failed getting selection and variables from finder")?;
 
-    let extractions = extract_from_selections(&raw_selection, config.get_best_match());
+    let extractions = extract_from_selections(&raw_selection, config.best_match);
 
     if extractions.is_err() {
         return main(config);
