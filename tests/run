@@ -15,7 +15,6 @@ if ! command_exists navi; then
 fi
 
 _navi() {
-   stty sane || true
    RUST_BACKTRACE=1 NAVI_PATH="${NAVI_TEST_PATH:-$TEST_CHEAT_PATH}" "$NAVI_EXE" "$@"
 }
 
