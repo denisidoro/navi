@@ -21,6 +21,7 @@ _navi() {
 
 _navi_cases() {
    local filter="$*"
+   filter="${filter::-2}"
    _navi --query "$filter" --best-match
 }
 
