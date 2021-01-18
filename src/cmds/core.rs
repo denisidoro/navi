@@ -31,12 +31,12 @@ fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
         },
         overrides: config.fzf_overrides.clone(),
         suggestion_type: SuggestionType::SnippetSelection,
-        query: if config.get_best_match() {
+        query: if config.best_match {
             None
         } else {
             config.get_query()
         },
-        filter: if config.get_best_match() {
+        filter: if config.best_match {
             config.get_query()
         } else {
             None
@@ -251,7 +251,7 @@ pub fn main(config: Config) -> Result<(), Error> {
         })
         .context("Failed getting selection and variables from finder")?;
 
-    let extractions = extract_from_selections(&raw_selection, config.get_best_match());
+    let extractions = extract_from_selections(&raw_selection, config.best_match);
 
     if extractions.is_err() {
         return main(config);

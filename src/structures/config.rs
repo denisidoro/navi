@@ -98,7 +98,7 @@ pub struct Config {
 
     /// Returns the best match
     #[clap(long)]
-    best_match: bool,
+    pub best_match: bool,
 
     /// Search for cheatsheets using the tldr-pages repository
     #[clap(long)]
@@ -252,7 +252,7 @@ impl Config {
         if q.is_some() {
             return q;
         }
-        if self.get_best_match() {
+        if self.best_match {
             match self.source() {
                 Source::TLDR(q) => Some(q),
                 Source::CHEATSH(q) => Some(q),
@@ -261,10 +261,6 @@ impl Config {
         } else {
             None
         }
-    }
-
-    pub fn get_best_match(&self) -> bool {
-        self.best_match
     }
 }
 
