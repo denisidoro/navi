@@ -4,8 +4,13 @@ use crate::parser;
 use crate::structures::cheat::VariableMap;
 use anyhow::Context;
 use anyhow::Error;
+use regex::Regex;
 use std::collections::HashSet;
 use std::process::{self, Command, Stdio};
+
+lazy_static! {
+    static ref UNKNOWN_TOPIC_REGEX: Regex = Regex::new(r"^Unknown topic\.").expect("Invalid regex");
+}
 
 fn map_line(line: &str) -> Result<String, Error> {
     let line = line.trim().trim_end_matches(':');
@@ -32,6 +37,19 @@ fn read_all(
 ) -> Result<Option<VariableMap>, Error> {
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
+
+    if UNKNOWN_TOPIC_REGEX.is_match(cheat) {
+        eprintln!(
+            "`{}` not found in cheatsh.
+
+Output:
+{}
+",
+            query, cheat
+        );
+        process::exit(35)
+    }
+
     parser::read_lines(
         lines(query, cheat),
         "cheat.sh",
@@ -69,9 +87,9 @@ Make sure wget is correctly installed."
     if let Some(0) = out.status.code() {
     } else {
         eprintln!(
-            "Failed to call: 
+            "Failed to call:
 wget {}
- 
+
 Output:
 {}
 
