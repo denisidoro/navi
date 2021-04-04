@@ -6,8 +6,8 @@ source "${NAVI_HOME}/scripts/install"
 
 cd "$NAVI_HOME"
 
-header "cargo clippy fix..."
-cargo clippy --fix || true
+header "cargo nighly fix..."
+cargo +nightly clippy --fix -Z unstable-options || true
 
 header "cargo fix..."
 cargo fix || true
@@ -21,3 +21,6 @@ dot code beautify "${NAVI_HOME}/alfred/alfred.bash" || true
 dot code beautify "${NAVI_HOME}/alfred/alfred2.bash" || true
 dot code beautify "${NAVI_HOME}/tests/core.bash" || true
 dot code beautify "${NAVI_HOME}/tests/run" || true
+
+header "clippy..."
+cargo clippy || true
