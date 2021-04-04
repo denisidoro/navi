@@ -92,9 +92,9 @@ dependencies = [
 
 [[package]]
 name = "directories-next"
-version = "1.0.3"
+version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a28ccebc1239c5c57f0c55986e2ac03f49af0d0ca3dff29bfcad39d60a8be56"
+checksum = "339ee130d97a610ea5a5872d2bbb130fdf68884ff09d3028b81bec8a1ac23bbc"
 dependencies = [
  "cfg-if",
  "dirs-sys-next",
