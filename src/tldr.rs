@@ -9,7 +9,7 @@ use std::collections::HashSet;
 use std::process::{self, Command, Stdio};
 
 lazy_static! {
-    pub static ref VAR_Tldr_REGEX: Regex = Regex::new(r"\{\{(.*?)\}\}").expect("Invalid regex");
+    pub static ref VAR_TLDR_REGEX: Regex = Regex::new(r"\{\{(.*?)\}\}").expect("Invalid regex");
     pub static ref NON_VAR_CHARS_REGEX: Regex = Regex::new(r"[^\da-zA-Z_]").expect("Invalid regex");
 }
 
@@ -17,7 +17,7 @@ static VERSION_DISCLAIMER: &str = "The tldr client written in C (the default one
 The client written in Rust is recommended. The one available in npm works, too.";
 
 fn convert_tldr_vars(line: &str) -> String {
-    let caps = VAR_Tldr_REGEX.find_iter(&line);
+    let caps = VAR_TLDR_REGEX.find_iter(&line);
     let mut new_line: String = line.to_string();
     for cap in caps {
         let braced_var = cap.as_str();
