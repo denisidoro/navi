@@ -5,7 +5,6 @@ extern crate anyhow;
 
 mod cheatsh;
 mod cmds;
-mod common;
 mod display;
 mod env_vars;
 mod fetcher;
@@ -18,7 +17,7 @@ mod tldr;
 mod welcome;
 mod clipboard;
 mod file_issue;
-mod filesystem;
+mod fs;
 mod git;
 mod hash;
 mod shell;
