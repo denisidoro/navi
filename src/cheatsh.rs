@@ -4,17 +4,11 @@ use crate::parser;
 use crate::structures::cheat::VariableMap;
 use anyhow::Context;
 use anyhow::Error;
-use regex::Regex;
 use std::collections::HashSet;
 use std::process::{self, Command, Stdio};
 
-lazy_static! {
-    static ref UNKNOWN_TOPIC_REGEX: Regex = Regex::new(r"^Unknown topic\.").expect("Invalid regex");
-}
-
-fn map_line(line: &str) -> Result<String, Error> {
-    let line = line.trim().trim_end_matches(':');
-    Ok(line.to_string())
+fn map_line(line: &str) -> String {
+    line.trim().trim_end_matches(':').to_string()
 }
 
 fn lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String, Error>> {
@@ -24,7 +18,7 @@ fn lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String, Err
         query, markdown
     )
     .lines()
-    .map(map_line)
+    .map(|line| Ok(map_line(line)))
     .collect::<Vec<Result<String, Error>>>()
     .into_iter()
 }
@@ -38,7 +32,7 @@ fn read_all(
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
 
-    if UNKNOWN_TOPIC_REGEX.is_match(cheat) {
+    if cheat.starts_with("Unknown topic.") {
         eprintln!(
             "`{}` not found in cheatsh.
 
