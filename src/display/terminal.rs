@@ -42,14 +42,6 @@ pub fn preview(comment: &str, tags: &str, snippet: &str) {
     );
 }
 
-pub fn wrapped_by_map(text: &str, map: Option<&str>) -> String {
-    if map.is_none() {
-        text.to_string()
-    } else {
-        format!("map({})", text)
-    }
-}
-
 fn get_env_var(name: &str) -> String {
     if let Ok(v) = env::var(name) {
         v
@@ -126,10 +118,7 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
             color = variable_color,
             variable = variable_name,
             reset = reset,
-            value = wrapped_by_map(
-                &finder::get_column(value, column, delimiter.as_deref()),
-                map.as_deref()
-            )
+            value = &finder::process(value, column, delimiter.as_deref(), map.clone()),
         );
     }
 

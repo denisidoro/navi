@@ -57,7 +57,7 @@ docker rmi <image_id>
 echo <mapped>
 
 $ image_id: docker images --- --column 3 --header-lines 1 --delimiter '\s\s+'
-$ mapped: echo 'false true' | tr ' ' '\n' --- --map "[[ $1 == t* ]] && echo 1 || echo 0"
+$ mapped: echo 'false true' | tr ' ' '\n' --- --map "grep -q t && echo 1 || echo 0"
 ```
 
 The supported parameters are:
