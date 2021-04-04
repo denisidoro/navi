@@ -53,6 +53,9 @@ echo description blank
 # x
 echo description one character
 
+# map can be used to expand into multiple arguments
+echo <phrases>
+
 # Concatenate pdf files
 files=($(echo "<files>"))
 echo pdftk "${files[@]:-}" cat output <pdf_output>
@@ -65,10 +68,11 @@ $ table_elem: echo -e '0  rust      rust-lang.org\n1  clojure   clojure.org' ---
 $ table_elem2: echo -e '0;rust;rust-lang.org\n1;clojure;clojure.org' --- --column 2 --delimiter ';'
 $ multi_col: ls -la | awk '{print $1, $9}' --- --column 2 --delimiter '\s' --multi
 $ langs: echo 'clojure rust javascript' | tr ' ' '\n' --- --multi
-$ mapped: echo 'true false' | tr ' ' '\n' --- --map "[[ $0 == t* ]] && echo 1 || echo 0"
+$ mapped: echo 'true false' | tr ' ' '\n' --- --map "[[ $1 == t* ]] && echo 1 || echo 0"
 $ examples: echo -e 'foo bar\nlorem ipsum\ndolor sit' --- --multi
 $ multiword: echo -e 'foo bar\nlorem ipsum\ndolor sit\nbaz'i
 $ file: ls . --- --preview 'cat {}' --preview-window 'right:50%'
+$ phrases: echo -e "foo bar\nlorem ipsum\ndolor sit" --- --multi --map "sed -e 's/^.*$/\"&\"/' | tr '\n' ' '"
 
 # this should be displayed
 echo hi
