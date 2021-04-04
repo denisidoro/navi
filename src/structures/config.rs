@@ -215,35 +215,35 @@ pub enum AlfredCommand {
 }
 
 pub enum Source {
-    FILESYSTEM(Option<String>),
-    TLDR(String),
-    CHEATSH(String),
+    Filesystem(Option<String>),
+    Tldr(String),
+    Cheats(String),
 }
 
 pub enum Action {
-    SAVE(String),
-    PRINT,
-    EXECUTE,
+    Save(String),
+    Print,
+    Execute,
 }
 
 impl Config {
     pub fn source(&self) -> Source {
         if let Some(query) = self.tldr.clone() {
-            Source::TLDR(query)
+            Source::Tldr(query)
         } else if let Some(query) = self.cheatsh.clone() {
-            Source::CHEATSH(query)
+            Source::Cheats(query)
         } else {
-            Source::FILESYSTEM(self.path.clone())
+            Source::Filesystem(self.path.clone())
         }
     }
 
     pub fn action(&self) -> Action {
         if let Some(filepath) = self.save.clone() {
-            Action::SAVE(filepath)
+            Action::Save(filepath)
         } else if self.print {
-            Action::PRINT
+            Action::Print
         } else {
-            Action::EXECUTE
+            Action::Execute
         }
     }
 
@@ -254,8 +254,8 @@ impl Config {
         }
         if self.best_match {
             match self.source() {
-                Source::TLDR(q) => Some(q),
-                Source::CHEATSH(q) => Some(q),
+                Source::Tldr(q) => Some(q),
+                Source::Cheats(q) => Some(q),
                 _ => Some(String::from("")),
             }
         } else {

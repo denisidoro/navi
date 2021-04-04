@@ -54,7 +54,7 @@ fn get_env_var(name: &str) -> String {
     if let Ok(v) = env::var(name) {
         v
     } else {
-        panic!(format!("{} not set", name))
+        panic!("{} not set", name)
     }
 }
 
