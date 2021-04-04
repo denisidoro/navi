@@ -26,10 +26,23 @@ pub trait Finder {
 
 fn apply_map(text: String, map_fn: Option<String>) -> String {
     if let Some(m) = map_fn {
+        let cmd = format!(
+            r#"
+_navi_map_fn() {{
+  {}
+}}
+                
+read -r -d '' navi_input <<'NAVIEOF'
+{}
+NAVIEOF
+
+echo "$navi_input" | _navi_map_fn"#,
+            m, text
+        );
+
         let output = Command::new("bash")
             .arg("-c")
-            .arg(m.as_str())
-            .arg(text.as_str())
+            .arg(cmd.as_str())
             .stderr(Stdio::inherit())
             .output()
             .expect("Failed to execute map function");
