@@ -1,6 +1,6 @@
-use crate::url;
 use crate::handler;
 use crate::structures::config;
+use crate::url;
 use anyhow::Error;
 
 #[derive(Debug)]

@@ -1,8 +1,8 @@
 use crate::cmds::func::Func;
 use crate::cmds::info::Info;
-use crate::shell::Shell;
 use crate::env_vars;
 use crate::finder::FinderChoice;
+use crate::shell::Shell;
 use clap::{crate_version, AppSettings, Clap};
 use std::str::FromStr;
 

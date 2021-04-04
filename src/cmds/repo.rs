@@ -1,6 +1,6 @@
-use crate::git;
 use crate::filesystem;
 use crate::finder::{Finder, FinderChoice};
+use crate::git;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use anyhow::Context;
 use anyhow::Error;
