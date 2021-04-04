@@ -1,5 +1,5 @@
-use crate::common::hash::fnv;
 use crate::display::{self, Writer};
+use crate::hash::fnv;
 use crate::structures::cheat::VariableMap;
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use crate::structures::item::Item;

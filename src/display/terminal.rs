@@ -1,8 +1,8 @@
-use crate::common::terminal_width;
 use crate::display;
 use crate::env_vars;
 use crate::finder;
 use crate::structures::item::Item;
+use crate::terminal_width;
 use std::cmp::max;
 use std::collections::HashSet;
 use std::env;

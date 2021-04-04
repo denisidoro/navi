@@ -1,5 +1,5 @@
-use crate::common::filesystem::{pathbuf_to_string, read_lines};
 use crate::display::Writer;
+use crate::fs::{pathbuf_to_string, read_lines};
 use crate::parser;
 use crate::structures::cheat::VariableMap;
 use anyhow::Error;

@@ -1,5 +1,5 @@
-use crate::common::filesystem::pathbuf_to_string;
 use crate::filesystem::default_cheat_pathbuf;
+use crate::fs::pathbuf_to_string;
 use anyhow::Error;
 
 #[derive(Debug)]

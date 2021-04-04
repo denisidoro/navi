@@ -1,7 +1,7 @@
-use crate::common::shell::BashSpawnError;
 use crate::display;
 use crate::fetcher::Fetcher;
 use crate::filesystem;
+use crate::shell::BashSpawnError;
 use crate::structures::cheat::Suggestion;
 use crate::structures::config::Config;
 use anyhow::Context;

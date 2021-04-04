@@ -1,4 +1,4 @@
-use crate::common::shell::Shell;
+use crate::shell::Shell;
 use anyhow::Error;
 
 pub fn main(shell: &Shell) -> Result<(), Error> {
