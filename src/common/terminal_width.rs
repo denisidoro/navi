@@ -29,7 +29,7 @@ fn width_with_shell_out() -> u16 {
             let stdout = String::from_utf8(output.stdout).expect("Invalid utf8 output from stty");
             let mut data = stdout.split_whitespace();
             data.next();
-            u16::from_str_radix(data.next().expect("Not enough data").parse::<u16>().expect("Invalid base-10 number")
+            data.next().expect("Not enough data").parse::<u16>().expect("Invalid base-10 number")
         }
         _ => FALLBACK_WIDTH,
     }
