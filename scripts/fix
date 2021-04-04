@@ -6,7 +6,7 @@ source "${NAVI_HOME}/scripts/install"
 
 cd "$NAVI_HOME"
 
-header "cargo nighly fix..."
+header "cargo clippy fix..."
 cargo +nightly clippy --fix -Z unstable-options || true
 
 header "cargo fix..."
