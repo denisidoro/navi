@@ -233,9 +233,9 @@ pub fn main(config: Config) -> Result<(), Error> {
             let mut writer = display::terminal::Writer::new();
 
             let fetcher: Box<dyn Fetcher> = match config.source() {
-                Source::CHEATSH(query) => Box::new(cheatsh::Fetcher::new(query)),
-                Source::TLDR(query) => Box::new(tldr::Fetcher::new(query)),
-                Source::FILESYSTEM(path) => Box::new(filesystem::Fetcher::new(path)),
+                Source::Cheats(query) => Box::new(cheatsh::Fetcher::new(query)),
+                Source::Tldr(query) => Box::new(tldr::Fetcher::new(query)),
+                Source::Filesystem(path) => Box::new(filesystem::Fetcher::new(path)),
             };
 
             let res = fetcher
@@ -280,13 +280,13 @@ pub fn main(config: Config) -> Result<(), Error> {
     );
 
     match config.action() {
-        Action::PRINT => {
+        Action::Print => {
             println!("{}", interpolated_snippet);
         }
-        Action::SAVE(filepath) => {
+        Action::Save(filepath) => {
             fs::write(filepath, interpolated_snippet).context("Unable to save output")?;
         }
-        Action::EXECUTE => match key {
+        Action::Execute => match key {
             "ctrl-y" => {
                 clipboard::copy(interpolated_snippet)?;
             }

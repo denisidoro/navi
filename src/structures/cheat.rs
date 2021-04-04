@@ -23,8 +23,7 @@ impl VariableMap {
         if let Some(v) = self.dependencies.get_mut(&k) {
             v.push(fnv(&tags_dependency));
         } else {
-            let mut v: Vec<u64> = Vec::new();
-            v.push(fnv(&tags_dependency));
+            let v: Vec<u64> = vec![fnv(&tags_dependency)];
             self.dependencies.insert(k, v);
         }
     }
