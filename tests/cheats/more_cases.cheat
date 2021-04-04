@@ -53,6 +53,9 @@ echo description blank
 # x
 echo description one character
 
+# map can be used to expand into multiple arguments
+echo <phrases>
+
 # Concatenate pdf files
 files=($(echo "<files>"))
 echo pdftk "${files[@]:-}" cat output <pdf_output>
@@ -69,6 +72,7 @@ $ mapped: echo 'true false' | tr ' ' '\n' --- --map "[[ $1 == t* ]] && echo 1 ||
 $ examples: echo -e 'foo bar\nlorem ipsum\ndolor sit' --- --multi
 $ multiword: echo -e 'foo bar\nlorem ipsum\ndolor sit\nbaz'i
 $ file: ls . --- --preview 'cat {}' --preview-window 'right:50%'
+$ phrases: echo -e "foo bar\nlorem ipsum\ndolor sit" --- --multi --map "sed -e 's/^.*$/\"&\"/' | tr '\n' ' '"
 
 # this should be displayed
 echo hi

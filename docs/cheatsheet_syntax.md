@@ -137,5 +137,5 @@ true \
 # This will result into: cat "file1.json" "file2.json"
 cat <jsons>
 
-$ jsons: find . -iname '*.json' -type f -print --- --multi --map "awk '{ print "\""$0"\""}' | tr '\n' ' '"
+$ jsons: find . -iname '*.json' -type f -print --- --multi --map "sed -e 's/^.*$/\"&\"/' | tr '\n' ' '
 ```

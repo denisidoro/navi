@@ -32,11 +32,11 @@ _navi_map_fn() {{
   {}
 }}
                 
-read -r -d '' navi_input <<'NAVIEOF'
+read -r -d '' _navi_input <<'NAVIEOF'
 {}
 NAVIEOF
 
-echo "$navi_input" | _navi_map_fn"#,
+echo "$_navi_input" | _navi_map_fn"#,
             m, text
         );
 
