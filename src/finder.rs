@@ -24,6 +24,8 @@ pub trait Finder {
         F: Fn(&mut process::ChildStdin, &mut Vec<String>) -> Result<Option<VariableMap>, Error>;
 }
 
+// TODO: extract
+// TODO: make it return Result
 fn apply_map(text: String, map_fn: Option<String>) -> String {
     if let Some(m) = map_fn {
         let cmd = format!(
@@ -54,7 +56,7 @@ echo "$_navi_input" | _navi_map_fn"#,
 }
 
 // TODO: extract
-pub fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> String {
+fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> String {
     if let Some(c) = column {
         let mut result = String::from("");
         let re = regex::Regex::new(delimiter.unwrap_or(r"\s\s+")).expect("Invalid regex");
@@ -72,6 +74,11 @@ pub fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> 
     } else {
         text
     }
+}
+
+// TODO: extract
+pub fn process(text: String, column: Option<u8>, delimiter: Option<&str>, map_fn: Option<String>) -> String {
+    apply_map(get_column(text, column, delimiter), map_fn)
 }
 
 fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> Result<String, Error> {
@@ -125,8 +132,7 @@ fn parse(out: Output, opts: Opts) -> Result<String, Error> {
     };
 
     let output = parse_output_single(text, opts.suggestion_type)?;
-    let output = get_column(output, opts.column, opts.delimiter.as_deref());
-    let output = apply_map(output, opts.map);
+    let output = process(output, opts.column, opts.delimiter.as_deref(), opts.map);
     Ok(output)
 }
 
