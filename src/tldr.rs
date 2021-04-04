@@ -34,9 +34,9 @@ fn convert_tldr_vars(line: &str) -> String {
     new_line
 }
 
-fn convert_tldr(line: &str) -> Result<String, Error> {
+fn convert_tldr(line: &str) -> String {
     let line = line.trim();
-    let new_line = if line.starts_with('-') {
+    if line.starts_with('-') {
         format!("{}{}", "# ", &line[2..line.len() - 1])
     } else if line.starts_with('`') {
         convert_tldr_vars(&line[1..line.len() - 1])
@@ -44,8 +44,7 @@ fn convert_tldr(line: &str) -> Result<String, Error> {
         line.to_string()
     } else {
         "".to_string()
-    };
-    Ok(new_line)
+    }
 }
 
 fn markdown_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String, Error>> {
@@ -55,7 +54,7 @@ fn markdown_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<St
         query, markdown
     )
     .lines()
-    .map(convert_tldr)
+    .map(|line| Ok(convert_tldr(line)))
     .collect::<Vec<Result<String, Error>>>()
     .into_iter()
 }
