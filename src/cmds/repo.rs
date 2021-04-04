@@ -1,4 +1,4 @@
-use crate::common::git;
+use crate::git;
 use crate::filesystem;
 use crate::finder::{Finder, FinderChoice};
 use crate::structures::finder::{Opts as FinderOpts, SuggestionType};

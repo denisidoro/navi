@@ -1,4 +1,4 @@
-use crate::common::url;
+use crate::url;
 use crate::handler;
 use crate::structures::config;
 use anyhow::Error;

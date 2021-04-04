@@ -1,4 +1,4 @@
-use crate::common::shell::BashSpawnError;
+use crate::shell::BashSpawnError;
 use crate::display;
 use crate::fetcher::Fetcher;
 use crate::filesystem;

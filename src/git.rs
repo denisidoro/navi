@@ -1,4 +1,4 @@
-use crate::common::shell::BashSpawnError;
+use crate::shell::BashSpawnError;
 use anyhow::{Context, Error};
 use std::process::Command;
 

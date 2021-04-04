@@ -1,4 +1,4 @@
-pub use crate::common::filesystem::{
+pub use crate::fs::{
     create_dir, exe_string, pathbuf_to_string, remove_dir, InvalidPath, UnreadableDir,
 };
 use crate::display::Writer;

@@ -1,6 +1,6 @@
 use crate::cmds::func::Func;
 use crate::cmds::info::Info;
-use crate::common::shell::Shell;
+use crate::shell::Shell;
 use crate::env_vars;
 use crate::finder::FinderChoice;
 use clap::{crate_version, AppSettings, Clap};

@@ -1,4 +1,4 @@
-use crate::common::terminal_width;
+use crate::terminal_width;
 use crate::display;
 use crate::env_vars;
 use crate::finder;

@@ -1,6 +1,6 @@
 use crate::cheatsh;
-use crate::common::clipboard;
-use crate::common::shell::{BashSpawnError, IS_FISH};
+use crate::clipboard;
+use crate::shell::{BashSpawnError, IS_FISH};
 use crate::display;
 use crate::env_vars;
 use crate::fetcher::Fetcher;
