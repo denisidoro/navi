@@ -15,7 +15,6 @@ lazy_static! {
 fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
     let mut multi = false;
     let mut prevent_extra = false;
-    let mut is_global = false;
     let mut opts = FinderOpts::default();
 
     let parts = shellwords::split(text).map_err(|_| anyhow!("Given options are missing a closing quote"))?;
@@ -31,10 +30,6 @@ fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
                 }
                 "--prevent-extra" => {
                     prevent_extra = true;
-                    false
-                }
-                "--global" => {
-                    is_global = true;
                     false
                 }
                 _ => true,
@@ -82,7 +77,6 @@ fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
         (false, true) => SuggestionType::SingleSelection,
     };
     opts.suggestion_type = suggestion_type;
-    opts.global = is_global;
 
     Ok(opts)
 }
