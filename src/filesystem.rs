@@ -1,10 +1,10 @@
-use crate::display::Writer;
 pub use crate::fs::{
     create_dir, exe_string, pathbuf_to_string, read_lines, remove_dir, InvalidPath, UnreadableDir,
 };
 use crate::parser;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
+use crate::writer::Writer;
 use anyhow::Error;
 use directories_next::BaseDirs;
 use std::collections::HashSet;
@@ -111,8 +111,8 @@ pub fn read_all(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::display;
     use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
+    use crate::writer;
     use std::process::{Command, Stdio};
 
     #[test]
@@ -126,7 +126,7 @@ mod tests {
             .unwrap();
         let child_stdin = child.stdin.as_mut().unwrap();
         let mut visited_lines: HashSet<u64> = HashSet::new();
-        let mut writer: Box<dyn Writer> = Box::new(display::terminal::Writer::new());
+        let mut writer: Box<dyn Writer> = Box::new(writer::terminal::Writer::new());
         read_file(
             path,
             0,

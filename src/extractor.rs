@@ -1,4 +1,4 @@
-use crate::display;
+use crate::writer;
 
 use anyhow::Context;
 use anyhow::Error;
@@ -18,7 +18,7 @@ pub fn extract_from_selections(raw_snippet: &str, is_single: bool) -> Result<Out
     let mut parts = lines
         .next()
         .context("No more parts in `selections`")?
-        .split(display::DELIMITER)
+        .split(writer::DELIMITER)
         .skip(3);
 
     let tags = parts.next().unwrap_or("");

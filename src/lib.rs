@@ -7,7 +7,6 @@ mod actor;
 mod cheatsh;
 mod clipboard;
 mod cmds;
-mod display;
 mod env_vars;
 mod extractor;
 mod filesystem;
@@ -23,6 +22,7 @@ mod terminal;
 mod tldr;
 mod url;
 mod welcome;
+mod writer;
 
 pub use handler::handle_config;
 pub use structures::config::{config_from_env, config_from_iter};

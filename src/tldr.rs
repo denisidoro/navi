@@ -1,7 +1,7 @@
-use crate::display::Writer;
 use crate::parser;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
+use crate::writer::Writer;
 use anyhow::{Context, Error};
 use regex::Regex;
 use std::collections::HashSet;

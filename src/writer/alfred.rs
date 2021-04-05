@@ -1,5 +1,5 @@
-use crate::display;
 use crate::structures::item::Item;
+use crate::writer;
 
 pub struct Writer {
     is_first: bool,
@@ -8,7 +8,7 @@ pub struct Writer {
 fn escape_for_json(txt: &str) -> String {
     txt.replace('\\', "\\\\")
         .replace('"', "“")
-        .replace(display::NEWLINE_ESCAPE_CHAR, " ")
+        .replace(writer::NEWLINE_ESCAPE_CHAR, " ")
 }
 
 pub fn print_items_start(varname: Option<&str>) {
@@ -25,7 +25,7 @@ pub fn print_items_end() {
     println!(r#"]}}"#);
 }
 
-impl display::Writer for Writer {
+impl writer::Writer for Writer {
     fn write(&mut self, item: Item) -> String {
         let prefix = if self.is_first {
             self.is_first = false;

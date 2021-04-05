@@ -1,8 +1,8 @@
-use crate::display::{self, Writer};
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::hash::fnv;
 use crate::structures::cheat::VariableMap;
 use crate::structures::item::Item;
+use crate::writer::{self, Writer};
 use anyhow::{Context, Error};
 use regex::Regex;
 use std::collections::HashSet;
@@ -202,7 +202,7 @@ pub fn read_lines(
             visited_lines.insert(hash);
 
             if !(&snippet).is_empty() {
-                snippet.push_str(display::LINE_SEPARATOR);
+                snippet.push_str(writer::LINE_SEPARATOR);
             }
             snippet.push_str(&line);
         }

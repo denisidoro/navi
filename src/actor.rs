@@ -1,7 +1,7 @@
 use crate::clipboard;
-use crate::display;
 use crate::env_vars;
 use crate::extractor;
+use crate::writer;
 
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::Finder;
@@ -133,10 +133,7 @@ fn replace_variables_from_snippet(
     config: &Config,
 ) -> Result<String, Error> {
     let mut interpolated_snippet = String::from(snippet);
-    let variables_found: Vec<&str> = display::VAR_REGEX
-        .find_iter(snippet)
-        .map(|m| m.as_str())
-        .collect();
+    let variables_found: Vec<&str> = writer::VAR_REGEX.find_iter(snippet).map(|m| m.as_str()).collect();
     let variable_count = unique_result_count(&variables_found);
 
     for bracketed_variable_name in variables_found {
@@ -187,7 +184,7 @@ pub fn act(
     env::set_var(env_vars::PREVIEW_TAGS, &tags);
     env::set_var(env_vars::PREVIEW_COMMENT, &comment);
 
-    let interpolated_snippet = display::with_new_lines(
+    let interpolated_snippet = writer::with_new_lines(
         replace_variables_from_snippet(
             snippet,
             tags,

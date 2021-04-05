@@ -1,5 +1,5 @@
-use crate::display::Writer;
 use crate::structures::cheat::VariableMap;
+use crate::writer::Writer;
 use anyhow::Error;
 
 pub trait Fetcher {

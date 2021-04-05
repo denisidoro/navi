@@ -1,9 +1,9 @@
-use crate::display;
 use crate::filesystem;
 use crate::shell::BashSpawnError;
 use crate::structures::cheat::Suggestion;
 use crate::structures::config::Config;
 use crate::structures::fetcher::Fetcher;
+use crate::writer;
 use anyhow::Context;
 use anyhow::Error;
 use std::env;
@@ -15,9 +15,9 @@ pub fn main(config: Config) -> Result<(), Error> {
         .spawn()
         .context("Unable to create child")?;
     let stdin = child.stdin.as_mut().context("Unable to get stdin")?;
-    let mut writer = display::alfred::Writer::new();
+    let mut writer = writer::alfred::Writer::new();
 
-    display::alfred::print_items_start(None);
+    writer::alfred::print_items_start(None);
 
     let fetcher = filesystem::Fetcher::new(config.path);
     fetcher
@@ -27,7 +27,7 @@ pub fn main(config: Config) -> Result<(), Error> {
     // make sure everything was printed to stdout before attempting to close the items vector
     let _ = child.wait_with_output().context("Failed to wait for fzf")?;
 
-    display::alfred::print_items_end();
+    writer::alfred::print_items_end();
     Ok(())
 }
 
@@ -59,7 +59,7 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
         .spawn()
         .context("Unable to create child")?;
     let stdin = child.stdin.as_mut().context("Unable to get stdin")?;
-    let mut writer = display::alfred::Writer::new();
+    let mut writer = writer::alfred::Writer::new();
 
     let fetcher = filesystem::Fetcher::new(config.path);
     let variables = fetcher
@@ -70,7 +70,7 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
     let tags = env::var("tags").context(r#"The env var "tags" isn't set"#)?;
     let snippet = env::var("snippet").context(r#"The env var "snippet" isn't set"#)?;
 
-    let capture = display::VAR_REGEX.captures_iter(&snippet).next();
+    let capture = writer::VAR_REGEX.captures_iter(&snippet).next();
     let bracketed_varname = &(capture.expect("Invalid capture"))[0];
     let varname = &bracketed_varname[1..bracketed_varname.len() - 1];
     let command = variables.get_suggestion(&tags, &varname);
@@ -82,7 +82,7 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
         return Ok(());
     }
 
-    display::alfred::print_items_start(Some(varname));
+    writer::alfred::print_items_start(Some(varname));
 
     let command = command.context("Invalid command")?;
     let lines = prompt_finder(command).context("Invalid lines")?;
@@ -93,7 +93,7 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
         writer.write_suggestion(&snippet, &varname, &line);
     }
 
-    display::alfred::print_items_end();
+    writer::alfred::print_items_end();
 
     Ok(())
 }

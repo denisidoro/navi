@@ -1,7 +1,7 @@
 use crate::actor;
 use crate::cheatsh;
 
-use crate::display;
+use crate::writer;
 
 use crate::extractor;
 use crate::filesystem;
@@ -51,7 +51,7 @@ pub fn main(config: Config) -> Result<(), Error> {
     let (raw_selection, variables) = config
         .finder
         .call(opts, &mut files, |stdin, files| {
-            let mut writer = display::terminal::Writer::new();
+            let mut writer = writer::terminal::Writer::new();
 
             let fetcher: Box<dyn Fetcher> = match config.source() {
                 Source::Cheats(query) => Box::new(cheatsh::Fetcher::new(query)),
