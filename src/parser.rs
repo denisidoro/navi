@@ -1,7 +1,7 @@
 use crate::display::{self, Writer};
+use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::hash::fnv;
 use crate::structures::cheat::VariableMap;
-use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
 use crate::structures::item::Item;
 use anyhow::{Context, Error};
 use regex::Regex;
