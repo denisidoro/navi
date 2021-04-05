@@ -75,7 +75,9 @@ Feel free to be the maintainer of **navi** for any package manager you'd like!
 
 ### Installing the shell widget
 
-If you want to use the shell widget, add this line to your `.bashrc`-like file:
+The shell widget maintains your `.history`-like file consistent and allows you to edit commands before executing them.
+
+If you want to install it, add this line to your `.bashrc`-like file:
 ```sh
 # bash
 eval "$(navi widget bash)"
@@ -88,3 +90,9 @@ navi widget fish | source
 ```
 
 By default, `Ctrl+G` is assigned to launching **navi**.
+
+There's currently no way to customize the widget behavior out-of-the-box. If you want to change the keybinding or the **navi** flags used by the widget, please:
+1. run, e.g., `navi widget bash` in your terminal
+2. copy the output
+3. paste the output in your `.bashrc`-like file
+4. edit the contents accordingly
