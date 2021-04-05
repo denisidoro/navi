@@ -1,19 +1,15 @@
-use crate::cheatsh;
 use crate::clipboard;
 use crate::display;
 use crate::env_vars;
 use crate::extractor;
-use crate::fetcher::Fetcher;
-use crate::filesystem;
+
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::Finder;
 use crate::shell::{BashSpawnError, IS_FISH};
 use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::structures::config::Action;
 use crate::structures::config::Config;
-use crate::structures::config::Source;
-use crate::tldr;
-use crate::welcome;
+
 use anyhow::Context;
 use anyhow::Error;
 
