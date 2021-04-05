@@ -128,7 +128,7 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
             color = variable_color,
             variable = variable_name,
             reset = reset,
-            value = &finder::process(value, column, delimiter.as_deref(), map.clone())
+            value = finder::process(value, column, delimiter.as_deref(), map.clone())
                 .expect("Unable to process value"),
         );
     }

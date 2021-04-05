@@ -127,7 +127,7 @@ fn prompt_finder(
         overrides: config.fzf_overrides_var.clone(),
         preview: Some(format!(
             r#"{prefix}navi preview-var "$(cat <<NAVIEOF
-{{}}
+{{+}}
 NAVIEOF
 )" "$(cat <<NAVIEOF
 {{q}}
