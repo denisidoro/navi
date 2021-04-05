@@ -10,7 +10,6 @@ mod cmds;
 mod display;
 mod env_vars;
 mod extractor;
-mod fetcher;
 mod filesystem;
 mod finder;
 mod fs;
