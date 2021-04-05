@@ -1,10 +1,8 @@
-use crate::display;
-use crate::finder::structures::Opts;
 use crate::finder::structures::SuggestionType;
-use crate::structures::cheat::VariableMap;
+
 use anyhow::Context;
 use anyhow::Error;
-use std::process::{self, Output};
+
 use std::process::{Command, Stdio};
 
 fn apply_map(text: String, map_fn: Option<String>) -> Result<String, Error> {
