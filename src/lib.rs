@@ -18,7 +18,7 @@ mod hash;
 mod parser;
 mod shell;
 mod structures;
-mod terminal_width;
+mod terminal;
 mod tldr;
 mod url;
 mod welcome;

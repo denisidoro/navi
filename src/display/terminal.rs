@@ -2,13 +2,12 @@ use crate::display;
 use crate::env_vars;
 use crate::finder;
 use crate::structures::item::Item;
-use crate::terminal_width;
+use crate::terminal::{self, color};
 use std::cmp::max;
 use std::collections::HashSet;
 use std::env;
 use std::iter;
 use std::str::FromStr;
-use termion::color;
 
 // TODO: extract
 pub fn parse_env_var<T: FromStr>(varname: &str) -> Option<T> {
@@ -146,7 +145,7 @@ fn limit_str(text: &str, length: usize) -> String {
 }
 
 fn get_widths() -> (usize, usize) {
-    let width = terminal_width::get();
+    let width = terminal::width();
     let tag_width = max(4, width * *TAG_WIDTH_PERCENTAGE / 100);
     let comment_width = max(4, width * *COMMENT_WIDTH_PERCENTAGE / 100);
     (usize::from(tag_width), usize::from(comment_width))

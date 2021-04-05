@@ -1,4 +1,5 @@
 use terminal_size::{terminal_size, terminal_size_using_fd, Height, Width};
+pub use termion::color;
 
 const FALLBACK_WIDTH: u16 = 80;
 
@@ -57,7 +58,7 @@ fn width_with_fd() -> u16 {
     }
 }
 
-pub fn get() -> u16 {
+pub fn width() -> u16 {
     let size = terminal_size();
     if let Some((Width(w), Height(_))) = size {
         w
