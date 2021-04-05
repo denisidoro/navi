@@ -109,7 +109,7 @@ pub fn read_all(
 mod tests {
     use super::*;
     use crate::display;
-    use crate::structures::finder::{Opts as FinderOpts, SuggestionType};
+    use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
     use std::process::{Command, Stdio};
 
     #[test]
