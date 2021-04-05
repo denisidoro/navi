@@ -63,8 +63,18 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
     let inactive_color = color::Fg(*COMMENT_COLOR);
 
     let mut colored_snippet = String::from(snippet);
-    let mut variables = String::from("");
     let mut visited_vars: HashSet<&str> = HashSet::new();
+
+    let mut variables = String::from("");
+
+    println!(
+        "{comment_color}{comment} {tag_color}{tags}{reset}",
+        comment = comment,
+        tags = format!("[{}]", tags),
+        comment_color = color::Fg(*COMMENT_COLOR),
+        tag_color = color::Fg(*TAG_COLOR),
+        reset = reset,
+    );
 
     let bracketed_current_variable = format!("<{}>", variable);
 
@@ -118,20 +128,13 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
             color = variable_color,
             variable = variable_name,
             reset = reset,
-            value = &finder::process(value, column, delimiter.as_deref(), map.clone()),
+            value = &finder::process(value, column, delimiter.as_deref(), map.clone())
+                .expect("Unable to process value"),
         );
     }
 
-    println!(
-        "{comment_color}{comment} {tag_color}{tags}{reset} \n{snippet}\n{variables}",
-        comment = comment,
-        tags = format!("[{}]", tags),
-        snippet = display::fix_newlines(&colored_snippet),
-        comment_color = color::Fg(*COMMENT_COLOR),
-        tag_color = color::Fg(*TAG_COLOR),
-        variables = variables,
-        reset = reset
-    );
+    println!("{snippet}", snippet = display::fix_newlines(&colored_snippet));
+    println!("{variables}", variables = variables);
 }
 
 fn limit_str(text: &str, length: usize) -> String {

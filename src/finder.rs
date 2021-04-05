@@ -25,8 +25,7 @@ pub trait Finder {
 }
 
 // TODO: extract
-// TODO: make it return Result
-fn apply_map(text: String, map_fn: Option<String>) -> String {
+fn apply_map(text: String, map_fn: Option<String>) -> Result<String, Error> {
     if let Some(m) = map_fn {
         let cmd = format!(
             r#"
@@ -47,11 +46,11 @@ echo "$_navi_input" | _navi_map_fn"#,
             .arg(cmd.as_str())
             .stderr(Stdio::inherit())
             .output()
-            .expect("Failed to execute map function");
+            .context("Failed to execute map function")?;
 
-        String::from_utf8(output.stdout).expect("Invalid utf8 output for map function")
+        String::from_utf8(output.stdout).context("Invalid utf8 output for map function")
     } else {
-        text
+        Ok(text)
     }
 }
 
@@ -77,7 +76,12 @@ fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> Stri
 }
 
 // TODO: extract
-pub fn process(text: String, column: Option<u8>, delimiter: Option<&str>, map_fn: Option<String>) -> String {
+pub fn process(
+    text: String,
+    column: Option<u8>,
+    delimiter: Option<&str>,
+    map_fn: Option<String>,
+) -> Result<String, Error> {
     apply_map(get_column(text, column, delimiter), map_fn)
 }
 
@@ -132,8 +136,7 @@ fn parse(out: Output, opts: Opts) -> Result<String, Error> {
     };
 
     let output = parse_output_single(text, opts.suggestion_type)?;
-    let output = process(output, opts.column, opts.delimiter.as_deref(), opts.map);
-    Ok(output)
+    process(output, opts.column, opts.delimiter.as_deref(), opts.map)
 }
 
 impl Finder for FinderChoice {
