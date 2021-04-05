@@ -1,9 +1,9 @@
 use crate::display;
-use crate::fetcher::Fetcher;
 use crate::filesystem;
 use crate::shell::BashSpawnError;
 use crate::structures::cheat::Suggestion;
 use crate::structures::config::Config;
+use crate::structures::fetcher::Fetcher;
 use anyhow::Context;
 use anyhow::Error;
 use std::env;
