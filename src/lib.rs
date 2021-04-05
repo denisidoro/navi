@@ -3,11 +3,13 @@ extern crate lazy_static;
 #[macro_use]
 extern crate anyhow;
 
+mod actor;
 mod cheatsh;
 mod clipboard;
 mod cmds;
 mod display;
 mod env_vars;
+mod extractor;
 mod fetcher;
 mod filesystem;
 mod finder;
