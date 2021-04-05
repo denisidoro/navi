@@ -4,10 +4,10 @@ use crate::cheatsh;
 use crate::display;
 
 use crate::extractor;
-use crate::fetcher::Fetcher;
 use crate::filesystem;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::Finder;
+use crate::structures::fetcher::Fetcher;
 
 use crate::structures::cheat::VariableMap;
 
