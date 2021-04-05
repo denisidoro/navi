@@ -2,6 +2,7 @@
 
 # Copy-pasted from https://gist.github.com/enisozgen/2109cc80ea9f405f80c6c383f2375e77
 
+
 # Change last part of the command
 # NOTE Creates sometime problem if there is same word in the input
 ChangeLastCommand()
@@ -16,6 +17,7 @@ SendLastCommandAfterPIPE()
     a=("${(@s/|/)${INPUT_STRING}}") # | modifier
     printf "%s" "$(echo "${a[-1]}")"
 }
+
 
 # Is there pipe in the input string
 IsPipeExist()
@@ -54,6 +56,8 @@ NaviOutputControl ()
     fi
 }
 
+
+
 SmartNavi()
 {
     if  IsOnlySpace $1 ; then
@@ -69,6 +73,23 @@ SmartNavi()
     else
         printf "Navi Returned Empty"
     fi
+}
+
+
+_call_navi() {
+    local selected
+    if [ -n "$LBUFFER" ]; then
+        if selected="$(printf "%s" "$(navi --print --fzf-overrides '--no-select-1' --query "${LBUFFER}" </dev/tty)")"; then
+            LBUFFER="$selected"
+        fi
+    else
+        # If there is not any word on list
+        if selected="$(printf "%s" "$(navi --print </dev/tty)")"; then
+            LBUFFER="$selected"
+        fi
+    fi
+    region_highlight=("P0 100 bold")
+    zle redisplay
 }
 
 _call_smart_navi() {
