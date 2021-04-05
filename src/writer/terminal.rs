@@ -1,8 +1,8 @@
-use crate::display;
 use crate::env_vars;
 use crate::finder;
 use crate::structures::item::Item;
 use crate::terminal::{self, color};
+use crate::writer;
 use std::cmp::max;
 use std::collections::HashSet;
 use std::env;
@@ -34,7 +34,7 @@ pub fn preview(comment: &str, tags: &str, snippet: &str) {
         "{comment_color}{comment} {tag_color}{tags} \n{snippet_color}{snippet}",
         comment = comment.to_string(),
         tags = format!("[{}]", tags),
-        snippet = display::fix_newlines(snippet),
+        snippet = writer::fix_newlines(snippet),
         comment_color = color::Fg(*COMMENT_COLOR),
         tag_color = color::Fg(*TAG_COLOR),
         snippet_color = color::Fg(*SNIPPET_COLOR),
@@ -53,7 +53,7 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
     let snippet = &get_env_var(env_vars::PREVIEW_INITIAL_SNIPPET);
     let tags = get_env_var(env_vars::PREVIEW_TAGS);
     let comment = get_env_var(env_vars::PREVIEW_COMMENT);
-    let column = display::terminal::parse_env_var(env_vars::PREVIEW_COLUMN);
+    let column = writer::terminal::parse_env_var(env_vars::PREVIEW_COLUMN);
     let delimiter = env::var(env_vars::PREVIEW_DELIMITER).ok();
     let map = env::var(env_vars::PREVIEW_MAP).ok();
 
@@ -79,10 +79,7 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
 
     let bracketed_variables: Vec<&str> = {
         if snippet.contains(&bracketed_current_variable) {
-            display::VAR_REGEX
-                .find_iter(snippet)
-                .map(|m| m.as_str())
-                .collect()
+            writer::VAR_REGEX.find_iter(snippet).map(|m| m.as_str()).collect()
         } else {
             iter::once(&bracketed_current_variable)
                 .map(|s| s.as_str())
@@ -132,7 +129,7 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
         );
     }
 
-    println!("{snippet}", snippet = display::fix_newlines(&colored_snippet));
+    println!("{snippet}", snippet = writer::fix_newlines(&colored_snippet));
     println!("{variables}", variables = variables);
 }
 
@@ -159,26 +156,26 @@ pub struct Writer {
 impl Writer {
     pub fn new() -> Writer {
         let (tag_width, comment_width) = get_widths();
-        display::terminal::Writer {
+        writer::terminal::Writer {
             tag_width,
             comment_width,
         }
     }
 }
 
-impl display::Writer for Writer {
+impl writer::Writer for Writer {
     fn write(&mut self, item: Item) -> String {
         format!(
             "{tag_color}{tags_short}{delimiter}{comment_color}{comment_short}{delimiter}{snippet_color}{snippet_short}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}{file_index}{delimiter}\n",
             tags_short = limit_str(item.tags, self.tag_width),
             comment_short = limit_str(item.comment, self.comment_width),
-            snippet_short = display::fix_newlines(item.snippet),
+            snippet_short = writer::fix_newlines(item.snippet),
             comment_color = color::Fg(*COMMENT_COLOR),
             tag_color = color::Fg(*TAG_COLOR),
             snippet_color = color::Fg(*SNIPPET_COLOR),
             tags = item.tags,
             comment = item.comment,
-            delimiter = display::DELIMITER,
+            delimiter = writer::DELIMITER,
             snippet = &item.snippet,
             file_index = item.file_index,
         )

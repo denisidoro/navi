@@ -1,5 +1,5 @@
-use crate::display::Writer;
 use crate::structures::item::Item;
+use crate::writer::Writer;
 use std::io::Write;
 
 fn add_msg(

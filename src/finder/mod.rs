@@ -1,5 +1,5 @@
-use crate::display;
 use crate::structures::cheat::VariableMap;
+use crate::writer;
 use anyhow::Context;
 use anyhow::Error;
 use std::process::{self, Output};
@@ -83,7 +83,7 @@ impl Finder for FinderChoice {
             "--with-nth",
             "1,2,3",
             "--delimiter",
-            display::DELIMITER.to_string().as_str(),
+            writer::DELIMITER.to_string().as_str(),
             "--ansi",
             "--bind",
             format!("ctrl-j:down,ctrl-k:up{}", bindings).as_str(),
