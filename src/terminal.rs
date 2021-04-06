@@ -1,5 +1,5 @@
-use terminal_size::{terminal_size, terminal_size_using_fd, Height, Width};
-pub use termion::color;
+pub use crossterm::style;
+use crossterm::terminal;
 
 const FALLBACK_WIDTH: u16 = 80;
 
@@ -39,30 +39,14 @@ fn width_with_shell_out() -> u16 {
     }
 }
 
-fn width_with_fd() -> u16 {
-    use std::fs;
-    use std::os::unix::io::AsRawFd;
-
-    let file = fs::File::open("/dev/tty");
-
-    if let Ok(f) = file {
-        let size = terminal_size_using_fd(f.as_raw_fd());
-
-        if let Some((Width(w), Height(_))) = size {
-            w
-        } else {
-            width_with_shell_out()
-        }
+pub fn width() -> u16 {
+    if let Ok((w, _)) = terminal::size() {
+        w
     } else {
         width_with_shell_out()
     }
 }
 
-pub fn width() -> u16 {
-    let size = terminal_size();
-    if let Some((Width(w), Height(_))) = size {
-        w
-    } else {
-        width_with_fd()
-    }
+pub fn parse_ansi(ansi: &str) -> Option<style::Color> {
+    style::Color::parse_ansi(&format!("5;{}", ansi))
 }
