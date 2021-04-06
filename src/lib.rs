@@ -7,7 +7,7 @@ mod actor;
 mod cheatsh;
 mod clipboard;
 mod cmds;
-mod env_vars;
+mod env_var;
 mod extractor;
 mod filesystem;
 mod finder;

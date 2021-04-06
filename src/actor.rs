@@ -1,5 +1,5 @@
 use crate::clipboard;
-use crate::env_vars;
+use crate::env_var;
 use crate::extractor;
 use crate::writer;
 
@@ -24,9 +24,9 @@ fn prompt_finder(
     suggestion: Option<&Suggestion>,
     variable_count: usize,
 ) -> Result<String, Error> {
-    env_vars::remove(env_vars::PREVIEW_COLUMN);
-    env_vars::remove(env_vars::PREVIEW_DELIMITER);
-    env_vars::remove(env_vars::PREVIEW_MAP);
+    env_var::remove(env_var::PREVIEW_COLUMN);
+    env_var::remove(env_var::PREVIEW_DELIMITER);
+    env_var::remove(env_var::PREVIEW_MAP);
 
     let mut extra_preview = None;
 
@@ -35,13 +35,13 @@ fn prompt_finder(
 
         if let Some(sopts) = suggestion_opts {
             if let Some(c) = &sopts.column {
-                env_vars::set(env_vars::PREVIEW_COLUMN, c.to_string());
+                env_var::set(env_var::PREVIEW_COLUMN, c.to_string());
             }
             if let Some(d) = &sopts.delimiter {
-                env_vars::set(env_vars::PREVIEW_DELIMITER, d);
+                env_var::set(env_var::PREVIEW_DELIMITER, d);
             }
             if let Some(m) = &sopts.map {
-                env_vars::set(env_vars::PREVIEW_MAP, m);
+                env_var::set(env_var::PREVIEW_MAP, m);
             }
             if let Some(p) = &sopts.preview {
                 extra_preview = Some(format!(";echo;{}", p));
@@ -86,9 +86,9 @@ NAVIEOF
         ..opts.clone().unwrap_or_default()
     };
 
-    opts.query = env_vars::get(format!("{}__query", variable_name)).ok();
+    opts.query = env_var::get(format!("{}__query", variable_name)).ok();
 
-    if let Ok(f) = env_vars::get(format!("{}__best", variable_name)) {
+    if let Ok(f) = env_var::get(format!("{}__best", variable_name)) {
         opts.filter = Some(f);
         opts.suggestion_type = SuggestionType::SingleSelection;
     }
@@ -138,8 +138,8 @@ fn replace_variables_from_snippet(
     for bracketed_variable_name in variables_found {
         let variable_name = &bracketed_variable_name[1..bracketed_variable_name.len() - 1];
 
-        let env_variable_name = env_vars::escape(variable_name);
-        let env_value = env_vars::get(&env_variable_name);
+        let env_variable_name = env_var::escape(variable_name);
+        let env_value = env_var::get(&env_variable_name);
 
         let value = if let Ok(e) = env_value {
             e
@@ -152,7 +152,7 @@ fn replace_variables_from_snippet(
             prompt_finder(variable_name, &config, None, variable_count)?
         };
 
-        env_vars::set(env_variable_name, &value);
+        env_var::set(env_variable_name, &value);
 
         interpolated_snippet = if value.as_str() == "\n" {
             interpolated_snippet.replacen(bracketed_variable_name, "", 1)
@@ -179,9 +179,9 @@ pub fn act(
         return Ok(());
     }
 
-    env_vars::set(env_vars::PREVIEW_INITIAL_SNIPPET, &snippet);
-    env_vars::set(env_vars::PREVIEW_TAGS, &tags);
-    env_vars::set(env_vars::PREVIEW_COMMENT, &comment);
+    env_var::set(env_var::PREVIEW_INITIAL_SNIPPET, &snippet);
+    env_var::set(env_var::PREVIEW_TAGS, &tags);
+    env_var::set(env_var::PREVIEW_COMMENT, &comment);
 
     let interpolated_snippet = writer::with_new_lines(
         replace_variables_from_snippet(

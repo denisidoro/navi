@@ -1,4 +1,4 @@
-use crate::env_vars;
+use crate::env_var;
 use crate::finder;
 use crate::structures::item::Item;
 use crate::terminal;
@@ -9,7 +9,7 @@ use std::collections::HashSet;
 use std::iter;
 
 fn parse_ansi(varname: &str, default: Color) -> Color {
-    let value: Option<String> = env_vars::parse(varname);
+    let value: Option<String> = env_var::parse(varname);
     if let Some(v) = value {
         if let Some(a) = terminal::parse_ansi(&v) {
             return a;
@@ -19,11 +19,11 @@ fn parse_ansi(varname: &str, default: Color) -> Color {
 }
 
 lazy_static! {
-    pub static ref TAG_COLOR: Color = parse_ansi(env_vars::TAG_COLOR, Color::Cyan);
-    pub static ref COMMENT_COLOR: Color = parse_ansi(env_vars::COMMENT_COLOR, Color::Blue);
-    pub static ref SNIPPET_COLOR: Color = parse_ansi(env_vars::SNIPPET_COLOR, Color::White);
-    pub static ref TAG_WIDTH_PERCENTAGE: u16 = env_vars::parse(env_vars::TAG_WIDTH).unwrap_or(20);
-    pub static ref COMMENT_WIDTH_PERCENTAGE: u16 = env_vars::parse(env_vars::COMMENT_WIDTH).unwrap_or(40);
+    pub static ref TAG_COLOR: Color = parse_ansi(env_var::TAG_COLOR, Color::Cyan);
+    pub static ref COMMENT_COLOR: Color = parse_ansi(env_var::COMMENT_COLOR, Color::Blue);
+    pub static ref SNIPPET_COLOR: Color = parse_ansi(env_var::SNIPPET_COLOR, Color::White);
+    pub static ref TAG_WIDTH_PERCENTAGE: u16 = env_var::parse(env_var::TAG_WIDTH).unwrap_or(20);
+    pub static ref COMMENT_WIDTH_PERCENTAGE: u16 = env_var::parse(env_var::COMMENT_WIDTH).unwrap_or(40);
 }
 
 pub fn preview(comment: &str, tags: &str, snippet: &str) {
@@ -35,12 +35,12 @@ pub fn preview(comment: &str, tags: &str, snippet: &str) {
     );
 }
 pub fn preview_var(selection: &str, query: &str, variable: &str) {
-    let snippet = env_vars::must_get(env_vars::PREVIEW_INITIAL_SNIPPET);
-    let tags = env_vars::must_get(env_vars::PREVIEW_TAGS);
-    let comment = env_vars::must_get(env_vars::PREVIEW_COMMENT);
-    let column = env_vars::parse(env_vars::PREVIEW_COLUMN);
-    let delimiter = env_vars::get(env_vars::PREVIEW_DELIMITER).ok();
-    let map = env_vars::get(env_vars::PREVIEW_MAP).ok();
+    let snippet = env_var::must_get(env_var::PREVIEW_INITIAL_SNIPPET);
+    let tags = env_var::must_get(env_var::PREVIEW_TAGS);
+    let comment = env_var::must_get(env_var::PREVIEW_COMMENT);
+    let column = env_var::parse(env_var::PREVIEW_COLUMN);
+    let delimiter = env_var::get(env_var::PREVIEW_DELIMITER).ok();
+    let map = env_var::get(env_var::PREVIEW_MAP).ok();
 
     let active_color = *TAG_COLOR;
     let inactive_color = *COMMENT_COLOR;
@@ -82,12 +82,12 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
 
         let is_current = variable_name == variable;
         let variable_color = if is_current { active_color } else { inactive_color };
-        let env_variable_name = env_vars::escape(variable_name);
+        let env_variable_name = env_var::escape(variable_name);
 
         let value = if is_current {
             let v = selection.trim_matches('\'');
             if v.is_empty() { query.trim_matches('\'') } else { v }.to_string()
-        } else if let Ok(v) = env_vars::get(&env_variable_name) {
+        } else if let Ok(v) = env_var::get(&env_variable_name) {
             v
         } else {
             "".to_string()
