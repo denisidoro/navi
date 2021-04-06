@@ -1,4 +1,4 @@
-use crate::env_vars;
+use crate::env_var;
 use crate::finder;
 use crate::structures::item::Item;
 use crate::terminal;
@@ -6,21 +6,10 @@ use crate::terminal::style::{style, Color};
 use crate::writer;
 use std::cmp::max;
 use std::collections::HashSet;
-use std::env;
 use std::iter;
-use std::str::FromStr;
-
-// TODO: extract
-pub fn parse_env_var<T: FromStr>(varname: &str) -> Option<T> {
-    if let Ok(x) = env::var(varname) {
-        x.parse::<T>().ok()
-    } else {
-        None
-    }
-}
 
 fn parse_ansi(varname: &str, default: Color) -> Color {
-    let value: Option<String> = parse_env_var(varname);
+    let value: Option<String> = env_var::parse(varname);
     if let Some(v) = value {
         if let Some(a) = terminal::parse_ansi(&v) {
             return a;
@@ -30,11 +19,11 @@ fn parse_ansi(varname: &str, default: Color) -> Color {
 }
 
 lazy_static! {
-    pub static ref TAG_COLOR: Color = parse_ansi(env_vars::TAG_COLOR, Color::Cyan);
-    pub static ref COMMENT_COLOR: Color = parse_ansi(env_vars::COMMENT_COLOR, Color::Blue);
-    pub static ref SNIPPET_COLOR: Color = parse_ansi(env_vars::SNIPPET_COLOR, Color::White);
-    pub static ref TAG_WIDTH_PERCENTAGE: u16 = parse_env_var(env_vars::TAG_WIDTH).unwrap_or(20);
-    pub static ref COMMENT_WIDTH_PERCENTAGE: u16 = parse_env_var(env_vars::COMMENT_WIDTH).unwrap_or(40);
+    pub static ref TAG_COLOR: Color = parse_ansi(env_var::TAG_COLOR, Color::Cyan);
+    pub static ref COMMENT_COLOR: Color = parse_ansi(env_var::COMMENT_COLOR, Color::Blue);
+    pub static ref SNIPPET_COLOR: Color = parse_ansi(env_var::SNIPPET_COLOR, Color::White);
+    pub static ref TAG_WIDTH_PERCENTAGE: u16 = env_var::parse(env_var::TAG_WIDTH).unwrap_or(20);
+    pub static ref COMMENT_WIDTH_PERCENTAGE: u16 = env_var::parse(env_var::COMMENT_WIDTH).unwrap_or(40);
 }
 
 pub fn preview(comment: &str, tags: &str, snippet: &str) {
@@ -45,27 +34,18 @@ pub fn preview(comment: &str, tags: &str, snippet: &str) {
         snippet = style(writer::fix_newlines(snippet)).with(*SNIPPET_COLOR),
     );
 }
-
-fn get_env_var(name: &str) -> String {
-    if let Ok(v) = env::var(name) {
-        v
-    } else {
-        panic!("{} not set", name)
-    }
-}
-
 pub fn preview_var(selection: &str, query: &str, variable: &str) {
-    let snippet = &get_env_var(env_vars::PREVIEW_INITIAL_SNIPPET);
-    let tags = get_env_var(env_vars::PREVIEW_TAGS);
-    let comment = get_env_var(env_vars::PREVIEW_COMMENT);
-    let column = writer::terminal::parse_env_var(env_vars::PREVIEW_COLUMN);
-    let delimiter = env::var(env_vars::PREVIEW_DELIMITER).ok();
-    let map = env::var(env_vars::PREVIEW_MAP).ok();
+    let snippet = env_var::must_get(env_var::PREVIEW_INITIAL_SNIPPET);
+    let tags = env_var::must_get(env_var::PREVIEW_TAGS);
+    let comment = env_var::must_get(env_var::PREVIEW_COMMENT);
+    let column = env_var::parse(env_var::PREVIEW_COLUMN);
+    let delimiter = env_var::get(env_var::PREVIEW_DELIMITER).ok();
+    let map = env_var::get(env_var::PREVIEW_MAP).ok();
 
     let active_color = *TAG_COLOR;
     let inactive_color = *COMMENT_COLOR;
 
-    let mut colored_snippet = String::from(snippet);
+    let mut colored_snippet = String::from(&snippet);
     let mut visited_vars: HashSet<&str> = HashSet::new();
 
     let mut variables = String::from("");
@@ -80,7 +60,10 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
 
     let bracketed_variables: Vec<&str> = {
         if snippet.contains(&bracketed_current_variable) {
-            writer::VAR_REGEX.find_iter(snippet).map(|m| m.as_str()).collect()
+            writer::VAR_REGEX
+                .find_iter(&snippet)
+                .map(|m| m.as_str())
+                .collect()
         } else {
             iter::once(&bracketed_current_variable)
                 .map(|s| s.as_str())
@@ -99,12 +82,12 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
 
         let is_current = variable_name == variable;
         let variable_color = if is_current { active_color } else { inactive_color };
-        let env_variable_name = variable_name.replace('-', "_");
+        let env_variable_name = env_var::escape(variable_name);
 
         let value = if is_current {
             let v = selection.trim_matches('\'');
             if v.is_empty() { query.trim_matches('\'') } else { v }.to_string()
-        } else if let Ok(v) = env::var(&env_variable_name) {
+        } else if let Ok(v) = env_var::get(&env_variable_name) {
             v
         } else {
             "".to_string()

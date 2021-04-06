@@ -1,9 +1,9 @@
-use std::env;
+use crate::env_var;
 use std::fmt::Debug;
 use thiserror::Error;
 
 lazy_static! {
-    pub static ref IS_FISH: bool = env::var("SHELL")
+    pub static ref IS_FISH: bool = env_var::get("SHELL")
         .unwrap_or_else(|_| "".to_string())
         .contains(&"fish");
 }

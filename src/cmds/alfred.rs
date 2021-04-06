@@ -1,3 +1,4 @@
+use crate::env_var;
 use crate::filesystem;
 use crate::shell::BashSpawnError;
 use crate::structures::cheat::Suggestion;
@@ -6,7 +7,6 @@ use crate::structures::fetcher::Fetcher;
 use crate::writer;
 use anyhow::Context;
 use anyhow::Error;
-use std::env;
 use std::process::{Command, Stdio};
 
 pub fn main(config: Config) -> Result<(), Error> {
@@ -67,8 +67,8 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
         .context("Failed to parse variables intended for finder")?
         .expect("Empty variable map");
 
-    let tags = env::var("tags").context(r#"The env var "tags" isn't set"#)?;
-    let snippet = env::var("snippet").context(r#"The env var "snippet" isn't set"#)?;
+    let tags = env_var::get("tags").context(r#"The env var "tags" isn't set"#)?;
+    let snippet = env_var::get("snippet").context(r#"The env var "snippet" isn't set"#)?;
 
     let capture = writer::VAR_REGEX.captures_iter(&snippet).next();
     let bracketed_varname = &(capture.expect("Invalid capture"))[0];
@@ -99,12 +99,12 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
 }
 
 pub fn transform() -> Result<(), Error> {
-    let snippet = env::var("snippet").context(r#"The env var "snippet" isn't set"#)?;
-    let varname = env::var("varname").context(r#"The env var "varname" isn't set"#)?;
-    let value = if let Ok(v) = env::var(&varname) {
+    let snippet = env_var::get("snippet").context(r#"The env var "snippet" isn't set"#)?;
+    let varname = env_var::get("varname").context(r#"The env var "varname" isn't set"#)?;
+    let value = if let Ok(v) = env_var::get(&varname) {
         v
     } else {
-        env::var("free").context("The env var for varname isn't set")?
+        env_var::get("free").context("The env var for varname isn't set")?
     };
 
     let bracketed_varname = format!("<{}>", varname);

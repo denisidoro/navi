@@ -1,6 +1,6 @@
 use crate::cmds::func::Func;
 use crate::cmds::info::Info;
-use crate::env_vars;
+use crate::env_var;
 use crate::finder::FinderChoice;
 use crate::shell::Shell;
 use clap::{crate_version, AppSettings, Clap};
@@ -81,7 +81,7 @@ EXAMPLES:
 #[clap(version = crate_version!())]
 pub struct Config {
     /// List of :-separated paths containing .cheat files
-    #[clap(short, long, env = env_vars::PATH)]
+    #[clap(short, long, env = env_var::PATH)]
     pub path: Option<String>,
 
     /// [Experimental] Instead of executing a snippet, saves it to a file
@@ -113,15 +113,15 @@ pub struct Config {
     query: Option<String>,
 
     /// finder overrides for cheat selection
-    #[clap(long, env = env_vars::FZF_OVERRIDES)]
+    #[clap(long, env = env_var::FZF_OVERRIDES)]
     pub fzf_overrides: Option<String>,
 
     /// finder overrides for variable selection
-    #[clap(long, env = env_vars::FZF_OVERRIDES_VAR)]
+    #[clap(long, env = env_var::FZF_OVERRIDES_VAR)]
     pub fzf_overrides_var: Option<String>,
 
     /// which finder application to use
-    #[clap(long, env = env_vars::FINDER, default_value = "fzf", possible_values = &["fzf", "skim"], case_insensitive = true)]
+    #[clap(long, env = env_var::FINDER, default_value = "fzf", possible_values = &["fzf", "skim"], case_insensitive = true)]
     pub finder: FinderChoice,
 
     #[clap(subcommand)]
