@@ -44,15 +44,11 @@ fn follow_symlink(pathbuf: PathBuf) -> Result<PathBuf, Error> {
                 .to_str()
                 .ok_or_else(|| InvalidPath(o.to_path_buf()))?;
             if o_str.starts_with('.') {
-                let parent = pathbuf
+                let p = pathbuf
                     .parent()
                     .ok_or_else(|| anyhow!("`{}` has no parent", pathbuf.display()))?;
-                let parent_str = parent
-                    .as_os_str()
-                    .to_str()
-                    .ok_or_else(|| InvalidPath(parent.to_path_buf()))?;
-                let path_str = format!("{}/{}", parent_str, o_str);
-                let p = PathBuf::from(path_str);
+                let mut p = PathBuf::from(p);
+                p.push(o_str);
                 follow_symlink(p)
             } else {
                 follow_symlink(o)
