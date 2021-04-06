@@ -15,7 +15,7 @@ pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
         p
     };
 
-    let repo_path_str = pathbuf_to_string(repo_pathbuf)?;
+    let repo_path_str = pathbuf_to_string(&repo_pathbuf)?;
 
     let _ = filesystem::remove_dir(&repo_pathbuf);
     filesystem::create_dir(&repo_pathbuf)?;
@@ -116,20 +116,20 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
     };
 
     let to_folder = {
-        let f = cheat_pathbuf.clone();
+        let mut f = cheat_pathbuf.clone();
         f.push(format!("{}__{}", user, repo));
         f
     };
 
     for file in files.split('\n') {
         let from = {
-            let f = tmp_pathbuf.clone();
+            let mut f = tmp_pathbuf.clone();
             f.push(file);
             f
         };
         let filename = file.replace("/", "__");
         let to = {
-            let f = to_folder.clone();
+            let mut f = to_folder.clone();
             f.push(filename);
             f
         };
