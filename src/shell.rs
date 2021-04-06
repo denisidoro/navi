@@ -1,4 +1,4 @@
-use std::env;
+use crate::env_vars;
 use std::fmt::Debug;
 use thiserror::Error;
 
