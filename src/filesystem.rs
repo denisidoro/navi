@@ -8,23 +8,16 @@ use crate::writer::Writer;
 use anyhow::Error;
 use directories_next::BaseDirs;
 use std::collections::HashSet;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 
-pub fn all_cheat_files(path_str: &str) -> Vec<String> {
-    let path_str_with_trailing_slash = if path_str.ends_with('/') {
-        path_str.to_string()
-    } else {
-        format!("{}/", &path_str)
-    };
-
-    WalkDir::new(&path_str)
+pub fn all_cheat_files(path: &Path) -> Vec<String> {
+    WalkDir::new(&path)
         .follow_links(true)
         .into_iter()
         .filter_map(|e| e.ok())
         .map(|e| e.path().to_str().unwrap_or("").to_string())
         .filter(|e| e.ends_with(".cheat"))
-        .map(|e| e.replace(&path_str_with_trailing_slash, ""))
         .collect::<Vec<String>>()
 }
 
@@ -58,7 +51,7 @@ pub fn cheat_paths(path: Option<String>) -> Result<String, Error> {
     if let Some(p) = path {
         Ok(p)
     } else {
-        pathbuf_to_string(default_cheat_pathbuf()?)
+        pathbuf_to_string(&default_cheat_pathbuf()?)
     }
 }
 
@@ -81,19 +74,11 @@ pub fn read_all(
     let folders = paths_from_path_param(&paths);
 
     for folder in folders {
-        for file in all_cheat_files(folder) {
-            let full_filename = format!("{}/{}", &folder, &file);
-            files.push(full_filename.clone());
+        let folder_pathbuf = PathBuf::from(folder);
+        for file in all_cheat_files(&folder_pathbuf) {
+            files.push(file);
             let index = files.len() - 1;
-            if read_file(
-                &full_filename,
-                index,
-                &mut variables,
-                &mut visited_lines,
-                writer,
-                stdin,
-            )
-            .is_ok()
+            if read_file(&file, index, &mut variables, &mut visited_lines, writer, stdin).is_ok()
                 && !found_something
             {
                 found_something = true
@@ -106,6 +91,33 @@ pub fn read_all(
     }
 
     Ok(Some(variables))
+}
+
+pub fn tmp_pathbuf() -> Result<PathBuf, Error> {
+    let root = default_cheat_pathbuf()?;
+    root.push("tmp");
+    Ok(root)
+}
+
+pub struct Fetcher {
+    path: Option<String>,
+}
+
+impl Fetcher {
+    pub fn new(path: Option<String>) -> Self {
+        Self { path }
+    }
+}
+
+impl fetcher::Fetcher for Fetcher {
+    fn fetch(
+        &self,
+        stdin: &mut std::process::ChildStdin,
+        writer: &mut dyn Writer,
+        files: &mut Vec<String>,
+    ) -> Result<Option<VariableMap>, Error> {
+        read_all(self.path.clone(), files, stdin, writer)
+    }
 }
 
 #[cfg(test)]
@@ -163,31 +175,5 @@ mod tests {
             let expected = expected_paths.next().unwrap();
             assert_eq!(found, expected)
         }
-    }
-}
-
-pub fn tmp_path_str() -> Result<String, Error> {
-    let cheat_path_str = pathbuf_to_string(default_cheat_pathbuf()?)?;
-    Ok(format!("{}/tmp", cheat_path_str))
-}
-
-pub struct Fetcher {
-    path: Option<String>,
-}
-
-impl Fetcher {
-    pub fn new(path: Option<String>) -> Self {
-        Self { path }
-    }
-}
-
-impl fetcher::Fetcher for Fetcher {
-    fn fetch(
-        &self,
-        stdin: &mut std::process::ChildStdin,
-        writer: &mut dyn Writer,
-        files: &mut Vec<String>,
-    ) -> Result<Option<VariableMap>, Error> {
-        read_all(self.path.clone(), files, stdin, writer)
     }
 }

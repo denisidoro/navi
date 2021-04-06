@@ -28,7 +28,7 @@ where
         .map(|line| line.map_err(Error::from)))
 }
 
-pub fn pathbuf_to_string(pathbuf: PathBuf) -> Result<String, Error> {
+pub fn pathbuf_to_string(pathbuf: &Path) -> Result<String, Error> {
     Ok(pathbuf
         .as_os_str()
         .to_str()
@@ -67,13 +67,23 @@ fn exe_pathbuf() -> Result<PathBuf, Error> {
 }
 
 pub fn exe_string() -> Result<String, Error> {
-    pathbuf_to_string(exe_pathbuf()?)
+    pathbuf_to_string(&exe_pathbuf()?)
 }
 
-pub fn create_dir(path: &str) -> Result<(), Error> {
-    create_dir_all(path).with_context(|| format!("Failed to create directory `{}`", path))
+pub fn create_dir(path: &Path) -> Result<(), Error> {
+    create_dir_all(path).with_context(|| {
+        format!(
+            "Failed to create directory `{}`",
+            pathbuf_to_string(path).expect("Unable to parse {path}")
+        )
+    })
 }
 
-pub fn remove_dir(path: &str) -> Result<(), Error> {
-    remove_dir_all(path).with_context(|| format!("Failed to remove directory `{}`", path))
+pub fn remove_dir(path: &Path) -> Result<(), Error> {
+    remove_dir_all(path).with_context(|| {
+        format!(
+            "Failed to remove directory `{}`",
+            pathbuf_to_string(path).expect("Unable to parse {path}")
+        )
+    })
 }
