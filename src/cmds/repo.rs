@@ -10,7 +10,7 @@ use std::io::Write;
 
 pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
     let repo_pathbuf = {
-        let p = filesystem::tmp_pathbuf()?;
+        let mut p = filesystem::tmp_pathbuf()?;
         p.push("featured");
         p
     };
@@ -25,9 +25,9 @@ pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
         .with_context(|| format!("Failed to clone `{}`", repo_url))?;
 
     let feature_repos_file = {
-        let f = repo_pathbuf.clone();
-        f.push("featured_repos.txt");
-        f
+        let mut p = repo_pathbuf.clone();
+        p.push("featured_repos.txt");
+        p
     };
 
     let repos = fs::read_to_string(&feature_repos_file).context("Unable to fetch featured repositories")?;
@@ -116,22 +116,22 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
     };
 
     let to_folder = {
-        let mut f = cheat_pathbuf.clone();
-        f.push(format!("{}__{}", user, repo));
-        f
+        let mut p = cheat_pathbuf.clone();
+        p.push(format!("{}__{}", user, repo));
+        p
     };
 
     for file in files.split('\n') {
         let from = {
-            let mut f = tmp_pathbuf.clone();
-            f.push(file);
-            f
+            let mut p = tmp_pathbuf.clone();
+            p.push(file);
+            p
         };
         let filename = file.replace("/", "__");
         let to = {
-            let mut f = to_folder.clone();
-            f.push(filename);
-            f
+            let mut p = to_folder.clone();
+            p.push(filename);
+            p
         };
         fs::create_dir_all(&to_folder).unwrap_or(());
         fs::copy(&from, &to).with_context(|| {
