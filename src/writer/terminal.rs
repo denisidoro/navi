@@ -45,7 +45,7 @@ pub fn preview_var(selection: &str, query: &str, variable: &str) {
     let active_color = *TAG_COLOR;
     let inactive_color = *COMMENT_COLOR;
 
-    let mut colored_snippet = String::from(snippet);
+    let mut colored_snippet = String::from(&snippet);
     let mut visited_vars: HashSet<&str> = HashSet::new();
 
     let mut variables = String::from("");
