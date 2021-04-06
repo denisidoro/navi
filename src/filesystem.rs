@@ -76,7 +76,7 @@ pub fn read_all(
     for folder in folders {
         let folder_pathbuf = PathBuf::from(folder);
         for file in all_cheat_files(&folder_pathbuf) {
-            files.push(file);
+            files.push(file.clone());
             let index = files.len() - 1;
             if read_file(&file, index, &mut variables, &mut visited_lines, writer, stdin).is_ok()
                 && !found_something
@@ -94,7 +94,7 @@ pub fn read_all(
 }
 
 pub fn tmp_pathbuf() -> Result<PathBuf, Error> {
-    let root = default_cheat_pathbuf()?;
+    let mut root = default_cheat_pathbuf()?;
     root.push("tmp");
     Ok(root)
 }
