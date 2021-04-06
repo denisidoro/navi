@@ -13,7 +13,6 @@ use crate::structures::config::Config;
 use anyhow::Context;
 use anyhow::Error;
 
-use std::env;
 use std::fs;
 use std::io::Write;
 use std::path::Path;
