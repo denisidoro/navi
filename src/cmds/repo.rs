@@ -81,7 +81,7 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
 
     let cheat_pathbuf = filesystem::default_cheat_pathbuf()?;
     let tmp_pathbuf = filesystem::tmp_pathbuf()?;
-    let tmp_path_str = pathbuf_to_string(tmp_pathbuf)?;
+    let tmp_path_str = pathbuf_to_string(&tmp_pathbuf)?;
 
     let _ = filesystem::remove_dir(&tmp_pathbuf);
     filesystem::create_dir(&tmp_pathbuf)?;
@@ -137,8 +137,8 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
         fs::copy(&from, &to).with_context(|| {
             format!(
                 "Failed to copy `{}` to `{}`",
-                pathbuf_to_string(from).expect("unable to parse {from}"),
-                pathbuf_to_string(to).expect("unable to parse {to}")
+                pathbuf_to_string(&from).expect("unable to parse {from}"),
+                pathbuf_to_string(&to).expect("unable to parse {to}")
             )
         })?;
     }
@@ -148,8 +148,8 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
     eprintln!(
         "The following .cheat files were imported successfully:\n{}\n\nThey are now located at {}/{}",
         files,
-        pathbuf_to_string(cheat_pathbuf)?,
-        pathbuf_to_string(to_folder)?
+        pathbuf_to_string(&cheat_pathbuf)?,
+        pathbuf_to_string(&to_folder)?
     );
 
     Ok(())
