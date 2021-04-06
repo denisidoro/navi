@@ -1,7 +1,8 @@
 use anyhow::{Context, Error};
 use core::fmt::Display;
+use remove_dir_all::remove_dir_all;
 use std::fmt::Debug;
-use std::fs::{self, create_dir_all, remove_dir_all, File};
+use std::fs::{self, create_dir_all, File};
 use std::io::{self, BufRead};
 use std::path::{Path, PathBuf};
 use thiserror::Error;
