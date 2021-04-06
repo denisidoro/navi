@@ -9,7 +9,7 @@ pub enum Info {
 
 pub fn main(info: &Info) -> Result<(), Error> {
     match info {
-        Info::CheatsPath => println!("{}", pathbuf_to_string(default_cheat_pathbuf()?)?),
+        Info::CheatsPath => println!("{}", pathbuf_to_string(&default_cheat_pathbuf()?)?),
     }
     Ok(())
 }

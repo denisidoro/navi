@@ -1,6 +1,7 @@
 use crate::filesystem;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::{Finder, FinderChoice};
+use crate::fs::pathbuf_to_string;
 use crate::git;
 use anyhow::Context;
 use anyhow::Error;
@@ -8,17 +9,28 @@ use std::fs;
 use std::io::Write;
 
 pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
-    let repo_path_str = format!("{}/featured", filesystem::tmp_path_str()?);
+    let repo_pathbuf = {
+        let mut p = filesystem::tmp_pathbuf()?;
+        p.push("featured");
+        p
+    };
 
-    let _ = filesystem::remove_dir(&repo_path_str);
-    filesystem::create_dir(&repo_path_str)?;
+    let repo_path_str = pathbuf_to_string(&repo_pathbuf)?;
+
+    let _ = filesystem::remove_dir(&repo_pathbuf);
+    filesystem::create_dir(&repo_pathbuf)?;
 
     let (repo_url, _, _) = git::meta("denisidoro/cheats");
     git::shallow_clone(repo_url.as_str(), &repo_path_str)
         .with_context(|| format!("Failed to clone `{}`", repo_url))?;
 
-    let repos = fs::read_to_string(format!("{}/featured_repos.txt", &repo_path_str))
-        .context("Unable to fetch featured repositories")?;
+    let feature_repos_file = {
+        let mut p = repo_pathbuf.clone();
+        p.push("featured_repos.txt");
+        p
+    };
+
+    let repos = fs::read_to_string(&feature_repos_file).context("Unable to fetch featured repositories")?;
 
     let opts = FinderOpts {
         column: Some(1),
@@ -35,7 +47,7 @@ pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
         })
         .context("Failed to get repo URL from finder")?;
 
-    filesystem::remove_dir(&repo_path_str)?;
+    filesystem::remove_dir(&repo_pathbuf)?;
 
     add(repo, finder)
 }
@@ -67,18 +79,19 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
     let should_import_all = ask_if_should_import_all(finder).unwrap_or(false);
     let (actual_uri, user, repo) = git::meta(uri.as_str());
 
-    let cheat_path_str = filesystem::pathbuf_to_string(filesystem::default_cheat_pathbuf()?)?;
-    let tmp_path_str = filesystem::tmp_path_str()?;
+    let cheat_pathbuf = filesystem::default_cheat_pathbuf()?;
+    let tmp_pathbuf = filesystem::tmp_pathbuf()?;
+    let tmp_path_str = pathbuf_to_string(&tmp_pathbuf)?;
 
-    let _ = filesystem::remove_dir(&tmp_path_str);
-    filesystem::create_dir(&tmp_path_str)?;
+    let _ = filesystem::remove_dir(&tmp_pathbuf);
+    filesystem::create_dir(&tmp_pathbuf)?;
 
     eprintln!("Cloning {} into {}...\n", &actual_uri, &tmp_path_str);
 
     git::shallow_clone(actual_uri.as_str(), &tmp_path_str)
         .with_context(|| format!("Failed to clone `{}`", actual_uri))?;
 
-    let all_files = filesystem::all_cheat_files(&tmp_path_str).join("\n");
+    let all_files = filesystem::all_cheat_files(&tmp_pathbuf).join("\n");
 
     let opts = FinderOpts {
         suggestion_type: SuggestionType::MultipleSelections,
@@ -102,21 +115,41 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
         files
     };
 
-    let to_folder = format!("{}/{}__{}", cheat_path_str, user, repo).replace("./", "");
+    let to_folder = {
+        let mut p = cheat_pathbuf.clone();
+        p.push(format!("{}__{}", user, repo));
+        p
+    };
 
-    for f in files.split('\n') {
-        let from = format!("{}/{}", tmp_path_str, f).replace("./", "");
-        let filename = f.replace("./", "").replace("/", "__");
-        let to = format!("{}/{}", &to_folder, filename);
+    for file in files.split('\n') {
+        let from = {
+            let mut p = tmp_pathbuf.clone();
+            p.push(file);
+            p
+        };
+        let filename = file.replace("/", "__");
+        let to = {
+            let mut p = to_folder.clone();
+            p.push(filename);
+            p
+        };
         fs::create_dir_all(&to_folder).unwrap_or(());
-        fs::copy(&from, &to).with_context(|| format!("Failed to copy `{}` to `{}`", from, to))?;
+        fs::copy(&from, &to).with_context(|| {
+            format!(
+                "Failed to copy `{}` to `{}`",
+                pathbuf_to_string(&from).expect("unable to parse {from}"),
+                pathbuf_to_string(&to).expect("unable to parse {to}")
+            )
+        })?;
     }
 
-    filesystem::remove_dir(&tmp_path_str)?;
+    filesystem::remove_dir(&tmp_pathbuf)?;
 
     eprintln!(
         "The following .cheat files were imported successfully:\n{}\n\nThey are now located at {}/{}",
-        files, cheat_path_str, to_folder
+        files,
+        pathbuf_to_string(&cheat_pathbuf)?,
+        pathbuf_to_string(&to_folder)?
     );
 
     Ok(())
