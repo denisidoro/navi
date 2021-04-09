@@ -27,7 +27,7 @@ fn widget_last_command() -> Result<(), Error> {
 
     let replacements = vec![("|", "ඛ"), ("||", "ග"), ("&&", "ඝ")];
 
-    let parts = shellwords::split(&text).map_err(|_| anyhow!("Given options are missing a closing quote"))?;
+    let parts = shellwords::split(&text).unwrap_or_else(|_| text.split('|').map(|s| s.to_string()).collect());
 
     for p in parts {
         for (pattern, escaped) in replacements.clone() {
