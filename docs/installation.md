@@ -75,8 +75,6 @@ Feel free to be the maintainer of **navi** for any package manager you'd like!
 
 ### Installing the shell widget
 
-The shell widget maintains your `.history`-like file consistent and allows you to edit commands before executing them.
-
 If you want to install it, add this line to your `.bashrc`-like file:
 ```sh
 # bash
