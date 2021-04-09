@@ -6,7 +6,7 @@ _navi_call() {
 
 _navi_widget() {
     local -r input="${LBUFFER}"
-    local -r last_command="$(echo "${input}" | navi fn shell)"
+    local -r last_command="$(echo "${input}" | navi fn widget::last_command)"
     local find="$last_command"
     local replacement="$last_command"
 

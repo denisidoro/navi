@@ -38,7 +38,7 @@ impl FromStr for Func {
         match s {
             "url::open" => Ok(Func::UrlOpen),
             "welcome" => Ok(Func::Welcome),
-            "shell" => Ok(Func::Shell),
+            "widget::last_command" => Ok(Func::WidgetLastCommand),
             _ => Err("no match"),
         }
     }
@@ -148,7 +148,7 @@ pub enum Command {
     /// Performs ad-hoc functions provided by navi
     Fn {
         /// Function name (example: "url::open")
-        #[clap(possible_values = &["url::welcome", "open", "shell"], case_insensitive = true)]
+        #[clap(possible_values = &["url::welcome", "open", "widget::last_command"], case_insensitive = true)]
         func: Func,
         /// List of arguments (example: "https://google.com")
         args: Vec<String>,

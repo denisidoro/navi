@@ -6,7 +6,7 @@ _navi_call() {
 
 _navi_widget() {
     local -r input="${READLINE_LINE}"
-    local -r last_command="$(echo "${input}" | navi fn shell)"
+    local -r last_command="$(echo "${input}" | navi fn widget::last_command)"
 
     if [ -z "${last_command}" ]; then 
         local -r output="$(_navi_call --print --fzf-overrides '--no-select-1')"
