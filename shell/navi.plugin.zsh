@@ -1,7 +1,11 @@
 #!/usr/bin/env zsh
 
 _navi_call() {
-    printf "%s" "$(navi "$@" </dev/tty)"
+    local result="$(navi "$@" </dev/tty)"
+    if [ -z "${result}" ]; then
+        result="$(navi --print </dev/tty)"
+    fi
+    printf "%s" "$result"
 }
 
 _navi_widget() {
