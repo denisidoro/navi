@@ -29,7 +29,8 @@ release() {
       bin_folder="release"
    fi
 
-   _ls -la "${NAVI_HOME}/target"
+   _ls "${NAVI_HOME}/target"
+   _ls "${NAVI_HOME}"
 
    bin_path="${NAVI_HOME}/target/${bin_folder}/navi"
 
@@ -47,8 +48,9 @@ release() {
 }
 
 _ls() {
-   echoerr "ls" $@
-   ls "$@"
+   echoerr "dir" $@
+   ls -la "$@"
+   tree "$@" || true
 }
 
 workflow() {
