@@ -2,7 +2,7 @@
   
 An interactive cheatsheet tool for the command-line and application launchers.
 
-[![Demo](https://asciinema.org/a/406456.svg)](https://asciinema.org/a/406456)
+[![Demo](https://asciinema.org/a/406461.svg)](https://asciinema.org/a/406461)
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands. Suggested values for arguments are dynamically displayed in a list.
 
