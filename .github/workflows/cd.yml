@@ -59,9 +59,18 @@ jobs:
       id: get_version
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
     - name: Upload binaries to release
+      if: '! startsWith(matrix.target, ''x86_64-pc-windows-'')'
       uses: svenstaro/upload-release-action@v1-release
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: target/tar/navi.tar.gz
+        tag: ${{ github.ref }}
+        asset_name: navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.tar.gz
+    - name: Upload binaries to release
+      if: startsWith(matrix.target, 'x86_64-pc-windows-')
+      uses: svenstaro/upload-release-action@v1-release
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: target/tar/navi.zip
         tag: ${{ github.ref }}
         asset_name: navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.tar.gz

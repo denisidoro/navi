@@ -34,12 +34,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        target: [x86_64-pc-windows-gnu, x86_64-pc-windows-msvc]
+        target: [x86_64-pc-windows-gnu]
         include:
           - os: ubuntu-latest
             target: x86_64-pc-windows-gnu
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
 
     steps:
     - uses: hecrj/setup-rust-action@v1.3.4

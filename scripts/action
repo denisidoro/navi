@@ -49,7 +49,12 @@ release() {
    cp "$bin_path" "$TAR_DIR"
 
    cd "$TAR_DIR"
-   tar -czf navi.tar.gz *
+   
+   if $is_windows; then
+      tar -czf navi.tar.gz *
+   else 
+      zip -r navi.zip *
+   fi
 
    _ls "${bin_path}"
    _ls "${TAR_DIR}"
