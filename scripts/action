@@ -16,6 +16,12 @@ release() {
       target=""
    fi
 
+   if echo "$target" | grep -q "windows"; then
+      local -r is_windows=true
+   else
+      local -r is_windows=false
+   fi
+
    cd "$NAVI_HOME"
 
    rm -rf "${NAVI_HOME}/target" 2> /dev/null || true
@@ -29,10 +35,13 @@ release() {
       bin_folder="release"
    fi
 
-   _ls "${NAVI_HOME}/target"
-   _ls "${NAVI_HOME}"
+   if $is_windows; then
+      local -r suffix=".exe"
+   else
+      local -r suffix=""
+   fi
 
-   bin_path="${NAVI_HOME}/target/${bin_folder}/navi"
+   bin_path="${NAVI_HOME}/target/${bin_folder}/navi${suffix}"
 
    chmod +x "$bin_path"
    mkdir -p "$TAR_DIR" 2> /dev/null || true
@@ -49,8 +58,8 @@ release() {
 
 _ls() {
    echoerr "dir" $@
-   ls -la "$@"
-   tree "$@" || true
+   ls -la "$@" || true
+   # tree "$@" || true
 }
 
 workflow() {
