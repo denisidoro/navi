@@ -28,6 +28,24 @@ jobs:
         continue-on-error: false
         with:
           command: check
+          
+  binary:
+    name: Publish binary for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        target: [x86_64-pc-windows-gnu]
+        include:
+          - os: ubuntu-latest
+            target: x86_64-pc-windows-gnu
+
+    steps:
+    - uses: hecrj/setup-rust-action@v1.3.4
+      with:
+        rust-version: stable
+    - uses: actions/checkout@v1
+    - name: Build
+      run: scripts/action release ${{ matrix.target }}
 
   test:
     name: Tests

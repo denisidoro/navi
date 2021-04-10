@@ -29,7 +29,10 @@ release() {
       bin_folder="release"
    fi
 
+   _ls -la "${NAVI_HOME}/target"
+
    bin_path="${NAVI_HOME}/target/${bin_folder}/navi"
+
    chmod +x "$bin_path"
    mkdir -p "$TAR_DIR" 2> /dev/null || true
 
@@ -38,6 +41,14 @@ release() {
    cd "$TAR_DIR"
    tar -czf navi.tar.gz *
 
+   _ls "${bin_path}"
+   _ls "${TAR_DIR}"
+
+}
+
+_ls() {
+   echoerr "ls" $@
+   ls "$@"
 }
 
 workflow() {
