@@ -49,8 +49,6 @@ jobs:
             target: x86_64-osx
           - os: macos-latest
             target: aarch64-osx
-          - os: macos-latest
-            target: -osx
           - os: ubuntu-latest
             target: x86_64-unknown-linux-musl
           - os: ubuntu-latest
