@@ -28,43 +28,6 @@ jobs:
         continue-on-error: false
         with:
           command: check
-          
-  binary:
-    name: Publish ${{ matrix.target }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        target: 
-          - x86_64-osx
-          - x86_64-unknown-linux-musl
-          - x86_64-pc-windows-gnu
-          - armv7-unknown-linux-musleabihf
-          - armv7-linux-androideabi
-          - aarch64-linux-android
-          - aarch64-apple-ios
-        include:
-          - os: macos-latest
-            target: x86_64-osx
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-musl
-          - os: ubuntu-latest
-            target: x86_64-pc-windows-gnu
-          - os: ubuntu-latest
-            target: armv7-unknown-linux-musleabihf
-          - os: ubuntu-latest
-            target: armv7-linux-androideabi
-          - os: ubuntu-latest
-            target: aarch64-linux-android
-          - os: macos-latest
-            target: aarch64-apple-ios
-    steps:
-    - uses: hecrj/setup-rust-action@v1.3.4
-      with:
-        rust-version: stable
-    - uses: actions/checkout@v1
-    - name: Build
-      run: scripts/action release ${{ matrix.target }}
 
   test:
     name: Tests

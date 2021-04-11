@@ -33,20 +33,29 @@ jobs:
       matrix:
         # This should work with only the `include`s but it currently doesn't because of this bug:
         # https://github.community/t5/How-to-use-Git-and-GitHub/GitHub-Actions-Matrix-options-dont-work-as-documented/td-p/29558
-        target: [x86_64-osx, x86_64-unknown-linux-musl, armv7-unknown-linux-musleabihf, armv7-linux-androideabi, aarch64-linux-android, x86_64-pc-windows-gnu]
+        target: 
+          - x86_64-osx
+          - x86_64-unknown-linux-musl
+          - x86_64-pc-windows-gnu
+          - armv7-unknown-linux-musleabihf
+          - armv7-linux-androideabi
+          - aarch64-linux-android
+          - aarch64-apple-ios
         include:
           - os: macos-latest
             target: x86_64-osx
           - os: ubuntu-latest
             target: x86_64-unknown-linux-musl
           - os: ubuntu-latest
+            target: x86_64-pc-windows-gnu
+          - os: ubuntu-latest
             target: armv7-unknown-linux-musleabihf
           - os: ubuntu-latest
             target: armv7-linux-androideabi
           - os: ubuntu-latest
             target: aarch64-linux-android
-          - os: ubuntu-latest
-            target: x86_64-pc-windows-gnu
+          - os: macos-latest
+            target: aarch64-apple-ios
     steps:
     - uses: hecrj/setup-rust-action@v1.3.4
       with:
