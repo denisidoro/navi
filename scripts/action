@@ -44,7 +44,7 @@ echoerr "cross_target: $cross_target"
    local -r env_target="$(get_env_target)" 
 echoerr "env_target: $env_target" 
 
-   if [[ $target == $env_target ]]; then
+   if [[ $cross_target == $env_target ]]; then
       cross=false
    fi
 
