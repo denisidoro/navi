@@ -47,30 +47,21 @@ jobs:
             target: aarch64-linux-android
           - os: ubuntu-latest
             target: x86_64-pc-windows-gnu
-
     steps:
     - uses: hecrj/setup-rust-action@v1.3.4
       with:
         rust-version: stable
     - uses: actions/checkout@v1
     - name: Build
+      id: build
       run: scripts/action release ${{ matrix.target }}
     - name: Get the version
       id: get_version
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
     - name: Upload binaries to release
-      if: '! startsWith(matrix.target, ''x86_64-pc-windows-'')'
       uses: svenstaro/upload-release-action@v1-release
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: target/tar/navi.tar.gz
+        file: target/tar/navi.${{ steps.build.outputs.EXTENSION }}
         tag: ${{ github.ref }}
-        asset_name: navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.tar.gz
-    - name: Upload binaries to release
-      if: startsWith(matrix.target, 'x86_64-pc-windows-')
-      uses: svenstaro/upload-release-action@v1-release
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: target/tar/navi.zip
-        tag: ${{ github.ref }}
-        asset_name: navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.tar.gz
+        asset_name: navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
