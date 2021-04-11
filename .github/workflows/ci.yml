@@ -37,7 +37,6 @@ jobs:
       matrix:
         target: 
           - x86_64-osx
-          - aarch64-osx
           - x86_64-unknown-linux-musl
           - x86_64-pc-windows-gnu
           - armv7-unknown-linux-musleabihf
@@ -47,8 +46,6 @@ jobs:
         include:
           - os: macos-latest
             target: x86_64-osx
-          - os: macos-latest
-            target: aarch64-osx
           - os: ubuntu-latest
             target: x86_64-unknown-linux-musl
           - os: ubuntu-latest
