@@ -16,8 +16,13 @@ get_env_target() {
    echo "${target_arch}-${target_vendor}-${target_os}-${target_env}"
 }
 
+as_cross_target() {
+   sed "s/osx/apple-darwin/g"
+}
+
 release() {
    target="${1:-}"
+   local -r cross_target="$(as_cross_target "$target")"
 
    TAR_DIR="${NAVI_HOME}/target/tar"
    local use_zip=false
@@ -41,8 +46,8 @@ release() {
 
    if $cross; then
       cargo install cross 2> /dev/null || true
-      cross build --release --locked --target "$target"
-      local -r bin_folder="${target}/release"
+      cross build --release --locked --target "$cross_target"
+      local -r bin_folder="${cross_target}/release"
    else
       cargo build --release --locked
       local -r bin_folder="release"
