@@ -116,7 +116,7 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
     };
 
     let to_folder = {
-        let mut p = cheat_pathbuf.clone();
+        let mut p = cheat_pathbuf;
         p.push(format!("{}__{}", user, repo));
         p
     };
@@ -127,7 +127,9 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
             p.push(file);
             p
         };
-        let filename = file.replace("/", "__");
+        let filename = file
+            .replace(&format!("{}/", &tmp_path_str), "")
+            .replace("/", "__");
         let to = {
             let mut p = to_folder.clone();
             p.push(filename);
@@ -146,9 +148,8 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
     filesystem::remove_dir(&tmp_pathbuf)?;
 
     eprintln!(
-        "The following .cheat files were imported successfully:\n{}\n\nThey are now located at {}/{}",
+        "The following .cheat files were imported successfully:\n{}\n\nThey are now located at {}",
         files,
-        pathbuf_to_string(&cheat_pathbuf)?,
         pathbuf_to_string(&to_folder)?
     );
 
