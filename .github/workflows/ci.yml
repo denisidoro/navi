@@ -31,9 +31,9 @@ jobs:
           
   binary:
     name: Publish binary for ${{ matrix.os }}
-    fail-fast: false
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         target: 
           - x86_64-osx
