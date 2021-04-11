@@ -13,7 +13,9 @@ is_windows() {
 
 get_env_target() {
    eval $(rustc --print cfg | grep target)
-   echo "${target_arch}-${target_vendor}-${target_os}-${target_env}"
+   local r raw="${target_arch}-${target_vendor}-${target_os}-${target_env}"
+echoerr "raw: $raw" 
+echo "$raw" 
 }
 
 as_cross_target() {
@@ -27,13 +29,16 @@ _tap() {
 
 release() {
    local -r target="${1:-}"
+echoerr "target: $target" 
    local -r cross_target="$(as_cross_target "$target")"
+echoerr "cross_target: $cross_target" 
 
    TAR_DIR="${NAVI_HOME}/target/tar"
    local use_zip=false
    local cross=true
 
-   local -r env_target="$(get_env_target)"
+   local -r env_target="$(get_env_target)" 
+echoerr "env_target: $env_target" 
 
    if [[ $target == $env_target ]]; then
       cross=false
