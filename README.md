@@ -54,7 +54,7 @@ There are multiple ways to use **navi**:
 - as a [shell scripting tool](docs/shell_scripting.md)
 - as an [Alfred workflow](docs/alfred.md)
 
-In particular, check [this](https://github.com/denisidoro/navi/blob/23be67d7ce001a8a4af2f84bdf7b5616b6f631ec/src/bin/main.rs#L8) if you want to replicate what's shown in the demo above.
+In particular, check [these instructions](https://github.com/denisidoro/navi/issues/491) if you want to replicate what's shown in the demo above.
 
 Cheatsheet repositories
 -----------------------
