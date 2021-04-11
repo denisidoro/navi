@@ -27,8 +27,8 @@ jobs:
 
   binary:
     name: Publish binary for ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
     fail-fast: false
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         # This should work with only the `include`s but it currently doesn't because of this bug:
