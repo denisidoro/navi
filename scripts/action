@@ -14,8 +14,12 @@ is_windows() {
 get_env_target() {
    eval $(rustc --print cfg | grep target)
    local r raw="${target_arch}-${target_vendor}-${target_os}-${target_env}"
-echoerr "raw: $raw" 
+echoerr "env_raw: $raw" 
+if echo "$raw" | grep -q "x86_64-apple-macos"; then
+echo "x86_64-apple-darwin" 
+else
 echo "$raw" 
+fi
 }
 
 as_cross_target() {
@@ -115,4 +119,5 @@ shift
 case "$cmd" in
    "release") release "$@" ;;
    "workflow") workflow "$@" ;;
+*) exit 2 ;;
 esac
