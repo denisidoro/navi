@@ -7,19 +7,19 @@ export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 source "${NAVI_HOME}/scripts/install"
 
 is_windows() {
-  local -r target="$1"
-  echo "$target" | grep -q "windows" 
+   local -r target="$1"
+   echo "$target" | grep -q "windows"
 }
 
 get_env_target() {
    eval $(rustc --print cfg | grep target)
    local r raw="${target_arch}-${target_vendor}-${target_os}-${target_env}"
-echoerr "env_raw: $raw" 
-if echo "$raw" | grep -q "x86_64-apple-macos"; then
-echo "x86_64-apple-darwin" 
-else
-echo "$raw" 
-fi
+   echoerr "env_raw: $raw"
+   if echo "$raw" | grep -q "x86_64-apple-macos"; then
+      echo "x86_64-apple-darwin"
+   else
+      echo "$raw"
+   fi
 }
 
 as_cross_target() {
@@ -33,16 +33,16 @@ _tap() {
 
 release() {
    local -r target="${1:-}"
-echoerr "target: $target" 
+   echoerr "target: $target"
    local -r cross_target="$(as_cross_target "$target")"
-echoerr "cross_target: $cross_target" 
+   echoerr "cross_target: $cross_target"
 
    TAR_DIR="${NAVI_HOME}/target/tar"
    local use_zip=false
    local cross=true
 
-   local -r env_target="$(get_env_target)" 
-echoerr "env_target: $env_target" 
+   local -r env_target="$(get_env_target)"
+   echoerr "env_target: $env_target"
 
    if [[ $cross_target == $env_target ]]; then
       cross=false
@@ -78,11 +78,11 @@ echoerr "env_target: $env_target"
    cp "$bin_path" "$TAR_DIR"
 
    cd "$TAR_DIR"
-   
+
    if $use_zip; then
       zip -r navi.zip *
       echo ::set-output name=EXTENSION::zip
-   else 
+   else
       tar -czf navi.tar.gz *
       echo ::set-output name=EXTENSION::tar.gz
    fi
@@ -119,5 +119,5 @@ shift
 case "$cmd" in
    "release") release "$@" ;;
    "workflow") workflow "$@" ;;
-*) exit 2 ;;
+   *) exit 2 ;;
 esac
