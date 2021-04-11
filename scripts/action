@@ -35,13 +35,7 @@ release() {
 
    local -r env_target="$(get_env_target)"
 
-   if [[ $target == *"osx"* ]]; then
-      cross=false
-      if ! [[ "$OSTYPE" == "darwin"* ]]; then
-         echoerr "OSTYPE=${OSTYPE}. OSX cross-compile isn't allowed"
-         exit 1
-      fi
-   elif [[ $target == $env_target ]]; then
+   if [[ $target == $env_target ]]; then
       cross=false
    fi
 
