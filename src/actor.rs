@@ -5,7 +5,7 @@ use crate::writer;
 
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::Finder;
-use crate::shell::BashSpawnError};
+use crate::shell::BashSpawnError;
 use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::structures::config::Action;
 use crate::structures::config::Config;
