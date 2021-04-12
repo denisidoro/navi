@@ -7,6 +7,7 @@ use anyhow::Context;
 use anyhow::Error;
 use std::fs;
 use std::io::Write;
+use std::path;
 
 pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
     let repo_pathbuf = {
@@ -128,8 +129,8 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
             p
         };
         let filename = file
-            .replace(&format!("{}/", &tmp_path_str), "")
-            .replace("/", "__");
+            .replace(&format!("{}{}", &tmp_path_str, path::MAIN_SEPARATOR), "")
+            .replace(path::MAIN_SEPARATOR, "__");
         let to = {
             let mut p = to_folder.clone();
             p.push(filename);
