@@ -5,7 +5,7 @@ use crate::writer;
 
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::Finder;
-use crate::shell::BashSpawnError;
+use crate::shell::{BashSpawnError, IS_FISH};
 use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::structures::config::Action;
 use crate::structures::config::Config;
@@ -71,13 +71,15 @@ fn prompt_finder(
     let mut opts = FinderOpts {
         overrides: config.fzf_overrides_var.clone(),
         preview: Some(format!(
-            r#"navi preview-var "$(cat <<NAVIEOF
+            r#"{prefix}navi preview-var "$(cat <<NAVIEOF
 {{+}}
 NAVIEOF
 )" "$(cat <<NAVIEOF
 {{q}}
 NAVIEOF
-)" "{name}"; {extra}"#,
+)" "{name}"; {extra}{suffix}"#,
+            prefix = if *IS_FISH { "bash -c '" } else { "" },
+            suffix = if *IS_FISH { "'" } else { "" },
             name = variable_name,
             extra = extra_preview.clone().unwrap_or_default()
         )),
