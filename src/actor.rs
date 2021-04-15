@@ -13,7 +13,6 @@ use crate::structures::config::Config;
 use anyhow::Context;
 use anyhow::Error;
 
-use std::fs;
 use std::io::Write;
 use std::path::Path;
 use std::process::{Command, Stdio};
@@ -206,9 +205,6 @@ pub fn act(
     match config.action() {
         Action::Print => {
             println!("{}", interpolated_snippet);
-        }
-        Action::Save(filepath) => {
-            fs::write(filepath, interpolated_snippet).context("Unable to save output")?;
         }
         Action::Execute => match key {
             "ctrl-y" => {
