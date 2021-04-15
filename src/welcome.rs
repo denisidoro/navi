@@ -10,13 +10,13 @@ fn add_msg(
     stdin: &mut std::process::ChildStdin,
 ) {
     let item = Item {
-        tags: &tags,
-        comment: &comment,
-        snippet: &snippet,
-        file_index: &0,
+        tags: tags.to_string(),
+        comment: comment.to_string(),
+        snippet: snippet.to_string(),
+        file_index: 0,
     };
     stdin
-        .write_all(writer.write(item).as_bytes())
+        .write_all(writer.write(&item).as_bytes())
         .expect("Could not write to fzf's stdin");
 }
 

@@ -111,6 +111,10 @@ pub struct Config {
     #[clap(long)]
     tldr: Option<String>,
 
+    /// [Experimental] Comma-separated list that acts as filter for tags. Parts starting with ! represent negation
+    #[clap(long)]
+    tag_rules: Option<String>,
+
     /// Search for cheatsheets using the cheat.sh repository
     #[clap(long)]
     cheatsh: Option<String>,
@@ -222,7 +226,7 @@ pub enum AlfredCommand {
 }
 
 pub enum Source {
-    Filesystem(Option<String>),
+    Filesystem(Option<String>, Option<String>),
     Tldr(String),
     Cheats(String),
 }
@@ -240,7 +244,7 @@ impl Config {
         } else if let Some(query) = self.cheatsh.clone() {
             Source::Cheats(query)
         } else {
-            Source::Filesystem(self.path.clone())
+            Source::Filesystem(self.path.clone(), self.tag_rules.clone())
         }
     }
 
