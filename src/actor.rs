@@ -4,7 +4,7 @@ use crate::extractor;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::Finder;
 use crate::shell;
-use crate::shell::{ShellSpawnError, IS_FISH};
+use crate::shell::ShellSpawnError;
 use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::structures::config::Action;
 use crate::structures::config::Config;
@@ -78,15 +78,13 @@ fn prompt_finder(
     let mut opts = FinderOpts {
         overrides,
         preview: Some(format!(
-            r#"{prefix}navi preview-var "$(cat <<NAVIEOF
+            r#"navi preview-var "$(cat <<NAVIEOF
 {{+}}
 NAVIEOF
 )" "$(cat <<NAVIEOF
 {{q}}
 NAVIEOF
-)" "{name}"; {extra}{suffix}"#,
-            prefix = if *IS_FISH { "bash -c '" } else { "" },
-            suffix = if *IS_FISH { "'" } else { "" },
+)" "{name}"; {extra}"#,
             name = variable_name,
             extra = extra_preview.clone().unwrap_or_default()
         )),
