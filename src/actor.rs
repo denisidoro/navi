@@ -115,9 +115,9 @@ NAVIEOF
         opts.suggestion_type = SuggestionType::Disabled;
     };
 
-    let (output, _) = config
+    let (output, _, _) = config
         .finder
-        .call(opts, &mut Vec::new(), |stdin, _| {
+        .call(opts, |stdin, _| {
             stdin
                 .write_all(suggestions.as_bytes())
                 .context("Could not write to finder's stdin")?;
@@ -178,7 +178,7 @@ fn replace_variables_from_snippet(
 pub fn act(
     extractions: Result<extractor::Output, Error>,
     config: Config,
-    files: &mut Vec<String>,
+    files: Vec<String>,
     variables: Option<VariableMap>,
 ) -> Result<(), Error> {
     let (key, tags, comment, snippet, file_index) = extractions.unwrap();
