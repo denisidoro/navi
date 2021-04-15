@@ -144,12 +144,12 @@ impl Writer {
 }
 
 impl writer::Writer for Writer {
-    fn write(&mut self, item: Item) -> String {
+    fn write(&mut self, item: &Item) -> String {
         format!(
             "{tags_short}{delimiter}{comment_short}{delimiter}{snippet_short}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}{file_index}{delimiter}\n",
-            tags_short = style(limit_str(item.tags, self.tag_width)).with(*TAG_COLOR),
-            comment_short = style(limit_str(item.comment, self.comment_width)).with(*COMMENT_COLOR),
-            snippet_short = style(writer::fix_newlines(item.snippet)).with(*SNIPPET_COLOR),
+            tags_short = style(limit_str(&item.tags, self.tag_width)).with(*TAG_COLOR),
+            comment_short = style(limit_str(&item.comment, self.comment_width)).with(*COMMENT_COLOR),
+            snippet_short = style(writer::fix_newlines(&item.snippet)).with(*SNIPPET_COLOR),
             tags = item.tags,
             comment = item.comment,
             delimiter = writer::DELIMITER,

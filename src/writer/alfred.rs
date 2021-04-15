@@ -26,7 +26,7 @@ pub fn print_items_end() {
 }
 
 impl writer::Writer for Writer {
-    fn write(&mut self, item: Item) -> String {
+    fn write(&mut self, item: &Item) -> String {
         let prefix = if self.is_first {
             self.is_first = false;
             ""
@@ -34,9 +34,9 @@ impl writer::Writer for Writer {
             ","
         };
 
-        let tags = escape_for_json(item.tags);
-        let comment = escape_for_json(item.comment);
-        let snippet = escape_for_json(item.snippet);
+        let tags = escape_for_json(&item.tags);
+        let comment = escape_for_json(&item.comment);
+        let snippet = escape_for_json(&item.snippet);
 
         format!(
             r#"{prefix}{{"type":"file","title":"{comment}","match":"{comment} {tags} {snippet}","subtitle":"{tags} :: {snippet}","variables":{{"tags":"{tags}","comment":"{comment}","snippet":"{snippet}"}},"icon":{{"path":"icon.png"}}}}"#,

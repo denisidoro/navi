@@ -75,6 +75,8 @@ fn read_all(
         &mut visited_lines,
         writer,
         stdin,
+        None,
+        None,
     )?;
     Ok(Some(variables))
 }

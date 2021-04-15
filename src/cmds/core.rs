@@ -54,7 +54,7 @@ pub fn main(config: Config) -> Result<(), Error> {
             let fetcher: Box<dyn Fetcher> = match config.source() {
                 Source::Cheats(query) => Box::new(cheatsh::Fetcher::new(query)),
                 Source::Tldr(query) => Box::new(tldr::Fetcher::new(query)),
-                Source::Filesystem(path) => Box::new(filesystem::Fetcher::new(path)),
+                Source::Filesystem(path, rules) => Box::new(filesystem::Fetcher::new(path, rules)),
             };
 
             let res = fetcher

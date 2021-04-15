@@ -28,5 +28,5 @@ pub fn fix_newlines(txt: &str) -> String {
 }
 
 pub trait Writer {
-    fn write(&mut self, item: Item) -> String;
+    fn write(&mut self, item: &Item) -> String;
 }

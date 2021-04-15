@@ -103,26 +103,32 @@ fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FinderOpts>), E
 }
 
 fn write_cmd(
-    tags: &str,
-    comment: &str,
-    snippet: &str,
-    file_index: &usize,
+    item: &Item,
     writer: &mut dyn Writer,
     stdin: &mut std::process::ChildStdin,
+    allowlist: Option<&Vec<String>>,
+    denylist: Option<&Vec<String>>,
 ) -> Result<(), Error> {
-    if snippet.len() <= 1 {
-        Ok(())
-    } else {
-        let item = Item {
-            tags: &tags,
-            comment: &comment,
-            snippet: &snippet,
-            file_index: &file_index,
-        };
-        stdin
-            .write_all(writer.write(item).as_bytes())
-            .context("Failed to write command to finder's stdin")
+    if item.snippet.len() <= 1 {
+        return Ok(());
     }
+    if let Some(list) = allowlist {
+        for v in list {
+            if !item.tags.contains(v) {
+                return Ok(());
+            }
+        }
+    }
+    if let Some(list) = denylist {
+        for v in list {
+            if item.tags.contains(v) {
+                return Ok(());
+            }
+        }
+    }
+    return stdin
+        .write_all(writer.write(item).as_bytes())
+        .context("Failed to write command to finder's stdin");
 }
 
 fn without_prefix(line: &str) -> String {
@@ -141,10 +147,12 @@ pub fn read_lines(
     visited_lines: &mut HashSet<u64>,
     writer: &mut dyn Writer,
     stdin: &mut std::process::ChildStdin,
+    allowlist: Option<&Vec<String>>,
+    denylist: Option<&Vec<String>>,
 ) -> Result<(), Error> {
-    let mut tags = String::from("");
-    let mut comment = String::from("");
-    let mut snippet = String::from("");
+    let mut item = Item::new();
+    item.file_index = file_index;
+
     let mut should_break = false;
 
     for (line_nr, line_result) in lines.enumerate() {
@@ -156,34 +164,34 @@ pub fn read_lines(
         }
 
         // duplicate
-        if !tags.is_empty() && !comment.is_empty() {}
+        if !item.tags.is_empty() && !item.comment.is_empty() {}
         // blank
         if line.is_empty() {
         }
         // tag
         else if line.starts_with('%') {
-            should_break = write_cmd(&tags, &comment, &snippet, &file_index, writer, stdin).is_err();
-            snippet = String::from("");
-            tags = without_prefix(&line);
+            should_break = write_cmd(&item, writer, stdin, allowlist, denylist).is_err();
+            item.snippet = String::from("");
+            item.tags = without_prefix(&line);
         }
         // dependency
         else if line.starts_with('@') {
             let tags_dependency = without_prefix(&line);
-            variables.insert_dependency(&tags, &tags_dependency);
+            variables.insert_dependency(&item.tags, &tags_dependency);
         }
         // metacomment
         else if line.starts_with(';') {
         }
         // comment
         else if line.starts_with('#') {
-            should_break = write_cmd(&tags, &comment, &snippet, &file_index, writer, stdin).is_err();
-            snippet = String::from("");
-            comment = without_prefix(&line);
+            should_break = write_cmd(&item, writer, stdin, allowlist, denylist).is_err();
+            item.snippet = String::from("");
+            item.comment = without_prefix(&line);
         }
         // variable
         else if line.starts_with('$') {
-            should_break = write_cmd(&tags, &comment, &snippet, &file_index, writer, stdin).is_err();
-            snippet = String::from("");
+            should_break = write_cmd(&item, writer, stdin, allowlist, denylist).is_err();
+            item.snippet = String::from("");
             let (variable, command, opts) = parse_variable_line(&line).with_context(|| {
                 format!(
                     "Failed to parse variable line. See line number {} in cheatsheet `{}`",
@@ -191,25 +199,25 @@ pub fn read_lines(
                     id
                 )
             })?;
-            variables.insert_suggestion(&tags, &variable, (String::from(command), opts));
+            variables.insert_suggestion(&item.tags, &variable, (String::from(command), opts));
         }
         // snippet
         else {
-            let hash = fnv(&format!("{}{}", &comment, &line));
+            let hash = fnv(&format!("{}{}", &item.comment, &line));
             if visited_lines.contains(&hash) {
                 continue;
             }
             visited_lines.insert(hash);
 
-            if !(&snippet).is_empty() {
-                snippet.push_str(writer::LINE_SEPARATOR);
+            if !(&item.snippet).is_empty() {
+                item.snippet.push_str(writer::LINE_SEPARATOR);
             }
-            snippet.push_str(&line);
+            item.snippet.push_str(&line);
         }
     }
 
     if !should_break {
-        let _ = write_cmd(&tags, &comment, &snippet, &file_index, writer, stdin);
+        let _ = write_cmd(&item, writer, stdin, allowlist, denylist);
     }
 
     Ok(())

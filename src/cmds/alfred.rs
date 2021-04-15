@@ -19,7 +19,7 @@ pub fn main(config: Config) -> Result<(), Error> {
 
     writer::alfred::print_items_start(None);
 
-    let fetcher = filesystem::Fetcher::new(config.path);
+    let fetcher = filesystem::Fetcher::new(config.path, None);
     fetcher
         .fetch(stdin, &mut writer, &mut Vec::new())
         .context("Failed to parse variables intended for finder")?;
@@ -61,7 +61,7 @@ pub fn suggestions(config: Config, dry_run: bool) -> Result<(), Error> {
     let stdin = child.stdin.as_mut().context("Unable to get stdin")?;
     let mut writer = writer::alfred::Writer::new();
 
-    let fetcher = filesystem::Fetcher::new(config.path);
+    let fetcher = filesystem::Fetcher::new(config.path, None);
     let variables = fetcher
         .fetch(stdin, &mut writer, &mut Vec::new())
         .context("Failed to parse variables intended for finder")?
