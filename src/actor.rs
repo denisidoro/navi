@@ -1,21 +1,19 @@
 use crate::clipboard;
 use crate::env_var;
 use crate::extractor;
-use crate::writer;
-
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::Finder;
-use crate::shell::{BashSpawnError, IS_FISH};
+use crate::shell;
+use crate::shell::{ShellSpawnError, IS_FISH};
 use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::structures::config::Action;
 use crate::structures::config::Config;
-
+use crate::writer;
 use anyhow::Context;
 use anyhow::Error;
-
 use std::io::Write;
 use std::path::Path;
-use std::process::{Command, Stdio};
+use std::process::Stdio;
 
 fn prompt_finder(
     variable_name: &str,
@@ -47,12 +45,12 @@ fn prompt_finder(
             }
         }
 
-        let child = Command::new("bash")
+        let child = shell::command()
             .stdout(Stdio::piped())
             .arg("-c")
             .arg(&suggestion_command)
             .spawn()
-            .map_err(|e| BashSpawnError::new(suggestion_command, e))?;
+            .map_err(|e| ShellSpawnError::new(suggestion_command, e))?;
 
         let text = String::from_utf8(
             child
@@ -211,11 +209,11 @@ pub fn act(
                 clipboard::copy(interpolated_snippet)?;
             }
             _ => {
-                Command::new("bash")
+                shell::command()
                     .arg("-c")
                     .arg(&interpolated_snippet[..])
                     .spawn()
-                    .map_err(|e| BashSpawnError::new(&interpolated_snippet[..], e))?
+                    .map_err(|e| ShellSpawnError::new(&interpolated_snippet[..], e))?
                     .wait()
                     .context("bash was not running")?;
             }

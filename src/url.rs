@@ -1,6 +1,5 @@
-use crate::shell::BashSpawnError;
+use crate::shell::{self, ShellSpawnError};
 use anyhow::Error;
-use std::process::Command;
 
 pub fn open(args: Vec<String>) -> Result<(), Error> {
     let url = args
@@ -32,11 +31,11 @@ NAVIEOF
 _open_url "$url""#,
         code, url
     );
-    Command::new("bash")
+    shell::command()
         .arg("-c")
         .arg(cmd.as_str())
         .spawn()
-        .map_err(|e| BashSpawnError::new(cmd, e))?
+        .map_err(|e| ShellSpawnError::new(cmd, e))?
         .wait()?;
     Ok(())
 }

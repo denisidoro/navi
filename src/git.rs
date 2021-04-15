@@ -1,4 +1,4 @@
-use crate::shell::BashSpawnError;
+use crate::shell::ShellSpawnError;
 use anyhow::{Context, Error};
 use std::process::Command;
 
@@ -6,7 +6,7 @@ pub fn shallow_clone(uri: &str, target: &str) -> Result<(), Error> {
     Command::new("git")
         .args(&["clone", uri, target, "--depth", "1"])
         .spawn()
-        .map_err(|e| BashSpawnError::new("git clone", e))?
+        .map_err(|e| ShellSpawnError::new("git clone", e))?
         .wait()
         .context("Unable to git clone")?;
     Ok(())
