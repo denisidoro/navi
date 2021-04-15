@@ -59,7 +59,7 @@ fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
                     "--preview" => opts.preview = Some(value.to_string()),
                     "--preview-window" => opts.preview_window = Some(value.to_string()),
                     "--header" => opts.header = Some(value.to_string()),
-                    "--overrides" => opts.overrides = Some(value.to_string()),
+                    "--fzf-overrides" => opts.overrides = Some(value.to_string()),
                     _ => (),
                 }
                 Ok(())
