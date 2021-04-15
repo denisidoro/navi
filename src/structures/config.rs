@@ -66,29 +66,30 @@ impl FromStr for Info {
     Please refer to https://github.com/denisidoro/navi
 
 MORE ENVIRONMENT VARIABLES:
-    NAVI_TAG_WIDTH                                   # terminal window % reserved for the tag column
-    NAVI_COMMENT_WIDTH                               # terminal window % reserved for the comment column
-    NAVI_SHELL                                       # shell used in shell outs
+    NAVI_TAG_WIDTH                               # tag column width as window integer %
+    NAVI_COMMENT_WIDTH                           # comment column width as window integer %
+    NAVI_SHELL                                   # shell used in shell outs
 
 EXAMPLES:
-    navi                                             # default behavior
-    navi --print                                     # doesn't execute the snippet
-    navi --tldr docker                               # search for docker cheatsheets using tldr
-    navi --cheatsh docker                            # search for docker cheatsheets using cheatsh
-    navi --path '/some/dir:/other/dir'               # use .cheat files from custom paths
-    navi --query git                                 # filter results by "git"
-    navi --query 'create db' --best-match            # autoselect the snippet that best matches a query
-    name=mydb navi --query 'create db' --best-match  # same, but set the value for the <name> variable
-    navi repo add denisidoro/cheats                  # import cheats from a git repository
-    eval "$(navi widget zsh)"                        # load the zsh widget
-    navi --finder 'skim'                             # set skim as finder, instead of fzf
-    navi --fzf-overrides '--with-nth 1,2'            # show only the comment and tag columns
-    navi --fzf-overrides '--no-select-1'             # prevent autoselection in case of single line
-    navi --fzf-overrides-var '--no-select-1'         # same, but for variable selection
-    navi --fzf-overrides '--nth 1,2'                 # only consider the first two columns for search
-    navi --fzf-overrides '--no-exact'                # use looser search algorithm
-    NAVI_SHELL=dash navi                             # use dash in shell outs
-    NAVI_TAG_WIDTH=30 NAVI_COMMENT_WIDTH=40 navi     # customize column widths"#)]
+    navi                                         # default behavior
+    navi --print                                 # doesn't execute the snippet
+    navi --tldr docker                           # search for docker cheatsheets using tldr
+    navi --cheatsh docker                        # search for docker cheatsheets using cheatsh
+    navi --path '/some/dir:/other/dir'           # use .cheat files from custom paths
+    navi --query git                             # filter results by "git"
+    navi --query 'create db' --best-match        # autoselect the snippet that best matches a query
+    db=my navi --query 'create db' --best-match  # same, but set the value for the <name> variable
+    navi repo add denisidoro/cheats              # import cheats from a git repository
+    eval "$(navi widget zsh)"                    # load the zsh widget
+    navi --finder 'skim'                         # set skim as finder, instead of fzf
+    navi --fzf-overrides '--with-nth 1,2'        # show only the comment and tag columns
+    navi --fzf-overrides '--no-select-1'         # prevent autoselection in case of single line
+    navi --fzf-overrides-var '--no-select-1'     # same, but for variable selection
+    navi --fzf-overrides '--nth 1,2'             # only consider the first two columns for search
+    navi --fzf-overrides '--no-exact'            # use looser search algorithm
+    NAVI_SHELL=dash navi                         # use dash in shell outs
+    NAVI_TAG_WIDTH=30 NAVI_COMMENT_WIDTH=40 navi # customize column widths
+    navi --tag-rules='git,!checkout'             # show non-checkout git snippets only"#)]
 #[clap(setting = AppSettings::ColorAuto)]
 #[clap(setting = AppSettings::ColoredHelp)]
 #[clap(setting = AppSettings::AllowLeadingHyphen)]
