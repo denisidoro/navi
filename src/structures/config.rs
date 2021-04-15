@@ -65,6 +65,11 @@ impl FromStr for Info {
 #[clap(after_help = r#"MORE INFO:
     Please refer to https://github.com/denisidoro/navi
 
+MORE ENVIRONMENT VARIABLES:
+    NAVI_TAG_WIDTH                                   # terminal window % reserved for the tag column
+    NAVI_COMMENT_WIDTH                               # terminal window % reserved for the comment column
+    NAVI_SHELL                                       # shell used in shell outs
+
 EXAMPLES:
     navi                                             # default behavior
     navi --print                                     # doesn't execute the snippet
@@ -81,7 +86,9 @@ EXAMPLES:
     navi --fzf-overrides '--no-select-1'             # prevent autoselection in case of single line
     navi --fzf-overrides-var '--no-select-1'         # same, but for variable selection
     navi --fzf-overrides '--nth 1,2'                 # only consider the first two columns for search
-    navi --fzf-overrides '--no-exact'                # use looser search algorithm"#)]
+    navi --fzf-overrides '--no-exact'                # use looser search algorithm
+    NAVI_SHELL=dash navi                             # use dash in shell outs
+    NAVI_TAG_WIDTH=30 NAVI_COMMENT_WIDTH=40 navi     # customize column widths"#)]
 #[clap(setting = AppSettings::ColorAuto)]
 #[clap(setting = AppSettings::ColoredHelp)]
 #[clap(setting = AppSettings::AllowLeadingHyphen)]
