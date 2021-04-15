@@ -1,14 +1,17 @@
 use crate::handler;
+use crate::shell::BashSpawnError;
 use crate::structures::config;
 use crate::url;
 use anyhow::Error;
 use std::io::{self, Read};
+use std::process::Command;
 
 #[derive(Debug)]
 pub enum Func {
     UrlOpen,
     Welcome,
     WidgetLastCommand,
+    MapExpand,
 }
 
 pub fn main(func: &Func, args: Vec<String>) -> Result<(), Error> {
@@ -18,7 +21,19 @@ pub fn main(func: &Func, args: Vec<String>) -> Result<(), Error> {
             "navi --path /tmp/navi/irrelevant".split(' ').collect(),
         )),
         Func::WidgetLastCommand => widget_last_command(),
+        Func::MapExpand => map_expand(),
     }
+}
+
+fn map_expand() -> Result<(), Error> {
+    let cmd = r#"sed -e 's/^.*$/"&"/' | tr '\n' ' '"#;
+    Command::new("bash")
+        .arg("-c")
+        .arg(cmd)
+        .spawn()
+        .map_err(|e| BashSpawnError::new(cmd, e))?
+        .wait()?;
+    Ok(())
 }
 
 fn widget_last_command() -> Result<(), Error> {
