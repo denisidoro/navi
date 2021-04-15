@@ -7,7 +7,7 @@ lazy_static! {
     pub static ref IS_FISH: bool = env_var::get("SHELL")
         .unwrap_or_else(|_| "".to_string())
         .contains(&"fish");
-    static ref SHELL: String = env_var::get(env_var::SHELL).unwrap_or_else(|_| "bash".to_string());
+    pub static ref SHELL: String = env_var::get(env_var::SHELL).unwrap_or_else(|_| "bash".to_string());
 }
 
 #[derive(Debug)]

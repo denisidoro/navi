@@ -1,3 +1,4 @@
+use crate::shell;
 use crate::structures::cheat::VariableMap;
 use crate::writer;
 use anyhow::Context;
@@ -144,7 +145,11 @@ impl Finder for FinderChoice {
                 });
         }
 
-        let child = command.stdin(Stdio::piped()).stdout(Stdio::piped()).spawn();
+        let child = command
+            .env("SHELL", &*shell::SHELL)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .spawn();
 
         let mut child = match child {
             Ok(x) => x,
