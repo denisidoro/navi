@@ -5,9 +5,14 @@ This is *experimental*. If you face any issues, please report [here](https://git
 
 ![Alfred demo](https://user-images.githubusercontent.com/3226564/80294838-582b1b00-8743-11ea-9eb5-a335d8eed833.gif)
 
+### Note
+
+Support for alfred has been been removed. The latest version which has some support for it is [2.15.1](https://github.com/denisidoro/navi/releases/tag/v2.15.1).
+
+
 ### Instructions
 
 - make sure you have [Alfred Powerpack](https://www.alfredapp.com/powerpack/)
-- make sure **navi** is up to date
+- make sure **navi** [2.15.1](https://github.com/denisidoro/navi/releases/tag/v2.15.1) is installed
 - make sure that the `navi` binary is in the `$PATH` determined by `~/.bashrc`
-- download and install the `.alfredworkflow` for the [latest release](https://github.com/denisidoro/navi/releases/latest)
+- download and install the [latest .alfredworkflow available](https://github.com/denisidoro/navi/releases/tag/v2.15.1)

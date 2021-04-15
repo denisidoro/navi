@@ -1,4 +1,3 @@
-pub mod alfred;
 pub mod core;
 pub mod func;
 pub mod info;

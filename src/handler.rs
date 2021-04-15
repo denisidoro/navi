@@ -1,6 +1,6 @@
 use crate::cmds;
-use crate::structures::config::Command::{Alfred, Fn, Info, Preview, PreviewVar, Repo, Widget};
-use crate::structures::config::{AlfredCommand, Config, RepoCommand};
+use crate::structures::config::Command::{Fn, Info, Preview, PreviewVar, Repo, Widget};
+use crate::structures::config::{Config, RepoCommand};
 use anyhow::Context;
 use anyhow::Error;
 
@@ -35,20 +35,6 @@ pub fn handle_config(config: Config) -> Result<(), Error> {
                 RepoCommand::Browse => {
                     cmds::repo::browse(&config.finder).context("Failed to browse featured cheatsheets")?;
                     cmds::core::main(config)
-                }
-            },
-
-            Alfred { cmd } => match cmd {
-                AlfredCommand::Start => {
-                    cmds::alfred::main(config).context("Failed to call Alfred starting function")
-                }
-                AlfredCommand::Suggestions => cmds::alfred::suggestions(config, false)
-                    .context("Failed to call Alfred suggestion function"),
-                AlfredCommand::Check => {
-                    cmds::alfred::suggestions(config, true).context("Failed to call Alfred check function")
-                }
-                AlfredCommand::Transform => {
-                    cmds::alfred::transform().context("Failed to call Alfred transform function")
                 }
             },
 

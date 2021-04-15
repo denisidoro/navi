@@ -194,12 +194,6 @@ pub enum Command {
         #[clap(possible_values = INFO_POSSIBLE_VALUES, case_insensitive = true)]
         info: Info,
     },
-    /// Helper command for Alfred integration
-    #[clap(setting = AppSettings::Hidden)]
-    Alfred {
-        #[clap(subcommand)]
-        cmd: AlfredCommand,
-    },
 }
 
 #[derive(Debug, Clap)]
@@ -211,18 +205,6 @@ pub enum RepoCommand {
     },
     /// Browses for featured cheatsheet repos
     Browse,
-}
-
-#[derive(Debug, Clap)]
-pub enum AlfredCommand {
-    /// Outputs a JSON with commands
-    Start,
-    /// Outputs a JSON with variable suggestions
-    Suggestions,
-    /// Transforms the snippet env var with the selected value
-    Transform,
-    /// Checks whether to use free input
-    Check,
 }
 
 pub enum Source {
