@@ -1,4 +1,4 @@
-use crate::shell::BashSpawnError;
+use crate::shell::{self, ShellSpawnError};
 use anyhow::Error;
 use std::process::Command;
 
@@ -20,7 +20,7 @@ _copy() {
    fi
 }"#;
 
-    Command::new("bash")
+    shell::command()
         .arg("-c")
         .arg(
             format!(
@@ -35,7 +35,7 @@ echo -n "$x" | _copy"#,
             .as_str(),
         )
         .spawn()
-        .map_err(|e| BashSpawnError::new(cmd, e))?
+        .map_err(|e| ShellSpawnError::new(cmd, e))?
         .wait()?;
 
     Ok(())

@@ -23,6 +23,8 @@ pub const FZF_OVERRIDES: &str = "NAVI_FZF_OVERRIDES";
 pub const FZF_OVERRIDES_VAR: &str = "NAVI_FZF_OVERRIDES_VAR";
 pub const FINDER: &str = "NAVI_FINDER";
 
+pub const SHELL: &str = "NAVI_SHELL";
+
 pub fn parse<T: FromStr>(varname: &str) -> Option<T> {
     if let Ok(x) = env::var(varname) {
         x.parse::<T>().ok()

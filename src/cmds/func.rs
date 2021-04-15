@@ -1,5 +1,5 @@
 use crate::handler;
-use crate::shell::BashSpawnError;
+use crate::shell::{self, ShellSpawnError};
 use crate::structures::config;
 use crate::url;
 use anyhow::Error;
@@ -27,11 +27,11 @@ pub fn main(func: &Func, args: Vec<String>) -> Result<(), Error> {
 
 fn map_expand() -> Result<(), Error> {
     let cmd = r#"sed -e 's/^.*$/"&"/' | tr '\n' ' '"#;
-    Command::new("bash")
+    shell::command()
         .arg("-c")
         .arg(cmd)
         .spawn()
-        .map_err(|e| BashSpawnError::new(cmd, e))?
+        .map_err(|e| ShellSpawnError::new(cmd, e))?
         .wait()?;
     Ok(())
 }
