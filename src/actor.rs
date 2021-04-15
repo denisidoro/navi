@@ -207,9 +207,6 @@ pub fn act(
         Action::Print => {
             println!("{}", interpolated_snippet);
         }
-        Action::Save(filepath) => {
-            fs::write(filepath, interpolated_snippet).context("Unable to save output")?;
-        }
         Action::Execute => match key {
             "ctrl-y" => {
                 clipboard::copy(interpolated_snippet)?;

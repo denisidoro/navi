@@ -91,10 +91,6 @@ pub struct Config {
     #[clap(short, long, env = env_var::PATH)]
     pub path: Option<String>,
 
-    /// [Experimental] Instead of executing a snippet, saves it to a file
-    #[clap(short, long)]
-    save: Option<String>,
-
     /// Instead of executing a snippet, prints it to stdout
     #[clap(long)]
     print: bool,
@@ -214,7 +210,6 @@ pub enum Source {
 }
 
 pub enum Action {
-    Save(String),
     Print,
     Execute,
 }
@@ -231,9 +226,7 @@ impl Config {
     }
 
     pub fn action(&self) -> Action {
-        if let Some(filepath) = self.save.clone() {
-            Action::Save(filepath)
-        } else if self.print {
+        if self.print {
             Action::Print
         } else {
             Action::Execute
