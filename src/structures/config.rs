@@ -6,6 +6,11 @@ use crate::shell::Shell;
 use clap::{crate_version, AppSettings, Clap};
 use std::str::FromStr;
 
+const FINDER_POSSIBLE_VALUES: &[&str] = &[&"fzf", &"skim"];
+const SHELL_POSSIBLE_VALUES: &[&str] = &[&"bash", &"zsh", &"fish"];
+const FUNC_POSSIBLE_VALUES: &[&str] = &[&"url::open", &"welcome", &"widget::last_command", &"map::expand"];
+const INFO_POSSIBLE_VALUES: &[&str] = &[&"cheats-path"];
+
 impl FromStr for FinderChoice {
     type Err = &'static str;
 
@@ -39,6 +44,7 @@ impl FromStr for Func {
             "url::open" => Ok(Func::UrlOpen),
             "welcome" => Ok(Func::Welcome),
             "widget::last_command" => Ok(Func::WidgetLastCommand),
+            "map::expand" => Ok(Func::MapExpand),
             _ => Err("no match"),
         }
     }
@@ -122,7 +128,7 @@ pub struct Config {
     pub fzf_overrides_var: Option<String>,
 
     /// which finder application to use
-    #[clap(long, env = env_var::FINDER, default_value = "fzf", possible_values = &["fzf", "skim"], case_insensitive = true)]
+    #[clap(long, env = env_var::FINDER, default_value = "fzf", possible_values = FINDER_POSSIBLE_VALUES, case_insensitive = true)]
     pub finder: FinderChoice,
 
     #[clap(subcommand)]
@@ -145,10 +151,10 @@ pub enum Command {
         /// List of arguments (example: "mybranch" "remote")
         args: Vec<String>,
     },
-    /// Performs ad-hoc functions provided by navi
+    /// [Experimental] Performs ad-hoc, internal functions provided by navi
     Fn {
         /// Function name (example: "url::open")
-        #[clap(possible_values = &["welcome", "url::open", "widget::last_command"], case_insensitive = true)]
+        #[clap(possible_values = FUNC_POSSIBLE_VALUES, case_insensitive = true)]
         func: Func,
         /// List of arguments (example: "https://google.com")
         args: Vec<String>,
@@ -176,12 +182,12 @@ pub enum Command {
     },
     /// Outputs shell widget source code
     Widget {
-        #[clap(possible_values = &["bash", "zsh", "fish"], case_insensitive = true, default_value = "bash")]
+        #[clap(possible_values = SHELL_POSSIBLE_VALUES, case_insensitive = true, default_value = "bash")]
         shell: Shell,
     },
     /// Shows info
     Info {
-        #[clap(possible_values = &["cheats-path"], case_insensitive = true)]
+        #[clap(possible_values = INFO_POSSIBLE_VALUES, case_insensitive = true)]
         info: Info,
     },
     /// Helper command for Alfred integration
@@ -271,4 +277,37 @@ pub fn config_from_env() -> Config {
 
 pub fn config_from_iter(args: Vec<&str>) -> Config {
     Config::parse_from(args)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_shell_possible_values() {
+        for v in SHELL_POSSIBLE_VALUES {
+            assert_eq!(true, Shell::from_str(v).is_ok())
+        }
+    }
+
+    #[test]
+    fn test_info_possible_values() {
+        for v in INFO_POSSIBLE_VALUES {
+            assert_eq!(true, Info::from_str(v).is_ok())
+        }
+    }
+
+    #[test]
+    fn test_func_possible_values() {
+        for v in FUNC_POSSIBLE_VALUES {
+            assert_eq!(true, Func::from_str(v).is_ok())
+        }
+    }
+
+    #[test]
+    fn test_finder_possible_values() {
+        for v in FINDER_POSSIBLE_VALUES {
+            assert_eq!(true, FinderChoice::from_str(v).is_ok())
+        }
+    }
 }

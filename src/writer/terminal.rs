@@ -22,8 +22,8 @@ lazy_static! {
     pub static ref TAG_COLOR: Color = parse_ansi(env_var::TAG_COLOR, Color::Cyan);
     pub static ref COMMENT_COLOR: Color = parse_ansi(env_var::COMMENT_COLOR, Color::Blue);
     pub static ref SNIPPET_COLOR: Color = parse_ansi(env_var::SNIPPET_COLOR, Color::White);
-    pub static ref TAG_WIDTH_PERCENTAGE: u16 = env_var::parse(env_var::TAG_WIDTH).unwrap_or(20);
-    pub static ref COMMENT_WIDTH_PERCENTAGE: u16 = env_var::parse(env_var::COMMENT_WIDTH).unwrap_or(40);
+    pub static ref TAG_WIDTH_PERCENTAGE: u16 = env_var::parse(env_var::TAG_WIDTH).unwrap_or(27);
+    pub static ref COMMENT_WIDTH_PERCENTAGE: u16 = env_var::parse(env_var::COMMENT_WIDTH).unwrap_or(43);
 }
 
 pub fn preview(comment: &str, tags: &str, snippet: &str) {
@@ -123,8 +123,8 @@ fn limit_str(text: &str, length: usize) -> String {
 
 fn get_widths() -> (usize, usize) {
     let width = terminal::width();
-    let tag_width = max(4, width * *TAG_WIDTH_PERCENTAGE / 100);
-    let comment_width = max(4, width * *COMMENT_WIDTH_PERCENTAGE / 100);
+    let tag_width = max(20, width * *TAG_WIDTH_PERCENTAGE / 100);
+    let comment_width = max(60, width * *COMMENT_WIDTH_PERCENTAGE / 100);
     (usize::from(tag_width), usize::from(comment_width))
 }
 

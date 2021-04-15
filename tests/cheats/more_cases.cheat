@@ -54,7 +54,7 @@ echo description blank
 echo description one character
 
 # map can be used to expand into multiple arguments
-echo <phrases>
+for l in <phrases>; do echo "line: $l"; done
 
 # Concatenate pdf files
 files=($(echo "<files>"))
@@ -72,7 +72,7 @@ $ mapped: echo 'true false' | tr ' ' '\n' --- --map "grep -q t && echo 1 || echo
 $ examples: echo -e 'foo bar\nlorem ipsum\ndolor sit' --- --multi
 $ multiword: echo -e 'foo bar\nlorem ipsum\ndolor sit\nbaz'i
 $ file: ls . --- --preview 'cat {}' --preview-window 'right:50%'
-$ phrases: echo -e "foo bar\nlorem ipsum\ndolor sit" --- --multi --map "sed -e 's/^.*$/\"&\"/' | tr '\n' ' '"
+$ phrases: echo -e "foo bar\nlorem ipsum\ndolor sit" --- --multi --map "navi fn map::expand"
 
 # this should be displayed
 echo hi
