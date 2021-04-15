@@ -7,7 +7,9 @@ This is *experimental*. If you face any issues, please report [here](https://git
 
 ### Note
 
-Support for alfred has been been removed. The latest version which has some support for it is [2.15.1](https://github.com/denisidoro/navi/releases/tag/v2.15.1).
+Support for alfred has been removed. 
+
+The latest version which has some support for it is [2.15.1](https://github.com/denisidoro/navi/releases/tag/v2.15.1).
 
 
 ### Instructions
