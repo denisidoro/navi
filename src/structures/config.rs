@@ -207,18 +207,6 @@ pub enum RepoCommand {
     Browse,
 }
 
-#[derive(Debug, Clap)]
-pub enum AlfredCommand {
-    /// Outputs a JSON with commands
-    Start,
-    /// Outputs a JSON with variable suggestions
-    Suggestions,
-    /// Transforms the snippet env var with the selected value
-    Transform,
-    /// Checks whether to use free input
-    Check,
-}
-
 pub enum Source {
     Filesystem(Option<String>, Option<String>),
     Tldr(String),
