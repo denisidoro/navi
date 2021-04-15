@@ -61,9 +61,10 @@ $ mapped: echo 'false true' | tr ' ' '\n' --- --map "grep -q t && echo 1 || echo
 ```
 
 The supported parameters are:
-- `--prevent-extra` *(experimental)*: limits the user to select one of the suggestions;
 - `--column <number>`: extracts a single column from the selected result;
 - `--map <bash_code>` *(experimental)*: applies a map function to the selected variable value;
+- `--prevent-extra` *(experimental)*: limits the user to select one of the suggestions;
+- `--fzf-overrides <arg>` *(experimental)*: applies arbitrary `fzf` overrides;
 
 In addition, it's possible to forward the following parameters to `fzf`:
 - `--multi`;
