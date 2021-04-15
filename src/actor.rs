@@ -30,7 +30,7 @@ fn prompt_finder(
 
     let mut extra_preview = None;
 
-    let (suggestions, opts) = if let Some(s) = suggestion {
+    let (suggestions, initial_opts) = if let Some(s) = suggestion {
         let (suggestion_command, suggestion_opts) = s;
 
         if let Some(sopts) = suggestion_opts {
@@ -68,8 +68,18 @@ fn prompt_finder(
         ('\n'.to_string(), &None)
     };
 
+    let overrides = {
+        let mut o = config.fzf_overrides.clone();
+        if let Some(io) = initial_opts {
+            if io.overrides.is_some() {
+                o = io.overrides.clone()
+            }
+        }
+        o
+    };
+
     let mut opts = FinderOpts {
-        overrides: config.fzf_overrides_var.clone(),
+        overrides,
         preview: Some(format!(
             r#"{prefix}navi preview-var "$(cat <<NAVIEOF
 {{+}}
@@ -83,7 +93,7 @@ NAVIEOF
             name = variable_name,
             extra = extra_preview.clone().unwrap_or_default()
         )),
-        ..opts.clone().unwrap_or_default()
+        ..initial_opts.clone().unwrap_or_default()
     };
 
     opts.query = env_var::get(format!("{}__query", variable_name)).ok();

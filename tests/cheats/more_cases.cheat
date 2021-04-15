@@ -56,11 +56,14 @@ echo description one character
 # map can be used to expand into multiple arguments
 for l in <phrases>; do echo "line: $l"; done
 
+# x
+echo <with_overrides>
+
 # Concatenate pdf files
 files=($(echo "<files>"))
 echo pdftk "${files[@]:-}" cat output <pdf_output>
 
-$ files: echo 'file1.pdf file2.pdf file3.pdf' | tr ' ' '\n' --- --multi --overrides '--tac'
+$ files: echo 'file1.pdf file2.pdf file3.pdf' | tr ' ' '\n' --- --multi --fzf-overrides '--tac'
 $ x: echo '1 2 3' | tr ' ' '\n'
 $ y: echo 'a b c' | tr ' ' '\n'
 $ z: echo 'foo bar' | tr ' ' '\n'
@@ -73,6 +76,7 @@ $ examples: echo -e 'foo bar\nlorem ipsum\ndolor sit' --- --multi
 $ multiword: echo -e 'foo bar\nlorem ipsum\ndolor sit\nbaz'i
 $ file: ls . --- --preview 'cat {}' --preview-window 'right:50%'
 $ phrases: echo -e "foo bar\nlorem ipsum\ndolor sit" --- --multi --map "navi fn map::expand"
+$ with_overrides: echo -e "foo bar\nlorem ipsum\ndolor sit" --- --fzf-overrides "--margin=15% --bind=ctrl-u:replace-query"
 
 # this should be displayed
 echo hi
