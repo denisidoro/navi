@@ -194,12 +194,6 @@ pub enum Command {
         #[clap(possible_values = INFO_POSSIBLE_VALUES, case_insensitive = true)]
         info: Info,
     },
-    /// Helper command for Alfred integration
-    #[clap(setting = AppSettings::Hidden)]
-    Alfred {
-        #[clap(subcommand)]
-        cmd: AlfredCommand,
-    },
 }
 
 #[derive(Debug, Clap)]

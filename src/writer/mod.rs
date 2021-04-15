@@ -1,4 +1,3 @@
-pub mod alfred;
 pub mod terminal;
 
 use crate::structures::item::Item;

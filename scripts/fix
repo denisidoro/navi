@@ -20,7 +20,5 @@ cargo clippy || true
 
 header "dot code beautify..."
 find scripts -type f | xargs -I% dot code beautify % || true
-dot code beautify "${NAVI_HOME}/alfred/alfred.bash" || true
-dot code beautify "${NAVI_HOME}/alfred/alfred2.bash" || true
 dot code beautify "${NAVI_HOME}/tests/core.bash" || true
 dot code beautify "${NAVI_HOME}/tests/run" || true
