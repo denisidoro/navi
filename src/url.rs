@@ -1,6 +1,5 @@
 use crate::shell::{self, ShellSpawnError};
 use anyhow::Error;
-use std::process::Command;
 
 pub fn open(args: Vec<String>) -> Result<(), Error> {
     let url = args

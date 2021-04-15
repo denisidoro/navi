@@ -1,6 +1,5 @@
 use crate::shell::{self, ShellSpawnError};
 use anyhow::Error;
-use std::process::Command;
 
 pub fn copy(text: String) -> Result<(), Error> {
     let cmd = r#"

@@ -4,7 +4,6 @@ use crate::structures::config;
 use crate::url;
 use anyhow::Error;
 use std::io::{self, Read};
-use std::process::Command;
 
 #[derive(Debug)]
 pub enum Func {

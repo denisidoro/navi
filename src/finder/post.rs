@@ -2,7 +2,7 @@ use crate::finder::structures::SuggestionType;
 use crate::shell;
 use anyhow::Context;
 use anyhow::Error;
-use std::process::{Command, Stdio};
+use std::process::Stdio;
 
 fn apply_map(text: String, map_fn: Option<String>) -> Result<String, Error> {
     if let Some(m) = map_fn {

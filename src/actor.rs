@@ -13,7 +13,7 @@ use anyhow::Context;
 use anyhow::Error;
 use std::io::Write;
 use std::path::Path;
-use std::process::{Command, Stdio};
+use std::process::Stdio;
 
 fn prompt_finder(
     variable_name: &str,
