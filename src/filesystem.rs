@@ -62,18 +62,18 @@ fn gen_lists(tag_rules: Option<String>) -> (Option<Vec<String>>, Option<Vec<Stri
     let mut denylist: Option<Vec<String>> = None;
 
     if let Some(rules) = tag_rules {
-        let words: Vec<_> = rules.split(",").collect();
+        let words: Vec<_> = rules.split(',').collect();
         allowlist = Some(
             words
                 .iter()
-                .filter(|w| !w.starts_with("!"))
+                .filter(|w| !w.starts_with('!'))
                 .map(|w| w.to_string())
                 .collect(),
         );
         denylist = Some(
             words
                 .iter()
-                .filter(|w| w.starts_with("!"))
+                .filter(|w| w.starts_with('!'))
                 .map(|w| without_first(w))
                 .collect(),
         );
