@@ -39,8 +39,8 @@ pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
         ..Default::default()
     };
 
-    let (repo, _) = finder
-        .call(opts, &mut Vec::new(), |stdin, _| {
+    let (repo, _, _) = finder
+        .call(opts, |stdin, _| {
             stdin
                 .write_all(repos.as_bytes())
                 .context("Unable to prompt featured repositories")?;
@@ -60,8 +60,8 @@ pub fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool, Error> {
         ..Default::default()
     };
 
-    let (response, _) = finder
-        .call(opts, &mut Vec::new(), |stdin, _| {
+    let (response, _, _) = finder
+        .call(opts, |stdin, _| {
             stdin
                 .write_all(b"Yes\nNo")
                 .context("Unable to writer alternatives")?;
@@ -105,8 +105,8 @@ pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
     let files = if should_import_all {
         all_files
     } else {
-        let (files, _) = finder
-            .call(opts, &mut Vec::new(), |stdin, _| {
+        let (files, _, _) = finder
+            .call(opts, |stdin, _| {
                 stdin
                     .write_all(all_files.as_bytes())
                     .context("Unable to prompt cheats to import")?;

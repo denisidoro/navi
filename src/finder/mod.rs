@@ -19,12 +19,7 @@ pub enum FinderChoice {
 }
 
 pub trait Finder {
-    fn call<F>(
-        &self,
-        opts: Opts,
-        files: &mut Vec<String>,
-        stdin_fn: F,
-    ) -> Result<(String, Option<VariableMap>), Error>
+    fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>, Vec<String>), Error>
     where
         F: Fn(&mut process::ChildStdin, &mut Vec<String>) -> Result<Option<VariableMap>, Error>;
 }
@@ -50,9 +45,8 @@ impl Finder for FinderChoice {
     fn call<F>(
         &self,
         finder_opts: Opts,
-        files: &mut Vec<String>,
         stdin_fn: F,
-    ) -> Result<(String, Option<VariableMap>), Error>
+    ) -> Result<(String, Option<VariableMap>, Vec<String>), Error>
     where
         F: Fn(&mut process::ChildStdin, &mut Vec<String>) -> Result<Option<VariableMap>, Error>,
     {
@@ -174,11 +168,13 @@ impl Finder for FinderChoice {
             .stdin
             .as_mut()
             .ok_or_else(|| anyhow!("Unable to acquire stdin of finder"))?;
-        let result_map = stdin_fn(stdin, files).context("Failed to pass data to finder")?;
+
+        let mut files = vec![];
+        let result_map = stdin_fn(stdin, &mut files).context("Failed to pass data to finder")?;
 
         let out = child.wait_with_output().context("Failed to wait for finder")?;
 
         let output = parse(out, finder_opts).context("Unable to get output")?;
-        Ok((output, result_map))
+        Ok((output, result_map, files))
     }
 }

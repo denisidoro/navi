@@ -46,11 +46,9 @@ fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
 pub fn main(config: Config) -> Result<(), Error> {
     let opts = gen_core_finder_opts(&config).context("Failed to generate finder options")?;
 
-    let mut files = Vec::new();
-
-    let (raw_selection, variables) = config
+    let (raw_selection, variables, files) = config
         .finder
-        .call(opts, &mut files, |stdin, files| {
+        .call(opts, |stdin, files| {
             let mut writer = writer::terminal::Writer::new();
 
             let fetcher: Box<dyn Fetcher> = match config.source() {
@@ -78,7 +76,7 @@ pub fn main(config: Config) -> Result<(), Error> {
         return main(config);
     }
 
-    actor::act(extractions, config, &mut files, variables)?;
+    actor::act(extractions, config, files, variables)?;
 
     Ok(())
 }
