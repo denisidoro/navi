@@ -1,15 +1,11 @@
-use crate::config::CONFIG;
-
 use crate::cheat_variable;
-use crate::finder::Finder;
-use crate::handler::core;
-use crate::shell::{self, ShellSpawnError};
-use crate::structures::cheat::VariableMap;
+
+use crate::shell::{self};
+
 use crate::url;
 use crate::welcome;
-use anyhow::Context;
+
 use anyhow::Result;
-use std::io::{self, Read};
 
 #[derive(Debug)]
 pub enum Func {

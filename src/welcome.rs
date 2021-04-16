@@ -8,7 +8,6 @@ use crate::writer;
 use anyhow::Context;
 use anyhow::Result;
 use std::io::Write;
-use std::io::{self, Read};
 
 pub fn main() -> Result<()> {
     let config = &CONFIG;
@@ -20,17 +19,6 @@ pub fn main() -> Result<()> {
             Ok(Some(VariableMap::new()))
         })
         .context("Failed getting selection and variables from finder")?;
-    Ok(())
-}
-
-fn map_expand() -> Result<()> {
-    let cmd = r#"sed -e 's/^.*$/"&"/' | tr '\n' ' '"#;
-    shell::command()
-        .arg("-c")
-        .arg(cmd)
-        .spawn()
-        .map_err(|e| ShellSpawnError::new(cmd, e))?
-        .wait()?;
     Ok(())
 }
 

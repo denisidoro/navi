@@ -1,10 +1,5 @@
 use crate::env_var;
-use crate::finder::Finder;
-use crate::handler::core;
-use crate::structures::cheat::VariableMap;
-use crate::url;
-use crate::welcome;
-use anyhow::Context;
+
 use anyhow::Result;
 use std::fmt::Debug;
 use std::io::{self, Read};
