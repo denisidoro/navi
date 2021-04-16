@@ -1,4 +1,5 @@
 use crate::config::CONFIG;
+use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::Finder;
 use crate::handler::core;
 
@@ -11,7 +12,7 @@ use std::io::Write;
 
 pub fn main() -> Result<()> {
     let config = &CONFIG;
-    let opts = core::gen_core_finder_opts(&config)?;
+    let opts = FinderOpts::from_config(&config)?;
     let _ = config
         .finder
         .call(opts, |stdin, _| {

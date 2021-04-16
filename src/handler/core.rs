@@ -13,30 +13,9 @@ use crate::welcome;
 use anyhow::Context;
 use anyhow::Result;
 
-pub fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts> {
-    let opts = FinderOpts {
-        preview: Some(format!("{} preview {{}}", filesystem::exe_string()?)),
-        overrides: config.fzf_overrides.clone(),
-        suggestion_type: SuggestionType::SnippetSelection,
-        query: if config.best_match {
-            None
-        } else {
-            config.get_query()
-        },
-        filter: if config.best_match {
-            config.get_query()
-        } else {
-            None
-        },
-        ..Default::default()
-    };
-
-    Ok(opts)
-}
-
 pub fn main() -> Result<()> {
     let config = &CONFIG;
-    let opts = gen_core_finder_opts(&config).context("Failed to generate finder options")?;
+    let opts = FinderOpts::from_config(&config)?;
 
     let (raw_selection, variables, files) = config
         .finder
