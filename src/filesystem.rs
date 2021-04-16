@@ -4,7 +4,6 @@ pub use crate::fs::{
 use crate::parser;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
-use crate::writer::Writer;
 use anyhow::Result;
 use directories_next::BaseDirs;
 use std::collections::HashSet;
@@ -103,7 +102,6 @@ impl fetcher::Fetcher for Fetcher {
     fn fetch(
         &self,
         stdin: &mut std::process::ChildStdin,
-        writer: &mut dyn Writer,
         files: &mut Vec<String>,
     ) -> Result<Option<VariableMap>> {
         let mut variables = VariableMap::new();
@@ -133,7 +131,6 @@ impl fetcher::Fetcher for Fetcher {
                         index,
                         &mut variables,
                         &mut visited_lines,
-                        writer,
                         stdin,
                         self.allowlist.as_ref(),
                         self.denylist.as_ref(),

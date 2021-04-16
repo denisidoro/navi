@@ -1,7 +1,6 @@
+use crate::ui;
 use crate::writer;
-
 use anyhow::Result;
-
 use std::process;
 
 fn extract_elements(argstr: &str) -> (&str, &str, &str) {
@@ -14,11 +13,13 @@ fn extract_elements(argstr: &str) -> (&str, &str, &str) {
 
 pub fn main(line: &str) -> Result<()> {
     let (tags, comment, snippet) = extract_elements(line);
-    writer::terminal::preview(comment, tags, snippet);
-    process::exit(0)
-}
 
-pub fn main_var(selection: &str, query: &str, variable: &str) -> Result<()> {
-    writer::terminal::preview_var(selection, query, variable);
+    println!(
+        "{comment} {tags} \n{snippet}",
+        comment = ui::style(comment).with(*ui::COMMENT_COLOR),
+        tags = ui::style(format!("[{}]", tags)).with(*ui::TAG_COLOR),
+        snippet = ui::style(writer::fix_newlines(snippet)).with(*ui::SNIPPET_COLOR),
+    );
+
     process::exit(0)
 }

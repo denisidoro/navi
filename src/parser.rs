@@ -2,7 +2,7 @@ use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::hash::fnv;
 use crate::structures::cheat::VariableMap;
 use crate::structures::item::Item;
-use crate::writer::{self, Writer};
+use crate::writer;
 use anyhow::{Context, Result};
 use regex::Regex;
 use std::collections::HashSet;
@@ -104,7 +104,6 @@ fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FinderOpts>)> {
 
 fn write_cmd(
     item: &Item,
-    writer: &mut dyn Writer,
     stdin: &mut std::process::ChildStdin,
     allowlist: Option<&Vec<String>>,
     denylist: Option<&Vec<String>>,
@@ -127,7 +126,7 @@ fn write_cmd(
         }
     }
     return stdin
-        .write_all(writer.write(item).as_bytes())
+        .write_all(writer::write(item).as_bytes())
         .context("Failed to write command to finder's stdin");
 }
 
@@ -146,7 +145,6 @@ pub fn read_lines(
     file_index: usize,
     variables: &mut VariableMap,
     visited_lines: &mut HashSet<u64>,
-    writer: &mut dyn Writer,
     stdin: &mut std::process::ChildStdin,
     allowlist: Option<&Vec<String>>,
     denylist: Option<&Vec<String>>,
@@ -171,7 +169,7 @@ pub fn read_lines(
         }
         // tag
         else if line.starts_with('%') {
-            should_break = write_cmd(&item, writer, stdin, allowlist, denylist).is_err();
+            should_break = write_cmd(&item, stdin, allowlist, denylist).is_err();
             item.snippet = String::from("");
             item.tags = without_prefix(&line);
         }
@@ -185,13 +183,13 @@ pub fn read_lines(
         }
         // comment
         else if line.starts_with('#') {
-            should_break = write_cmd(&item, writer, stdin, allowlist, denylist).is_err();
+            should_break = write_cmd(&item, stdin, allowlist, denylist).is_err();
             item.snippet = String::from("");
             item.comment = without_prefix(&line);
         }
         // variable
         else if line.starts_with('$') {
-            should_break = write_cmd(&item, writer, stdin, allowlist, denylist).is_err();
+            should_break = write_cmd(&item, stdin, allowlist, denylist).is_err();
             item.snippet = String::from("");
             let (variable, command, opts) = parse_variable_line(&line).with_context(|| {
                 format!(
@@ -218,7 +216,7 @@ pub fn read_lines(
     }
 
     if !should_break {
-        let _ = write_cmd(&item, writer, stdin, allowlist, denylist);
+        let _ = write_cmd(&item, stdin, allowlist, denylist);
     }
 
     Ok(())

@@ -1,7 +1,6 @@
 use crate::parser;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
-use crate::writer::Writer;
 use anyhow::Context;
 use anyhow::Result;
 use std::collections::HashSet;
@@ -23,12 +22,7 @@ fn lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String>> {
     .into_iter()
 }
 
-fn read_all(
-    query: &str,
-    cheat: &str,
-    stdin: &mut std::process::ChildStdin,
-    writer: &mut dyn Writer,
-) -> Result<Option<VariableMap>> {
+fn read_all(query: &str, cheat: &str, stdin: &mut std::process::ChildStdin) -> Result<Option<VariableMap>> {
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
 
@@ -50,7 +44,6 @@ Output:
         0,
         &mut variables,
         &mut visited_lines,
-        writer,
         stdin,
         None,
         None,
@@ -119,10 +112,9 @@ impl fetcher::Fetcher for Fetcher {
     fn fetch(
         &self,
         stdin: &mut std::process::ChildStdin,
-        writer: &mut dyn Writer,
         _files: &mut Vec<String>,
     ) -> Result<Option<VariableMap>> {
         let cheat = fetch(&self.query)?;
-        read_all(&self.query, &cheat, stdin, writer)
+        read_all(&self.query, &cheat, stdin)
     }
 }
