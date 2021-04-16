@@ -138,6 +138,7 @@ fn without_prefix(line: &str) -> String {
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn read_lines(
     lines: impl Iterator<Item = Result<String>>,
     id: &str,
