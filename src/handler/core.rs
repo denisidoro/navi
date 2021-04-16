@@ -1,18 +1,13 @@
 use crate::actor;
 use crate::cheatsh;
-
-use crate::writer;
-
 use crate::extractor;
 use crate::filesystem;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::Finder;
-use crate::structures::fetcher::Fetcher;
-
 use crate::structures::cheat::VariableMap;
-
 use crate::structures::config::Config;
 use crate::structures::config::Source;
+use crate::structures::fetcher::Fetcher;
 use crate::tldr;
 use crate::welcome;
 use anyhow::Context;
@@ -45,8 +40,6 @@ pub fn main(config: Config) -> Result<()> {
     let (raw_selection, variables, files) = config
         .finder
         .call(opts, |stdin, files| {
-            let mut writer = writer::terminal::Writer::new();
-
             let fetcher: Box<dyn Fetcher> = match config.source() {
                 Source::Cheats(query) => Box::new(cheatsh::Fetcher::new(query)),
                 Source::Tldr(query) => Box::new(tldr::Fetcher::new(query)),
@@ -54,13 +47,13 @@ pub fn main(config: Config) -> Result<()> {
             };
 
             let res = fetcher
-                .fetch(stdin, &mut writer, files)
+                .fetch(stdin, files)
                 .context("Failed to parse variables intended for finder")?;
 
             if let Some(variables) = res {
                 Ok(Some(variables))
             } else {
-                welcome::populate_cheatsheet(&mut writer, stdin);
+                welcome::populate_cheatsheet(stdin);
                 Ok(Some(VariableMap::new()))
             }
         })
