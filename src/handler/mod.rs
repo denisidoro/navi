@@ -7,7 +7,7 @@ pub mod repo_add;
 pub mod repo_browse;
 pub mod shell;
 
-use crate::config::Command::{Deleted, Fn, Info, Preview, PreviewVar, Repo, Widget};
+use crate::config::Command::{Fn, Info, Preview, PreviewVar, Repo, Widget};
 use crate::config::{RepoCommand, CONFIG};
 use crate::handler;
 use anyhow::Context;
@@ -18,21 +18,21 @@ pub fn handle() -> Result<()> {
         None => handler::core::main(),
 
         Some(c) => match c {
-            Preview { line } => handler::preview::main(&line),
+            Preview { line } => handler::preview::main(line),
 
             PreviewVar {
                 selection,
                 query,
                 variable,
-            } => handler::preview_var::main(&selection, &query, &variable),
+            } => handler::preview_var::main(selection, query, variable),
 
-            Widget { shell } => handler::shell::main(&shell).context("Failed to print shell widget code"),
+            Widget { shell } => handler::shell::main(shell).context("Failed to print shell widget code"),
 
-            Fn { func, args } => handler::func::main(&func, args.to_vec())
+            Fn { func, args } => handler::func::main(func, args.to_vec())
                 .with_context(|| format!("Failed to execute function `{:#?}`", func)),
 
             Info { info } => {
-                handler::info::main(&info).with_context(|| format!("Failed to fetch info `{:#?}`", info))
+                handler::info::main(info).with_context(|| format!("Failed to fetch info `{:#?}`", info))
             }
 
             Repo { cmd } => match cmd {
@@ -49,8 +49,6 @@ pub fn handle() -> Result<()> {
                     handler::core::main()
                 }
             },
-
-            Deleted => unreachable!("Invalid command"),
         },
     }
 }

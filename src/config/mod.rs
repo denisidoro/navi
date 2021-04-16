@@ -5,7 +5,6 @@ use crate::finder::FinderChoice;
 use crate::handler::func::Func;
 use crate::handler::info::Info;
 use crate::shell::Shell;
-
 use crate::terminal::style::Color;
 use clap::{crate_version, AppSettings, Clap};
 use file::Yaml;
@@ -71,7 +70,7 @@ impl FromStr for Info {
     }
 }
 
-#[derive(Debug, Clap, Clone)]
+#[derive(Debug, Clap)]
 #[clap(after_help = r#"MORE INFO:
     Please refer to https://github.com/denisidoro/navi
 
@@ -190,15 +189,6 @@ pub enum Command {
         #[clap(possible_values = INFO_POSSIBLE_VALUES, case_insensitive = true)]
         info: Info,
     },
-    /// Value used when cloning the config
-    #[clap(setting = AppSettings::Hidden)]
-    Deleted,
-}
-
-impl Clone for Command {
-    fn clone(&self) -> Self {
-        Self::Deleted {}
-    }
 }
 
 #[derive(Debug, Clap)]

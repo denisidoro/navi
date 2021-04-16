@@ -4,6 +4,7 @@ extern crate lazy_static;
 extern crate anyhow;
 
 mod actor;
+mod cheat_variable;
 mod cheatsh;
 mod clipboard;
 mod config;

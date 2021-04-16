@@ -2,7 +2,6 @@ use crate::env_var;
 
 use crate::terminal;
 pub use crate::terminal::style::style;
-use crate::terminal::style::Color;
 use std::cmp::max;
 
 lazy_static! {

@@ -1,6 +1,38 @@
+use crate::config::CONFIG;
+use crate::finder::Finder;
+use crate::handler::core;
+use crate::shell::{self, ShellSpawnError};
+use crate::structures::cheat::VariableMap;
 use crate::structures::item::Item;
 use crate::writer;
+use anyhow::Context;
+use anyhow::Result;
 use std::io::Write;
+use std::io::{self, Read};
+
+pub fn main() -> Result<()> {
+    let config = &CONFIG;
+    let opts = core::gen_core_finder_opts(&config)?;
+    let _ = config
+        .finder
+        .call(opts, |stdin, _| {
+            populate_cheatsheet(stdin);
+            Ok(Some(VariableMap::new()))
+        })
+        .context("Failed getting selection and variables from finder")?;
+    Ok(())
+}
+
+fn map_expand() -> Result<()> {
+    let cmd = r#"sed -e 's/^.*$/"&"/' | tr '\n' ' '"#;
+    shell::command()
+        .arg("-c")
+        .arg(cmd)
+        .spawn()
+        .map_err(|e| ShellSpawnError::new(cmd, e))?
+        .wait()?;
+    Ok(())
+}
 
 fn add_msg(tags: &str, comment: &str, snippet: &str, stdin: &mut std::process::ChildStdin) {
     let item = Item {
