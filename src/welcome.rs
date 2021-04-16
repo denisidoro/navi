@@ -1,7 +1,6 @@
 use crate::config::CONFIG;
-use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
+use crate::finder::structures::Opts as FinderOpts;
 use crate::finder::Finder;
-use crate::handler::core;
 
 use crate::structures::cheat::VariableMap;
 use crate::structures::item::Item;

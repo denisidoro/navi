@@ -1,10 +1,10 @@
 use crate::actor;
 use crate::cheatsh;
 use crate::config::Source;
-use crate::config::{Config, CONFIG};
+use crate::config::CONFIG;
 use crate::extractor;
 use crate::filesystem;
-use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
+use crate::finder::structures::Opts as FinderOpts;
 use crate::finder::Finder;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher::Fetcher;
