@@ -8,11 +8,12 @@ use std::process::{Command, Stdio};
 mod post;
 pub mod structures;
 pub use post::process;
+use serde::Deserialize;
 use std::str::FromStr;
 use structures::Opts;
 use structures::SuggestionType;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Deserialize)]
 pub enum FinderChoice {
     Fzf,
     Skim,

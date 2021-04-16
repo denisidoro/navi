@@ -16,7 +16,7 @@ const FUNC_POSSIBLE_VALUES: &[&str] = &[&"url::open", &"welcome", &"widget::last
 const INFO_POSSIBLE_VALUES: &[&str] = &[&"cheats-path"];
 
 lazy_static! {
-    pub static ref FILE_CONFIG: Yaml = Yaml::new(); // TODO
+    pub static ref FILE_CONFIG: Yaml = Yaml::parse("foo: 32");
     pub static ref CONFIG: Config = Config::parse();
 }
 
@@ -249,15 +249,15 @@ impl Config {
     }
 
     pub fn tag_color(&self) -> Color {
-        FILE_CONFIG.style.tag.color
+        Color::from_str(&FILE_CONFIG.style.tag.color).expect("invalid color")
     }
 
     pub fn comment_color(&self) -> Color {
-        FILE_CONFIG.style.comment.color
+        Color::from_str(&FILE_CONFIG.style.comment.color).expect("invalid color")
     }
 
     pub fn snippet_color(&self) -> Color {
-        FILE_CONFIG.style.snippet.color
+        Color::from_str(&FILE_CONFIG.style.snippet.color).expect("invalid color")
     }
 
     pub fn tag_width(&self) -> u16 {
