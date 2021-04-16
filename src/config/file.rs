@@ -63,7 +63,7 @@ impl Yaml {
 impl Default for ColorWidth {
     fn default() -> Self {
         Self {
-            color: "cyan".to_string(),
+            color: "white".to_string(),
             width: 26,
             min_abs_width: 20,
         }
@@ -83,11 +83,7 @@ impl Default for Style {
                 width: 42,
                 min_abs_width: 45,
             },
-            snippet: ColorWidth {
-                color: "white".to_string(),
-                width: 0,
-                min_abs_width: 0,
-            },
+            snippet: Default::default(),
         }
     }
 }
