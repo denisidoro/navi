@@ -1,10 +1,10 @@
 use crate::finder::structures::SuggestionType;
 use crate::shell;
 use anyhow::Context;
-use anyhow::Error;
+use anyhow::Result;
 use std::process::Stdio;
 
-fn apply_map(text: String, map_fn: Option<String>) -> Result<String, Error> {
+fn apply_map(text: String, map_fn: Option<String>) -> Result<String> {
     if let Some(m) = map_fn {
         let cmd = format!(
             r#"
@@ -58,14 +58,11 @@ pub fn process(
     column: Option<u8>,
     delimiter: Option<&str>,
     map_fn: Option<String>,
-) -> Result<String, Error> {
+) -> Result<String> {
     apply_map(get_column(text, column, delimiter), map_fn)
 }
 
-pub(super) fn parse_output_single(
-    mut text: String,
-    suggestion_type: SuggestionType,
-) -> Result<String, Error> {
+pub(super) fn parse_output_single(mut text: String, suggestion_type: SuggestionType) -> Result<String> {
     Ok(match suggestion_type {
         SuggestionType::SingleSelection => text
             .lines()

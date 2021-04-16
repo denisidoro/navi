@@ -1,4 +1,4 @@
-use anyhow::{Context, Error};
+use anyhow::{Context, Error, Result};
 use core::fmt::Display;
 use remove_dir_all::remove_dir_all;
 use std::fmt::Debug;
@@ -19,7 +19,7 @@ pub struct UnreadableDir {
     source: anyhow::Error,
 }
 
-pub fn read_lines<P>(filename: P) -> Result<impl Iterator<Item = Result<String, Error>>, Error>
+pub fn read_lines<P>(filename: P) -> Result<impl Iterator<Item = Result<String>>>
 where
     P: AsRef<Path> + Display + Copy,
 {
@@ -29,7 +29,7 @@ where
         .map(|line| line.map_err(Error::from)))
 }
 
-pub fn pathbuf_to_string(pathbuf: &Path) -> Result<String, Error> {
+pub fn pathbuf_to_string(pathbuf: &Path) -> Result<String> {
     Ok(pathbuf
         .as_os_str()
         .to_str()
@@ -37,7 +37,7 @@ pub fn pathbuf_to_string(pathbuf: &Path) -> Result<String, Error> {
         .map(str::to_string)?)
 }
 
-fn follow_symlink(pathbuf: PathBuf) -> Result<PathBuf, Error> {
+fn follow_symlink(pathbuf: PathBuf) -> Result<PathBuf> {
     fs::read_link(pathbuf.clone())
         .map(|o| {
             let o_str = o
@@ -58,16 +58,16 @@ fn follow_symlink(pathbuf: PathBuf) -> Result<PathBuf, Error> {
         .unwrap_or(Ok(pathbuf))
 }
 
-fn exe_pathbuf() -> Result<PathBuf, Error> {
+fn exe_pathbuf() -> Result<PathBuf> {
     let pathbuf = std::env::current_exe().context("Unable to acquire executable's path")?;
     follow_symlink(pathbuf)
 }
 
-pub fn exe_string() -> Result<String, Error> {
+pub fn exe_string() -> Result<String> {
     pathbuf_to_string(&exe_pathbuf()?)
 }
 
-pub fn create_dir(path: &Path) -> Result<(), Error> {
+pub fn create_dir(path: &Path) -> Result<()> {
     create_dir_all(path).with_context(|| {
         format!(
             "Failed to create directory `{}`",
@@ -76,7 +76,7 @@ pub fn create_dir(path: &Path) -> Result<(), Error> {
     })
 }
 
-pub fn remove_dir(path: &Path) -> Result<(), Error> {
+pub fn remove_dir(path: &Path) -> Result<()> {
     remove_dir_all(path).with_context(|| {
         format!(
             "Failed to remove directory `{}`",

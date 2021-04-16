@@ -1,8 +1,8 @@
 use crate::shell::ShellSpawnError;
-use anyhow::{Context, Error};
+use anyhow::{Context, Result};
 use std::process::Command;
 
-pub fn shallow_clone(uri: &str, target: &str) -> Result<(), Error> {
+pub fn shallow_clone(uri: &str, target: &str) -> Result<()> {
     Command::new("git")
         .args(&["clone", uri, target, "--depth", "1"])
         .spawn()

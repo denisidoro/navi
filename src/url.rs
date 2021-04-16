@@ -1,7 +1,7 @@
 use crate::shell::{self, ShellSpawnError};
-use anyhow::Error;
+use anyhow::Result;
 
-pub fn open(args: Vec<String>) -> Result<(), Error> {
+pub fn open(args: Vec<String>) -> Result<()> {
     let url = args
         .into_iter()
         .next()

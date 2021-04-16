@@ -16,9 +16,9 @@ use crate::structures::config::Source;
 use crate::tldr;
 use crate::welcome;
 use anyhow::Context;
-use anyhow::Error;
+use anyhow::Result;
 
-fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
+fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts> {
     let opts = FinderOpts {
         preview: if config.no_preview {
             None
@@ -43,7 +43,7 @@ fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts, Error> {
     Ok(opts)
 }
 
-pub fn main(config: Config) -> Result<(), Error> {
+pub fn main(config: Config) -> Result<()> {
     let opts = gen_core_finder_opts(&config).context("Failed to generate finder options")?;
 
     let (raw_selection, variables, files) = config

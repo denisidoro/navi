@@ -2,9 +2,9 @@ use crate::cmds;
 use crate::structures::config::Command::{Fn, Info, Preview, PreviewVar, Repo, Widget};
 use crate::structures::config::{Config, RepoCommand};
 use anyhow::Context;
-use anyhow::Error;
+use anyhow::Result;
 
-pub fn handle_config(config: Config) -> Result<(), Error> {
+pub fn handle_config(config: Config) -> Result<()> {
     match config.cmd.as_ref() {
         None => cmds::core::main(config),
 

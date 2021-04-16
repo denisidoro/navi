@@ -5,7 +5,7 @@ use crate::parser;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
 use crate::writer::Writer;
-use anyhow::Error;
+use anyhow::Result;
 use directories_next::BaseDirs;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
@@ -25,7 +25,7 @@ fn paths_from_path_param(env_var: &str) -> impl Iterator<Item = &str> {
     env_var.split(':').filter(|folder| folder != &"")
 }
 
-pub fn default_cheat_pathbuf() -> Result<PathBuf, Error> {
+pub fn default_cheat_pathbuf() -> Result<PathBuf> {
     let base_dirs = BaseDirs::new().ok_or_else(|| anyhow!("Unable to get base dirs"))?;
 
     let mut pathbuf = PathBuf::from(base_dirs.data_dir());
@@ -34,7 +34,7 @@ pub fn default_cheat_pathbuf() -> Result<PathBuf, Error> {
     Ok(pathbuf)
 }
 
-pub fn cheat_paths(path: Option<String>) -> Result<String, Error> {
+pub fn cheat_paths(path: Option<String>) -> Result<String> {
     if let Some(p) = path {
         Ok(p)
     } else {
@@ -42,7 +42,7 @@ pub fn cheat_paths(path: Option<String>) -> Result<String, Error> {
     }
 }
 
-pub fn tmp_pathbuf() -> Result<PathBuf, Error> {
+pub fn tmp_pathbuf() -> Result<PathBuf> {
     let mut root = default_cheat_pathbuf()?;
     root.push("tmp");
     Ok(root)
@@ -105,7 +105,7 @@ impl fetcher::Fetcher for Fetcher {
         stdin: &mut std::process::ChildStdin,
         writer: &mut dyn Writer,
         files: &mut Vec<String>,
-    ) -> Result<Option<VariableMap>, Error> {
+    ) -> Result<Option<VariableMap>> {
         let mut variables = VariableMap::new();
         let mut found_something = false;
         let mut visited_lines = HashSet::new();

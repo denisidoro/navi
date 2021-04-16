@@ -3,7 +3,7 @@ use crate::hash::fnv;
 use crate::structures::cheat::VariableMap;
 use crate::structures::item::Item;
 use crate::writer::{self, Writer};
-use anyhow::{Context, Error};
+use anyhow::{Context, Result};
 use regex::Regex;
 use std::collections::HashSet;
 use std::io::Write;
@@ -12,7 +12,7 @@ lazy_static! {
     pub static ref VAR_LINE_REGEX: Regex = Regex::new(r"^\$\s*([^:]+):(.*)").expect("Invalid regex");
 }
 
-fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
+fn parse_opts(text: &str) -> Result<FinderOpts> {
     let mut multi = false;
     let mut prevent_extra = false;
     let mut opts = FinderOpts::default();
@@ -81,7 +81,7 @@ fn parse_opts(text: &str) -> Result<FinderOpts, Error> {
     Ok(opts)
 }
 
-fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FinderOpts>), Error> {
+fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FinderOpts>)> {
     let caps = VAR_LINE_REGEX
         .captures(line)
         .ok_or_else(|| anyhow!("No variables, command, and options found in the line `{}`", line))?;
@@ -108,7 +108,7 @@ fn write_cmd(
     stdin: &mut std::process::ChildStdin,
     allowlist: Option<&Vec<String>>,
     denylist: Option<&Vec<String>>,
-) -> Result<(), Error> {
+) -> Result<()> {
     if item.snippet.len() <= 1 {
         return Ok(());
     }
@@ -141,7 +141,7 @@ fn without_prefix(line: &str) -> String {
 
 #[allow(clippy::too_many_arguments)]
 pub fn read_lines(
-    lines: impl Iterator<Item = Result<String, Error>>,
+    lines: impl Iterator<Item = Result<String>>,
     id: &str,
     file_index: usize,
     variables: &mut VariableMap,
@@ -150,7 +150,7 @@ pub fn read_lines(
     stdin: &mut std::process::ChildStdin,
     allowlist: Option<&Vec<String>>,
     denylist: Option<&Vec<String>>,
-) -> Result<(), Error> {
+) -> Result<()> {
     let mut item = Item::new();
     item.file_index = file_index;
 

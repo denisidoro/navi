@@ -2,7 +2,7 @@ use crate::handler;
 use crate::shell::{self, ShellSpawnError};
 use crate::structures::config;
 use crate::url;
-use anyhow::Error;
+use anyhow::Result;
 use std::io::{self, Read};
 
 #[derive(Debug)]
@@ -13,7 +13,7 @@ pub enum Func {
     MapExpand,
 }
 
-pub fn main(func: &Func, args: Vec<String>) -> Result<(), Error> {
+pub fn main(func: &Func, args: Vec<String>) -> Result<()> {
     match func {
         Func::UrlOpen => url::open(args),
         Func::Welcome => handler::handle_config(config::config_from_iter(
@@ -24,7 +24,7 @@ pub fn main(func: &Func, args: Vec<String>) -> Result<(), Error> {
     }
 }
 
-fn map_expand() -> Result<(), Error> {
+fn map_expand() -> Result<()> {
     let cmd = r#"sed -e 's/^.*$/"&"/' | tr '\n' ' '"#;
     shell::command()
         .arg("-c")
@@ -35,7 +35,7 @@ fn map_expand() -> Result<(), Error> {
     Ok(())
 }
 
-fn widget_last_command() -> Result<(), Error> {
+fn widget_last_command() -> Result<()> {
     let mut text = String::new();
     io::stdin().read_to_string(&mut text)?;
 
