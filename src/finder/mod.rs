@@ -13,7 +13,7 @@ pub use post::process;
 use structures::Opts;
 use structures::SuggestionType;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum FinderChoice {
     Fzf,
     Skim,

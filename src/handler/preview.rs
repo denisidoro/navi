@@ -1,3 +1,4 @@
+use crate::config::CONFIG;
 use crate::ui;
 use crate::writer;
 use anyhow::Result;
@@ -12,13 +13,15 @@ fn extract_elements(argstr: &str) -> (&str, &str, &str) {
 }
 
 pub fn main(line: &str) -> Result<()> {
+    // dbg!(CONFIG.comment_color());
+
     let (tags, comment, snippet) = extract_elements(line);
 
     println!(
         "{comment} {tags} \n{snippet}",
-        comment = ui::style(comment).with(*ui::COMMENT_COLOR),
-        tags = ui::style(format!("[{}]", tags)).with(*ui::TAG_COLOR),
-        snippet = ui::style(writer::fix_newlines(snippet)).with(*ui::SNIPPET_COLOR),
+        comment = ui::style(comment).with(CONFIG.comment_color()),
+        tags = ui::style(format!("[{}]", tags)).with(CONFIG.tag_color()),
+        snippet = ui::style(writer::fix_newlines(snippet)).with(CONFIG.snippet_color()),
     );
 
     process::exit(0)

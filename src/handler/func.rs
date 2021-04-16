@@ -1,7 +1,13 @@
-use crate::handler;
+use crate::config::{Config, CONFIG};
+use crate::filesystem;
+use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
+use crate::finder::Finder;
+use crate::handler::core;
 use crate::shell::{self, ShellSpawnError};
-use crate::structures::config;
+use crate::structures::cheat::VariableMap;
 use crate::url;
+use crate::welcome;
+use anyhow::Context;
 use anyhow::Result;
 use std::io::{self, Read};
 
@@ -16,12 +22,23 @@ pub enum Func {
 pub fn main(func: &Func, args: Vec<String>) -> Result<()> {
     match func {
         Func::UrlOpen => url::open(args),
-        Func::Welcome => handler::handle_config(config::config_from_iter(
-            "navi --path /tmp/navi/irrelevant".split(' ').collect(),
-        )),
+        Func::Welcome => welcome(),
         Func::WidgetLastCommand => widget_last_command(),
         Func::MapExpand => map_expand(),
     }
+}
+
+fn welcome() -> Result<()> {
+    let config = &CONFIG;
+    let opts = core::gen_core_finder_opts(&config)?;
+    let _ = config
+        .finder
+        .call(opts, |stdin, _| {
+            welcome::populate_cheatsheet(stdin);
+            Ok(Some(VariableMap::new()))
+        })
+        .context("Failed getting selection and variables from finder")?;
+    Ok(())
 }
 
 fn map_expand() -> Result<()> {

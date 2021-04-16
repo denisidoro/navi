@@ -1,15 +1,25 @@
+mod file;
+
 use crate::env_var;
 use crate::finder::FinderChoice;
 use crate::handler::func::Func;
 use crate::handler::info::Info;
 use crate::shell::Shell;
-use clap::{crate_version, AppSettings, Clap};
+use crate::terminal;
+use crate::terminal::style::Color;
+use clap::{crate_version, AppSettings, ArgSettings, Clap};
+use file::Yaml;
 use std::str::FromStr;
 
 const FINDER_POSSIBLE_VALUES: &[&str] = &[&"fzf", &"skim"];
 const SHELL_POSSIBLE_VALUES: &[&str] = &[&"bash", &"zsh", &"fish"];
 const FUNC_POSSIBLE_VALUES: &[&str] = &[&"url::open", &"welcome", &"widget::last_command", &"map::expand"];
 const INFO_POSSIBLE_VALUES: &[&str] = &[&"cheats-path"];
+
+lazy_static! {
+    pub static ref FILE_CONFIG: Yaml = Yaml::new();
+    pub static ref CONFIG: Config = Config::parse();
+}
 
 impl FromStr for FinderChoice {
     type Err = &'static str;
@@ -61,7 +71,7 @@ impl FromStr for Info {
     }
 }
 
-#[derive(Debug, Clap)]
+#[derive(Debug, Clap, Clone)]
 #[clap(after_help = r#"MORE INFO:
     Please refer to https://github.com/denisidoro/navi
 
@@ -180,6 +190,15 @@ pub enum Command {
         #[clap(possible_values = INFO_POSSIBLE_VALUES, case_insensitive = true)]
         info: Info,
     },
+    /// Value used when cloning the config
+    #[clap(setting = AppSettings::Hidden)]
+    Deleted,
+}
+
+impl Clone for Command {
+    fn clone(&self) -> Self {
+        Self::Deleted {}
+    }
 }
 
 #[derive(Debug, Clap)]
@@ -215,6 +234,28 @@ impl Config {
         }
     }
 
+    /*
+    pub fn tag_color(&self) -> Color {
+        self.comment_color
+            .and_then(|ansi| terminal::parse_ansi(&ansi.to_string()))
+            .unwrap_or(FILE_CONFIG.style.comment.color)
+    }
+    */
+
+    pub fn tag_color(&self) -> Color {
+        FILE_CONFIG.style.comment.color
+    }
+
+    // TODO
+    pub fn comment_color(&self) -> Color {
+        FILE_CONFIG.style.comment.color
+    }
+
+    // TODO
+    pub fn snippet_color(&self) -> Color {
+        FILE_CONFIG.style.comment.color
+    }
+
     pub fn action(&self) -> Action {
         if self.print {
             Action::Print
@@ -238,14 +279,6 @@ impl Config {
             None
         }
     }
-}
-
-pub fn config_from_env() -> Config {
-    Config::parse()
-}
-
-pub fn config_from_iter(args: Vec<&str>) -> Config {
-    Config::parse_from(args)
 }
 
 #[cfg(test)]

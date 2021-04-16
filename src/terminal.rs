@@ -1,5 +1,6 @@
 pub use crossterm::style;
 use crossterm::terminal;
+use std::str::FromStr;
 
 const FALLBACK_WIDTH: u16 = 80;
 
@@ -49,4 +50,19 @@ pub fn width() -> u16 {
 
 pub fn parse_ansi(ansi: &str) -> Option<style::Color> {
     style::Color::parse_ansi(&format!("5;{}", ansi))
+}
+
+#[derive(Debug, Clone)]
+pub struct Color(pub style::Color);
+
+impl FromStr for Color {
+    type Err = &'static str;
+
+    fn from_str(ansi: &str) -> Result<Self, Self::Err> {
+        if let Some(c) = parse_ansi(ansi) {
+            Ok(Color(c))
+        } else {
+            Err("Invalid color")
+        }
+    }
 }

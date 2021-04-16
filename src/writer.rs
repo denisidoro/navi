@@ -1,3 +1,4 @@
+use crate::config::CONFIG;
 use crate::structures::item::Item;
 use crate::ui;
 use regex::Regex;
@@ -38,9 +39,9 @@ pub fn write(item: &Item) -> String {
     let (tag_width, comment_width) = *COLUMN_WIDTHS;
     format!(
             "{tags_short}{delimiter}{comment_short}{delimiter}{snippet_short}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}{file_index}{delimiter}\n",
-            tags_short = ui::style(limit_str(&item.tags, tag_width)).with(*ui::TAG_COLOR),
-            comment_short = ui::style(limit_str(&item.comment, comment_width)).with(*ui::COMMENT_COLOR),
-            snippet_short = ui::style(fix_newlines(&item.snippet)).with(*ui::SNIPPET_COLOR),
+            tags_short = ui::style(limit_str(&item.tags, tag_width)).with(CONFIG.tag_color()),
+            comment_short = ui::style(limit_str(&item.comment, comment_width)).with(CONFIG.comment_color()),
+            snippet_short = ui::style(fix_newlines(&item.snippet)).with(CONFIG.snippet_color()),
             tags = item.tags,
             comment = item.comment,
             delimiter = DELIMITER,

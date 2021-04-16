@@ -1,11 +1,9 @@
+use crate::config::CONFIG;
 use crate::env_var;
 use crate::finder;
-
 use crate::terminal::style::style;
-use crate::ui;
 use crate::writer;
 use anyhow::Result;
-
 use std::collections::HashSet;
 use std::iter;
 use std::process;
@@ -18,8 +16,8 @@ pub fn main(selection: &str, query: &str, variable: &str) -> Result<()> {
     let delimiter = env_var::get(env_var::PREVIEW_DELIMITER).ok();
     let map = env_var::get(env_var::PREVIEW_MAP).ok();
 
-    let active_color = *ui::TAG_COLOR;
-    let inactive_color = *ui::COMMENT_COLOR;
+    let active_color = CONFIG.tag_color();
+    let inactive_color = CONFIG.comment_color();
 
     let mut colored_snippet = String::from(&snippet);
     let mut visited_vars: HashSet<&str> = HashSet::new();
@@ -28,8 +26,8 @@ pub fn main(selection: &str, query: &str, variable: &str) -> Result<()> {
 
     println!(
         "{comment} {tags}",
-        comment = style(comment).with(*ui::COMMENT_COLOR),
-        tags = style(format!("[{}]", tags)).with(*ui::TAG_COLOR),
+        comment = style(comment).with(CONFIG.comment_color()),
+        tags = style(format!("[{}]", tags)).with(CONFIG.tag_color()),
     );
 
     let bracketed_current_variable = format!("<{}>", variable);

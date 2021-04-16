@@ -1,3 +1,4 @@
+use crate::config::CONFIG;
 use crate::filesystem;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::{Finder, FinderChoice};
@@ -9,51 +10,7 @@ use std::fs;
 use std::io::Write;
 use std::path;
 
-pub fn browse(finder: &FinderChoice) -> Result<()> {
-    let repo_pathbuf = {
-        let mut p = filesystem::tmp_pathbuf()?;
-        p.push("featured");
-        p
-    };
-
-    let repo_path_str = pathbuf_to_string(&repo_pathbuf)?;
-
-    let _ = filesystem::remove_dir(&repo_pathbuf);
-    filesystem::create_dir(&repo_pathbuf)?;
-
-    let (repo_url, _, _) = git::meta("denisidoro/cheats");
-    git::shallow_clone(repo_url.as_str(), &repo_path_str)
-        .with_context(|| format!("Failed to clone `{}`", repo_url))?;
-
-    let feature_repos_file = {
-        let mut p = repo_pathbuf.clone();
-        p.push("featured_repos.txt");
-        p
-    };
-
-    let repos = fs::read_to_string(&feature_repos_file).context("Unable to fetch featured repositories")?;
-
-    let opts = FinderOpts {
-        column: Some(1),
-        suggestion_type: SuggestionType::SingleSelection,
-        ..Default::default()
-    };
-
-    let (repo, _, _) = finder
-        .call(opts, |stdin, _| {
-            stdin
-                .write_all(repos.as_bytes())
-                .context("Unable to prompt featured repositories")?;
-            Ok(None)
-        })
-        .context("Failed to get repo URL from finder")?;
-
-    filesystem::remove_dir(&repo_pathbuf)?;
-
-    add(repo, finder)
-}
-
-pub fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
+fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
     let opts = FinderOpts {
         column: Some(1),
         header: Some("Do you want to import all files from this repo?".to_string()),
@@ -76,8 +33,10 @@ pub fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
     }
 }
 
-pub fn add(uri: String, finder: &FinderChoice) -> Result<()> {
-    let should_import_all = ask_if_should_import_all(finder).unwrap_or(false);
+pub fn main(uri: String) -> Result<()> {
+    let finder = CONFIG.finder;
+
+    let should_import_all = ask_if_should_import_all(&finder).unwrap_or(false);
     let (actual_uri, user, repo) = git::meta(uri.as_str());
 
     let cheat_pathbuf = filesystem::default_cheat_pathbuf()?;
