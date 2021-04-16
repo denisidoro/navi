@@ -1,7 +1,7 @@
 use crate::config::CONFIG;
 use crate::finder::Finder;
 use crate::handler::core;
-use crate::shell::{self, ShellSpawnError};
+
 use crate::structures::cheat::VariableMap;
 use crate::structures::item::Item;
 use crate::writer;
