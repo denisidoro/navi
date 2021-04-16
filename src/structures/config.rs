@@ -141,20 +141,6 @@ pub struct Config {
 
 #[derive(Debug, Clap)]
 pub enum Command {
-    /// Filters results
-    #[clap(setting = AppSettings::Hidden)]
-    Query {
-        /// String used as filter (example: "git")
-        query: String,
-    },
-    /// Autoselects the snippet that best matches the query
-    #[clap(setting = AppSettings::Hidden)]
-    Best {
-        /// String used as filter (example: "git remove branch")
-        query: String,
-        /// List of arguments (example: "mybranch" "remote")
-        args: Vec<String>,
-    },
     /// [Experimental] Performs ad-hoc, internal functions provided by navi
     Fn {
         /// Function name (example: "url::open")

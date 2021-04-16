@@ -37,8 +37,6 @@ pub fn handle_config(config: Config) -> Result<()> {
                     cmds::core::main(config)
                 }
             },
-
-            _ => cmds::core::main(config),
         },
     }
 }
