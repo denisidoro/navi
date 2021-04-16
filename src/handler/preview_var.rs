@@ -1,12 +1,11 @@
 use crate::env_var;
 use crate::finder;
-use crate::structures::item::Item;
-use crate::terminal;
-use crate::terminal::style::{style, Color};
+
+use crate::terminal::style::style;
 use crate::ui;
 use crate::writer;
 use anyhow::Result;
-use std::cmp::max;
+
 use std::collections::HashSet;
 use std::iter;
 use std::process;

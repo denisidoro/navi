@@ -1,13 +1,10 @@
 use crate::env_var;
-use crate::finder;
-use crate::structures::item::Item;
+
 use crate::terminal;
 pub use crate::terminal::style::style;
 use crate::terminal::style::Color;
-use crate::writer;
+
 use std::cmp::max;
-use std::collections::HashSet;
-use std::iter;
 
 fn parse_ansi(varname: &str, default: Color) -> Color {
     let value: Option<String> = env_var::parse(varname);

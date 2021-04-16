@@ -1,13 +1,7 @@
-use crate::env_var;
-use crate::finder;
 use crate::structures::item::Item;
-use crate::terminal;
-use crate::terminal::style::{style, Color};
+
 use crate::ui;
 use crate::writer;
-use std::cmp::max;
-use std::collections::HashSet;
-use std::iter;
 
 fn limit_str(text: &str, length: usize) -> String {
     if text.len() > length {
