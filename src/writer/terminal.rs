@@ -24,7 +24,7 @@ pub struct Writer {
 
 impl Writer {
     pub fn new() -> Writer {
-        let (tag_width, comment_width) = get_widths();
+        let (tag_width, comment_width) = ui::get_widths();
         writer::terminal::Writer {
             tag_width,
             comment_width,
