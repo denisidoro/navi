@@ -13,7 +13,7 @@ pub fn main() -> Result<()> {
     let config = &CONFIG;
     let opts = FinderOpts::from_config(&config)?;
     let _ = config
-        .finder
+        .finder()
         .call(opts, |stdin, _| {
             populate_cheatsheet(stdin);
             Ok(Some(VariableMap::new()))

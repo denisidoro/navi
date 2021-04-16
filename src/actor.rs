@@ -66,7 +66,7 @@ fn prompt_finder(
     };
 
     let overrides = {
-        let mut o = CONFIG.fzf_overrides.clone();
+        let mut o = CONFIG.fzf_overrides_var().clone();
         if let Some(io) = initial_opts {
             if io.overrides.is_some() {
                 o = io.overrides.clone()
@@ -111,7 +111,7 @@ NAVIEOF
     };
 
     let (output, _, _) = CONFIG
-        .finder
+        .finder()
         .call(opts, |stdin, _| {
             stdin
                 .write_all(suggestions.as_bytes())

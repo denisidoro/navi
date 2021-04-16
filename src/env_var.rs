@@ -11,9 +11,6 @@ pub const PREVIEW_COLUMN: &str = "NAVI_PREVIEW_COLUMN";
 pub const PREVIEW_DELIMITER: &str = "NAVI_PREVIEW_DELIMITER";
 pub const PREVIEW_MAP: &str = "NAVI_PREVIEW_MAP";
 
-pub const TAG_WIDTH: &str = "NAVI_TAG_WIDTH";
-pub const COMMENT_WIDTH: &str = "NAVI_COMMENT_WIDTH";
-
 pub const PATH: &str = "NAVI_PATH";
 pub const FZF_OVERRIDES: &str = "NAVI_FZF_OVERRIDES";
 pub const FZF_OVERRIDES_VAR: &str = "NAVI_FZF_OVERRIDES_VAR";

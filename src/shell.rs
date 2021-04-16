@@ -1,17 +1,9 @@
-use crate::env_var;
-
+use crate::config::CONFIG;
 use anyhow::Result;
 use std::fmt::Debug;
 use std::io::{self, Read};
 use std::process::Command;
 use thiserror::Error;
-
-lazy_static! {
-    pub static ref IS_FISH: bool = env_var::get("SHELL")
-        .unwrap_or_else(|_| "".to_string())
-        .contains(&"fish");
-    pub static ref SHELL: String = env_var::get(env_var::SHELL).unwrap_or_else(|_| "bash".to_string());
-}
 
 #[derive(Debug)]
 pub enum Shell {
@@ -41,7 +33,7 @@ impl ShellSpawnError {
 }
 
 pub fn command() -> Command {
-    Command::new(&*SHELL)
+    Command::new(CONFIG.shell())
 }
 
 pub fn widget_last_command() -> Result<()> {

@@ -55,7 +55,7 @@ impl Opts {
     pub fn from_config(config: &Config) -> Result<Opts> {
         let opts = Opts {
             preview: Some(format!("{} preview {{}}", filesystem::exe_string()?)),
-            overrides: config.fzf_overrides.clone(),
+            overrides: config.fzf_overrides().clone(),
             suggestion_type: SuggestionType::SnippetSelection,
             query: if config.best_match {
                 None

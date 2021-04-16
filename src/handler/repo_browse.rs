@@ -10,7 +10,7 @@ use std::fs;
 use std::io::Write;
 
 pub fn main() -> Result<String> {
-    let finder = CONFIG.finder;
+    let finder = CONFIG.finder();
 
     let repo_pathbuf = {
         let mut p = filesystem::tmp_pathbuf()?;

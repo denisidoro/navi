@@ -34,7 +34,7 @@ fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
 }
 
 pub fn main(uri: String) -> Result<()> {
-    let finder = CONFIG.finder;
+    let finder = CONFIG.finder();
 
     let should_import_all = ask_if_should_import_all(&finder).unwrap_or(false);
     let (actual_uri, user, repo) = git::meta(uri.as_str());

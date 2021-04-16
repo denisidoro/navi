@@ -11,25 +11,13 @@ use file::Yaml;
 use std::str::FromStr;
 
 const FINDER_POSSIBLE_VALUES: &[&str] = &[&"fzf", &"skim"];
-const SHELL_POSSIBLE_VALUES: &[&str] = &[&"bash", &"zsh", &"fish"];
+const WIDGET_POSSIBLE_VALUES: &[&str] = &[&"bash", &"zsh", &"fish"];
 const FUNC_POSSIBLE_VALUES: &[&str] = &[&"url::open", &"welcome", &"widget::last_command", &"map::expand"];
 const INFO_POSSIBLE_VALUES: &[&str] = &[&"cheats-path"];
 
 lazy_static! {
-    pub static ref FILE_CONFIG: Yaml = Yaml::new();
+    pub static ref FILE_CONFIG: Yaml = Yaml::new(); // TODO
     pub static ref CONFIG: Config = Config::parse();
-}
-
-impl FromStr for FinderChoice {
-    type Err = &'static str;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "fzf" => Ok(FinderChoice::Fzf),
-            "skim" => Ok(FinderChoice::Skim),
-            _ => Err("no match"),
-        }
-    }
 }
 
 impl FromStr for Shell {
@@ -104,9 +92,9 @@ EXAMPLES:
 #[clap(setting = AppSettings::AllowLeadingHyphen)]
 #[clap(version = crate_version!())]
 pub struct Config {
-    /// List of :-separated paths containing .cheat files
+    /// Colon-separated list of paths containing .cheat files
     #[clap(short, long, env = env_var::PATH)]
-    pub path: Option<String>,
+    path: Option<String>,
 
     /// Instead of executing a snippet, prints it to stdout
     #[clap(long)]
@@ -132,17 +120,17 @@ pub struct Config {
     #[clap(short, long)]
     query: Option<String>,
 
-    /// finder overrides for cheat selection
-    #[clap(long, env = env_var::FZF_OVERRIDES)]
-    pub fzf_overrides: Option<String>,
+    /// Finder overrides for snippet selection
+    #[clap(long)]
+    fzf_overrides: Option<String>,
 
-    /// finder overrides for variable selection
-    #[clap(long, env = env_var::FZF_OVERRIDES_VAR)]
-    pub fzf_overrides_var: Option<String>,
+    /// Finder overrides for variable selection
+    #[clap(long)]
+    fzf_overrides_var: Option<String>,
 
-    /// which finder application to use
-    #[clap(long, env = env_var::FINDER, default_value = "fzf", possible_values = FINDER_POSSIBLE_VALUES, case_insensitive = true)]
-    pub finder: FinderChoice,
+    /// Finder application to use
+    #[clap(long, possible_values = FINDER_POSSIBLE_VALUES, case_insensitive = true)]
+    finder: Option<FinderChoice>,
 
     #[clap(subcommand)]
     pub cmd: Option<Command>,
@@ -181,7 +169,7 @@ pub enum Command {
     },
     /// Outputs shell widget source code
     Widget {
-        #[clap(possible_values = SHELL_POSSIBLE_VALUES, case_insensitive = true, default_value = "bash")]
+        #[clap(possible_values = WIDGET_POSSIBLE_VALUES, case_insensitive = true, default_value = "bash")]
         shell: Shell,
     },
     /// Shows info
@@ -220,7 +208,7 @@ impl Config {
         } else if let Some(query) = self.cheatsh.clone() {
             Source::Cheats(query)
         } else {
-            Source::Filesystem(self.path.clone(), self.tag_rules.clone())
+            Source::Filesystem(self.path(), self.tag_rules())
         }
     }
 
@@ -232,18 +220,60 @@ impl Config {
     }
     */
 
-    pub fn tag_color(&self) -> Color {
-        FILE_CONFIG.style.comment.color
+    pub fn path(&self) -> Option<String> {
+        self.path.clone().or_else(|| FILE_CONFIG.cheats.path.clone())
     }
 
-    // TODO
+    pub fn finder(&self) -> FinderChoice {
+        self.finder.unwrap_or(FILE_CONFIG.finder.command)
+    }
+
+    pub fn fzf_overrides(&self) -> Option<String> {
+        self.fzf_overrides
+            .clone()
+            .or_else(|| FILE_CONFIG.finder.overrides.clone())
+    }
+
+    pub fn fzf_overrides_var(&self) -> Option<String> {
+        self.fzf_overrides_var
+            .clone()
+            .or_else(|| FILE_CONFIG.finder.overrides_var.clone())
+    }
+
+    pub fn shell(&self) -> String {
+        FILE_CONFIG.shell.command.clone()
+    }
+
+    pub fn tag_rules(&self) -> Option<String> {
+        self.tag_rules.clone().or_else(|| FILE_CONFIG.search.tags.clone())
+    }
+
+    pub fn tag_color(&self) -> Color {
+        FILE_CONFIG.style.tag.color
+    }
+
     pub fn comment_color(&self) -> Color {
         FILE_CONFIG.style.comment.color
     }
 
-    // TODO
     pub fn snippet_color(&self) -> Color {
-        FILE_CONFIG.style.comment.color
+        FILE_CONFIG.style.snippet.color
+    }
+
+    pub fn tag_width(&self) -> u16 {
+        FILE_CONFIG.style.tag.width
+    }
+
+    pub fn comment_width(&self) -> u16 {
+        FILE_CONFIG.style.comment.width
+    }
+
+    pub fn tag_min_abs_width(&self) -> u16 {
+        FILE_CONFIG.style.tag.min_abs_width
+    }
+
+    pub fn comment_min_abs_width(&self) -> u16 {
+        FILE_CONFIG.style.comment.min_abs_width
     }
 
     pub fn action(&self) -> Action {
@@ -276,8 +306,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_shell_possible_values() {
-        for v in SHELL_POSSIBLE_VALUES {
+    fn test_widget_possible_values() {
+        for v in WIDGET_POSSIBLE_VALUES {
             assert_eq!(true, Shell::from_str(v).is_ok())
         }
     }

@@ -18,7 +18,7 @@ pub fn main() -> Result<()> {
     let opts = FinderOpts::from_config(&config)?;
 
     let (raw_selection, variables, files) = config
-        .finder
+        .finder()
         .call(opts, |stdin, files| {
             let fetcher: Box<dyn Fetcher> = match config.source() {
                 Source::Cheats(query) => Box::new(cheatsh::Fetcher::new(query)),
