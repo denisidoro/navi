@@ -2,7 +2,7 @@ use crate::shell;
 use crate::structures::cheat::VariableMap;
 use crate::writer;
 use anyhow::Context;
-use anyhow::Error;
+use anyhow::Result;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
 
@@ -20,12 +20,12 @@ pub enum FinderChoice {
 }
 
 pub trait Finder {
-    fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>, Vec<String>), Error>
+    fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>, Vec<String>)>
     where
-        F: Fn(&mut process::ChildStdin, &mut Vec<String>) -> Result<Option<VariableMap>, Error>;
+        F: Fn(&mut process::ChildStdin, &mut Vec<String>) -> Result<Option<VariableMap>>;
 }
 
-fn parse(out: Output, opts: Opts) -> Result<String, Error> {
+fn parse(out: Output, opts: Opts) -> Result<String> {
     let text = match out.status.code() {
         Some(0) | Some(1) | Some(2) => {
             String::from_utf8(out.stdout).context("Invalid utf8 received from finder")?
@@ -43,13 +43,9 @@ fn parse(out: Output, opts: Opts) -> Result<String, Error> {
 }
 
 impl Finder for FinderChoice {
-    fn call<F>(
-        &self,
-        finder_opts: Opts,
-        stdin_fn: F,
-    ) -> Result<(String, Option<VariableMap>, Vec<String>), Error>
+    fn call<F>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>, Vec<String>)>
     where
-        F: Fn(&mut process::ChildStdin, &mut Vec<String>) -> Result<Option<VariableMap>, Error>,
+        F: Fn(&mut process::ChildStdin, &mut Vec<String>) -> Result<Option<VariableMap>>,
     {
         let finder_str = match self {
             Self::Fzf => "fzf",

@@ -1,6 +1,6 @@
 use crate::structures::cheat::VariableMap;
 use crate::writer::Writer;
-use anyhow::Error;
+use anyhow::Result;
 
 pub trait Fetcher {
     fn fetch(
@@ -8,5 +8,5 @@ pub trait Fetcher {
         stdin: &mut std::process::ChildStdin,
         writer: &mut dyn Writer,
         files: &mut Vec<String>,
-    ) -> Result<Option<VariableMap>, Error>;
+    ) -> Result<Option<VariableMap>>;
 }

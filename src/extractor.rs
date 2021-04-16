@@ -1,11 +1,11 @@
 use crate::writer;
 
 use anyhow::Context;
-use anyhow::Error;
+use anyhow::Result;
 
 pub type Output<'a> = (&'a str, &'a str, &'a str, &'a str, Option<usize>);
 
-pub fn extract_from_selections(raw_snippet: &str, is_single: bool) -> Result<Output, Error> {
+pub fn extract_from_selections(raw_snippet: &str, is_single: bool) -> Result<Output> {
     let mut lines = raw_snippet.split('\n');
     let key = if is_single {
         "enter"

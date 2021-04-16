@@ -4,12 +4,12 @@ use crate::finder::{Finder, FinderChoice};
 use crate::fs::pathbuf_to_string;
 use crate::git;
 use anyhow::Context;
-use anyhow::Error;
+use anyhow::Result;
 use std::fs;
 use std::io::Write;
 use std::path;
 
-pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
+pub fn browse(finder: &FinderChoice) -> Result<()> {
     let repo_pathbuf = {
         let mut p = filesystem::tmp_pathbuf()?;
         p.push("featured");
@@ -53,7 +53,7 @@ pub fn browse(finder: &FinderChoice) -> Result<(), Error> {
     add(repo, finder)
 }
 
-pub fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool, Error> {
+pub fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
     let opts = FinderOpts {
         column: Some(1),
         header: Some("Do you want to import all files from this repo?".to_string()),
@@ -76,7 +76,7 @@ pub fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool, Error> {
     }
 }
 
-pub fn add(uri: String, finder: &FinderChoice) -> Result<(), Error> {
+pub fn add(uri: String, finder: &FinderChoice) -> Result<()> {
     let should_import_all = ask_if_should_import_all(finder).unwrap_or(false);
     let (actual_uri, user, repo) = git::meta(uri.as_str());
 

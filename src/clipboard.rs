@@ -1,7 +1,7 @@
 use crate::shell::{self, ShellSpawnError};
-use anyhow::Error;
+use anyhow::Result;
 
-pub fn copy(text: String) -> Result<(), Error> {
+pub fn copy(text: String) -> Result<()> {
     let cmd = r#"
 exst() {
    type "$1" &>/dev/null

@@ -2,7 +2,7 @@ use crate::parser;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
 use crate::writer::Writer;
-use anyhow::{Context, Error};
+use anyhow::{Context, Result};
 use regex::Regex;
 use std::collections::HashSet;
 
@@ -47,7 +47,7 @@ fn convert_tldr(line: &str) -> String {
     }
 }
 
-fn markdown_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String, Error>> {
+fn markdown_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String>> {
     format!(
         "% {}, tldr
  {}",
@@ -55,7 +55,7 @@ fn markdown_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<St
     )
     .lines()
     .map(|line| Ok(convert_tldr(line)))
-    .collect::<Vec<Result<String, Error>>>()
+    .collect::<Vec<Result<String>>>()
     .into_iter()
 }
 
@@ -64,7 +64,7 @@ fn read_all(
     markdown: &str,
     stdin: &mut std::process::ChildStdin,
     writer: &mut dyn Writer,
-) -> Result<Option<VariableMap>, Error> {
+) -> Result<Option<VariableMap>> {
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
     parser::read_lines(
@@ -81,7 +81,7 @@ fn read_all(
     Ok(Some(variables))
 }
 
-pub fn fetch(query: &str) -> Result<String, Error> {
+pub fn fetch(query: &str) -> Result<String> {
     let args = [query, "--markdown"];
 
     let child = Command::new("tldr")
@@ -156,7 +156,7 @@ impl fetcher::Fetcher for Fetcher {
         stdin: &mut std::process::ChildStdin,
         writer: &mut dyn Writer,
         _files: &mut Vec<String>,
-    ) -> Result<Option<VariableMap>, Error> {
+    ) -> Result<Option<VariableMap>> {
         let markdown = fetch(&self.query)?;
         read_all(&self.query, &markdown, stdin, writer)
     }

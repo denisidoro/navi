@@ -10,7 +10,7 @@ use crate::structures::config::Action;
 use crate::structures::config::Config;
 use crate::writer;
 use anyhow::Context;
-use anyhow::Error;
+use anyhow::Result;
 use std::io::Write;
 use std::path::Path;
 use std::process::Stdio;
@@ -20,7 +20,7 @@ fn prompt_finder(
     config: &Config,
     suggestion: Option<&Suggestion>,
     variable_count: usize,
-) -> Result<String, Error> {
+) -> Result<String> {
     env_var::remove(env_var::PREVIEW_COLUMN);
     env_var::remove(env_var::PREVIEW_DELIMITER);
     env_var::remove(env_var::PREVIEW_MAP);
@@ -135,7 +135,7 @@ fn replace_variables_from_snippet(
     tags: &str,
     variables: VariableMap,
     config: &Config,
-) -> Result<String, Error> {
+) -> Result<String> {
     let mut interpolated_snippet = String::from(snippet);
     let variables_found: Vec<&str> = writer::VAR_REGEX.find_iter(snippet).map(|m| m.as_str()).collect();
     let variable_count = unique_result_count(&variables_found);
@@ -171,11 +171,11 @@ fn replace_variables_from_snippet(
 
 // TODO: make it depend on less inputs
 pub fn act(
-    extractions: Result<extractor::Output, Error>,
+    extractions: Result<extractor::Output>,
     config: Config,
     files: Vec<String>,
     variables: Option<VariableMap>,
-) -> Result<(), Error> {
+) -> Result<()> {
     let (key, tags, comment, snippet, file_index) = extractions.unwrap();
 
     if key == "ctrl-o" {
