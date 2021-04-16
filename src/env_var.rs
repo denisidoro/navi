@@ -11,10 +11,6 @@ pub const PREVIEW_COLUMN: &str = "NAVI_PREVIEW_COLUMN";
 pub const PREVIEW_DELIMITER: &str = "NAVI_PREVIEW_DELIMITER";
 pub const PREVIEW_MAP: &str = "NAVI_PREVIEW_MAP";
 
-pub const TAG_COLOR: &str = "NAVI_TAG_COLOR";
-pub const COMMENT_COLOR: &str = "NAVI_COMMENT_COLOR";
-pub const SNIPPET_COLOR: &str = "NAVI_SNIPPET_COLOR";
-
 pub const TAG_WIDTH: &str = "NAVI_TAG_WIDTH";
 pub const COMMENT_WIDTH: &str = "NAVI_COMMENT_WIDTH";
 

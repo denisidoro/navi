@@ -3,18 +3,7 @@ use crate::env_var;
 use crate::terminal;
 pub use crate::terminal::style::style;
 use crate::terminal::style::Color;
-
 use std::cmp::max;
-
-fn parse_ansi(varname: &str, default: Color) -> Color {
-    let value: Option<String> = env_var::parse(varname);
-    if let Some(v) = value {
-        if let Some(a) = terminal::parse_ansi(&v) {
-            return a;
-        }
-    }
-    default
-}
 
 lazy_static! {
     pub static ref TAG_WIDTH_PERCENTAGE: u16 = env_var::parse(env_var::TAG_WIDTH).unwrap_or(26);

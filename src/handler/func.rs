@@ -1,5 +1,4 @@
-use crate::config::{CONFIG};
-
+use crate::config::CONFIG;
 
 use crate::finder::Finder;
 use crate::handler::core;
