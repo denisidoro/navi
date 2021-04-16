@@ -5,9 +5,9 @@ use crate::finder::FinderChoice;
 use crate::handler::func::Func;
 use crate::handler::info::Info;
 use crate::shell::Shell;
-use crate::terminal;
+
 use crate::terminal::style::Color;
-use clap::{crate_version, AppSettings, ArgSettings, Clap};
+use clap::{crate_version, AppSettings, Clap};
 use file::Yaml;
 use std::str::FromStr;
 

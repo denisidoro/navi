@@ -1,6 +1,6 @@
-use crate::config::{Config, CONFIG};
-use crate::filesystem;
-use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
+use crate::config::{CONFIG};
+
+
 use crate::finder::Finder;
 use crate::handler::core;
 use crate::shell::{self, ShellSpawnError};

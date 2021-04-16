@@ -1,6 +1,6 @@
 use crate::clipboard;
 use crate::config::Action;
-use crate::config::Config;
+
 use crate::config::CONFIG;
 use crate::env_var;
 use crate::extractor;

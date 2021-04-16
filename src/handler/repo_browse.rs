@@ -1,7 +1,7 @@
 use crate::config::CONFIG;
 use crate::filesystem;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
-use crate::finder::{Finder, FinderChoice};
+use crate::finder::{Finder};
 use crate::fs::pathbuf_to_string;
 use crate::git;
 use anyhow::Context;
