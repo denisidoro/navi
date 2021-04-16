@@ -103,10 +103,6 @@ pub struct Config {
     #[clap(long)]
     print: bool,
 
-    /// Hides preview window
-    #[clap(long)]
-    pub no_preview: bool,
-
     /// Returns the best match
     #[clap(long)]
     pub best_match: bool,

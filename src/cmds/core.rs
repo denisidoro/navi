@@ -20,11 +20,7 @@ use anyhow::Result;
 
 fn gen_core_finder_opts(config: &Config) -> Result<FinderOpts> {
     let opts = FinderOpts {
-        preview: if config.no_preview {
-            None
-        } else {
-            Some(format!("{} preview {{}}", filesystem::exe_string()?))
-        },
+        preview: Some(format!("{} preview {{}}", filesystem::exe_string()?)),
         overrides: config.fzf_overrides.clone(),
         suggestion_type: SuggestionType::SnippetSelection,
         query: if config.best_match {
