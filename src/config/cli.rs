@@ -3,25 +3,15 @@ use crate::finder::FinderChoice;
 use crate::handler::func::Func;
 use crate::handler::info::Info;
 use crate::shell::Shell;
+
 use clap::{crate_version, AppSettings, Clap};
+
 use std::str::FromStr;
 
 const FINDER_POSSIBLE_VALUES: &[&str] = &[&"fzf", &"skim"];
-const SHELL_POSSIBLE_VALUES: &[&str] = &[&"bash", &"zsh", &"fish"];
+const WIDGET_POSSIBLE_VALUES: &[&str] = &[&"bash", &"zsh", &"fish"];
 const FUNC_POSSIBLE_VALUES: &[&str] = &[&"url::open", &"welcome", &"widget::last_command", &"map::expand"];
-const INFO_POSSIBLE_VALUES: &[&str] = &[&"cheats-path"];
-
-impl FromStr for FinderChoice {
-    type Err = &'static str;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "fzf" => Ok(FinderChoice::Fzf),
-            "skim" => Ok(FinderChoice::Skim),
-            _ => Err("no match"),
-        }
-    }
-}
+const INFO_POSSIBLE_VALUES: &[&str] = &[&"cheats-path", "config-path"];
 
 impl FromStr for Shell {
     type Err = &'static str;
@@ -56,6 +46,7 @@ impl FromStr for Info {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "cheats-path" => Ok(Info::CheatsPath),
+            "config-path" => Ok(Info::ConfigPath),
             _ => Err("no match"),
         }
     }
@@ -94,14 +85,14 @@ EXAMPLES:
 #[clap(setting = AppSettings::ColoredHelp)]
 #[clap(setting = AppSettings::AllowLeadingHyphen)]
 #[clap(version = crate_version!())]
-pub struct Config {
-    /// List of :-separated paths containing .cheat files
+pub(super) struct ClapConfig {
+    /// Colon-separated list of paths containing .cheat files
     #[clap(short, long, env = env_var::PATH)]
     pub path: Option<String>,
 
     /// Instead of executing a snippet, prints it to stdout
     #[clap(long)]
-    print: bool,
+    pub print: bool,
 
     /// Returns the best match
     #[clap(long)]
@@ -109,34 +100,40 @@ pub struct Config {
 
     /// Search for cheatsheets using the tldr-pages repository
     #[clap(long)]
-    tldr: Option<String>,
+    pub tldr: Option<String>,
 
     /// [Experimental] Comma-separated list that acts as filter for tags. Parts starting with ! represent negation
     #[clap(long)]
-    tag_rules: Option<String>,
+    pub tag_rules: Option<String>,
 
     /// Search for cheatsheets using the cheat.sh repository
     #[clap(long)]
-    cheatsh: Option<String>,
+    pub cheatsh: Option<String>,
 
     /// Query
     #[clap(short, long)]
-    query: Option<String>,
+    pub query: Option<String>,
 
-    /// finder overrides for cheat selection
-    #[clap(long, env = env_var::FZF_OVERRIDES)]
+    /// Finder overrides for snippet selection
+    #[clap(long)]
     pub fzf_overrides: Option<String>,
 
-    /// finder overrides for variable selection
-    #[clap(long, env = env_var::FZF_OVERRIDES_VAR)]
+    /// Finder overrides for variable selection
+    #[clap(long)]
     pub fzf_overrides_var: Option<String>,
 
-    /// which finder application to use
-    #[clap(long, env = env_var::FINDER, default_value = "fzf", possible_values = FINDER_POSSIBLE_VALUES, case_insensitive = true)]
-    pub finder: FinderChoice,
+    /// Finder application to use
+    #[clap(long, possible_values = FINDER_POSSIBLE_VALUES, case_insensitive = true)]
+    pub finder: Option<FinderChoice>,
 
     #[clap(subcommand)]
     pub cmd: Option<Command>,
+}
+
+impl ClapConfig {
+    pub fn new() -> Self {
+        Self::parse()
+    }
 }
 
 #[derive(Debug, Clap)]
@@ -172,7 +169,7 @@ pub enum Command {
     },
     /// Outputs shell widget source code
     Widget {
-        #[clap(possible_values = SHELL_POSSIBLE_VALUES, case_insensitive = true, default_value = "bash")]
+        #[clap(possible_values = WIDGET_POSSIBLE_VALUES, case_insensitive = true, default_value = "bash")]
         shell: Shell,
     },
     /// Shows info
@@ -204,57 +201,13 @@ pub enum Action {
     Execute,
 }
 
-impl Config {
-    pub fn source(&self) -> Source {
-        if let Some(query) = self.tldr.clone() {
-            Source::Tldr(query)
-        } else if let Some(query) = self.cheatsh.clone() {
-            Source::Cheats(query)
-        } else {
-            Source::Filesystem(self.path.clone(), self.tag_rules.clone())
-        }
-    }
-
-    pub fn action(&self) -> Action {
-        if self.print {
-            Action::Print
-        } else {
-            Action::Execute
-        }
-    }
-
-    pub fn get_query(&self) -> Option<String> {
-        let q = self.query.clone();
-        if q.is_some() {
-            return q;
-        }
-        if self.best_match {
-            match self.source() {
-                Source::Tldr(q) => Some(q),
-                Source::Cheats(q) => Some(q),
-                _ => Some(String::from("")),
-            }
-        } else {
-            None
-        }
-    }
-}
-
-pub fn config_from_env() -> Config {
-    Config::parse()
-}
-
-pub fn config_from_iter(args: Vec<&str>) -> Config {
-    Config::parse_from(args)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_shell_possible_values() {
-        for v in SHELL_POSSIBLE_VALUES {
+    fn test_widget_possible_values() {
+        for v in WIDGET_POSSIBLE_VALUES {
             assert_eq!(true, Shell::from_str(v).is_ok())
         }
     }

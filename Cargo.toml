@@ -27,6 +27,8 @@ thiserror = "1.0.24"
 strip-ansi-escapes = "0.1.0"
 edit = "0.1.3"
 remove_dir_all = "0.7.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.8"
 
 [lib]
 name = "navi"

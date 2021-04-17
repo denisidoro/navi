@@ -33,6 +33,15 @@ pub fn default_cheat_pathbuf() -> Result<PathBuf> {
     Ok(pathbuf)
 }
 
+pub fn default_config_pathbuf() -> Result<PathBuf> {
+    let base_dirs = BaseDirs::new().ok_or_else(|| anyhow!("Unable to get base dirs"))?;
+
+    let mut pathbuf = PathBuf::from(base_dirs.config_dir());
+    pathbuf.push("navi");
+    pathbuf.push("config.yaml");
+    Ok(pathbuf)
+}
+
 pub fn cheat_paths(path: Option<String>) -> Result<String> {
     if let Some(p) = path {
         Ok(p)
@@ -124,7 +133,8 @@ impl fetcher::Fetcher for Fetcher {
                 files.push(file.clone());
                 let index = files.len() - 1;
                 let read_file_result = {
-                    let lines = read_lines(&file)?;
+                    let path = PathBuf::from(&file);
+                    let lines = read_lines(&path)?;
                     parser::read_lines(
                         lines,
                         &file,

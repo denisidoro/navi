@@ -1,4 +1,7 @@
 use crate::clipboard;
+use crate::config::Action;
+
+use crate::config::CONFIG;
 use crate::env_var;
 use crate::extractor;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
@@ -6,8 +9,6 @@ use crate::finder::Finder;
 use crate::shell;
 use crate::shell::ShellSpawnError;
 use crate::structures::cheat::{Suggestion, VariableMap};
-use crate::structures::config::Action;
-use crate::structures::config::Config;
 use crate::writer;
 use anyhow::Context;
 use anyhow::Result;
@@ -17,7 +18,6 @@ use std::process::Stdio;
 
 fn prompt_finder(
     variable_name: &str,
-    config: &Config,
     suggestion: Option<&Suggestion>,
     variable_count: usize,
 ) -> Result<String> {
@@ -66,7 +66,7 @@ fn prompt_finder(
     };
 
     let overrides = {
-        let mut o = config.fzf_overrides.clone();
+        let mut o = CONFIG.fzf_overrides_var();
         if let Some(io) = initial_opts {
             if io.overrides.is_some() {
                 o = io.overrides.clone()
@@ -110,8 +110,8 @@ NAVIEOF
         opts.suggestion_type = SuggestionType::Disabled;
     };
 
-    let (output, _, _) = config
-        .finder
+    let (output, _, _) = CONFIG
+        .finder()
         .call(opts, |stdin, _| {
             stdin
                 .write_all(suggestions.as_bytes())
@@ -130,12 +130,7 @@ fn unique_result_count(results: &[&str]) -> usize {
     vars.len()
 }
 
-fn replace_variables_from_snippet(
-    snippet: &str,
-    tags: &str,
-    variables: VariableMap,
-    config: &Config,
-) -> Result<String> {
+fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: VariableMap) -> Result<String> {
     let mut interpolated_snippet = String::from(snippet);
     let variables_found: Vec<&str> = writer::VAR_REGEX.find_iter(snippet).map(|m| m.as_str()).collect();
     let variable_count = unique_result_count(&variables_found);
@@ -150,11 +145,10 @@ fn replace_variables_from_snippet(
             e
         } else if let Some(suggestion) = variables.get_suggestion(&tags, &variable_name) {
             let mut new_suggestion = suggestion.clone();
-            new_suggestion.0 =
-                replace_variables_from_snippet(&new_suggestion.0, tags, variables.clone(), config)?;
-            prompt_finder(variable_name, &config, Some(&new_suggestion), variable_count)?
+            new_suggestion.0 = replace_variables_from_snippet(&new_suggestion.0, tags, variables.clone())?;
+            prompt_finder(variable_name, Some(&new_suggestion), variable_count)?
         } else {
-            prompt_finder(variable_name, &config, None, variable_count)?
+            prompt_finder(variable_name, None, variable_count)?
         };
 
         env_var::set(env_variable_name, &value);
@@ -172,7 +166,6 @@ fn replace_variables_from_snippet(
 // TODO: make it depend on less inputs
 pub fn act(
     extractions: Result<extractor::Output>,
-    config: Config,
     files: Vec<String>,
     variables: Option<VariableMap>,
 ) -> Result<()> {
@@ -180,7 +173,7 @@ pub fn act(
 
     if key == "ctrl-o" {
         edit::edit_file(Path::new(&files[file_index.expect("No files found")]))
-            .expect("Cound not open file in external editor");
+            .expect("Could not open file in external editor");
         return Ok(());
     }
 
@@ -193,12 +186,11 @@ pub fn act(
             snippet,
             tags,
             variables.expect("No variables received from finder"),
-            &config,
         )
         .context("Failed to replace variables from snippet")?,
     );
 
-    match config.action() {
+    match CONFIG.action() {
         Action::Print => {
             println!("{}", interpolated_snippet);
         }

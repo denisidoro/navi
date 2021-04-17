@@ -11,19 +11,15 @@ pub const PREVIEW_COLUMN: &str = "NAVI_PREVIEW_COLUMN";
 pub const PREVIEW_DELIMITER: &str = "NAVI_PREVIEW_DELIMITER";
 pub const PREVIEW_MAP: &str = "NAVI_PREVIEW_MAP";
 
-pub const TAG_COLOR: &str = "NAVI_TAG_COLOR";
-pub const COMMENT_COLOR: &str = "NAVI_COMMENT_COLOR";
-pub const SNIPPET_COLOR: &str = "NAVI_SNIPPET_COLOR";
-
-pub const TAG_WIDTH: &str = "NAVI_TAG_WIDTH";
-pub const COMMENT_WIDTH: &str = "NAVI_COMMENT_WIDTH";
-
 pub const PATH: &str = "NAVI_PATH";
 pub const FZF_OVERRIDES: &str = "NAVI_FZF_OVERRIDES";
 pub const FZF_OVERRIDES_VAR: &str = "NAVI_FZF_OVERRIDES_VAR";
 pub const FINDER: &str = "NAVI_FINDER";
 
 pub const SHELL: &str = "NAVI_SHELL";
+
+pub const CONFIG: &str = "NAVI_CONFIG";
+pub const CONFIG_YAML: &str = "NAVI_CONFIG_YAML";
 
 pub fn parse<T: FromStr>(varname: &str) -> Option<T> {
     if let Ok(x) = env::var(varname) {

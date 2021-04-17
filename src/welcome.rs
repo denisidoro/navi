@@ -1,6 +1,26 @@
+use crate::config::CONFIG;
+use crate::finder::structures::Opts as FinderOpts;
+use crate::finder::Finder;
+
+use crate::structures::cheat::VariableMap;
 use crate::structures::item::Item;
 use crate::writer;
+use anyhow::Context;
+use anyhow::Result;
 use std::io::Write;
+
+pub fn main() -> Result<()> {
+    let config = &CONFIG;
+    let opts = FinderOpts::from_config(&config)?;
+    let _ = config
+        .finder()
+        .call(opts, |stdin, _| {
+            populate_cheatsheet(stdin);
+            Ok(Some(VariableMap::new()))
+        })
+        .context("Failed getting selection and variables from finder")?;
+    Ok(())
+}
 
 fn add_msg(tags: &str, comment: &str, snippet: &str, stdin: &mut std::process::ChildStdin) {
     let item = Item {

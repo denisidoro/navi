@@ -1,5 +1,5 @@
 use anyhow::{Context, Error, Result};
-use core::fmt::Display;
+
 use remove_dir_all::remove_dir_all;
 use std::fmt::Debug;
 use std::fs::{self, create_dir_all, File};
@@ -19,11 +19,15 @@ pub struct UnreadableDir {
     source: anyhow::Error,
 }
 
-pub fn read_lines<P>(filename: P) -> Result<impl Iterator<Item = Result<String>>>
-where
-    P: AsRef<Path> + Display + Copy,
-{
-    let file = File::open(filename).with_context(|| format!("Failed to open file {}", filename))?;
+pub fn open(filename: &Path) -> Result<File> {
+    File::open(filename).with_context(|| {
+        let x = pathbuf_to_string(filename).unwrap_or_else(|e| format!("Unable to get path string: {}", e));
+        format!("Failed to open file {}", &x)
+    })
+}
+
+pub fn read_lines(filename: &Path) -> Result<impl Iterator<Item = Result<String>>> {
+    let file = open(filename)?;
     Ok(io::BufReader::new(file)
         .lines()
         .map(|line| line.map_err(Error::from)))

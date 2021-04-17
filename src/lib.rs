@@ -4,8 +4,10 @@ extern crate lazy_static;
 extern crate anyhow;
 
 mod actor;
+mod cheat_variable;
 mod cheatsh;
 mod clipboard;
+mod config;
 mod env_var;
 mod extractor;
 mod filesystem;
@@ -24,5 +26,4 @@ mod url;
 mod welcome;
 mod writer;
 
-pub use handler::handle_config;
-pub use structures::config::{config_from_env, config_from_iter};
+pub use handler::handle;

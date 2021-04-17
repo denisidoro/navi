@@ -25,5 +25,5 @@ impl FileAnIssue {
 }
 
 fn main() -> Result<(), anyhow::Error> {
-    navi::handle_config(navi::config_from_env()).map_err(|e| FileAnIssue::new(e).into())
+    navi::handle().map_err(|e| FileAnIssue::new(e).into())
 }

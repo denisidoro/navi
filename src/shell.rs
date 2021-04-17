@@ -1,14 +1,9 @@
-use crate::env_var;
+use crate::config::CONFIG;
+use anyhow::Result;
 use std::fmt::Debug;
+use std::io::{self, Read};
 use std::process::Command;
 use thiserror::Error;
-
-lazy_static! {
-    pub static ref IS_FISH: bool = env_var::get("SHELL")
-        .unwrap_or_else(|_| "".to_string())
-        .contains(&"fish");
-    pub static ref SHELL: String = env_var::get(env_var::SHELL).unwrap_or_else(|_| "bash".to_string());
-}
 
 #[derive(Debug)]
 pub enum Shell {
@@ -38,5 +33,42 @@ impl ShellSpawnError {
 }
 
 pub fn command() -> Command {
-    Command::new(&*SHELL)
+    Command::new(CONFIG.shell())
+}
+
+pub fn widget_last_command() -> Result<()> {
+    let mut text = String::new();
+    io::stdin().read_to_string(&mut text)?;
+
+    let replacements = vec![("|", "ඛ"), ("||", "ග"), ("&&", "ඝ")];
+
+    let parts = shellwords::split(&text).unwrap_or_else(|_| text.split('|').map(|s| s.to_string()).collect());
+
+    for p in parts {
+        for (pattern, escaped) in replacements.clone() {
+            if p.contains(pattern) && p != pattern {
+                let replacement = p.replace(pattern, escaped);
+                text = text.replace(&p, &replacement);
+            }
+        }
+    }
+
+    let mut extracted = text.clone();
+    for (pattern, _) in replacements.clone() {
+        let mut new_parts = text.rsplit(pattern);
+        if let Some(extracted_attempt) = new_parts.next() {
+            if extracted_attempt.len() <= extracted.len() {
+                extracted = extracted_attempt.to_string();
+            }
+        }
+    }
+
+    for (pattern, escaped) in replacements.clone() {
+        text = text.replace(&escaped, &pattern);
+        extracted = extracted.replace(&escaped, &pattern);
+    }
+
+    println!("{}", extracted.trim_start());
+
+    Ok(())
 }

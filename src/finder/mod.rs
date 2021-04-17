@@ -1,22 +1,34 @@
-use crate::shell;
+use crate::config::CONFIG;
 use crate::structures::cheat::VariableMap;
 use crate::writer;
 use anyhow::Context;
 use anyhow::Result;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
-
 mod post;
 pub mod structures;
-
 pub use post::process;
+use serde::Deserialize;
+use std::str::FromStr;
 use structures::Opts;
 use structures::SuggestionType;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, Deserialize)]
 pub enum FinderChoice {
     Fzf,
     Skim,
+}
+
+impl FromStr for FinderChoice {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "fzf" => Ok(FinderChoice::Fzf),
+            "skim" => Ok(FinderChoice::Skim),
+            _ => Err("no match"),
+        }
+    }
 }
 
 pub trait Finder {
@@ -142,7 +154,7 @@ impl Finder for FinderChoice {
         }
 
         let child = command
-            .env("SHELL", &*shell::SHELL)
+            .env("SHELL", CONFIG.shell())
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .spawn();
