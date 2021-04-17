@@ -94,20 +94,20 @@ impl Config {
         self.yaml.style.snippet.color.get()
     }
 
-    pub fn tag_width(&self) -> u16 {
-        self.yaml.style.tag.width
+    pub fn tag_width_percentage(&self) -> u16 {
+        self.yaml.style.tag.width_percentage
     }
 
-    pub fn comment_width(&self) -> u16 {
-        self.yaml.style.comment.width
+    pub fn comment_width_percentage(&self) -> u16 {
+        self.yaml.style.comment.width_percentage
     }
 
-    pub fn tag_min_abs_width(&self) -> u16 {
-        self.yaml.style.tag.min_abs_width
+    pub fn tag_min_width(&self) -> u16 {
+        self.yaml.style.tag.min_width
     }
 
-    pub fn comment_min_abs_width(&self) -> u16 {
-        self.yaml.style.comment.min_abs_width
+    pub fn comment_min_width(&self) -> u16 {
+        self.yaml.style.comment.min_width
     }
 
     pub fn action(&self) -> Action {

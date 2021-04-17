@@ -35,8 +35,8 @@ where
 #[serde(default)]
 pub struct ColorWidth {
     pub color: Color,
-    pub width: u16,
-    pub min_abs_width: u16,
+    pub width_percentage: u16,
+    pub min_width: u16,
 }
 #[derive(Deserialize)]
 #[serde(default)]
@@ -114,8 +114,8 @@ impl Default for ColorWidth {
     fn default() -> Self {
         Self {
             color: Color::from_str("white"),
-            width: 26,
-            min_abs_width: 20,
+            width_percentage: 26,
+            min_width: 20,
         }
     }
 }
@@ -125,13 +125,13 @@ impl Default for Style {
         Self {
             tag: ColorWidth {
                 color: Color::from_str("cyan"),
-                width: 26,
-                min_abs_width: 20,
+                width_percentage: 26,
+                min_width: 20,
             },
             comment: ColorWidth {
                 color: Color::from_str("blue"),
-                width: 42,
-                min_abs_width: 45,
+                width_percentage: 42,
+                min_width: 45,
             },
             snippet: Default::default(),
         }

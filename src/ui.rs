@@ -5,10 +5,16 @@ use std::cmp::max;
 
 pub fn get_widths() -> (usize, usize) {
     let width = terminal::width();
-    let tag_width = max(CONFIG.tag_min_abs_width(), width * CONFIG.tag_width() / 100);
-    let comment_width = max(
-        CONFIG.comment_min_abs_width(),
-        width * CONFIG.comment_width() / 100,
+    let tag_width_percentage = max(
+        CONFIG.tag_min_width(),
+        width * CONFIG.tag_width_percentage() / 100,
     );
-    (usize::from(tag_width), usize::from(comment_width))
+    let comment_width_percentage = max(
+        CONFIG.comment_min_width(),
+        width * CONFIG.comment_width_percentage() / 100,
+    );
+    (
+        usize::from(tag_width_percentage),
+        usize::from(comment_width_percentage),
+    )
 }

@@ -36,11 +36,11 @@ fn limit_str(text: &str, length: usize) -> String {
 }
 
 pub fn write(item: &Item) -> String {
-    let (tag_width, comment_width) = *COLUMN_WIDTHS;
+    let (tag_width_percentage, comment_width_percentage) = *COLUMN_WIDTHS;
     format!(
             "{tags_short}{delimiter}{comment_short}{delimiter}{snippet_short}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}{file_index}{delimiter}\n",
-            tags_short = ui::style(limit_str(&item.tags, tag_width)).with(CONFIG.tag_color()),
-            comment_short = ui::style(limit_str(&item.comment, comment_width)).with(CONFIG.comment_color()),
+            tags_short = ui::style(limit_str(&item.tags, tag_width_percentage)).with(CONFIG.tag_color()),
+            comment_short = ui::style(limit_str(&item.comment, comment_width_percentage)).with(CONFIG.comment_color()),
             snippet_short = ui::style(fix_newlines(&item.snippet)).with(CONFIG.snippet_color()),
             tags = item.tags,
             comment = item.comment,

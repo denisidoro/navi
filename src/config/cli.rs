@@ -11,7 +11,7 @@ use std::str::FromStr;
 const FINDER_POSSIBLE_VALUES: &[&str] = &[&"fzf", &"skim"];
 const WIDGET_POSSIBLE_VALUES: &[&str] = &[&"bash", &"zsh", &"fish"];
 const FUNC_POSSIBLE_VALUES: &[&str] = &[&"url::open", &"welcome", &"widget::last_command", &"map::expand"];
-const INFO_POSSIBLE_VALUES: &[&str] = &[&"cheats-path"];
+const INFO_POSSIBLE_VALUES: &[&str] = &[&"cheats-path", "config-path"];
 
 impl FromStr for Shell {
     type Err = &'static str;
@@ -46,6 +46,7 @@ impl FromStr for Info {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "cheats-path" => Ok(Info::CheatsPath),
+            "config-path" => Ok(Info::ConfigPath),
             _ => Err("no match"),
         }
     }
