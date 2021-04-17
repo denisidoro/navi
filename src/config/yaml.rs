@@ -2,33 +2,31 @@ use crate::env_var;
 use crate::filesystem::default_config_pathbuf;
 use crate::finder::FinderChoice;
 use crate::fs;
-use crate::terminal::style;
+use crate::terminal::style::Color as TerminalColor;
 use anyhow::Result;
 use serde::{de, Deserialize};
+use std::convert::TryFrom;
 use std::io::BufReader;
 use std::path::Path;
 use std::path::PathBuf;
 use std::str::FromStr;
 
 #[derive(Deserialize)]
-pub struct Color(#[serde(deserialize_with = "color_deserialize")] style::Color);
+pub struct Color(#[serde(deserialize_with = "color_deserialize")] TerminalColor);
 
 impl Color {
-    pub fn from_str(color: &str) -> Self {
-        Self(style::Color::from_str(color).unwrap_or(style::Color::White))
-    }
-
-    pub fn get(&self) -> style::Color {
+    pub fn get(&self) -> TerminalColor {
         self.0
     }
 }
 
-fn color_deserialize<'de, D>(deserializer: D) -> Result<style::Color, D::Error>
+fn color_deserialize<'de, D>(deserializer: D) -> Result<TerminalColor, D::Error>
 where
     D: de::Deserializer<'de>,
 {
     let s: String = Deserialize::deserialize(deserializer)?;
-    style::Color::from_str(&s).map_err(|_| de::Error::custom(format!("Failed to deserialize color: {}", s)))
+    TerminalColor::try_from(s.as_str())
+        .map_err(|_| de::Error::custom(format!("Failed to deserialize color: {}", s)))
 }
 
 #[derive(Deserialize)]
@@ -38,6 +36,7 @@ pub struct ColorWidth {
     pub width_percentage: u16,
     pub min_width: u16,
 }
+
 #[derive(Deserialize)]
 #[serde(default)]
 pub struct Style {
@@ -113,7 +112,7 @@ impl YamlConfig {
 impl Default for ColorWidth {
     fn default() -> Self {
         Self {
-            color: Color::from_str("white"),
+            color: Color(TerminalColor::Blue),
             width_percentage: 26,
             min_width: 20,
         }
@@ -124,12 +123,12 @@ impl Default for Style {
     fn default() -> Self {
         Self {
             tag: ColorWidth {
-                color: Color::from_str("cyan"),
+                color: Color(TerminalColor::Cyan),
                 width_percentage: 26,
                 min_width: 20,
             },
             comment: ColorWidth {
-                color: Color::from_str("blue"),
+                color: Color(TerminalColor::Blue),
                 width_percentage: 42,
                 min_width: 45,
             },
