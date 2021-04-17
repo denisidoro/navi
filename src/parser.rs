@@ -111,13 +111,7 @@ fn write_cmd(
     if item.snippet.len() <= 1 {
         return Ok(());
     }
-    if let Some(list) = allowlist {
-        for v in list {
-            if !item.tags.contains(v) {
-                return Ok(());
-            }
-        }
-    }
+
     if let Some(list) = denylist {
         for v in list {
             if item.tags.contains(v) {
@@ -125,6 +119,20 @@ fn write_cmd(
             }
         }
     }
+
+    if let Some(list) = allowlist {
+        let mut should_allow = false;
+        for v in list {
+            if item.tags.contains(v) {
+                should_allow = true;
+                break;
+            }
+        }
+        if !should_allow {
+            return Ok(());
+        }
+    }
+
     return stdin
         .write_all(writer::write(item).as_bytes())
         .context("Failed to write command to finder's stdin");
