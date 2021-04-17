@@ -5,7 +5,6 @@ use crate::fs;
 use crate::terminal::style;
 use anyhow::Result;
 use serde::{de, Deserialize};
-
 use std::io::BufReader;
 use std::path::Path;
 use std::path::PathBuf;
@@ -85,13 +84,13 @@ pub struct YamlConfig {
 
 impl YamlConfig {
     fn from_str(text: &str) -> Result<Self> {
-        serde_yaml::from_str(&text).map_err(|_| anyhow!("TODO"))
+        serde_yaml::from_str(&text).map_err(|e| e.into())
     }
 
     fn from_path(path: &Path) -> Result<Self> {
         let file = fs::open(path)?;
         let reader = BufReader::new(file);
-        serde_yaml::from_reader(reader).map_err(|_| anyhow!("TODO"))
+        serde_yaml::from_reader(reader).map_err(|e| e.into())
     }
 
     pub fn get() -> Result<Self> {
