@@ -1,12 +1,41 @@
 use crate::env_var;
+use crate::filesystem::default_config_pathbuf;
 use crate::finder::FinderChoice;
-use serde::Deserialize;
+use crate::fs;
+use crate::terminal::style;
+use anyhow::Result;
+use serde::{de, Deserialize};
+use std::fs::File;
+use std::io::BufReader;
+use std::path::Path;
 use std::str::FromStr;
+use std::{error::Error, path::PathBuf};
+
+#[derive(Deserialize)]
+pub struct Color(#[serde(deserialize_with = "color_deserialize")] style::Color);
+
+impl Color {
+    pub fn from_str(color: &str) -> Self {
+        Self(style::Color::from_str(color).unwrap_or(style::Color::White))
+    }
+
+    pub fn get(&self) -> style::Color {
+        self.0
+    }
+}
+
+fn color_deserialize<'de, D>(deserializer: D) -> Result<style::Color, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let s: String = Deserialize::deserialize(deserializer)?;
+    style::Color::from_str(&s).map_err(|_| de::Error::custom(format!("Failed to deserialize color: {}", s)))
+}
 
 #[derive(Deserialize)]
 #[serde(default)]
 pub struct ColorWidth {
-    pub color: String,
+    pub color: Color,
     pub width: u16,
     pub min_abs_width: u16,
 }
@@ -46,7 +75,7 @@ pub struct Shell {
 
 #[derive(Deserialize, Default)]
 #[serde(default)]
-pub struct Yaml {
+pub struct YamlConfig {
     pub style: Style,
     pub finder: Finder,
     pub cheats: Cheats,
@@ -54,16 +83,38 @@ pub struct Yaml {
     pub shell: Shell,
 }
 
-impl Yaml {
-    pub fn parse(text: &str) -> Self {
-        serde_yaml::from_str::<Yaml>(&text).expect("invalid yaml")
+impl YamlConfig {
+    fn from_str(text: &str) -> Result<Self> {
+        serde_yaml::from_str(&text).map_err(|_| anyhow!("TODO"))
+    }
+
+    fn from_path(path: &Path) -> Result<Self> {
+        let file = fs::open(path)?;
+        let reader = BufReader::new(file);
+        serde_yaml::from_reader(reader).map_err(|_| anyhow!("TODO"))
+    }
+
+    pub fn get() -> Result<Self> {
+        if let Ok(yaml) = env_var::get(env_var::CONFIG_YAML) {
+            return Self::from_str(&yaml);
+        }
+        if let Ok(path_str) = env_var::get(env_var::CONFIG) {
+            let p = PathBuf::from(path_str);
+            return YamlConfig::from_path(&p);
+        }
+        if let Ok(p) = default_config_pathbuf() {
+            if p.exists() {
+                return YamlConfig::from_path(&p);
+            }
+        }
+        Ok(YamlConfig::default())
     }
 }
 
 impl Default for ColorWidth {
     fn default() -> Self {
         Self {
-            color: "white".to_string(),
+            color: Color::from_str("white"),
             width: 26,
             min_abs_width: 20,
         }
@@ -74,12 +125,12 @@ impl Default for Style {
     fn default() -> Self {
         Self {
             tag: ColorWidth {
-                color: "cyan".to_string(),
+                color: Color::from_str("cyan"),
                 width: 26,
                 min_abs_width: 20,
             },
             comment: ColorWidth {
-                color: "blue".to_string(),
+                color: Color::from_str("blue"),
                 width: 42,
                 min_abs_width: 45,
             },

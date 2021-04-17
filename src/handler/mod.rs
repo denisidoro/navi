@@ -14,7 +14,7 @@ use anyhow::Context;
 use anyhow::Result;
 
 pub fn handle() -> Result<()> {
-    match CONFIG.cmd.as_ref() {
+    match CONFIG.cmd() {
         None => handler::core::main(),
 
         Some(c) => match c {

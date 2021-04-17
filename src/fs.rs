@@ -19,11 +19,15 @@ pub struct UnreadableDir {
     source: anyhow::Error,
 }
 
-pub fn read_lines<P>(filename: P) -> Result<impl Iterator<Item = Result<String>>>
-where
-    P: AsRef<Path> + Display + Copy,
-{
-    let file = File::open(filename).with_context(|| format!("Failed to open file {}", filename))?;
+pub fn open(filename: &Path) -> Result<File> {
+    File::open(filename).with_context(|| {
+        let x = pathbuf_to_string(filename).unwrap_or("TODO".to_string());
+        format!("Failed to open file {}", &x)
+    })
+}
+
+pub fn read_lines(filename: &Path) -> Result<impl Iterator<Item = Result<String>>> {
+    let file = open(filename)?;
     Ok(io::BufReader::new(file)
         .lines()
         .map(|line| line.map_err(Error::from)))

@@ -7,7 +7,8 @@ use crate::handler::info::Info;
 use crate::shell::Shell;
 use crate::terminal::style::Color;
 use clap::{crate_version, AppSettings, Clap};
-use file::Yaml;
+use file::YamlConfig;
+use std::process;
 use std::str::FromStr;
 
 const FINDER_POSSIBLE_VALUES: &[&str] = &[&"fzf", &"skim"];
@@ -16,8 +17,7 @@ const FUNC_POSSIBLE_VALUES: &[&str] = &[&"url::open", &"welcome", &"widget::last
 const INFO_POSSIBLE_VALUES: &[&str] = &[&"cheats-path"];
 
 lazy_static! {
-    pub static ref FILE_CONFIG: Yaml = Yaml::parse("foo: 32");
-    pub static ref CONFIG: Config = Config::parse();
+    pub static ref CONFIG: Config = Config::new();
 }
 
 impl FromStr for Shell {
@@ -91,7 +91,7 @@ EXAMPLES:
 #[clap(setting = AppSettings::ColoredHelp)]
 #[clap(setting = AppSettings::AllowLeadingHyphen)]
 #[clap(version = crate_version!())]
-pub struct Config {
+struct ClapConfig {
     /// Colon-separated list of paths containing .cheat files
     #[clap(short, long, env = env_var::PATH)]
     path: Option<String>,
@@ -102,7 +102,7 @@ pub struct Config {
 
     /// Returns the best match
     #[clap(long)]
-    pub best_match: bool,
+    best_match: bool,
 
     /// Search for cheatsheets using the tldr-pages repository
     #[clap(long)]
@@ -133,7 +133,7 @@ pub struct Config {
     finder: Option<FinderChoice>,
 
     #[clap(subcommand)]
-    pub cmd: Option<Command>,
+    cmd: Option<Command>,
 }
 
 #[derive(Debug, Clap)]
@@ -201,83 +201,106 @@ pub enum Action {
     Execute,
 }
 
+pub struct Config {
+    yaml: YamlConfig,
+    clap: ClapConfig,
+}
+
 impl Config {
+    pub fn new() -> Self {
+        match YamlConfig::get() {
+            Ok(yaml) => Self {
+                yaml,
+                clap: ClapConfig::parse(),
+            },
+            Err(e) => {
+                eprintln!("Error parsing config file: {}", e);
+                process::exit(42)
+            }
+        }
+    }
+
+    pub fn best_match(&self) -> bool {
+        self.clap.best_match
+    }
+
+    pub fn cmd(&self) -> Option<&Command> {
+        self.clap.cmd.as_ref()
+    }
+
     pub fn source(&self) -> Source {
-        if let Some(query) = self.tldr.clone() {
+        if let Some(query) = self.clap.tldr.clone() {
             Source::Tldr(query)
-        } else if let Some(query) = self.cheatsh.clone() {
+        } else if let Some(query) = self.clap.cheatsh.clone() {
             Source::Cheats(query)
         } else {
             Source::Filesystem(self.path(), self.tag_rules())
         }
     }
 
-    /*
-    pub fn tag_color(&self) -> Color {
-        self.comment_color
-            .and_then(|ansi| terminal::parse_ansi(&ansi.to_string()))
-            .unwrap_or(FILE_CONFIG.style.comment.color)
-    }
-    */
-
     pub fn path(&self) -> Option<String> {
-        self.path.clone().or_else(|| FILE_CONFIG.cheats.path.clone())
+        self.clap.path.clone().or_else(|| self.yaml.cheats.path.clone())
     }
 
     pub fn finder(&self) -> FinderChoice {
-        self.finder.unwrap_or(FILE_CONFIG.finder.command)
+        self.clap.finder.unwrap_or(self.yaml.finder.command)
     }
 
     pub fn fzf_overrides(&self) -> Option<String> {
-        self.fzf_overrides
+        self.clap
+            .fzf_overrides
             .clone()
-            .or_else(|| FILE_CONFIG.finder.overrides.clone())
+            .or_else(|| self.yaml.finder.overrides.clone())
     }
 
     pub fn fzf_overrides_var(&self) -> Option<String> {
-        self.fzf_overrides_var
+        self.clap
+            .fzf_overrides_var
             .clone()
-            .or_else(|| FILE_CONFIG.finder.overrides_var.clone())
+            .or_else(|| self.yaml.finder.overrides_var.clone())
     }
 
     pub fn shell(&self) -> String {
-        FILE_CONFIG.shell.command.clone()
+        self.yaml.shell.command.clone()
     }
 
     pub fn tag_rules(&self) -> Option<String> {
-        self.tag_rules.clone().or_else(|| FILE_CONFIG.search.tags.clone())
+        self.clap
+            .tag_rules
+            .clone()
+            .or_else(|| self.yaml.search.tags.clone())
     }
 
     pub fn tag_color(&self) -> Color {
-        Color::from_str(&FILE_CONFIG.style.tag.color).expect("invalid color")
+        self.yaml.style.tag.color.get()
     }
 
     pub fn comment_color(&self) -> Color {
-        Color::from_str(&FILE_CONFIG.style.comment.color).expect("invalid color")
+        self.yaml.style.comment.color.get()
     }
 
     pub fn snippet_color(&self) -> Color {
-        Color::from_str(&FILE_CONFIG.style.snippet.color).expect("invalid color")
+        self.yaml.style.snippet.color.get()
     }
 
     pub fn tag_width(&self) -> u16 {
-        FILE_CONFIG.style.tag.width
+        self.yaml.style.tag.width
     }
 
     pub fn comment_width(&self) -> u16 {
-        FILE_CONFIG.style.comment.width
+        self.yaml.style.comment.width
     }
 
     pub fn tag_min_abs_width(&self) -> u16 {
-        FILE_CONFIG.style.tag.min_abs_width
+        self.yaml.style.tag.min_abs_width
     }
 
     pub fn comment_min_abs_width(&self) -> u16 {
-        FILE_CONFIG.style.comment.min_abs_width
+        self.yaml.style.comment.min_abs_width
     }
 
     pub fn action(&self) -> Action {
-        if self.print {
+        if self.clap.print {
             Action::Print
         } else {
             Action::Execute
@@ -285,11 +308,11 @@ impl Config {
     }
 
     pub fn get_query(&self) -> Option<String> {
-        let q = self.query.clone();
+        let q = self.clap.query.clone();
         if q.is_some() {
             return q;
         }
-        if self.best_match {
+        if self.best_match() {
             match self.source() {
                 Source::Tldr(q) => Some(q),
                 Source::Cheats(q) => Some(q),

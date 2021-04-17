@@ -66,7 +66,7 @@ fn prompt_finder(
     };
 
     let overrides = {
-        let mut o = CONFIG.fzf_overrides_var().clone();
+        let mut o = CONFIG.fzf_overrides_var();
         if let Some(io) = initial_opts {
             if io.overrides.is_some() {
                 o = io.overrides.clone()
@@ -173,7 +173,7 @@ pub fn act(
 
     if key == "ctrl-o" {
         edit::edit_file(Path::new(&files[file_index.expect("No files found")]))
-            .expect("Cound not open file in external editor");
+            .expect("Could not open file in external editor");
         return Ok(());
     }
 

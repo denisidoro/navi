@@ -39,7 +39,7 @@ pub fn main() -> Result<()> {
         })
         .context("Failed getting selection and variables from finder")?;
 
-    let extractions = extractor::extract_from_selections(&raw_selection, config.best_match);
+    let extractions = extractor::extract_from_selections(&raw_selection, config.best_match());
 
     if extractions.is_err() {
         return main();
