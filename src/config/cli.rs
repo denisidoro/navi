@@ -3,9 +3,9 @@ use crate::finder::FinderChoice;
 use crate::handler::func::Func;
 use crate::handler::info::Info;
 use crate::shell::Shell;
-use crate::terminal::style::Color;
+
 use clap::{crate_version, AppSettings, Clap};
-use std::process;
+
 use std::str::FromStr;
 
 const FINDER_POSSIBLE_VALUES: &[&str] = &[&"fzf", &"skim"];

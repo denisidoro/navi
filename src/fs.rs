@@ -1,5 +1,5 @@
 use anyhow::{Context, Error, Result};
-use core::fmt::Display;
+
 use remove_dir_all::remove_dir_all;
 use std::fmt::Debug;
 use std::fs::{self, create_dir_all, File};

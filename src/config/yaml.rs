@@ -5,11 +5,11 @@ use crate::fs;
 use crate::terminal::style;
 use anyhow::Result;
 use serde::{de, Deserialize};
-use std::fs::File;
+
 use std::io::BufReader;
 use std::path::Path;
+use std::path::PathBuf;
 use std::str::FromStr;
-use std::{error::Error, path::PathBuf};
 
 #[derive(Deserialize)]
 pub struct Color(#[serde(deserialize_with = "color_deserialize")] style::Color);

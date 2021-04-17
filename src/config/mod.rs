@@ -1,15 +1,12 @@
 mod cli;
 mod yaml;
 
-use crate::env_var;
 use crate::finder::FinderChoice;
-use crate::handler::func::Func;
-use crate::handler::info::Info;
-use crate::shell::Shell;
+
 use crate::terminal::style::Color;
 pub use cli::*;
 use std::process;
-use std::str::FromStr;
+
 use yaml::YamlConfig;
 
 lazy_static! {
