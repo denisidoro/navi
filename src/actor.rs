@@ -96,7 +96,7 @@ fn prompt_finder(
 
     if opts.preview_window.is_none() {
         opts.preview_window = Some(if extra_preview.is_none() {
-            format!("up:{}", variable_count + 10)
+            format!("up:{}", variable_count + 3)
         } else {
             "right:50%".to_string()
         });
