@@ -1,6 +1,6 @@
 use crate::clipboard;
 use crate::config::Action;
-
+use crate::fs;
 use crate::config::CONFIG;
 use crate::env_var;
 use crate::extractor;
@@ -65,6 +65,8 @@ fn prompt_finder(
         ('\n'.to_string(), &None)
     };
 
+    eprintln!("{}", fs::exe_string()?);
+
     let overrides = {
         let mut o = CONFIG.fzf_overrides_var();
         if let Some(io) = initial_opts {
@@ -78,15 +80,9 @@ fn prompt_finder(
     let mut opts = FinderOpts {
         overrides,
         preview: Some(format!(
-            r#"navi preview-var "$(cat <<NAVIEOF
-{{+}}
-NAVIEOF
-)" "$(cat <<NAVIEOF
-{{q}}
-NAVIEOF
-)" "{name}"; {extra}"#,
+            r#"(@echo.{{+}}NAVIEOF{{q}}NAVIEOF{name}) | {exe} preview-var-win"#,
+            exe = fs::exe_string()?,
             name = variable_name,
-            extra = extra_preview.clone().unwrap_or_default()
         )),
         ..initial_opts.clone().unwrap_or_default()
     };
@@ -100,7 +96,7 @@ NAVIEOF
 
     if opts.preview_window.is_none() {
         opts.preview_window = Some(if extra_preview.is_none() {
-            format!("up:{}", variable_count + 3)
+            format!("up:{}", variable_count + 10)
         } else {
             "right:50%".to_string()
         });
