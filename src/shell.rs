@@ -34,8 +34,13 @@ impl ShellSpawnError {
     }
 }
 
-pub fn command() -> Command {
-    Command::new(CONFIG.shell())
+pub fn out() -> Command {
+    let shell = CONFIG.shell();
+    let mut cmd = Command::new(&shell);
+    if shell != "cmd.exe" {
+        cmd.arg("-c");
+    }
+    cmd
 }
 
 pub fn widget_last_command() -> Result<()> {

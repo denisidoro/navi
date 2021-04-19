@@ -26,7 +26,7 @@ fn prompt_finder(
     env_var::remove(env_var::PREVIEW_DELIMITER);
     env_var::remove(env_var::PREVIEW_MAP);
 
-    let mut extra_preview = None;
+    let mut extra_preview: Option<String> = None;
 
     let (suggestions, initial_opts) = if let Some(s) = suggestion {
         let (suggestion_command, suggestion_opts) = s;
@@ -42,13 +42,12 @@ fn prompt_finder(
                 env_var::set(env_var::PREVIEW_MAP, m);
             }
             if let Some(p) = &sopts.preview {
-                extra_preview = Some(format!(";echo;{}", p));
+                extra_preview = Some(p.into());
             }
         }
 
-        let child = shell::command()
+        let child = shell::out()
             .stdout(Stdio::piped())
-            .arg("-c")
             .arg(&suggestion_command)
             .spawn()
             .map_err(|e| ShellSpawnError::new(suggestion_command, e))?;
@@ -79,7 +78,7 @@ fn prompt_finder(
     let exe = fs::exe_string()?;
     let extra = extra_preview.clone().unwrap_or_default();
 
-    let preview = if cfg!(target_os = "macos") {
+    let preview = if cfg!(target_os = "windows") {
         format!(
             r#"(@echo.{{+}}{eof}{{q}}{eof}{name}){eof}{extra} | {exe} preview-var-stdin"#,
             exe = exe,
@@ -217,8 +216,7 @@ pub fn act(
                 clipboard::copy(interpolated_snippet)?;
             }
             _ => {
-                shell::command()
-                    .arg("-c")
+                shell::out()
                     .arg(&interpolated_snippet[..])
                     .spawn()
                     .map_err(|e| ShellSpawnError::new(&interpolated_snippet[..], e))?

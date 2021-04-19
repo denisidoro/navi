@@ -23,8 +23,7 @@ echo "$_navi_input" | _navi_map_fn"#,
             eof = EOF
         );
 
-        let output = shell::command()
-            .arg("-c")
+        let output = shell::out()
             .arg(cmd.as_str())
             .stderr(Stdio::inherit())
             .output()

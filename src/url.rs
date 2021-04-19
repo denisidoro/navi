@@ -34,8 +34,7 @@ _open_url "$url""#,
         url = url,
         eof = EOF,
     );
-    shell::command()
-        .arg("-c")
+    shell::out()
         .arg(cmd.as_str())
         .spawn()
         .map_err(|e| ShellSpawnError::new(cmd, e))?

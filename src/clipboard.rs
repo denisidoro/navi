@@ -19,8 +19,7 @@ _copy() {
    fi
 }"#;
 
-    shell::command()
-        .arg("-c")
+    shell::out()
         .arg(
             format!(
                 r#"{cmd} 
