@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-##? action release
+##? release
 
 export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 source "${NAVI_HOME}/scripts/install"
@@ -22,19 +22,13 @@ get_env_target() {
    fi
 }
 
-as_cross_target() {
-   echo "$1" | sed "s/osx/apple-darwin/g"
-}
-
 _tap() {
    echoerr "$@"
    "$@"
 }
 
 release() {
-   local -r target="${1:-}"
-   echoerr "target: $target"
-   local -r cross_target="$(as_cross_target "$target")"
+   local -r cross_target="${1:-}"
    echoerr "cross_target: $cross_target"
 
    TAR_DIR="${NAVI_HOME}/target/tar"
@@ -63,7 +57,7 @@ release() {
 
    _ls "${bin_folder}"
 
-   if is_windows "$target"; then
+   if is_windows "$cross_target"; then
       local -r exe_ext=".exe"
       use_zip=true
    else
@@ -97,10 +91,4 @@ _ls() {
    ls -la "$@" || true
 }
 
-cmd="$1"
-shift
-
-case "$cmd" in
-   "release") release "$@" ;;
-   *) exit 2 ;;
-esac
+release "$@"

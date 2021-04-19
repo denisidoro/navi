@@ -16,7 +16,7 @@ jobs:
         # This should work with only the `include`s but it currently doesn't because of this bug:
         # https://github.community/t5/How-to-use-Git-and-GitHub/GitHub-Actions-Matrix-options-dont-work-as-documented/td-p/29558
         target: 
-          - x86_64-osx
+          - x86_64-apple-darwin
           - x86_64-unknown-linux-musl
           - x86_64-pc-windows-gnu
           - armv7-unknown-linux-musleabihf
@@ -25,7 +25,7 @@ jobs:
           - aarch64-apple-ios
         include:
           - os: macos-latest
-            target: x86_64-osx
+            target: x86_64-apple-darwin
           - os: ubuntu-latest
             target: x86_64-unknown-linux-musl
           - os: ubuntu-latest
@@ -45,7 +45,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Build
       id: build
-      run: scripts/action release ${{ matrix.target }}
+      run: scripts/release ${{ matrix.target }}
     - name: Get the version
       id: get_version
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}

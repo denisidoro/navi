@@ -14,8 +14,8 @@ gen_formula() {
    sha_linux="$(sha_for_asset_on_github "$version" "x86_64-unknown-linux-musl")"
    header "$sha_linux"
 
-   header "sha_for x86_64-osx..."
-   sha_osx="$(sha_for_asset_on_github "$version" "x86_64-osx")"
+   header "sha_for x86_64-apple-darwin..."
+   sha_osx="$(sha_for_asset_on_github "$version" "x86_64-apple-darwin")"
    header "$sha_osx"
 
    header "rb..."
