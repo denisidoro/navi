@@ -180,7 +180,6 @@ fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: Variable
     Ok(interpolated_snippet)
 }
 
-// TODO: make it depend on less inputs
 pub fn act(
     extractions: Result<extractor::Output>,
     files: Vec<String>,
