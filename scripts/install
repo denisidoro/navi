@@ -2,6 +2,7 @@
 set -euo pipefail
 
 if ${X_MODE:-false}; then
+echo X_MODE
    set -x
 fi
 
