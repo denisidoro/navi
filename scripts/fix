@@ -6,8 +6,8 @@ source "${NAVI_HOME}/scripts/install"
 
 _commit() {
     if [ -n "${DOTFILES:-}" ]; then
-        git add --all
-        dot git commit am
+        git add --all || true
+        dot git commit am || true
     fi
 }
 
