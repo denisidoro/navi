@@ -22,15 +22,13 @@ uninstall() {
 }
 
 fix() {
-   export X_MODE=true
-   echoerr EXPORT
    "${NAVI_HOME}/scripts/fix"
 }
 
 cmd="$1"
 shift
 
-
+set -x
 case "$cmd" in
    "install") install "$@" ;;
    "uninstall") uninstall "$@" ;;
