@@ -7,7 +7,6 @@ use crate::finder::FinderChoice;
 use crate::terminal::style::Color;
 pub use cli::*;
 
-
 use env::EnvConfig;
 use yaml::YamlConfig;
 
