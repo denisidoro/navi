@@ -13,8 +13,6 @@ fn extract_elements(argstr: &str) -> (&str, &str, &str) {
 }
 
 pub fn main(line: &str) -> Result<()> {
-    // dbg!(CONFIG.comment_color());
-
     let (tags, comment, snippet) = extract_elements(line);
 
     println!(

@@ -9,6 +9,7 @@ use std::convert::TryFrom;
 use std::io::BufReader;
 use std::path::Path;
 use std::path::PathBuf;
+use std::str::FromStr;
 
 #[derive(Deserialize)]
 pub struct Color(#[serde(deserialize_with = "color_deserialize")] TerminalColor);
@@ -47,9 +48,19 @@ pub struct Style {
 #[derive(Deserialize)]
 #[serde(default)]
 pub struct Finder {
+    #[serde(deserialize_with = "finder_deserialize")]
     pub command: FinderChoice,
     pub overrides: Option<String>,
     pub overrides_var: Option<String>,
+}
+
+fn finder_deserialize<'de, D>(deserializer: D) -> Result<FinderChoice, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let s: String = Deserialize::deserialize(deserializer)?;
+    FinderChoice::from_str(s.to_lowercase().as_str())
+        .map_err(|_| de::Error::custom(format!("Failed to deserialize finder: {}", s)))
 }
 
 #[derive(Deserialize)]

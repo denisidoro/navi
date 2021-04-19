@@ -11,7 +11,7 @@ use std::str::FromStr;
 const FINDER_POSSIBLE_VALUES: &[&str] = &[&"fzf", &"skim"];
 const WIDGET_POSSIBLE_VALUES: &[&str] = &[&"bash", &"zsh", &"fish"];
 const FUNC_POSSIBLE_VALUES: &[&str] = &[&"url::open", &"welcome", &"widget::last_command", &"map::expand"];
-const INFO_POSSIBLE_VALUES: &[&str] = &[&"cheats-path", "config-path"];
+const INFO_POSSIBLE_VALUES: &[&str] = &[&"cheats-path", "config-path", "config-example"];
 
 impl FromStr for Shell {
     type Err = &'static str;
@@ -46,6 +46,7 @@ impl FromStr for Info {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "cheats-path" => Ok(Info::CheatsPath),
+            "config-example" => Ok(Info::ConfigExample),
             "config-path" => Ok(Info::ConfigPath),
             _ => Err("no match"),
         }
@@ -57,9 +58,21 @@ impl FromStr for Info {
     Please refer to https://github.com/denisidoro/navi
 
 MORE ENVIRONMENT VARIABLES:
-    NAVI_TAG_WIDTH                               # tag column width as window integer %
-    NAVI_COMMENT_WIDTH                           # comment column width as window integer %
-    NAVI_SHELL                                   # shell used in shell outs
+    NAVI_CONFIG            # path to config file
+    NAVI_CONFIG_YAML       # config file content
+
+CONFIG FILE:
+    By default it's located in:
+       navi info config-path
+
+    You can generate a config file by running:
+       navi info config-example > "$(navi info config-path)"
+     
+    Please check the generated config file for more info
+
+FEATURE STABILITY:
+    experimental           # may be removed or changed at any time
+    deprecated             # may be removed in 3 months after first being deprecated
 
 EXAMPLES:
     navi                                         # default behavior
@@ -78,8 +91,6 @@ EXAMPLES:
     navi --fzf-overrides-var '--no-select-1'     # same, but for variable selection
     navi --fzf-overrides '--nth 1,2'             # only consider the first two columns for search
     navi --fzf-overrides '--no-exact'            # use looser search algorithm
-    NAVI_SHELL=dash navi                         # use dash in shell outs
-    NAVI_TAG_WIDTH=30 NAVI_COMMENT_WIDTH=40 navi # customize column widths
     navi --tag-rules='git,!checkout'             # show non-checkout git snippets only"#)]
 #[clap(setting = AppSettings::ColorAuto)]
 #[clap(setting = AppSettings::ColoredHelp)]

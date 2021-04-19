@@ -6,7 +6,6 @@ use crate::finder::FinderChoice;
 
 use crate::terminal::style::Color;
 pub use cli::*;
-use std::process;
 
 use env::EnvConfig;
 use yaml::YamlConfig;
@@ -23,17 +22,14 @@ pub struct Config {
 impl Config {
     pub fn new() -> Self {
         let env = EnvConfig::new();
-        match YamlConfig::get(&env) {
-            Ok(yaml) => Self {
-                yaml,
-                env,
-                clap: ClapConfig::new(),
-            },
-            Err(e) => {
-                eprintln!("Error parsing config file: {}", e);
-                process::exit(42)
-            }
-        }
+        let yaml = YamlConfig::get(&env).unwrap_or_else(|e| {
+            eprintln!("Error parsing config file: {}", e);
+            eprintln!("Fallbacking to default one...");
+            eprintln!();
+            YamlConfig::default()
+        });
+        let clap = ClapConfig::new();
+        Self { yaml, clap, env }
     }
 
     pub fn best_match(&self) -> bool {
