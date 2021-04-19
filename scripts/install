@@ -163,8 +163,8 @@ sha_for_asset_on_github() {
 }
 
 error_installing() {
-      log::error "Unable to install navi. Please check https://github.com/denisidoro/navi for alternative installation instructions"
-      exit 33
+   log::error "Unable to install navi. Please check https://github.com/denisidoro/navi for alternative installation instructions"
+   exit 33
 }
 
 
@@ -220,7 +220,7 @@ install_navi() {
 
    if command_exists navi; then
       log::success "navi is already installed"
-       exit 0
+      exit 0
 
    elif command_exists brew; then
       brew install navi
@@ -238,8 +238,8 @@ install_navi() {
    fi
 
    echoerr
-   log::success "Finished" 
-   log::success "navi is now available at ${BIN_DIR}/navi" 
+   log::success "Finished"
+   log::success "navi is now available at ${BIN_DIR}/navi"
    echoerr
 
    if echo "$PATH" | grep -q "$BIN_DIR"; then

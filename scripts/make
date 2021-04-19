@@ -24,8 +24,8 @@ fix() {
 cmd="$1"
 shift
 
-   export X_MODE=true
-   set -x
+export X_MODE=true
+set -x
 
 case "$cmd" in
    "install") install "$@" ;;
