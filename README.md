@@ -1,7 +1,5 @@
 # navi <img src="https://user-images.githubusercontent.com/3226564/65362934-b4432500-dbdf-11e9-8f75-815fbc5cbf8f.png" alt="icon" height="28px"/> [![Actions Status](https://github.com/denisidoro/navi/workflows/Tests/badge.svg)](https://github.com/denisidoro/navi/actions) ![GitHub release](https://img.shields.io/github/v/release/denisidoro/navi?include_prereleases)
   
-TODO: windows
-
 An interactive cheatsheet tool for the command-line.
 
 [![Demo](https://asciinema.org/a/406461.svg)](https://asciinema.org/a/406461)

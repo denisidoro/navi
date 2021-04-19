@@ -5,6 +5,8 @@ use std::io::{self, Read};
 use std::process::Command;
 use thiserror::Error;
 
+pub const EOF: &str = "NAVIEOF";
+
 #[derive(Debug)]
 pub enum Shell {
     Bash,

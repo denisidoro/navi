@@ -1,5 +1,6 @@
 use crate::shell::{self, ShellSpawnError};
 use anyhow::Result;
+use shell::EOF;
 
 pub fn open(args: Vec<String>) -> Result<()> {
     let url = args
@@ -22,14 +23,16 @@ _open_url() {
     fi
 }"#;
     let cmd = format!(
-        r#"{}
+        r#"{code}
                 
-read -r -d '' url <<'NAVIEOF'
-{}
-NAVIEOF
+read -r -d '' url <<'{eof}'
+{url}
+{eof}
 
 _open_url "$url""#,
-        code, url
+        code = code,
+        url = url,
+        eof = EOF,
     );
     shell::command()
         .arg("-c")
