@@ -2,13 +2,6 @@ use crate::env_var;
 
 use crate::finder::FinderChoice;
 
-
-
-
-
-
-
-
 use std::str::FromStr;
 
 pub struct EnvConfig {
