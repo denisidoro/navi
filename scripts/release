@@ -14,7 +14,7 @@ is_windows() {
 get_env_target() {
    eval $(rustc --print cfg | grep target)
    local r raw="${target_arch}-${target_vendor}-${target_os}-${target_env}"
-   echoerr "env_raw: $raw"
+   log::note "env target raw: $raw"
    if echo "$raw" | grep -q "x86_64-apple-macos"; then
       echo "x86_64-apple-darwin"
    else
@@ -23,20 +23,20 @@ get_env_target() {
 }
 
 _tap() {
-   echoerr "$@"
+   log::note "$@"
    "$@"
 }
 
 release() {
-   local -r cross_target="${1:-}"
-   echoerr "cross_target: $cross_target"
+   local -r env_target="$(get_env_target)"
+   log::note "env target: $env_target"
+
+   local -r cross_target="${1:-"$env_target"}"
+   log::note "desired target: $cross_target"
 
    TAR_DIR="${NAVI_HOME}/target/tar"
    local use_zip=false
    local cross=true
-
-   local -r env_target="$(get_env_target)"
-   echoerr "env_target: $env_target"
 
    if [[ $cross_target == $env_target ]]; then
       cross=false
@@ -83,11 +83,10 @@ release() {
 
    _ls "${bin_path}"
    _ls "${TAR_DIR}"
-
 }
 
 _ls() {
-   echoerr "contents from $@:"
+   log::note "contents from $@:"
    ls -la "$@" || true
 }
 
