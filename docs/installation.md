@@ -46,7 +46,7 @@ cargo install navi
 bash <(curl -sL https://raw.githubusercontent.com/denisidoro/navi/master/scripts/install)
 
 # (optional) to set directories:
-# SOURCE_DIR=/opt/navi BIN_DIR=/usr/local/bin bash <(curl -sL https://raw.githubusercontent.com/denisidoro/navi/master/scripts/install)
+# BIN_DIR=/usr/local/bin bash <(curl -sL https://raw.githubusercontent.com/denisidoro/navi/master/scripts/install)
 ```
 
 #### Downloading pre-compiled binaries

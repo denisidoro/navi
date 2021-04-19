@@ -37,9 +37,8 @@ impl ShellSpawnError {
 pub fn out() -> Command {
     let shell = CONFIG.shell();
     let mut cmd = Command::new(&shell);
-    if shell != "cmd.exe" {
-        cmd.arg("-c");
-    }
+    let arg = if shell == "cmd.exe" { "/c" } else { "-c" };
+    cmd.arg(arg);
     cmd
 }
 

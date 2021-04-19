@@ -91,27 +91,27 @@ _integration() {
    rm "$log_file" 2>/dev/null || true
    mv "$cheats_path" "$bak_cheats_path" 2>/dev/null || true
 
-   echoerr "Starting sessions..."
+   log::note "Starting sessions..."
    tmux new-session -d -s ci "export NAVI_TEST_PATH='${cheats_path}'; ${NAVI_HOME}/tests/run _navi |& tee '${log_file}'"
    sleep 5
    _assert_tmux "$log_file"
 
-   echoerr "Downloading default cheatsheets..."
+   log::note "Downloading default cheatsheets..."
    tmux send-key -t ci "download default"; tmux send-key -t ci "Enter"
    sleep 1
    _assert_tmux "$log_file"
 
-   echoerr "Confirming import..."
+   log::note "Confirming import..."
    tmux send-key -t ci "y"; tmux send-key -t ci "Enter"
    sleep 6
    _assert_tmux "$log_file"
 
-   echoerr "Running snippet..."
+   log::note "Running snippet..."
    tmux send-key -t ci "pwd"
    sleep 1
    tmux send-key -t ci "Enter"
 
-   echoerr "Checking paths..."
+   log::note "Checking paths..."
    sleep 2
    local -r downloaded_path="$(cat "$log_file" | grep 'They are now located at' | sed 's/They are now located at //')"
    ls "$downloaded_path" | grep -q '^pkg_mgr__brew.cheat$'
