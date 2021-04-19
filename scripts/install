@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if ${X_MODE:-false}; then
+   set -x
+fi
+
 # =====================
 # paths
 # =====================

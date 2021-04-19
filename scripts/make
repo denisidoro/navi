@@ -28,7 +28,9 @@ fix() {
 cmd="$1"
 shift
 
-set -x
+   export X_MODE=true
+   set -x
+
 case "$cmd" in
    "install") install "$@" ;;
    "uninstall") uninstall "$@" ;;
