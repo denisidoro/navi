@@ -258,8 +258,8 @@ install_navi() {
    if echo "$PATH" | grep -q "$BIN_DIR"; then
       :
    else
-      local -r cmd='  export PATH="${PATH}:'"$BIN_DIR"'"'
-      append_to_file "${HOME}.bashrc" "$cmd"
+      local -r cmd="$(export_path_cmd)"
+      append_to_file "${HOME}/.bashrc" "$cmd"
       append_to_file "${ZDOTDIR:-"$HOME"}/.zshrc" "$cmd"
       append_to_file "${HOME}/.fishrc" "$cmd"
    fi
