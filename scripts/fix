@@ -14,23 +14,23 @@ _commit() {
 cd "$NAVI_HOME"
 
 _commit
-header "cargo clippy fix..."
+log::note "cargo clippy fix..."
 cargo +nightly clippy --fix -Z unstable-options || true
 
 _commit
-header "cargo fix..."
+log::note "cargo fix..."
 cargo fix || true
 
 _commit
-header "cargo fmt..."
+log::note "cargo fmt..."
 cargo fmt || true
 
 _commit
-header "clippy..."
+log::note "clippy..."
 cargo clippy || true
 
 _commit
-header "dot code beautify..."
+log::note "dot code beautify..."
 find scripts -type f | xargs -I% dot code beautify % || true
 dot code beautify "${NAVI_HOME}/tests/core.bash" || true
 dot code beautify "${NAVI_HOME}/tests/run" || true
