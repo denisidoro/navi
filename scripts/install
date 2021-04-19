@@ -224,7 +224,7 @@ append_to_file() {
    local -r path="$1"
    local -r text="$2"
    if [ -f "$path" ]; then
-      echo "$text" >> "$file"
+      echo "$text" >> "$path"
    fi
 }
 
