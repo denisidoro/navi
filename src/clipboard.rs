@@ -1,4 +1,4 @@
-use crate::shell::{self, ShellSpawnError};
+use crate::shell::{self, ShellSpawnError, EOF};
 use anyhow::Result;
 
 pub fn copy(text: String) -> Result<()> {
@@ -23,13 +23,15 @@ _copy() {
         .arg("-c")
         .arg(
             format!(
-                r#"{} 
-        read -r -d '' x <<'NAVIEOF'
-{}
-NAVIEOF
+                r#"{cmd} 
+        read -r -d '' x <<'{eof}'
+{text}
+{eof}
 
 echo -n "$x" | _copy"#,
-                cmd, text
+                cmd = cmd,
+                text = text,
+                eof = EOF,
             )
             .as_str(),
         )

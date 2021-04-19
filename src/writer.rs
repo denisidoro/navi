@@ -9,7 +9,7 @@ pub const DELIMITER: &str = r"  ⠀";
 
 lazy_static! {
     pub static ref NEWLINE_REGEX: Regex = Regex::new(r"\\\s+").expect("Invalid regex");
-    pub static ref VAR_REGEX: Regex = Regex::new(r"<(\w[\w\d\-_]*)>").expect("Invalid regex");
+    pub static ref VAR_REGEX: Regex = Regex::new(r"\\?<(\w[\w\d\-_]*)>").expect("Invalid regex");
     pub static ref COLUMN_WIDTHS: (usize, usize) = ui::get_widths();
 }
 

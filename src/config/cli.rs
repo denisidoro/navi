@@ -167,6 +167,9 @@ pub enum Command {
         /// Typed text
         variable: String,
     },
+    /// Used for fzf's preview window when selecting variable suggestions
+    #[clap(setting = AppSettings::Hidden)]
+    PreviewVarStdin,
     /// Outputs shell widget source code
     Widget {
         #[clap(possible_values = WIDGET_POSSIBLE_VALUES, case_insensitive = true, default_value = "bash")]

@@ -2,6 +2,7 @@ use crate::finder::structures::SuggestionType;
 use crate::shell;
 use anyhow::Context;
 use anyhow::Result;
+use shell::EOF;
 use std::process::Stdio;
 
 fn apply_map(text: String, map_fn: Option<String>) -> Result<String> {
@@ -9,15 +10,17 @@ fn apply_map(text: String, map_fn: Option<String>) -> Result<String> {
         let cmd = format!(
             r#"
 _navi_map_fn() {{
-  {}
+  {m}
 }}
                 
-read -r -d '' _navi_input <<'NAVIEOF'
-{}
-NAVIEOF
+read -r -d '' _navi_input <<'{eof}'
+{text}
+{eof}
 
 echo "$_navi_input" | _navi_map_fn"#,
-            m, text
+            m = m,
+            text = text,
+            eof = EOF
         );
 
         let output = shell::command()

@@ -1,17 +1,18 @@
 use crate::clipboard;
 use crate::config::Action;
-
 use crate::config::CONFIG;
 use crate::env_var;
 use crate::extractor;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::Finder;
+use crate::fs;
 use crate::shell;
 use crate::shell::ShellSpawnError;
 use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::writer;
 use anyhow::Context;
 use anyhow::Result;
+use shell::EOF;
 use std::io::Write;
 use std::path::Path;
 use std::process::Stdio;
@@ -75,19 +76,36 @@ fn prompt_finder(
         o
     };
 
+    let exe = fs::exe_string()?;
+    let extra = extra_preview.clone().unwrap_or_default();
+
+    let preview = if cfg!(target_os = "macos") {
+        format!(
+            r#"(@echo.{{+}}{eof}{{q}}{eof}{name}){eof}{extra} | {exe} preview-var-stdin"#,
+            exe = exe,
+            name = variable_name,
+            extra = extra,
+            eof = EOF,
+        )
+    } else {
+        format!(
+            r#"{exe} preview-var "$(cat <<{eof}
+{{+}}
+{eof}
+)" "$(cat <<{eof}
+{{q}}
+{eof}
+)" "{name}"; {extra}"#,
+            exe = exe,
+            name = variable_name,
+            extra = extra,
+            eof = EOF,
+        )
+    };
+
     let mut opts = FinderOpts {
         overrides,
-        preview: Some(format!(
-            r#"navi preview-var "$(cat <<NAVIEOF
-{{+}}
-NAVIEOF
-)" "$(cat <<NAVIEOF
-{{q}}
-NAVIEOF
-)" "{name}"; {extra}"#,
-            name = variable_name,
-            extra = extra_preview.clone().unwrap_or_default()
-        )),
+        preview: Some(preview),
         ..initial_opts.clone().unwrap_or_default()
     };
 

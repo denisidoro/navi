@@ -3,11 +3,12 @@ pub mod func;
 pub mod info;
 pub mod preview;
 pub mod preview_var;
+pub mod preview_var_stdin;
 pub mod repo_add;
 pub mod repo_browse;
 pub mod shell;
 
-use crate::config::Command::{Fn, Info, Preview, PreviewVar, Repo, Widget};
+use crate::config::Command::{Fn, Info, Preview, PreviewVar, PreviewVarStdin, Repo, Widget};
 use crate::config::{RepoCommand, CONFIG};
 use crate::handler;
 use anyhow::Context;
@@ -19,6 +20,8 @@ pub fn handle() -> Result<()> {
 
         Some(c) => match c {
             Preview { line } => handler::preview::main(line),
+
+            PreviewVarStdin => handler::preview_var_stdin::main(),
 
             PreviewVar {
                 selection,
