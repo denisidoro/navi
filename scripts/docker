@@ -3,6 +3,7 @@ set -euo pipefail
 
 export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 
+_start() {
 cd "$NAVI_HOME"
 
 ./scripts/release x86_64-unknown-linux-musl
@@ -12,4 +13,20 @@ docker run \
    -e HOMEBREW_NO_INSTALL_CLEANUP=1 \
    -v "$(pwd):/navi" \
    -it 'bashell/alpine-bash' \
-   bash -c 'apk add git; apk add curl; git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && yes | ln -s /navi/target/debug/navi /usr/local/bin/navi; source $HOME/.bashrc; bash'
+   bash -c '/navi/scripts docker setup; exec bash'
+}
+
+_setup() {
+   apk add git
+   apk add curl
+   git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+   ln -s /navi/target/debug/navi /usr/local/bin/navi
+}
+
+main() {
+   local -r fn="$1"
+   shift || true
+   "_${fn}" "$@"
+}
+
+main "$@"

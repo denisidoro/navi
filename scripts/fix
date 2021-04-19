@@ -4,20 +4,32 @@ set -euo pipefail
 export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 source "${NAVI_HOME}/scripts/install"
 
+_commit() {
+    if [ -n "${DOTFILES:-}" ]; then
+        git add --all
+        dot git commit am
+    fi
+}
+
 cd "$NAVI_HOME"
 
+_commit
 header "cargo clippy fix..."
 cargo +nightly clippy --fix -Z unstable-options || true
 
+_commit
 header "cargo fix..."
 cargo fix || true
 
+_commit
 header "cargo fmt..."
 cargo fmt || true
 
+_commit
 header "clippy..."
 cargo clippy || true
 
+_commit
 header "dot code beautify..."
 find scripts -type f | xargs -I% dot code beautify % || true
 dot code beautify "${NAVI_HOME}/tests/core.bash" || true
