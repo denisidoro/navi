@@ -15,8 +15,7 @@ pub fn main() -> Result<()> {
 
     if let Some(extra) = parts.next() {
         if !extra.is_empty() {
-            shell::command()
-                .arg("-c")
+            shell::out()
                 .arg(extra)
                 .spawn()
                 .map_err(|e| ShellSpawnError::new(extra, e))?

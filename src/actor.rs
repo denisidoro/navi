@@ -46,9 +46,8 @@ fn prompt_finder(
             }
         }
 
-        let child = shell::command()
+        let child = shell::out()
             .stdout(Stdio::piped())
-            .arg("-c")
             .arg(&suggestion_command)
             .spawn()
             .map_err(|e| ShellSpawnError::new(suggestion_command, e))?;
@@ -217,8 +216,7 @@ pub fn act(
                 clipboard::copy(interpolated_snippet)?;
             }
             _ => {
-                shell::command()
-                    .arg("-c")
+                shell::out()
                     .arg(&interpolated_snippet[..])
                     .spawn()
                     .map_err(|e| ShellSpawnError::new(&interpolated_snippet[..], e))?
