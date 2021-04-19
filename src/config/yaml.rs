@@ -1,4 +1,4 @@
-use crate::env_var;
+use super::env::EnvConfig;
 use crate::filesystem::default_config_pathbuf;
 use crate::finder::FinderChoice;
 use crate::fs;
@@ -9,7 +9,6 @@ use std::convert::TryFrom;
 use std::io::BufReader;
 use std::path::Path;
 use std::path::PathBuf;
-use std::str::FromStr;
 
 #[derive(Deserialize)]
 pub struct Color(#[serde(deserialize_with = "color_deserialize")] TerminalColor);
@@ -92,11 +91,11 @@ impl YamlConfig {
         serde_yaml::from_reader(reader).map_err(|e| e.into())
     }
 
-    pub fn get() -> Result<Self> {
-        if let Ok(yaml) = env_var::get(env_var::CONFIG_YAML) {
-            return Self::from_str(&yaml);
+    pub fn get(env: &EnvConfig) -> Result<Self> {
+        if let Some(yaml) = env.config_yaml.as_ref() {
+            return Self::from_str(yaml);
         }
-        if let Ok(path_str) = env_var::get(env_var::CONFIG) {
+        if let Some(path_str) = env.config_path.as_ref() {
             let p = PathBuf::from(path_str);
             return YamlConfig::from_path(&p);
         }
@@ -140,21 +139,16 @@ impl Default for Style {
 impl Default for Finder {
     fn default() -> Self {
         Self {
-            command: env_var::get(env_var::FINDER)
-                .ok()
-                .and_then(|x| FinderChoice::from_str(&x).ok())
-                .unwrap_or(FinderChoice::Fzf),
-            overrides: env_var::get(env_var::FZF_OVERRIDES).ok(),
-            overrides_var: env_var::get(env_var::FZF_OVERRIDES_VAR).ok(),
+            command: FinderChoice::Fzf,
+            overrides: None,
+            overrides_var: None,
         }
     }
 }
 
 impl Default for Cheats {
     fn default() -> Self {
-        Self {
-            path: env_var::get(env_var::PATH).ok(),
-        }
+        Self { path: None }
     }
 }
 
@@ -167,9 +161,7 @@ impl Default for Search {
 impl Default for Shell {
     fn default() -> Self {
         Self {
-            command: env_var::get(env_var::SHELL)
-                .ok()
-                .unwrap_or_else(|| "bash".to_string()),
+            command: "bash".to_string(),
         }
     }
 }

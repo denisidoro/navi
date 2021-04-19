@@ -1,4 +1,5 @@
 mod cli;
+mod env;
 mod yaml;
 
 use crate::finder::FinderChoice;
@@ -7,6 +8,7 @@ use crate::terminal::style::Color;
 pub use cli::*;
 use std::process;
 
+use env::EnvConfig;
 use yaml::YamlConfig;
 
 lazy_static! {
@@ -15,13 +17,16 @@ lazy_static! {
 pub struct Config {
     yaml: YamlConfig,
     clap: ClapConfig,
+    env: EnvConfig,
 }
 
 impl Config {
     pub fn new() -> Self {
-        match YamlConfig::get() {
+        let env = EnvConfig::new();
+        match YamlConfig::get(&env) {
             Ok(yaml) => Self {
                 yaml,
+                env,
                 clap: ClapConfig::new(),
             },
             Err(e) => {
@@ -50,17 +55,25 @@ impl Config {
     }
 
     pub fn path(&self) -> Option<String> {
-        self.clap.path.clone().or_else(|| self.yaml.cheats.path.clone())
+        self.clap
+            .path
+            .clone()
+            .or_else(|| self.env.path.clone())
+            .or_else(|| self.yaml.cheats.path.clone())
     }
 
     pub fn finder(&self) -> FinderChoice {
-        self.clap.finder.unwrap_or(self.yaml.finder.command)
+        self.clap
+            .finder
+            .or(self.env.finder)
+            .unwrap_or(self.yaml.finder.command)
     }
 
     pub fn fzf_overrides(&self) -> Option<String> {
         self.clap
             .fzf_overrides
             .clone()
+            .or_else(|| self.env.fzf_overrides.clone())
             .or_else(|| self.yaml.finder.overrides.clone())
     }
 
@@ -68,6 +81,7 @@ impl Config {
         self.clap
             .fzf_overrides_var
             .clone()
+            .or_else(|| self.env.fzf_overrides_var.clone())
             .or_else(|| self.yaml.finder.overrides_var.clone())
     }
 
