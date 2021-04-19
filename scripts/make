@@ -23,7 +23,7 @@ uninstall() {
 
 fix() {
 export X_MODE=true
-echo EXPORT
+echoerr EXPORT
    "${NAVI_HOME}/scripts/fix"
 }
 
