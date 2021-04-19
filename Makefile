@@ -3,3 +3,6 @@ install:
 
 uninstall:
 	scripts/make uninstall
+
+fix:
+	scripts/fix

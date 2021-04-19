@@ -6,11 +6,11 @@ export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$NAVI_HOME"
 
 if command_exists navi; then
-    navi "$@"
+   navi "$@"
 elif [ -f "./target/release/navi" ]; then
-    "./target/release/navi" "$@"
+   "./target/release/navi" "$@"
 elif [ -f "./target/debug/navi" ]; then
-    "./target/release/navi" "$@"
-else 
-    cargo run -- "$@"
+   "./target/debug/navi" "$@"
+else
+   cargo run -- "$@"
 fi

@@ -4,16 +4,16 @@ set -euo pipefail
 export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 
 _start() {
-cd "$NAVI_HOME"
+   cd "$NAVI_HOME"
 
-./scripts/release x86_64-unknown-linux-musl
+   ./scripts/release x86_64-unknown-linux-musl
 
-docker run \
-   -e HOMEBREW_NO_AUTO_UPDATE=1 \
-   -e HOMEBREW_NO_INSTALL_CLEANUP=1 \
-   -v "$(pwd):/navi" \
-   -it 'bashell/alpine-bash' \
-   bash -c '/navi/scripts docker setup; exec bash'
+   docker run \
+      -e HOMEBREW_NO_AUTO_UPDATE=1 \
+      -e HOMEBREW_NO_INSTALL_CLEANUP=1 \
+      -v "$(pwd):/navi" \
+      -it 'bashell/alpine-bash' \
+      bash -c '/navi/scripts docker setup; exec bash'
 }
 
 _setup() {
