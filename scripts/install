@@ -215,6 +215,19 @@ get_shell() {
 # main
 # =====================
 
+export_path_cmd() {
+   echo
+   echo '  export PATH="${PATH}:'"$BIN_DIR"'"'
+}
+
+append_to_file() {
+   local -r path="$1"
+   local -r text="$2"
+   if [ -f "$path" ]; then
+      echo "$text" >> "$path"
+   fi
+}
+
 install_navi() {
    local -r target="$(get_target)"
 
@@ -245,9 +258,10 @@ install_navi() {
    if echo "$PATH" | grep -q "$BIN_DIR"; then
       :
    else
-      echoerr
-      log::note 'Please add the following to your .bashrc-like file:'
-      echo -e '  export PATH="${PATH}:'"$BIN_DIR"'"\n'
+      local -r cmd="$(export_path_cmd)"
+      append_to_file "${HOME}/.bashrc" "$cmd"
+      append_to_file "${ZDOTDIR:-"$HOME"}/.zshrc" "$cmd"
+      append_to_file "${HOME}/.fishrc" "$cmd"
    fi
 
    log::note "To call navi, restart your shell or reload your .bashrc-like config file"
