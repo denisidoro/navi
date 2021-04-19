@@ -21,10 +21,17 @@ uninstall() {
    rm "$SOURCE_DIR"
 }
 
+fix() {
+   "${NAVI_HOME}/scripts/fix"
+}
+
 cmd="$1"
 shift
+
+set -x
 
 case "$cmd" in
    "install") install "$@" ;;
    "uninstall") uninstall "$@" ;;
+   "fix") fix "$@" ;;
 esac
