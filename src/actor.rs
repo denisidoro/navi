@@ -80,7 +80,7 @@ fn prompt_finder(
 
     let preview = if cfg!(target_os = "windows") {
         format!(
-            r#"(@echo.{{+}}{eof}{{q}}{eof}{name}){eof}{extra} | {exe} preview-var-stdin"#,
+            r#"(@echo.{{+}}{eof}{{q}}{eof}{name}{eof}{extra}) | {exe} preview-var-stdin"#,
             exe = exe,
             name = variable_name,
             extra = extra,
