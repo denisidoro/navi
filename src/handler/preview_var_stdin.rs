@@ -15,6 +15,8 @@ pub fn main() -> Result<()> {
 
     if let Some(extra) = parts.next() {
         if !extra.is_empty() {
+            print!("");
+
             shell::out()
                 .arg(extra)
                 .spawn()
