@@ -75,7 +75,7 @@ fn prompt_finder(
         o
     };
 
-    let exe = fs::exe_string()?;
+    let exe = fs::exe_string();
     let extra = extra_preview.clone().unwrap_or_default();
 
     let preview = if cfg!(target_os = "windows") {
@@ -180,6 +180,13 @@ fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: Variable
     Ok(interpolated_snippet)
 }
 
+pub fn with_absolute_path(snippet: String) -> String {
+    if let Some(s) = snippet.strip_prefix("navi ") {
+        return format!("{} {}", fs::exe_string(), s);
+    }
+    snippet
+}
+
 pub fn act(
     extractions: Result<extractor::Output>,
     files: Vec<String>,
@@ -197,14 +204,17 @@ pub fn act(
     env_var::set(env_var::PREVIEW_TAGS, &tags);
     env_var::set(env_var::PREVIEW_COMMENT, &comment);
 
-    let interpolated_snippet = writer::with_new_lines(
-        replace_variables_from_snippet(
+    let interpolated_snippet = {
+        let mut s = replace_variables_from_snippet(
             snippet,
             tags,
             variables.expect("No variables received from finder"),
         )
-        .context("Failed to replace variables from snippet")?,
-    );
+        .context("Failed to replace variables from snippet")?;
+        s = with_absolute_path(s);
+        s = writer::with_new_lines(s);
+        s
+    };
 
     match CONFIG.action() {
         Action::Print => {

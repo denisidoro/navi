@@ -67,8 +67,12 @@ fn exe_pathbuf() -> Result<PathBuf> {
     follow_symlink(pathbuf)
 }
 
-pub fn exe_string() -> Result<String> {
+fn exe_abs_string() -> Result<String> {
     pathbuf_to_string(&exe_pathbuf()?)
+}
+
+pub fn exe_string() -> String {
+    exe_abs_string().unwrap_or_else(|_| "navi".to_string())
 }
 
 pub fn create_dir(path: &Path) -> Result<()> {
