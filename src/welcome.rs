@@ -1,7 +1,8 @@
+use crate::actor;
 use crate::config::CONFIG;
+use crate::extractor;
 use crate::finder::structures::Opts as FinderOpts;
 use crate::finder::Finder;
-
 use crate::structures::cheat::VariableMap;
 use crate::structures::item::Item;
 use crate::writer;
@@ -12,13 +13,21 @@ use std::io::Write;
 pub fn main() -> Result<()> {
     let config = &CONFIG;
     let opts = FinderOpts::from_config(&config)?;
-    let _ = config
+    let (raw_selection, variables, files) = config
         .finder()
         .call(opts, |stdin, _| {
             populate_cheatsheet(stdin);
             Ok(Some(VariableMap::new()))
         })
         .context("Failed getting selection and variables from finder")?;
+
+    let extractions = extractor::extract_from_selections(&raw_selection, config.best_match());
+
+    if extractions.is_err() {
+        return main();
+    }
+
+    actor::act(extractions, files, variables)?;
     Ok(())
 }
 
