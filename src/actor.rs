@@ -76,14 +76,13 @@ fn prompt_finder(
     };
 
     let exe = fs::exe_string();
-    let extra = extra_preview.clone().unwrap_or_default();
 
     let preview = if cfg!(target_os = "windows") {
         format!(
             r#"(@echo.{{+}}{eof}{{q}}{eof}{name}{eof}{extra}) | {exe} preview-var-stdin"#,
             exe = exe,
             name = variable_name,
-            extra = extra,
+            extra = extra_preview.clone().unwrap_or_default(),
             eof = EOF,
         )
     } else {
@@ -97,7 +96,10 @@ fn prompt_finder(
 )" "{name}"; {extra}"#,
             exe = exe,
             name = variable_name,
-            extra = extra,
+            extra = extra_preview
+                .clone()
+                .map(|e| format!(" echo; {}", e))
+                .unwrap_or_default(),
             eof = EOF,
         )
     };
