@@ -127,6 +127,10 @@ impl Finder for FinderChoice {
             command.args(&["--filter", &f]);
         }
 
+        if let Some(d) = opts.delimiter {
+            command.args(&["--delimiter", &d]);
+        }
+
         if let Some(h) = opts.header {
             command.args(&["--header", &h]);
         }
