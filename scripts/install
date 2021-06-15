@@ -9,7 +9,8 @@ fi
 # paths
 # =====================
 
-export BIN_DIR="${BIN_DIR:-"${HOME}/.cargo/bin"}"
+export CARGO_DEFAULT_BIN="${HOME}/.cargo/bin"
+export BIN_DIR="${BIN_DIR:-"$CARGO_DEFAULT_BIN"}"
 
 
 # =====================
@@ -217,7 +218,7 @@ get_shell() {
 
 export_path_cmd() {
    echo
-   echo '  export PATH="${PATH}:'"$BIN_DIR"'"'
+   echo '  export PATH="${PATH}:'"$1"'"'
 }
 
 append_to_file() {
@@ -225,6 +226,19 @@ append_to_file() {
    local -r text="$2"
    if [ -f "$path" ]; then
       echo "$text" >> "$path"
+   fi
+}
+
+get_navi_bin_path() {
+   local file="${BIN_DIR}/navi"
+   if [ -f "$file" ]; then
+      echo "$file"
+      return 0
+   fi
+   file="${CARGO_DEFAULT_BIN}/navi"
+   if [ -f "$file" ]; then
+      echo "$file"
+      return 0
    fi
 }
 
@@ -250,15 +264,25 @@ install_navi() {
 
    fi
 
+   hash -r 2>/dev/null || true
+
+   local navi_bin_path="$(which navi || get_navi_bin_path)"
+   ln -s "$navi_bin_path" "${BIN_DIR}/navi" &>/dev/null || true
+   if [ -f "${BIN_DIR}/navi" ]; then
+      navi_bin_path="${BIN_DIR}/navi"
+   fi
+
+   local -r navi_bin_dir="$(dirname "$navi_bin_path")"
+
    echoerr
    log::success "Finished"
-   log::success "navi is now available at ${BIN_DIR}/navi"
+   log::success "navi is now available at ${navi_bin_path}"
    echoerr
 
-   if echo "$PATH" | grep -q "$BIN_DIR"; then
+   if echo "$PATH" | grep -q "$navi_bin_path"; then
       :
    else
-      local -r cmd="$(export_path_cmd)"
+      local -r cmd="$(export_path_cmd "$navi_bin_path")"
       append_to_file "${HOME}/.bashrc" "$cmd"
       append_to_file "${ZDOTDIR:-"$HOME"}/.zshrc" "$cmd"
       append_to_file "${HOME}/.fishrc" "$cmd"
@@ -268,7 +292,7 @@ install_navi() {
    echo
    log::note "Check https://github.com/denisidoro/navi for more info"
 
-   export PATH="${PATH}:${BIN_DIR}"
+   export PATH="${PATH}:${navi_bin_path}"
 
    return 0
 }
