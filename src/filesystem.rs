@@ -6,6 +6,7 @@ use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
 use anyhow::Result;
 use directories_next::BaseDirs;
+use regex::Regex;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
@@ -127,8 +128,15 @@ impl fetcher::Fetcher for Fetcher {
         let paths = paths.expect("Unable to get paths");
         let folders = paths_from_path_param(&paths);
 
+        let home_regex = Regex::new(r"^~").unwrap();
+        let home = BaseDirs::new().and_then(|b| pathbuf_to_string(b.home_dir()).ok());
+
         for folder in folders {
-            let folder_pathbuf = PathBuf::from(folder);
+            let interpolated_folder = match &home {
+                Some(h) => home_regex.replace(folder, h).to_string(),
+                None => folder.to_string(),
+            };
+            let folder_pathbuf = PathBuf::from(interpolated_folder);
             for file in all_cheat_files(&folder_pathbuf) {
                 files.push(file.clone());
                 let index = files.len() - 1;
