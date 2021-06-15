@@ -77,7 +77,7 @@ fn prompt_finder(
 
     let exe = fs::exe_string();
 
-    let is_fish = CONFIG.shell().contains("fish");
+    let subshell_prefix = if CONFIG.shell().contains("fish") { "" } else { "$" };
 
     let preview = if cfg!(target_os = "windows") {
         format!(
@@ -89,16 +89,16 @@ fn prompt_finder(
         )
     } else {
         format!(
-            r#"{exe} preview-var "{shellpref}(cat <<{eof}
+            r#"{exe} preview-var "{subshell_prefix}(cat <<{eof}
 {{+}}
 {eof}
-)" "{shellpref}(cat <<{eof}
+)" "{subshell_prefix}(cat <<{eof}
 {{q}}
 {eof}
 )" "{name}"; {extra}"#,
             exe = exe,
             name = variable_name,
-            shellpref = if is_fish { "" } else { "$" },
+            subshell_prefix = subshell_prefix,
             extra = extra_preview
                 .clone()
                 .map(|e| format!(" echo; {}", e))
