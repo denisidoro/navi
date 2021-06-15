@@ -2,6 +2,7 @@ use crate::config::CONFIG;
 use crate::ui;
 use crate::writer;
 use anyhow::Result;
+use crossterm::style::Stylize;
 use std::process;
 
 fn extract_elements(argstr: &str) -> (&str, &str, &str) {

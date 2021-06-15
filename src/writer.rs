@@ -1,6 +1,7 @@
 use crate::config::CONFIG;
 use crate::structures::item::Item;
 use crate::ui;
+use crossterm::style::Stylize;
 use regex::Regex;
 
 const NEWLINE_ESCAPE_CHAR: char = '\x15';
