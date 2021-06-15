@@ -13,7 +13,7 @@ _navi_widget() {
     local -r last_command="$(echo "${input}" | navi fn widget::last_command)"
 
     if [ -z "${last_command}" ]; then 
-        local -r output="$(_navi_call --print --fzf-overrides '--no-select-1')"
+        local -r output="$(FZF_OVERRIDES="${FZF_OVERRIDES:-} --no-select-1" _navi_call --print)"
     else
         local -r find="$last_command"
         local -r replacement="$(_navi_call --print --query "${last_command}")"
