@@ -69,7 +69,7 @@ pub(super) fn parse_output_single(mut text: String, suggestion_type: SuggestionT
         SuggestionType::SingleSelection => text
             .lines()
             .next()
-            .context("Not sufficient data for single selection")?
+            .context("No sufficient data for single selection")?
             .to_string(),
         SuggestionType::MultipleSelections | SuggestionType::Disabled | SuggestionType::SnippetSelection => {
             let len = text.len();
