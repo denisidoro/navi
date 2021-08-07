@@ -22,6 +22,7 @@ fn parse_opts(text: &str) -> Result<FinderOpts> {
         suggestion_type: SuggestionType::SingleRecommendation,
         query: None,
         filter: None,
+        select1: true,
         ..Default::default()
     };
 
