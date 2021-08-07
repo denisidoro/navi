@@ -187,6 +187,9 @@ pub fn read_lines(
         if !item.tags.is_empty() && !item.comment.is_empty() {}
         // blank
         if line.is_empty() {
+            if !(&item.snippet).is_empty() {
+                item.snippet.push_str(writer::LINE_SEPARATOR);
+            }
         }
         // tag
         else if line.starts_with('%') {

@@ -145,7 +145,6 @@ for i in $(_get_tests "$filter"); do
    IFS="$ifs"
    query="$(echo "$i" | cut -d'|' -f1)"
    expected="$(echo "$i" | tr "$NEWLINE_CHAR" '\n' | cut -d'|' -f2)"
-   echoerr "expected: $i"
    test::run "$query" _navi_cases_test "$query" "$expected"
 done
 

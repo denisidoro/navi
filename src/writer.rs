@@ -46,7 +46,7 @@ pub fn write(item: &Item) -> String {
             tags = item.tags,
             comment = item.comment,
             delimiter = DELIMITER,
-            snippet = &item.snippet,
+            snippet = &item.snippet.trim_end_matches(LINE_SEPARATOR),
             file_index = item.file_index,
         )
 }

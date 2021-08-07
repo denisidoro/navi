@@ -17,7 +17,7 @@ echo lorem ipsum
 echo lorem ipsum
 echo baz
 
-# empty line -> "foo\n\n\n\nbar"
+# empty line -> "foo\n\n\nbar"
 echo "$(cat <<EOF
 foo
 
