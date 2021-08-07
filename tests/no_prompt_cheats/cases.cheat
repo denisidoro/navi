@@ -8,6 +8,12 @@ echo "foo"
 # map -> "_foo_"
 echo "<map1>"
 
+# duplicated lines -> "foo\nlorem ipsum\nlorem ipsum\nbaz"
+echo foo
+echo lorem ipsum
+echo lorem ipsum
+echo baz
+
 # expand -> "foo"
 echo "<expand1>"
 
