@@ -18,7 +18,7 @@ _navi() {
    stty sane || true
    local path="${NAVI_TEST_PATH:-$TEST_CHEAT_PATH}"
    path="${path//$HOME/~}"
-	export NAVI_TEST_PATH="$path"
+   export NAVI_TEST_PATH="$path"
    RUST_BACKTRACE=1 NAVI_PATH='$NAVI_TEST_PATH' "$NAVI_EXE" "$@"
 }
 
