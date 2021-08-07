@@ -19,7 +19,10 @@ finder:
   # overrides_var: --tac # equivalent to the --fzf-overrides-var option
 
 # cheats:
-  # path: /path/to/some/dir # equivalent to the --path option
+  # paths: 
+    # - /path/to/some/dir
+    # - /path/to/another/dir
+  # path: /path/to/some/dir # (DEPRECATED) equivalent to the --path option
 
 # search:
   # tags: git,!checkout # equivalent to the --tag-rules option

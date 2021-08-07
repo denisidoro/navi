@@ -55,6 +55,14 @@ impl Config {
             .path
             .clone()
             .or_else(|| self.env.path.clone())
+            .or_else(|| {
+                let p = self.yaml.cheats.paths.clone();
+                if p.is_empty() {
+                    None
+                } else {
+                    Some(p.join(":"))
+                }
+            })
             .or_else(|| self.yaml.cheats.path.clone())
     }
 
