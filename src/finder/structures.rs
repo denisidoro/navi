@@ -16,6 +16,7 @@ pub struct Opts {
     pub delimiter: Option<String>,
     pub column: Option<u8>,
     pub map: Option<String>,
+    pub select1: bool,
 }
 
 impl Default for Opts {
@@ -33,6 +34,7 @@ impl Default for Opts {
             column: None,
             delimiter: None,
             map: None,
+            select1: true,
         }
     }
 }
