@@ -15,7 +15,8 @@ lazy_static! {
 fn parse_opts(text: &str) -> Result<FinderOpts> {
     let mut multi = false;
     let mut prevent_extra = false;
-    let mut opts = FinderOpts::default();
+
+    let mut opts = FinderOpts::var_default();
 
     let parts = shellwords::split(text).map_err(|_| anyhow!("Given options are missing a closing quote"))?;
 
@@ -240,15 +241,10 @@ mod tests {
             parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --prevent-extra").unwrap();
         assert_eq!(command, " echo -e \"$(whoami)\\nroot\" ");
         assert_eq!(variable, "user");
-        assert_eq!(
-            command_options,
-            Some(FinderOpts {
-                header_lines: 0,
-                column: None,
-                delimiter: None,
-                suggestion_type: SuggestionType::SingleSelection,
-                ..Default::default()
-            })
-        );
+        let opts = command_options.unwrap();
+        assert_eq!(opts.header_lines, 0);
+        assert_eq!(opts.column, None);
+        assert_eq!(opts.delimiter, None);
+        assert_eq!(opts.suggestion_type, SuggestionType::SingleSelection);
     }
 }

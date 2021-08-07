@@ -6,3 +6,6 @@ uninstall:
 
 fix:
 	scripts/make fix
+
+test:
+	scripts/test

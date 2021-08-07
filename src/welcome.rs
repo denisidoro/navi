@@ -1,7 +1,6 @@
 use crate::actor;
 use crate::config::CONFIG;
 use crate::extractor;
-use crate::finder::structures::Opts as FinderOpts;
 use crate::finder::Finder;
 use crate::structures::cheat::VariableMap;
 use crate::structures::item::Item;
@@ -12,7 +11,8 @@ use std::io::Write;
 
 pub fn main() -> Result<()> {
     let config = &CONFIG;
-    let opts = FinderOpts::from_config(config)?;
+    let opts = Default::default();
+
     let (raw_selection, variables, files) = config
         .finder()
         .call(opts, |stdin, _| {

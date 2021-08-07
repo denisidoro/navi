@@ -1,6 +1,5 @@
-use crate::config::Config;
+use crate::config::CONFIG;
 use crate::filesystem;
-use anyhow::Result;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Opts {
@@ -16,7 +15,7 @@ pub struct Opts {
     pub delimiter: Option<String>,
     pub column: Option<u8>,
     pub map: Option<String>,
-    pub select1: bool,
+    pub prevent_select1: bool,
 }
 
 impl Default for Opts {
@@ -30,11 +29,42 @@ impl Default for Opts {
             header_lines: 0,
             header: None,
             prompt: None,
-            suggestion_type: SuggestionType::SingleRecommendation,
+            suggestion_type: SuggestionType::SingleSelection,
             column: None,
             delimiter: None,
             map: None,
-            select1: true,
+            prevent_select1: true,
+        }
+    }
+}
+
+impl Opts {
+    pub fn snippet_default() -> Self {
+        Self {
+            suggestion_type: SuggestionType::SnippetSelection,
+            overrides: CONFIG.fzf_overrides(),
+            preview: Some(format!("{} preview {{}}", filesystem::exe_string())),
+            prevent_select1: !CONFIG.best_match(),
+            query: if CONFIG.best_match() {
+                None
+            } else {
+                CONFIG.get_query()
+            },
+            filter: if CONFIG.best_match() {
+                CONFIG.get_query()
+            } else {
+                None
+            },
+            ..Default::default()
+        }
+    }
+
+    pub fn var_default() -> Self {
+        Self {
+            overrides: CONFIG.fzf_overrides_var(),
+            suggestion_type: SuggestionType::SingleRecommendation,
+            prevent_select1: false,
+            ..Default::default()
         }
     }
 }
@@ -51,27 +81,4 @@ pub enum SuggestionType {
     SingleRecommendation,
     /// initial snippet selection
     SnippetSelection,
-}
-
-impl Opts {
-    pub fn from_config(config: &Config) -> Result<Opts> {
-        let opts = Opts {
-            preview: Some(format!("{} preview {{}}", filesystem::exe_string())),
-            overrides: config.fzf_overrides(),
-            suggestion_type: SuggestionType::SnippetSelection,
-            query: if config.best_match() {
-                None
-            } else {
-                config.get_query()
-            },
-            filter: if config.best_match() {
-                config.get_query()
-            } else {
-                None
-            },
-            ..Default::default()
-        };
-
-        Ok(opts)
-    }
 }

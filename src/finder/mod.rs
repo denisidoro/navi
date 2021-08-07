@@ -93,7 +93,7 @@ impl Finder for FinderChoice {
             "--exact",
         ]);
 
-        if opts.select1 {
+        if !opts.prevent_select1 {
             if let Self::Fzf = self {
                 command.arg("--select-1");
             }

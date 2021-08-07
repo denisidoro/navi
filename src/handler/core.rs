@@ -15,11 +15,7 @@ use anyhow::Result;
 
 pub fn main() -> Result<()> {
     let config = &CONFIG;
-    let opts = {
-        let mut o = FinderOpts::from_config(config)?;
-        o.select1 = false;
-        o
-    };
+    let opts = FinderOpts::snippet_default();
 
     let (raw_selection, variables, files) = config
         .finder()
