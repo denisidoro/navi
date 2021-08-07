@@ -8,14 +8,23 @@ echo "foo"
 # map -> "_foo_"
 echo "<map1>"
 
+# expand -> "foo"
+echo "<expand1>"
+
 # duplicated lines -> "foo\nlorem ipsum\nlorem ipsum\nbaz"
 echo foo
 echo lorem ipsum
 echo lorem ipsum
 echo baz
 
-# expand -> "foo"
-echo "<expand1>"
+# empty line -> "foo\n\n\n\nbar"
+echo "$(cat <<EOF
+foo
+
+
+bar
+EOF
+)"
 
 # sed with replacement -> "172.17.0.2"
 echo "8.8.8.8 via 172.17.0.1 dev eth0  src 172.17.0.2" | sed -E 's/.*src ([0-9.]+).*/\1/p' | head -n1

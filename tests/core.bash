@@ -3,6 +3,8 @@
 
 source "${NAVI_HOME}/scripts/install"
 
+NEWLINE_CHAR="\036"
+
 PASSED=0
 FAILED=0
 SKIPPED=0
@@ -38,12 +40,17 @@ test::run() {
    "$@" && test::success || test::fail
 }
 
+test::_escape() {
+	tr '\n' "$NEWLINE_CHAR" | sed -E "s/[\s$(printf "$NEWLINE_CHAR") ]+$//g"
+}
+
 test::equals() {
    local -r actual="$(cat)"
    local -r expected="$(echo "${1:-}")"
+	
 
-   local -r actual2="$(echo "$actual" | xargs | sed -E 's/\s/ /g')"
-   local -r expected2="$(echo "$expected" | xargs | sed -E 's/\s/ /g')"
+   local -r actual2="$(echo "$actual" | test::_escape)"
+   local -r expected2="$(echo "$expected" | test::_escape)"
 
    if [[ "$actual2" != "$expected2" ]]; then
       log::error "Expected '${expected}' but got '${actual}'"
