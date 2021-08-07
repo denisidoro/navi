@@ -12,7 +12,12 @@ use std::io::Write;
 
 pub fn main() -> Result<()> {
     let config = &CONFIG;
-    let opts: FinderOpts = Default::default();
+    let opts = FinderOpts {
+        overrides: config.fzf_overrides(),
+        select1: false,
+        ..Default::default()
+    };
+
     let (raw_selection, variables, files) = config
         .finder()
         .call(opts, |stdin, _| {
