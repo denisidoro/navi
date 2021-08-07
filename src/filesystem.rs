@@ -1,3 +1,4 @@
+use crate::env_var;
 pub use crate::fs::{
     create_dir, exe_string, pathbuf_to_string, read_lines, remove_dir, InvalidPath, UnreadableDir,
 };
@@ -66,6 +67,21 @@ fn without_first(string: &str) -> String {
         .to_string()
 }
 
+fn interpolate_paths(paths: String) -> String {
+    let re = Regex::new(r#"\$\{?[a-zA-Z_][a-zA-Z_0-9]*"#).unwrap();
+    let mut newtext = paths.to_string();
+    for capture in re.captures_iter(&paths) {
+        if let Some(c) = capture.get(0) {
+            let varname = c.as_str().replace("$", "").replace("{", "").replace("}", "");
+            let replacement = &env_var::must_get(&varname);
+            newtext = newtext
+                .replace(&format!("${}", varname), replacement)
+                .replace(&format!("${{{}}}", varname), replacement);
+        }
+    }
+    newtext
+}
+
 fn gen_lists(tag_rules: Option<String>) -> (Option<Vec<String>>, Option<Vec<String>>) {
     let mut allowlist = None;
     let mut denylist: Option<Vec<String>> = None;
@@ -126,7 +142,8 @@ impl fetcher::Fetcher for Fetcher {
         };
 
         let paths = paths.expect("Unable to get paths");
-        let folders = paths_from_path_param(&paths);
+        let interpolated_paths = interpolate_paths(paths);
+        let folders = paths_from_path_param(&interpolated_paths);
 
         let home_regex = Regex::new(r"^~").unwrap();
         let home = BaseDirs::new().and_then(|b| pathbuf_to_string(b.home_dir()).ok());
