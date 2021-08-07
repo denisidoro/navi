@@ -15,17 +15,13 @@ pub struct Opts {
     pub delimiter: Option<String>,
     pub column: Option<u8>,
     pub map: Option<String>,
-    pub select1: bool,
+    pub prevent_select1: bool,
 }
 
 impl Default for Opts {
     fn default() -> Self {
-        let base = Self {
-            query: None,
-            filter: None,
-            preview: None,
+        Self {
             preview_window: None,
-            overrides: None,
             header_lines: 0,
             header: None,
             prompt: None,
@@ -33,13 +29,9 @@ impl Default for Opts {
             column: None,
             delimiter: None,
             map: None,
-            select1: true,
-        };
-
-        Self {
             overrides: CONFIG.fzf_overrides(),
             preview: Some(format!("{} preview {{}}", filesystem::exe_string())),
-            select1: CONFIG.best_match(),
+            prevent_select1: !CONFIG.best_match(),
             query: if CONFIG.best_match() {
                 None
             } else {
@@ -50,7 +42,6 @@ impl Default for Opts {
             } else {
                 None
             },
-            ..base
         }
     }
 }

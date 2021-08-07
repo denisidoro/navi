@@ -22,7 +22,7 @@ fn parse_opts(text: &str) -> Result<FinderOpts> {
         suggestion_type: SuggestionType::SingleRecommendation,
         query: None,
         filter: None,
-        select1: true,
+        prevent_select1: false,
         ..Default::default()
     };
 
@@ -249,15 +249,10 @@ mod tests {
             parse_variable_line("$ user : echo -e \"$(whoami)\\nroot\" --- --prevent-extra").unwrap();
         assert_eq!(command, " echo -e \"$(whoami)\\nroot\" ");
         assert_eq!(variable, "user");
-        assert_eq!(
-            command_options,
-            Some(FinderOpts {
-                header_lines: 0,
-                column: None,
-                delimiter: None,
-                suggestion_type: SuggestionType::SingleSelection,
-                ..Default::default()
-            })
-        );
+        let opts = command_options.unwrap();
+        assert_eq!(opts.header_lines, 0);
+        assert_eq!(opts.column, None);
+        assert_eq!(opts.delimiter, None);
+        assert_eq!(opts.suggestion_type, SuggestionType::SingleSelection);
     }
 }
