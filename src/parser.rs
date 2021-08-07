@@ -16,8 +16,12 @@ lazy_static! {
 fn parse_opts(text: &str) -> Result<FinderOpts> {
     let mut multi = false;
     let mut prevent_extra = false;
+
     let mut opts = FinderOpts {
         overrides: CONFIG.fzf_overrides_var(),
+        suggestion_type: SuggestionType::SingleRecommendation,
+        query: None,
+        filter: None,
         ..Default::default()
     };
 

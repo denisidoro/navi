@@ -15,11 +15,7 @@ use anyhow::Result;
 
 pub fn main() -> Result<()> {
     let config = &CONFIG;
-    let opts = FinderOpts {
-        overrides: config.fzf_overrides(),
-        select1: false,
-        ..Default::default()
-    };
+    let opts = FinderOpts::default();
 
     let (raw_selection, variables, files) = config
         .finder()

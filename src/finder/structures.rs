@@ -29,7 +29,7 @@ impl Default for Opts {
             header_lines: 0,
             header: None,
             prompt: None,
-            suggestion_type: SuggestionType::SingleRecommendation,
+            suggestion_type: SuggestionType::SnippetSelection,
             column: None,
             delimiter: None,
             map: None,
@@ -37,8 +37,9 @@ impl Default for Opts {
         };
 
         Self {
+            overrides: CONFIG.fzf_overrides(),
             preview: Some(format!("{} preview {{}}", filesystem::exe_string())),
-            suggestion_type: SuggestionType::SnippetSelection,
+            select1: CONFIG.best_match(),
             query: if CONFIG.best_match() {
                 None
             } else {
