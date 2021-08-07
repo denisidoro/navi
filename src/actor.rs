@@ -6,7 +6,6 @@ use crate::extractor;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::Finder;
 use crate::fs;
-use crate::parser;
 use crate::shell;
 use crate::shell::ShellSpawnError;
 use crate::structures::cheat::{Suggestion, VariableMap};
@@ -100,7 +99,7 @@ fn prompt_finder(
 
     let mut opts = FinderOpts {
         preview: Some(preview),
-        ..initial_opts.clone().unwrap_or_else(parser::default_opts)
+        ..initial_opts.clone().unwrap_or_else(FinderOpts::var_default)
     };
 
     opts.query = env_var::get(format!("{}__query", variable_name)).ok();

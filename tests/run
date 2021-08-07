@@ -18,8 +18,8 @@ _navi() {
    stty sane || true
    local path="${NAVI_TEST_PATH:-$TEST_CHEAT_PATH}"
    path="${path//$HOME/~}"
-   export NAVI_TEST_PATH="$path"
-   RUST_BACKTRACE=1 NAVI_PATH='$NAVI_TEST_PATH' "$NAVI_EXE" "$@"
+   export NAVI_ENV_VAR_PATH="$path"
+   RUST_BACKTRACE=1 NAVI_PATH='$NAVI_ENV_VAR_PATH' "$NAVI_EXE" "$@"
 }
 
 _navi_cases() {
@@ -89,6 +89,7 @@ _integration() {
    _kill_tmux
    local -r log_file="${NAVI_HOME}/target/ci.log"
    local -r cheats_path="$($NAVI_EXE info cheats-path)"
+	rm -rf "$cheats_path" 2>/dev/null || true
    mkdir -p "$cheats_path" 2>/dev/null || true
    local -r bak_cheats_path="$(mktemp -d "${cheats_path}_XXXXX")"
    rm "$log_file" 2>/dev/null || true
@@ -105,7 +106,9 @@ _integration() {
    _assert_tmux "$log_file"
 
    log::note "Confirming import..."
-   tmux send-key -t ci "y"; tmux send-key -t ci "Enter"
+   tmux send-key -t ci "y"
+	sleep 1 
+	tmux send-key -t ci "Enter"
    sleep 6
    _assert_tmux "$log_file"
 

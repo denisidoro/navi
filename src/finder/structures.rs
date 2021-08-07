@@ -21,14 +21,27 @@ pub struct Opts {
 impl Default for Opts {
     fn default() -> Self {
         Self {
+            query: None,
+            filter: None,
+            preview: None,
             preview_window: None,
+            overrides: None,
             header_lines: 0,
             header: None,
             prompt: None,
-            suggestion_type: SuggestionType::SnippetSelection,
+            suggestion_type: SuggestionType::SingleSelection,
             column: None,
             delimiter: None,
             map: None,
+            prevent_select1: false,
+        }
+    }
+}
+
+impl Opts {
+    pub fn snippet_default() -> Self {
+        Self {
+            suggestion_type: SuggestionType::SnippetSelection,
             overrides: CONFIG.fzf_overrides(),
             preview: Some(format!("{} preview {{}}", filesystem::exe_string())),
             prevent_select1: !CONFIG.best_match(),
@@ -42,6 +55,15 @@ impl Default for Opts {
             } else {
                 None
             },
+            ..Default::default()
+        }
+    }
+
+    pub fn var_default() -> Self {
+        Self {
+            overrides: CONFIG.fzf_overrides_var(),
+            suggestion_type: SuggestionType::SingleRecommendation,
+            ..Default::default()
         }
     }
 }
