@@ -113,10 +113,17 @@ fn write_cmd(
     stdin: &mut std::process::ChildStdin,
     allowlist: Option<&Vec<String>>,
     denylist: Option<&Vec<String>>,
+    visited_lines: &mut HashSet<u64>,
 ) -> Result<()> {
     if item.snippet.len() <= 1 {
         return Ok(());
     }
+
+    let hash = fnv(&format!("{}{}", &item.comment, &item.snippet));
+    if visited_lines.contains(&hash) {
+        return Ok(());
+    }
+    visited_lines.insert(hash);
 
     if let Some(list) = denylist {
         for v in list {
@@ -183,7 +190,7 @@ pub fn read_lines(
         }
         // tag
         else if line.starts_with('%') {
-            should_break = write_cmd(&item, stdin, allowlist, denylist).is_err();
+            should_break = write_cmd(&item, stdin, allowlist, denylist, visited_lines).is_err();
             item.snippet = String::from("");
             item.tags = without_prefix(&line);
         }
@@ -197,13 +204,13 @@ pub fn read_lines(
         }
         // comment
         else if line.starts_with('#') {
-            should_break = write_cmd(&item, stdin, allowlist, denylist).is_err();
+            should_break = write_cmd(&item, stdin, allowlist, denylist, visited_lines).is_err();
             item.snippet = String::from("");
             item.comment = without_prefix(&line);
         }
         // variable
         else if line.starts_with('$') {
-            should_break = write_cmd(&item, stdin, allowlist, denylist).is_err();
+            should_break = write_cmd(&item, stdin, allowlist, denylist, visited_lines).is_err();
             item.snippet = String::from("");
             let (variable, command, opts) = parse_variable_line(&line).with_context(|| {
                 format!(
@@ -216,12 +223,6 @@ pub fn read_lines(
         }
         // snippet
         else {
-            let hash = fnv(&format!("{}{}", &item.comment, &line));
-            if visited_lines.contains(&hash) {
-                continue;
-            }
-            visited_lines.insert(hash);
-
             if !(&item.snippet).is_empty() {
                 item.snippet.push_str(writer::LINE_SEPARATOR);
             }
@@ -230,7 +231,7 @@ pub fn read_lines(
     }
 
     if !should_break {
-        let _ = write_cmd(&item, stdin, allowlist, denylist);
+        let _ = write_cmd(&item, stdin, allowlist, denylist, visited_lines);
     }
 
     Ok(())
