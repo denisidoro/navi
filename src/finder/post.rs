@@ -40,7 +40,7 @@ fn get_column(text: String, column: Option<u8>, delimiter: Option<&str>) -> Stri
         let mut result = String::from("");
         let re = regex::Regex::new(delimiter.unwrap_or(r"\s\s+")).expect("Invalid regex");
         for line in text.split('\n') {
-            if (&line).is_empty() {
+            if (line).is_empty() {
                 continue;
             }
             let mut parts = re.split(line).skip((c - 1) as usize);

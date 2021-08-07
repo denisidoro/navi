@@ -12,7 +12,7 @@ use std::io::Write;
 
 pub fn main() -> Result<()> {
     let config = &CONFIG;
-    let opts = FinderOpts::from_config(&config)?;
+    let opts = FinderOpts::from_config(config)?;
     let (raw_selection, variables, files) = config
         .finder()
         .call(opts, |stdin, _| {

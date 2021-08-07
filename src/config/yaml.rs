@@ -93,7 +93,7 @@ pub struct YamlConfig {
 
 impl YamlConfig {
     fn from_str(text: &str) -> Result<Self> {
-        serde_yaml::from_str(&text).map_err(|e| e.into())
+        serde_yaml::from_str(text).map_err(|e| e.into())
     }
 
     fn from_path(path: &Path) -> Result<Self> {

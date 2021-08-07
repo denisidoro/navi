@@ -16,7 +16,7 @@ static VERSION_DISCLAIMER: &str = "The tldr client written in C (the default one
 The client written in Rust is recommended. The one available in npm works, too.";
 
 fn convert_tldr_vars(line: &str) -> String {
-    let caps = VAR_TLDR_REGEX.find_iter(&line);
+    let caps = VAR_TLDR_REGEX.find_iter(line);
     let mut new_line: String = line.to_string();
     for cap in caps {
         let braced_var = cap.as_str();

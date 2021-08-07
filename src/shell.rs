@@ -70,8 +70,8 @@ pub fn widget_last_command() -> Result<()> {
     }
 
     for (pattern, escaped) in replacements.clone() {
-        text = text.replace(&escaped, &pattern);
-        extracted = extracted.replace(&escaped, &pattern);
+        text = text.replace(&escaped, pattern);
+        extracted = extracted.replace(&escaped, pattern);
     }
 
     println!("{}", extracted.trim_start());

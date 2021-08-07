@@ -165,7 +165,7 @@ fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: Variable
 
         let value = if let Ok(e) = env_value {
             e
-        } else if let Some(suggestion) = variables.get_suggestion(&tags, &variable_name) {
+        } else if let Some(suggestion) = variables.get_suggestion(tags, variable_name) {
             let mut new_suggestion = suggestion.clone();
             new_suggestion.0 = replace_variables_from_snippet(&new_suggestion.0, tags, variables.clone())?;
             prompt_finder(variable_name, Some(&new_suggestion), variable_count)?

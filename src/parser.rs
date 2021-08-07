@@ -206,7 +206,7 @@ pub fn read_lines(
                     id
                 )
             })?;
-            variables.insert_suggestion(&item.tags, &variable, (String::from(command), opts));
+            variables.insert_suggestion(&item.tags, variable, (String::from(command), opts));
         }
         // snippet
         else {
