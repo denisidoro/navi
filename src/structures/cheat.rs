@@ -52,7 +52,7 @@ impl VariableMap {
 
         if let Some(dependency_keys) = self.dependencies.get(&k) {
             for dependency_key in dependency_keys {
-                if let Some(vm) = self.variables.get(&dependency_key) {
+                if let Some(vm) = self.variables.get(dependency_key) {
                     let res = vm.get(variable);
                     if res.is_some() {
                         return res;
