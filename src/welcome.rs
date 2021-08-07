@@ -45,17 +45,32 @@ fn add_msg(tags: &str, comment: &str, snippet: &str, stdin: &mut std::process::C
 }
 
 pub fn populate_cheatsheet(stdin: &mut std::process::ChildStdin) {
-    add_msg(
-        "cheatsheets",
-        "Download default cheatsheets",
-        "navi repo add denisidoro/cheats",
-        stdin,
-    );
-    add_msg(
-        "cheatsheets",
-        "Browse for cheatsheet repos",
-        "navi repo browse",
-        stdin,
-    );
-    add_msg("more info", "Read --help message", "navi --help", stdin);
+    let items: Vec<(&str, &str, &str)> = vec![
+        (
+            "cheatsheets",
+            "Download default cheatsheets",
+            "navi repo add denisidoro/cheats",
+        ),
+        ("cheatsheets", "Browse for cheatsheet repos", "navi repo browse"),
+        (
+            "cheatsheet",
+            "Edit main local cheatsheets",
+            r#"f="$(navi info cheats-path)/main.cheat"; [ -f "$f" ] || echo -e "% first cheat\n\n# print something\necho hello world\n" > "$f"; $EDITOR "$f""#,
+        ),
+        (
+            "widget",
+            "Initialize shell widget",
+            r#"eval "$(navi widget $SHELL)""#,
+        ),
+        (
+            "config",
+            "Edit config file",
+            r#"f="$(navi info config-path)"; [ -f "$f" ] || navi info config-example > "$f"; $EDITOR "$f""#,
+        ),
+        ("more info", "Read --help message", "navi --help"),
+    ];
+
+    for (tags, comment, snippet) in items {
+        add_msg(tags, comment, snippet, stdin);
+    }
 }
