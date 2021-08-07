@@ -61,21 +61,21 @@ $ mapped: echo 'false true' | tr ' ' '\n' --- --map "grep -q t && echo 1 || echo
 ```
 
 The supported parameters are:
-- `--column <number>`: extracts a single column from the selected result;
-- `--map <bash_code>` *(experimental)*: applies a map function to the selected variable value;
-- `--prevent-extra` *(experimental)*: limits the user to select one of the suggestions;
-- `--fzf-overrides <arg>` *(experimental)*: applies arbitrary `fzf` overrides;
+- `--column <number>`: extracts a single column from the selected result
+- `--map <bash_code>`: *(experimental)* applies a map function to the selected variable value
+- `--prevent-extra`: *(experimental)* limits the user to select one of the suggestions
+- `--fzf-overrides <arg>`: *(experimental)* applies arbitrary `fzf` overrides
+- `--expand`: *(experimental)* converts each line into a separate argument
 
 In addition, it's possible to forward the following parameters to `fzf`:
-- `--multi`;
-- `--expand` *(experimental)*: converts each line into a separate argument;
-- `--header-lines <number>`;
-- `--delimiter <regex>`;
-- `--query <text>`;
-- `--filter <text>`;
-- `--header <text>`;
-- `--preview <bash_code>`;
-- `--preview-window <text>`.
+- `--multi`
+- `--header-lines <number>`
+- `--delimiter <regex>`
+- `--query <text>`
+- `--filter <text>`
+- `--header <text>`
+- `--preview <bash_code>`
+- `--preview-window <text>`
 
 ### Variable dependency
 
