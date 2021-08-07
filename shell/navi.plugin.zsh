@@ -1,15 +1,7 @@
 #!/usr/bin/env zsh
 
 _navi_call() {
-	 local -r query="$1"
-	 shift
-	 if [ -n "$query" ]; then
-	    set -- "$@" "$query"
-	 fi
     local result="$(navi "$@" </dev/tty)"
-    if [ -z "${result}" ] && [ -n "$query" ]; then
-        result="$(navi --print </dev/tty)"
-    fi
     printf "%s" "$result"
 }
 
@@ -19,17 +11,19 @@ _navi_widget() {
     local find="$last_command"
     local replacement="$last_command"
 
-    if [ -z "${last_command}" ]; then 
-        replacement="$(FZF_OVERRIDES="${FZF_OVERRIDES:-}" _navi_call "" --print)"
-    elif [ "${LASTWIDGET}" = "_navi_widget" ] && [ "$input" = "$previous_output" ]; then
-        find="$input"
-        replacement="$(_navi_call "${previous_last_command:-$last_command}" --print --query)"
+    if [ -z "$last_command" ]; then 
+        replacement="$(_navi_call --print)"
+    elif [ "$LASTWIDGET" = "_navi_widget" ] && [ "$input" = "$previous_output" ]; then
+        replacement="$(_navi_call --print --query "$last_command")"
     else
-        replacement="$(_navi_call "${previous_last_command:-$last_command}" --print --best-match --query)"
+        replacement="$(_navi_call --print --best-match --query "$last_command")"
     fi
 
-    previous_last_command="$last_command"
-    previous_output="${input//$find/$replacement}"
+	 if [ -n "$replacement" ]; then
+       previous_output="${input//$find/$replacement}"
+	 else
+       previous_output="$input"
+	 fi
 
     zle kill-whole-line
     LBUFFER="${previous_output}"
