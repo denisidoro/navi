@@ -5,6 +5,12 @@
 # trivial case -> "foo"
 echo "foo"
 
+# map -> "_foo_"
+echo "<map1>"
+
+# expand -> "foo"
+echo "<expand1>"
+
 # sed with replacement -> "172.17.0.2"
 echo "8.8.8.8 via 172.17.0.1 dev eth0  src 172.17.0.2" | sed -E 's/.*src ([0-9.]+).*/\1/p' | head -n1
 
@@ -44,6 +50,8 @@ $ language: echo '0  rust      rust-lang.org' --- --column 2
 $ language2: echo '1;clojure;clojure.org' --- --column 2 --delimiter ';'
 $ multiword: echo 'foo bar'
 $ pictures_folder: echo "/my/pictures"
+$ map1: echo "foo" --- --map 'echo _$(cat)_'
+$ expand1: echo "foo" --- --expand
 
 # this should be displayed -> "hi"
 echo hi

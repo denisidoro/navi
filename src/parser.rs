@@ -1,4 +1,5 @@
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
+use crate::fs;
 use crate::hash::fnv;
 use crate::structures::cheat::VariableMap;
 use crate::structures::item::Item;
@@ -31,6 +32,10 @@ fn parse_opts(text: &str) -> Result<FinderOpts> {
                 }
                 "--prevent-extra" => {
                     prevent_extra = true;
+                    false
+                }
+                "--expand" => {
+                    opts.map = Some(format!("{} fn map::expand", fs::exe_string()));
                     false
                 }
                 _ => true,

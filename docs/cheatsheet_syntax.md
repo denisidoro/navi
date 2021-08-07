@@ -68,6 +68,7 @@ The supported parameters are:
 
 In addition, it's possible to forward the following parameters to `fzf`:
 - `--multi`;
+- `--expand` *(experimental)*: converts each line into a separate argument;
 - `--header-lines <number>`;
 - `--delimiter <regex>`;
 - `--query <text>`;
@@ -138,5 +139,5 @@ true \
 # This will result into: cat "file1.json" "file2.json"
 cat <jsons>
 
-$ jsons: find . -iname '*.json' -type f -print --- --multi --map "navi fn map::expand"
+$ jsons: find . -iname '*.json' -type f -print --- --multi --expand
 ```
