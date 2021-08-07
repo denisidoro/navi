@@ -32,5 +32,7 @@ cargo clippy || true
 _commit
 log::note "dot code beautify..."
 find scripts -type f | xargs -I% dot code beautify % || true
+dot code beautify "${NAVI_HOME}/shell/navi.plugin.bash" || true
+dot code beautify "${NAVI_HOME}/shell/navi.plugin.zsh" || true
 dot code beautify "${NAVI_HOME}/tests/core.bash" || true
 dot code beautify "${NAVI_HOME}/tests/run" || true
