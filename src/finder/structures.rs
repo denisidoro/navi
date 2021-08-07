@@ -33,7 +33,7 @@ impl Default for Opts {
             column: None,
             delimiter: None,
             map: None,
-            prevent_select1: false,
+            prevent_select1: true,
         }
     }
 }
@@ -63,6 +63,7 @@ impl Opts {
         Self {
             overrides: CONFIG.fzf_overrides_var(),
             suggestion_type: SuggestionType::SingleRecommendation,
+            prevent_select1: false,
             ..Default::default()
         }
     }
