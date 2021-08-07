@@ -1,3 +1,4 @@
+use crate::config::CONFIG;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::hash::fnv;
 use crate::structures::cheat::VariableMap;
@@ -15,7 +16,10 @@ lazy_static! {
 fn parse_opts(text: &str) -> Result<FinderOpts> {
     let mut multi = false;
     let mut prevent_extra = false;
-    let mut opts = FinderOpts::default();
+    let mut opts = FinderOpts {
+        overrides: CONFIG.fzf_overrides_var(),
+        ..Default::default()
+    };
 
     let parts = shellwords::split(text).map_err(|_| anyhow!("Given options are missing a closing quote"))?;
 

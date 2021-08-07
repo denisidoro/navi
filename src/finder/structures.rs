@@ -1,6 +1,5 @@
-use crate::config::Config;
+use crate::config::CONFIG;
 use crate::filesystem;
-use anyhow::Result;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Opts {
@@ -21,7 +20,7 @@ pub struct Opts {
 
 impl Default for Opts {
     fn default() -> Self {
-        Self {
+        let base = Self {
             query: None,
             filter: None,
             preview: None,
@@ -35,6 +34,22 @@ impl Default for Opts {
             delimiter: None,
             map: None,
             select1: true,
+        };
+
+        Self {
+            preview: Some(format!("{} preview {{}}", filesystem::exe_string())),
+            suggestion_type: SuggestionType::SnippetSelection,
+            query: if CONFIG.best_match() {
+                None
+            } else {
+                CONFIG.get_query()
+            },
+            filter: if CONFIG.best_match() {
+                CONFIG.get_query()
+            } else {
+                None
+            },
+            ..base
         }
     }
 }
@@ -51,27 +66,4 @@ pub enum SuggestionType {
     SingleRecommendation,
     /// initial snippet selection
     SnippetSelection,
-}
-
-impl Opts {
-    pub fn from_config(config: &Config) -> Result<Opts> {
-        let opts = Opts {
-            preview: Some(format!("{} preview {{}}", filesystem::exe_string())),
-            overrides: config.fzf_overrides(),
-            suggestion_type: SuggestionType::SnippetSelection,
-            query: if config.best_match() {
-                None
-            } else {
-                config.get_query()
-            },
-            filter: if config.best_match() {
-                config.get_query()
-            } else {
-                None
-            },
-            ..Default::default()
-        };
-
-        Ok(opts)
-    }
 }

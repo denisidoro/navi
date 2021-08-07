@@ -65,16 +65,6 @@ fn prompt_finder(
         ('\n'.to_string(), &None)
     };
 
-    let overrides = {
-        let mut o = CONFIG.fzf_overrides_var();
-        if let Some(io) = initial_opts {
-            if io.overrides.is_some() {
-                o = io.overrides.clone()
-            }
-        }
-        o
-    };
-
     let exe = fs::exe_string();
 
     let subshell_prefix = if CONFIG.shell().contains("fish") { "" } else { "$" };
@@ -108,7 +98,6 @@ fn prompt_finder(
     };
 
     let mut opts = FinderOpts {
-        overrides,
         preview: Some(preview),
         ..initial_opts.clone().unwrap_or_default()
     };
