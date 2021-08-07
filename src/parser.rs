@@ -13,18 +13,23 @@ lazy_static! {
     pub static ref VAR_LINE_REGEX: Regex = Regex::new(r"^\$\s*([^:]+):(.*)").expect("Invalid regex");
 }
 
-fn parse_opts(text: &str) -> Result<FinderOpts> {
-    let mut multi = false;
-    let mut prevent_extra = false;
-
-    let mut opts = FinderOpts {
+pub fn default_opts() -> FinderOpts {
+    FinderOpts {
         overrides: CONFIG.fzf_overrides_var(),
         suggestion_type: SuggestionType::SingleRecommendation,
+        preview: None,
         query: None,
         filter: None,
         prevent_select1: false,
         ..Default::default()
-    };
+    }
+}
+
+fn parse_opts(text: &str) -> Result<FinderOpts> {
+    let mut multi = false;
+    let mut prevent_extra = false;
+
+    let mut opts = default_opts();
 
     let parts = shellwords::split(text).map_err(|_| anyhow!("Given options are missing a closing quote"))?;
 
