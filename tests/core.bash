@@ -41,13 +41,13 @@ test::run() {
 }
 
 test::_escape() {
-	tr '\n' "$NEWLINE_CHAR" | sed -E "s/[\s$(printf "$NEWLINE_CHAR") ]+$//g"
+   tr '\n' "$NEWLINE_CHAR" | sed -E "s/[\s$(printf "$NEWLINE_CHAR") ]+$//g"
 }
 
 test::equals() {
    local -r actual="$(cat)"
    local -r expected="$(echo "${1:-}")"
-	
+
    local -r actual2="$(echo "$actual" | test::_escape)"
    local -r expected2="$(echo "$expected" | test::_escape)"
 
