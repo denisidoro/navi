@@ -67,6 +67,7 @@ where
 #[serde(default)]
 pub struct Cheats {
     pub path: Option<String>,
+    pub paths: Vec<String>,
 }
 
 #[derive(Deserialize)]
@@ -159,7 +160,10 @@ impl Default for Finder {
 
 impl Default for Cheats {
     fn default() -> Self {
-        Self { path: None }
+        Self {
+            path: None,
+            paths: Vec::new(),
+        }
     }
 }
 
