@@ -1,3 +1,5 @@
+export PATH := /usr/local/opt/bash/bin/:$(PATH)
+
 install:
 	scripts/make install
 
@@ -9,3 +11,6 @@ fix:
 
 test:
 	scripts/test
+
+build:
+	cargo build
