@@ -1,8 +1,13 @@
 #!/usr/bin/env zsh
 
 _navi_call() {
+	 local -r query="$1"
+	 shift
+	 if [ -n "$query" ]; then
+	    set -- "$@" "$query"
+	 fi
     local result="$(navi "$@" </dev/tty)"
-    if [ -z "${result}" ]; then
+    if [ -z "${result}" ] && [ -n "$query" ]; then
         result="$(navi --print </dev/tty)"
     fi
     printf "%s" "$result"
@@ -15,12 +20,12 @@ _navi_widget() {
     local replacement="$last_command"
 
     if [ -z "${last_command}" ]; then 
-        replacement="$(FZF_OVERRIDES="${FZF_OVERRIDES:-} --no-select-1" _navi_call --print)"
+        replacement="$(FZF_OVERRIDES="${FZF_OVERRIDES:-}" _navi_call "" --print)"
     elif [ "${LASTWIDGET}" = "_navi_widget" ] && [ "$input" = "$previous_output" ]; then
         find="$input"
-        replacement="$(_navi_call --print --query "${previous_last_command:-$last_command}")"
+        replacement="$(_navi_call "${previous_last_command:-$last_command}" --print --query)"
     else
-        replacement="$(_navi_call --print --best-match --query "${last_command}")"
+        replacement="$(_navi_call "${previous_last_command:-$last_command}" --print --best-match --query)"
     fi
 
     previous_last_command="$last_command"
