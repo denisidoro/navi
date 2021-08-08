@@ -1,0 +1,38 @@
+% cheatsheets
+	 
+# Download default cheatsheets
+navi repo add denisidoro/cheats
+
+# Browse for cheatsheet repos
+navi repo browse
+
+# Edit main local cheatsheets
+f="$(navi info cheats-path)/main.cheat"
+[ -f "$f" ] || navi info cheats-example > "$f"
+$EDITOR "$f"
+
+
+% config
+
+# Edit config file
+f="$(navi info config-path)"
+[ -f "$f" ] || navi info config-example > "$f"
+$EDITOR "$f"
+
+
+% 3rd-party
+
+# Search using tldr
+navi --tldr "<query>"
+
+# Search using cheatsh
+navi --cheatsh "<query>"
+
+
+% help
+
+# Read command-line help text
+navi --help
+
+# Read project README.md
+navi fn url::open "https://github.com/denisidoro/navi"

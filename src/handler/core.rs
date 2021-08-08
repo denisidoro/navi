@@ -33,7 +33,7 @@ pub fn main() -> Result<()> {
             if let Some(variables) = res {
                 Ok(Some(variables))
             } else {
-                welcome::populate_cheatsheet(stdin);
+                welcome::populate_cheatsheet(stdin)?;
                 Ok(Some(VariableMap::new()))
             }
         })
