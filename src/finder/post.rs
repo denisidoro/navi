@@ -1,3 +1,4 @@
+use crate::config::CONFIG;
 use crate::finder::structures::SuggestionType;
 use crate::shell;
 use anyhow::Context;
@@ -7,21 +8,30 @@ use std::process::Stdio;
 
 fn apply_map(text: String, map_fn: Option<String>) -> Result<String> {
     if let Some(m) = map_fn {
-        let cmd = format!(
-            r#"
+        let cmd = if CONFIG.shell().contains("fish") {
+            format!(r#"printf "%s" "{text}" | {m}"#, m = m, text = text)
+        } else {
+            format!(
+                r#"_navi_input() {{
+cat <<'{eof}'
+{text}
+{eof}
+}}
+
 _navi_map_fn() {{
   {m}
 }}
-                
-read -r -d '' _navi_input <<'{eof}'
-{text}
-{eof}
 
-echo "$_navi_input" | _navi_map_fn"#,
-            m = m,
-            text = text,
-            eof = EOF
-        );
+_navi_nonewline() {{
+  printf "%s" "$(cat)"
+}}
+
+_navi_input | _navi_map_fn | _navi_nonewline"#,
+                m = m,
+                text = text,
+                eof = EOF
+            )
+        };
 
         let output = shell::out()
             .arg(cmd.as_str())
