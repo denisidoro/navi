@@ -88,6 +88,7 @@ Customization
 -------------
 
 You can:
+- [setup your own config file](docs/config_file.md)
 - [change colors](docs/customization.md#changing-colors)
 - [resize columns](docs/customization.md#resizing-columns)
 - [change how search is performed](docs/customization.md#overriding-fzf-options)

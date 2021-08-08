@@ -11,7 +11,7 @@ use std::str::FromStr;
 const FINDER_POSSIBLE_VALUES: &[&str] = &["fzf", "skim"];
 const WIDGET_POSSIBLE_VALUES: &[&str] = &["bash", "zsh", "fish"];
 const FUNC_POSSIBLE_VALUES: &[&str] = &["url::open", "welcome", "widget::last_command", "map::expand"];
-const INFO_POSSIBLE_VALUES: &[&str] = &["cheats-path", "config-path", "config-example"];
+const INFO_POSSIBLE_VALUES: &[&str] = &["cheats-example", "cheats-path", "config-path", "config-example"];
 
 impl FromStr for Shell {
     type Err = &'static str;
@@ -45,6 +45,7 @@ impl FromStr for Info {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
+            "cheats-example" => Ok(Info::CheatsExample),
             "cheats-path" => Ok(Info::CheatsPath),
             "config-example" => Ok(Info::ConfigExample),
             "config-path" => Ok(Info::ConfigPath),
@@ -62,13 +63,7 @@ MORE ENVIRONMENT VARIABLES:
     NAVI_CONFIG_YAML       # config file content
 
 CONFIG FILE:
-    By default it's located in:
-       navi info config-path
-
-    You can generate a config file by running:
-       navi info config-example > "$(navi info config-path)"
-     
-    Please check the generated config file for more info
+    Please check the online documentation or run `navi fn welcome` to setup the file
 
 FEATURE STABILITY:
     experimental           # may be removed or changed at any time
@@ -76,6 +71,7 @@ FEATURE STABILITY:
 
 EXAMPLES:
     navi                                         # default behavior
+    navi fn welcome                              # show cheatsheets for navi itself
     navi --print                                 # doesn't execute the snippet
     navi --tldr docker                           # search for docker cheatsheets using tldr
     navi --cheatsh docker                        # search for docker cheatsheets using cheatsh

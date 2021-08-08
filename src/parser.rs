@@ -115,7 +115,7 @@ fn write_cmd(
     denylist: Option<&Vec<String>>,
     visited_lines: &mut HashSet<u64>,
 ) -> Result<()> {
-    if item.snippet.len() <= 1 {
+    if item.comment.is_empty() || item.snippet.trim().is_empty() {
         return Ok(());
     }
 
@@ -212,7 +212,7 @@ pub fn read_lines(
             item.comment = without_prefix(&line);
         }
         // variable
-        else if line.starts_with('$') {
+        else if line.starts_with('$') && line.contains(':') {
             should_break = write_cmd(&item, stdin, allowlist, denylist, visited_lines).is_err();
             item.snippet = String::from("");
             let (variable, command, opts) = parse_variable_line(&line).with_context(|| {
