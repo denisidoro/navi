@@ -12,7 +12,7 @@ An example config can be found by running:
 navi info config-example
 ```
 
-You can also read it online by clicking [here](docs/config_file_example.yaml).
+You can also read it online by clicking [here](./config_file_example.yaml).
 
 ### Location
 
