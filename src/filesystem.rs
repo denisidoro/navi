@@ -67,19 +67,20 @@ fn without_first(string: &str) -> String {
         .to_string()
 }
 
-fn interpolate_paths(paths: String) -> Result<String> {
+fn interpolate_paths(paths: String) -> String {
     let re = Regex::new(r#"\$\{?[a-zA-Z_][a-zA-Z_0-9]*"#).unwrap();
     let mut newtext = paths.to_string();
     for capture in re.captures_iter(&paths) {
         if let Some(c) = capture.get(0) {
             let varname = c.as_str().replace("$", "").replace("{", "").replace("}", "");
-            let replacement = &env_var::get(&varname)?;
-            newtext = newtext
-                .replace(&format!("${}", varname), replacement)
-                .replace(&format!("${{{}}}", varname), replacement);
+            if let Ok(replacement) = &env_var::get(&varname) {
+                newtext = newtext
+                    .replace(&format!("${}", varname), replacement)
+                    .replace(&format!("${{{}}}", varname), replacement);
+            }
         }
     }
-    Ok(newtext)
+    newtext
 }
 
 fn gen_lists(tag_rules: Option<String>) -> (Option<Vec<String>>, Option<Vec<String>>) {
@@ -142,7 +143,7 @@ impl fetcher::Fetcher for Fetcher {
         };
 
         let paths = paths.expect("Unable to get paths");
-        let interpolated_paths = interpolate_paths(paths)?;
+        let interpolated_paths = interpolate_paths(paths);
         let folders = paths_from_path_param(&interpolated_paths);
 
         let home_regex = Regex::new(r"^~").unwrap();
