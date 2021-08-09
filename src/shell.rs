@@ -46,13 +46,13 @@ pub fn widget_last_command() -> Result<()> {
     let mut text = String::new();
     io::stdin().read_to_string(&mut text)?;
 
-    let replacements = vec![("|", "ඛ"), ("||", "ග"), ("&&", "ඝ")];
+    let replacements = vec![("||", "ග"), ("|", "ඛ"), ("&&", "ඝ")];
 
     let parts = shellwords::split(&text).unwrap_or_else(|_| text.split('|').map(|s| s.to_string()).collect());
 
     for p in parts {
         for (pattern, escaped) in replacements.clone() {
-            if p.contains(pattern) && p != pattern {
+            if p.contains(pattern) && p != pattern && p != format!("{}{}", pattern, pattern) {
                 let replacement = p.replace(pattern, escaped);
                 text = text.replace(&p, &replacement);
             }
@@ -60,6 +60,7 @@ pub fn widget_last_command() -> Result<()> {
     }
 
     let mut extracted = text.clone();
+
     for (pattern, _) in replacements.clone() {
         let mut new_parts = text.rsplit(pattern);
         if let Some(extracted_attempt) = new_parts.next() {
