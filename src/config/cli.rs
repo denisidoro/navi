@@ -55,39 +55,39 @@ impl FromStr for Info {
 }
 
 #[derive(Debug, Clap)]
-#[clap(after_help = r#"MORE INFO:
-    Please refer to https://github.com/denisidoro/navi
+#[clap(after_help = "\x1b[0;33mMORE INFO:\x1b[0;0m
+    Please refer to \x1b[0;32mhttps://github.com/denisidoro/navi\x1b[0;0m
 
-MORE ENVIRONMENT VARIABLES:
-    NAVI_CONFIG            # path to config file
-    NAVI_CONFIG_YAML       # config file content
+\x1b[0;33mENVIRONMENT VARIABLES:\x1b[0m
+    \x1b[0;32mNAVI_CONFIG\x1b[0;0m            # path to config file
+    \x1b[0;32mNAVI_CONFIG_YAML\x1b[0;0m       # config file content
 
-CONFIG FILE:
-    Please check the online documentation or run `navi fn welcome` to setup the file
+\x1b[0;33mFEATURE STABILITY:\x1b[0m
+    \x1b[0;32mexperimental\x1b[0;0m           # may be removed or changed at any time
+    \x1b[0;32mdeprecated\x1b[0;0m             # may be removed in 3 months after first being deprecated
 
-FEATURE STABILITY:
-    experimental           # may be removed or changed at any time
-    deprecated             # may be removed in 3 months after first being deprecated
+\x1b[0;33mCOMMON NAVI COMMANDS:\x1b[0m
+    Run \x1b[0;32mnavi fn welcome\x1b[0;0m to browse the cheatsheet for navi itself
 
-EXAMPLES:
+\x1b[0;33mEXAMPLES:\x1b[0m
     navi                                         # default behavior
     navi fn welcome                              # show cheatsheets for navi itself
     navi --print                                 # doesn't execute the snippet
     navi --tldr docker                           # search for docker cheatsheets using tldr
     navi --cheatsh docker                        # search for docker cheatsheets using cheatsh
     navi --path '/some/dir:/other/dir'           # use .cheat files from custom paths
-    navi --query git                             # filter results by "git"
+    navi --query git                             # filter results by \"git\"
     navi --query 'create db' --best-match        # autoselect the snippet that best matches a query
     db=my navi --query 'create db' --best-match  # same, but set the value for the <name> variable
     navi repo add denisidoro/cheats              # import cheats from a git repository
-    eval "$(navi widget zsh)"                    # load the zsh widget
+    eval \"$(navi widget zsh)\"                    # load the zsh widget
     navi --finder 'skim'                         # set skim as finder, instead of fzf
     navi --fzf-overrides '--with-nth 1,2'        # show only the comment and tag columns
     navi --fzf-overrides '--no-select-1'         # prevent autoselection in case of single line
     navi --fzf-overrides-var '--no-select-1'     # same, but for variable selection
     navi --fzf-overrides '--nth 1,2'             # only consider the first two columns for search
     navi --fzf-overrides '--no-exact'            # use looser search algorithm
-    navi --tag-rules='git,!checkout'             # show non-checkout git snippets only"#)]
+    navi --tag-rules='git,!checkout'             # show non-checkout git snippets only")]
 #[clap(setting = AppSettings::ColorAuto)]
 #[clap(setting = AppSettings::ColoredHelp)]
 #[clap(setting = AppSettings::AllowLeadingHyphen)]
@@ -105,7 +105,7 @@ pub(super) struct ClapConfig {
     #[clap(long)]
     pub best_match: bool,
 
-    /// Search for cheatsheets using the tldr-pages repository
+    /// Searches for cheatsheets using the tldr-pages repository
     #[clap(long)]
     pub tldr: Option<String>,
 
@@ -113,11 +113,11 @@ pub(super) struct ClapConfig {
     #[clap(long)]
     pub tag_rules: Option<String>,
 
-    /// Search for cheatsheets using the cheat.sh repository
+    /// Searches for cheatsheets using the cheat.sh repository
     #[clap(long)]
     pub cheatsh: Option<String>,
 
-    /// Query
+    /// Prepopulates the search field
     #[clap(short, long)]
     pub query: Option<String>,
 
@@ -144,8 +144,12 @@ impl ClapConfig {
 }
 
 #[derive(Debug, Clap)]
+#[clap(setting = AppSettings::ColorAuto)]
+#[clap(setting = AppSettings::ColoredHelp)]
 pub enum Command {
-    /// [Experimental] Performs ad-hoc, internal functions provided by navi
+    /// [Experimental] Calls internal functions
+    #[clap(setting = AppSettings::ColorAuto)]
+    #[clap(setting = AppSettings::ColoredHelp)]
     Fn {
         /// Function name (example: "url::open")
         #[clap(possible_values = FUNC_POSSIBLE_VALUES, case_insensitive = true)]
@@ -154,18 +158,24 @@ pub enum Command {
         args: Vec<String>,
     },
     /// Manages cheatsheet repositories
+    #[clap(setting = AppSettings::ColorAuto)]
+    #[clap(setting = AppSettings::ColoredHelp)]
     Repo {
         #[clap(subcommand)]
         cmd: RepoCommand,
     },
     /// Used for fzf's preview window when selecting snippets
     #[clap(setting = AppSettings::Hidden)]
+    #[clap(setting = AppSettings::ColorAuto)]
+    #[clap(setting = AppSettings::ColoredHelp)]
     Preview {
         /// Selection line
         line: String,
     },
     /// Used for fzf's preview window when selecting variable suggestions
     #[clap(setting = AppSettings::Hidden)]
+    #[clap(setting = AppSettings::ColorAuto)]
+    #[clap(setting = AppSettings::ColoredHelp)]
     PreviewVar {
         /// Selection line
         selection: String,
@@ -176,13 +186,19 @@ pub enum Command {
     },
     /// Used for fzf's preview window when selecting variable suggestions
     #[clap(setting = AppSettings::Hidden)]
+    #[clap(setting = AppSettings::ColorAuto)]
+    #[clap(setting = AppSettings::ColoredHelp)]
     PreviewVarStdin,
     /// Outputs shell widget source code
+    #[clap(setting = AppSettings::ColorAuto)]
+    #[clap(setting = AppSettings::ColoredHelp)]
     Widget {
         #[clap(possible_values = WIDGET_POSSIBLE_VALUES, case_insensitive = true, default_value = "bash")]
         shell: Shell,
     },
     /// Shows info
+    #[clap(setting = AppSettings::ColorAuto)]
+    #[clap(setting = AppSettings::ColoredHelp)]
     Info {
         #[clap(possible_values = INFO_POSSIBLE_VALUES, case_insensitive = true)]
         info: Info,
@@ -190,6 +206,8 @@ pub enum Command {
 }
 
 #[derive(Debug, Clap)]
+#[clap(setting = AppSettings::ColorAuto)]
+#[clap(setting = AppSettings::ColoredHelp)]
 pub enum RepoCommand {
     /// Imports cheatsheets from a repo
     Add {
