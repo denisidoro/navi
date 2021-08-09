@@ -8,7 +8,6 @@ _navi_call() {
 _navi_widget() {
    local -r input="${LBUFFER}"
    local -r last_command="$(echo "${input}" | navi fn widget::last_command)"
-   local find="$last_command"
    local replacement="$last_command"
 
    if [ -z "$last_command" ]; then
@@ -20,7 +19,9 @@ _navi_widget() {
    fi
 
    if [ -n "$replacement" ]; then
-      previous_output="${input//$find/$replacement}"
+      local -r find="${last_command}_NAVIEND"
+      previous_output="${input}_NAVIEND"
+      previous_output="${previous_output//$find/$replacement}"
    else
       previous_output="$input"
    fi

@@ -29,6 +29,12 @@ navi --tldr "<query>"
 navi --cheatsh "<query>"
 
 
+% widget
+
+# Load shell widget
+shell="$(basename $SHELL)"; eval "$(navi widget $shell)"
+
+
 % help
 
 # Read command-line help text

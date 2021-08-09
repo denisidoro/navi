@@ -12,11 +12,12 @@ _navi_widget() {
    if [ -z "${last_command}" ]; then
       local -r output="$(_navi_call --print)"
    else
-      local -r find="$last_command"
+      local -r find="${last_command}_NAVIEND"
       local -r replacement="$(_navi_call --print --query "$last_command")"
       local output="$input"
       if [ -n "$replacement" ]; then
-         output="${input//$find/$replacement}"
+         output="${input}_NAVIEND"
+         output="${output//$find/$replacement}"
       fi
    fi
 
