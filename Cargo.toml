@@ -16,7 +16,7 @@ travis-ci = { repository = "denisidoro/navi", branch = "master" }
 
 [dependencies]
 regex = { version = "1.5.4", default-features = false, features = ["std", "unicode-perl"] }
-clap = "3.0.0-beta.2"
+clap = "3.0.0-beta.4"
 crossterm = "0.20.0"
 lazy_static = "1.4.0"
 directories-next = "2.0.0"
