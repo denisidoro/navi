@@ -12,6 +12,7 @@ pub enum Shell {
     Bash,
     Zsh,
     Fish,
+    Elvish,
 }
 
 #[derive(Error, Debug)]
