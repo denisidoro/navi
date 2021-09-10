@@ -85,6 +85,9 @@ eval "$(navi widget zsh)"
 
 # fish
 navi widget fish | source
+
+# elvish
+eval (navi widget elvish | slurp)
 ```
 
 By default, `Ctrl+G` is assigned to launching **navi**.

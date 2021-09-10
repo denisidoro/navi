@@ -6,6 +6,7 @@ pub fn main(shell: &Shell) -> Result<()> {
         Shell::Bash => include_str!("../../shell/navi.plugin.bash"),
         Shell::Zsh => include_str!("../../shell/navi.plugin.zsh"),
         Shell::Fish => include_str!("../../shell/navi.plugin.fish"),
+        Shell::Elvish => include_str!("../../shell/navi.plugin.elv"),
     };
 
     println!("{}", content);

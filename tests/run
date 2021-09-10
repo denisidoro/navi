@@ -158,6 +158,7 @@ test::set_suite "widget"
 test::run "bash" _navi_widget "bash"
 test::run "zsh" _navi_widget "zsh"
 test::run "zsh" _navi_widget "fish"
+test::run "elvish" _navi_widget "elvish"
 
 test::set_suite "3rd party"
 test::run "tldr" _navi_tldr
