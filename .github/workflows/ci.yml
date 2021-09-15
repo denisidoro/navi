@@ -51,6 +51,9 @@ jobs:
 
       - name: Install fzf
         run: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; yes | ~/.fzf/install;
+        
+      - name: Install elvish
+        run: sudo apt-get install elvish || sudo apt install elvish || brew install elvish
 
       - name: Install tmux
         run: sudo apt-get install tmux || sudo apt install tmux || brew install tmux
