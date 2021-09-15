@@ -8,123 +8,123 @@ export TEST_CHEAT_PATH="${NAVI_HOME}/tests/no_prompt_cheats"
 export NAVI_EXE="${NAVI_HOME}/target/debug/navi"
 
 if ! command_exists navi; then
-   navi() {
-      "$NAVI_EXE" "$@"
-   }
-   export -f navi
+    navi() {
+        "$NAVI_EXE" "$@"
+    }
+    export -f navi
 fi
 
 _navi() {
-   stty sane || true
-   local path="${NAVI_TEST_PATH:-$TEST_CHEAT_PATH}"
-   path="${path//$HOME/~}"
-   export NAVI_ENV_VAR_PATH="$path"
-   RUST_BACKTRACE=1 NAVI_PATH='$NAVI_ENV_VAR_PATH' "$NAVI_EXE" "$@"
+    stty sane || true
+    local path="${NAVI_TEST_PATH:-$TEST_CHEAT_PATH}"
+    path="${path//$HOME/~}"
+    export NAVI_ENV_VAR_PATH="$path"
+    RUST_BACKTRACE=1 NAVI_PATH='$NAVI_ENV_VAR_PATH' "$NAVI_EXE" "$@"
 }
 
 _navi_cases() {
-   local -r filter="${1::-2}"
-   _navi --query "$filter" --best-match
+    local -r filter="${1::-2}"
+    _navi --query "$filter" --best-match
 }
 
 _navi_cases_test() {
-   _navi_cases "$1" \
-      | test::equals "$2"
+    _navi_cases "$1" \
+    | test::equals "$2"
 }
 
 _get_all_tests() {
-   cat "${TEST_CHEAT_PATH}/cases.cheat" \
-      | grep '^#' \
-      | grep ' ->' \
-      | sed 's/\\n/'"$(printf "$NEWLINE_CHAR")"'/g' \
-      | sed -E 's/# (.*) -> "(.*)"/\1|\2/g'
+    cat "${TEST_CHEAT_PATH}/cases.cheat" \
+    | grep '^#' \
+    | grep ' ->' \
+    | sed 's/\\n/'"$(printf "$NEWLINE_CHAR")"'/g' \
+    | sed -E 's/# (.*) -> "(.*)"/\1|\2/g'
 }
 
 _get_tests() {
-   local -r filter="$1"
-
-   if [ -n "$filter" ]; then
-      _get_all_tests \
-         | grep "$filter"
-   else
-      _get_all_tests
-   fi
+    local -r filter="$1"
+    
+    if [ -n "$filter" ]; then
+        _get_all_tests \
+        | grep "$filter"
+    else
+        _get_all_tests
+    fi
 }
 
 _navi_tldr() {
-   _navi --tldr docker --query ps --print --best-match \
-      | test::equals "docker ps"
+    _navi --tldr docker --query ps --print --best-match \
+    | test::equals "docker ps"
 }
 
 _navi_cheatsh() {
-   _navi --cheatsh docker --query remove --print --best-match \
-      | test::equals "docker rm container_name"
+    _navi --cheatsh docker --query remove --print --best-match \
+    | test::equals "docker rm container_name"
 }
 
 _navi_widget() {
-   echo "$(_navi widget "$1")" \
-      | grep -q "#!/usr/bin/env $1"
+    echo "$(_navi widget "$1")" \
+    | grep -q "#!/usr/bin/env $1"
 }
 
 _navi_cheatspath() {
-   _navi info cheats-path \
-      | grep -q "/cheats"
+    _navi info cheats-path \
+    | grep -q "/cheats"
 }
 
 _kill_tmux() {
-   pkill -f tmux 2>/dev/null || true
+    pkill -f tmux 2>/dev/null || true
 }
 
 _assert_tmux() {
-   local -r log_file="$1"
-   local -r sessions="$(tmux list-sessions)"
-   if [ -z "$sessions" ]; then
-      _kill_tmux
-      cat "$log_file"
-      return 1
-   fi
+    local -r log_file="$1"
+    local -r sessions="$(tmux list-sessions)"
+    if [ -z "$sessions" ]; then
+        _kill_tmux
+        cat "$log_file"
+        return 1
+    fi
 }
 
 _integration() {
-   _kill_tmux
-   local -r log_file="${NAVI_HOME}/target/ci.log"
-   local -r cheats_path="$($NAVI_EXE info cheats-path)"
-   rm -rf "$cheats_path" 2>/dev/null || true
-   mkdir -p "$cheats_path" 2>/dev/null || true
-   local -r bak_cheats_path="$(mktemp -d "${cheats_path}_XXXXX")"
-   rm "$log_file" 2>/dev/null || true
-   mv "$cheats_path" "$bak_cheats_path" 2>/dev/null || true
-
-   log::note "Starting sessions..."
-   tmux new-session -d -s ci "export NAVI_TEST_PATH='${cheats_path}'; ${NAVI_HOME}/tests/run _navi |& tee '${log_file}'"
-   sleep 5
-   _assert_tmux "$log_file"
-
-   log::note "Downloading default cheatsheets..."
-   tmux send-key -t ci "download default"; tmux send-key -t ci "Enter"
-   sleep 1
-   _assert_tmux "$log_file"
-
-   log::note "Confirming import..."
-   tmux send-key -t ci "y"
-   sleep 1
-   tmux send-key -t ci "Enter"
-   sleep 6
-   _assert_tmux "$log_file"
-
-   log::note "Running snippet..."
-   tmux send-key -t ci "pwd"
-   sleep 1
-   tmux send-key -t ci "Enter"
-
-   log::note "Checking paths..."
-   sleep 2
-   local -r downloaded_path="$(cat "$log_file" | grep 'They are now located at' | sed 's/They are now located at //')"
-   ls "$downloaded_path" | grep -q '^pkg_mgr__brew.cheat$'
+    _kill_tmux
+    local -r log_file="${NAVI_HOME}/target/ci.log"
+    local -r cheats_path="$($NAVI_EXE info cheats-path)"
+    rm -rf "$cheats_path" 2>/dev/null || true
+    mkdir -p "$cheats_path" 2>/dev/null || true
+    local -r bak_cheats_path="$(mktemp -d "${cheats_path}_XXXXX")"
+    rm "$log_file" 2>/dev/null || true
+    mv "$cheats_path" "$bak_cheats_path" 2>/dev/null || true
+    
+    log::note "Starting sessions..."
+    tmux new-session -d -s ci "export NAVI_TEST_PATH='${cheats_path}'; ${NAVI_HOME}/tests/run _navi |& tee '${log_file}'"
+    sleep 5
+    _assert_tmux "$log_file"
+    
+    log::note "Downloading default cheatsheets..."
+    tmux send-key -t ci "download default"; tmux send-key -t ci "Enter"
+    sleep 1
+    _assert_tmux "$log_file"
+    
+    log::note "Confirming import..."
+    tmux send-key -t ci "y"
+    sleep 1
+    tmux send-key -t ci "Enter"
+    sleep 6
+    _assert_tmux "$log_file"
+    
+    log::note "Running snippet..."
+    tmux send-key -t ci "pwd"
+    sleep 1
+    tmux send-key -t ci "Enter"
+    
+    log::note "Checking paths..."
+    sleep 2
+    local -r downloaded_path="$(cat "$log_file" | grep 'They are now located at' | sed 's/They are now located at //')"
+    ls "$downloaded_path" | grep -q '^pkg_mgr__brew.cheat$'
 }
 
 if ! command_exists fzf; then
-   export PATH="$PATH:$HOME/.fzf/bin"
+    export PATH="$PATH:$HOME/.fzf/bin"
 fi
 
 cd "$NAVI_HOME"
@@ -133,19 +133,19 @@ filter="${1:-}"
 
 # TODO: remove this
 if [[ $filter == "_navi" ]]; then
-   shift
-   _navi "$@"
-   exit 0
+    shift
+    _navi "$@"
+    exit 0
 fi
 
 test::set_suite "cases"
 ifs="$IFS"
 IFS=$'\n'
 for i in $(_get_tests "$filter"); do
-   IFS="$ifs"
-   query="$(echo "$i" | cut -d'|' -f1)"
-   expected="$(echo "$i" | tr "$NEWLINE_CHAR" '\n' | cut -d'|' -f2)"
-   test::run "$query" _navi_cases_test "$query" "$expected"
+    IFS="$ifs"
+    query="$(echo "$i" | cut -d'|' -f1)"
+    expected="$(echo "$i" | tr "$NEWLINE_CHAR" '\n' | cut -d'|' -f2)"
+    test::run "$query" _navi_cases_test "$query" "$expected"
 done
 
 test::set_suite "info"
@@ -157,7 +157,7 @@ test::run "welcome->pwd" _integration
 test::set_suite "widget"
 test::run "bash" _navi_widget "bash"
 test::run "zsh" _navi_widget "zsh"
-test::run "zsh" _navi_widget "fish"
+test::run "fish" _navi_widget "fish"
 test::run "elvish" _navi_widget "elvish"
 
 test::set_suite "3rd party"
