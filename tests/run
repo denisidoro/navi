@@ -62,8 +62,11 @@ _navi_cheatsh() {
 }
 
 _navi_widget() {
-   echo "$(_navi widget "$1")" \
-      | grep -q "#!/usr/bin/env $1"
+   local -r out="$(_navi widget "$1")"
+   if ! echo "$out" | grep -q "navi "; then
+      echo "$out"
+      return 1
+   fi
 }
 
 _navi_cheatspath() {
@@ -151,17 +154,17 @@ done
 test::set_suite "info"
 test::run "cheats_path" _navi_cheatspath
 
-test::set_suite "integration"
-test::run "welcome->pwd" _integration
-
 test::set_suite "widget"
 test::run "bash" _navi_widget "bash"
 test::run "zsh" _navi_widget "zsh"
-test::run "zsh" _navi_widget "fish"
+test::run "fish" _navi_widget "fish"
 test::run "elvish" _navi_widget "elvish"
 
 test::set_suite "3rd party"
 test::run "tldr" _navi_tldr
 test::run "cheatsh" _navi_cheatsh
+
+test::set_suite "integration"
+test::run "welcome->pwd" _integration
 
 test::finish

@@ -49,11 +49,25 @@ jobs:
         with:
           command: test
 
+      - name: Install deps
+        run: |
+           _install() { 
+              if command -v "$1"; then 
+                 return 0; 
+              fi
+              sudo apt-get install "$1" || sudo apt install "$1" || brew install "$1"
+           }; 
+           
+           _install_many() { 
+              for dep in $@; do 
+                 _install "$dep"
+              done
+           }  
+           
+           _install_many git bash npm tmux
+
       - name: Install fzf
         run: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; yes | ~/.fzf/install;
-
-      - name: Install tmux
-        run: sudo apt-get install tmux || sudo apt install tmux || brew install tmux
 
       - name: Install tealdeer
         run: sudo npm install -g tldr
