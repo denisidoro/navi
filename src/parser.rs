@@ -175,6 +175,8 @@ pub fn read_lines(
 
     let mut should_break = false;
 
+    let mut variable_cmd = String::from("");
+
     for (line_nr, line_result) in lines.enumerate() {
         let line = line_result
             .with_context(|| format!("Failed to read line number {} in cheatsheet `{}`", line_nr, id))?;
@@ -212,17 +214,26 @@ pub fn read_lines(
             item.comment = without_prefix(&line);
         }
         // variable
-        else if line.starts_with('$') && line.contains(':') {
+        else if !variable_cmd.is_empty() || (line.starts_with('$') && line.contains(':')) {
             should_break = write_cmd(&item, stdin, allowlist, denylist, visited_lines).is_err();
+
             item.snippet = String::from("");
-            let (variable, command, opts) = parse_variable_line(&line).with_context(|| {
-                format!(
-                    "Failed to parse variable line. See line number {} in cheatsheet `{}`",
-                    line_nr + 1,
-                    id
-                )
-            })?;
-            variables.insert_suggestion(&item.tags, variable, (String::from(command), opts));
+
+            variable_cmd.push_str(line.trim_end_matches('\\'));
+
+            if !line.ends_with('\\') {
+                let full_variable_cmd = variable_cmd.clone();
+                let (variable, command, opts) =
+                    parse_variable_line(&full_variable_cmd).with_context(|| {
+                        format!(
+                            "Failed to parse variable line. See line number {} in cheatsheet `{}`",
+                            line_nr + 1,
+                            id
+                        )
+                    })?;
+                variable_cmd = String::from("");
+                variables.insert_suggestion(&item.tags, variable, (String::from(command), opts));
+            }
         }
         // snippet
         else {
