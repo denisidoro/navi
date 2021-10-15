@@ -58,6 +58,9 @@ echo "foo" \
     && echo "match" \
     || echo "no match"
 
+# multiline variable -> "foo bar"
+echo "<multilinevar>"
+
 $ x: echo '2'
 $ x2: echo "$((x+10))"
 $ y: echo 'a'
@@ -66,7 +69,11 @@ $ language2: echo '1;clojure;clojure.org' --- --column 2 --delimiter ';'
 $ multiword: echo 'foo bar'
 $ pictures_folder: echo "/my/pictures"
 $ map1: echo "foo" --- --map 'echo _$(cat)_'
+$ multilinevar: echo "xoo yar" \
+   | tr 'x' 'f' \
+   | tr 'y' 'b'
 $ expand1: echo "foo" --- --expand
+
 
 # this should be displayed -> "hi"
 echo hi
