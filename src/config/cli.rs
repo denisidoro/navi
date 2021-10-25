@@ -4,7 +4,7 @@ use crate::handler::func::Func;
 use crate::handler::info::Info;
 use crate::shell::Shell;
 
-use clap::{crate_version, AppSettings, Clap};
+use clap::{crate_version, AppSettings, Parser, Subcommand};
 
 use std::str::FromStr;
 
@@ -55,7 +55,7 @@ impl FromStr for Info {
     }
 }
 
-#[derive(Debug, Clap)]
+#[derive(Debug, Parser)]
 #[clap(after_help = "\x1b[0;33mMORE INFO:\x1b[0;0m
     Please refer to \x1b[0;32mhttps://github.com/denisidoro/navi\x1b[0;0m
 
@@ -89,8 +89,6 @@ impl FromStr for Info {
     navi --fzf-overrides '--nth 1,2'             # only consider the first two columns for search
     navi --fzf-overrides '--no-exact'            # use looser search algorithm
     navi --tag-rules='git,!checkout'             # show non-checkout git snippets only")]
-#[clap(setting = AppSettings::ColorAuto)]
-#[clap(setting = AppSettings::ColoredHelp)]
 #[clap(setting = AppSettings::AllowLeadingHyphen)]
 #[clap(version = crate_version!())]
 pub(super) struct ClapConfig {
@@ -144,13 +142,9 @@ impl ClapConfig {
     }
 }
 
-#[derive(Debug, Clap)]
-#[clap(setting = AppSettings::ColorAuto)]
-#[clap(setting = AppSettings::ColoredHelp)]
+#[derive(Debug, Parser)]
 pub enum Command {
     /// [Experimental] Calls internal functions
-    #[clap(setting = AppSettings::ColorAuto)]
-    #[clap(setting = AppSettings::ColoredHelp)]
     Fn {
         /// Function name (example: "url::open")
         #[clap(possible_values = FUNC_POSSIBLE_VALUES, case_insensitive = true)]
@@ -159,24 +153,18 @@ pub enum Command {
         args: Vec<String>,
     },
     /// Manages cheatsheet repositories
-    #[clap(setting = AppSettings::ColorAuto)]
-    #[clap(setting = AppSettings::ColoredHelp)]
     Repo {
         #[clap(subcommand)]
         cmd: RepoCommand,
     },
     /// Used for fzf's preview window when selecting snippets
     #[clap(setting = AppSettings::Hidden)]
-    #[clap(setting = AppSettings::ColorAuto)]
-    #[clap(setting = AppSettings::ColoredHelp)]
     Preview {
         /// Selection line
         line: String,
     },
     /// Used for fzf's preview window when selecting variable suggestions
     #[clap(setting = AppSettings::Hidden)]
-    #[clap(setting = AppSettings::ColorAuto)]
-    #[clap(setting = AppSettings::ColoredHelp)]
     PreviewVar {
         /// Selection line
         selection: String,
@@ -187,28 +175,20 @@ pub enum Command {
     },
     /// Used for fzf's preview window when selecting variable suggestions
     #[clap(setting = AppSettings::Hidden)]
-    #[clap(setting = AppSettings::ColorAuto)]
-    #[clap(setting = AppSettings::ColoredHelp)]
     PreviewVarStdin,
     /// Outputs shell widget source code
-    #[clap(setting = AppSettings::ColorAuto)]
-    #[clap(setting = AppSettings::ColoredHelp)]
     Widget {
         #[clap(possible_values = WIDGET_POSSIBLE_VALUES, case_insensitive = true, default_value = "bash")]
         shell: Shell,
     },
     /// Shows info
-    #[clap(setting = AppSettings::ColorAuto)]
-    #[clap(setting = AppSettings::ColoredHelp)]
     Info {
         #[clap(possible_values = INFO_POSSIBLE_VALUES, case_insensitive = true)]
         info: Info,
     },
 }
 
-#[derive(Debug, Clap)]
-#[clap(setting = AppSettings::ColorAuto)]
-#[clap(setting = AppSettings::ColoredHelp)]
+#[derive(Debug, Subcommand)]
 pub enum RepoCommand {
     /// Imports cheatsheets from a repo
     Add {
