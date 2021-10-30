@@ -11,9 +11,6 @@ keywords = ["cheatsheets", "terminal", "cli", "tui", "shell"]
 categories = ["command-line-utilities"]
 license = "Apache-2.0"
 
-[toolchain]
-channel = "1.56.0"
-
 [badges]
 travis-ci = { repository = "denisidoro/navi", branch = "master" }
 
