@@ -217,28 +217,28 @@ mod tests {
     #[test]
     fn test_widget_possible_values() {
         for v in WIDGET_POSSIBLE_VALUES {
-            assert_eq!(true, Shell::from_str(v).is_ok())
+            assert!(Shell::from_str(v).is_ok())
         }
     }
 
     #[test]
     fn test_info_possible_values() {
         for v in INFO_POSSIBLE_VALUES {
-            assert_eq!(true, Info::from_str(v).is_ok())
+            assert!(Info::from_str(v).is_ok())
         }
     }
 
     #[test]
     fn test_func_possible_values() {
         for v in FUNC_POSSIBLE_VALUES {
-            assert_eq!(true, Func::from_str(v).is_ok())
+            assert!(Func::from_str(v).is_ok())
         }
     }
 
     #[test]
     fn test_finder_possible_values() {
         for v in FINDER_POSSIBLE_VALUES {
-            assert_eq!(true, FinderChoice::from_str(v).is_ok())
+            assert!(FinderChoice::from_str(v).is_ok())
         }
     }
 }
