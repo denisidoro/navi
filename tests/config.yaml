@@ -1,0 +1,18 @@
+style:
+  tag:
+    color: cyan
+    width_percentage: 26
+    min_width: 20
+  comment:
+    color: yellow
+    width_percentage: 42
+    min_width: 45
+  snippet:
+    color: white
+
+finder:
+  command: fzf
+
+shell:
+  finder_command: bash
+  command: env BASH_ENV="${NAVI_HOME}/tests/helpers.sh" bash --norc --noprofile

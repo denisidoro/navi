@@ -61,6 +61,9 @@ echo "foo" \
 # multiline variable -> "foo bar"
 echo "<multilinevar>"
 
+# helper -> "inside helper: 42"
+myhelperfn 42
+
 $ x: echo '2'
 $ x2: echo "$((x+10))"
 $ y: echo 'a'

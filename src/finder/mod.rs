@@ -160,7 +160,7 @@ impl Finder for FinderChoice {
         }
 
         let child = command
-            .env("SHELL", CONFIG.shell())
+            .env("SHELL", CONFIG.finder_shell())
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .spawn();

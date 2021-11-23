@@ -36,10 +36,14 @@ impl ShellSpawnError {
 }
 
 pub fn out() -> Command {
-    let shell = CONFIG.shell();
-    let mut cmd = Command::new(&shell);
-    let arg = if shell == "cmd.exe" { "/c" } else { "-c" };
-    cmd.arg(arg);
+    let words_str = CONFIG.shell();
+    let mut words_vec = shellwords::split(&words_str).expect("empty shell command");
+    let mut words = words_vec.iter_mut();
+    let first_cmd = words.next().expect("absent shell binary");
+    let mut cmd = Command::new(&first_cmd);
+    cmd.args(words);
+    let dash_c = if words_str.contains("cmd.exe") { "/c" } else { "-c" };
+    cmd.arg(dash_c);
     cmd
 }
 

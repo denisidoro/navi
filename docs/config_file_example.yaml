@@ -29,3 +29,4 @@ finder:
 
 shell:
   command: bash # shell used for shell out. possible values: bash, zsh, dash, ...
+  # finder_command: bash # similar, but for fzf's internals
