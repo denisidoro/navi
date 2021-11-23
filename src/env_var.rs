@@ -16,8 +16,6 @@ pub const FZF_OVERRIDES: &str = "NAVI_FZF_OVERRIDES";
 pub const FZF_OVERRIDES_VAR: &str = "NAVI_FZF_OVERRIDES_VAR";
 pub const FINDER: &str = "NAVI_FINDER";
 
-pub const SHELL: &str = "NAVI_SHELL";
-
 pub const CONFIG: &str = "NAVI_CONFIG";
 pub const CONFIG_YAML: &str = "NAVI_CONFIG_YAML";
 

@@ -8,7 +8,6 @@ pub struct EnvConfig {
     pub config_yaml: Option<String>,
     pub config_path: Option<String>,
     pub path: Option<String>,
-    pub shell: Option<String>,
     pub finder: Option<FinderChoice>,
     pub fzf_overrides: Option<String>,
     pub fzf_overrides_var: Option<String>,
@@ -20,7 +19,6 @@ impl EnvConfig {
             config_yaml: env_var::get(env_var::CONFIG_YAML).ok(),
             config_path: env_var::get(env_var::CONFIG).ok(),
             path: env_var::get(env_var::PATH).ok(),
-            shell: env_var::get(env_var::SHELL).ok(),
             finder: env_var::get(env_var::FINDER)
                 .ok()
                 .and_then(|x| FinderChoice::from_str(&x).ok()),

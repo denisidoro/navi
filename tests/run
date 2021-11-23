@@ -19,7 +19,7 @@ _navi() {
    local path="${NAVI_TEST_PATH:-$TEST_CHEAT_PATH}"
    path="${path//$HOME/~}"
    export NAVI_ENV_VAR_PATH="$path"
-   RUST_BACKTRACE=1 NAVI_PATH='$NAVI_ENV_VAR_PATH' "$NAVI_EXE" "$@"
+   RUST_BACKTRACE=1 NAVI_PATH='$NAVI_ENV_VAR_PATH' NAVI_CONFIG="${NAVI_HOME}/tests/config.yaml" "$NAVI_EXE" "$@"
 }
 
 _navi_cases() {

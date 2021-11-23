@@ -93,6 +93,14 @@ impl Config {
         self.yaml.shell.command.clone()
     }
 
+    pub fn finder_shell(&self) -> String {
+        self.yaml
+            .shell
+            .finder_command
+            .clone()
+            .unwrap_or_else(|| self.yaml.shell.command.clone())
+    }
+
     pub fn tag_rules(&self) -> Option<String> {
         self.clap
             .tag_rules

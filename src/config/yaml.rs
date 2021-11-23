@@ -80,6 +80,7 @@ pub struct Search {
 #[serde(default)]
 pub struct Shell {
     pub command: String,
+    pub finder_command: Option<String>,
 }
 
 #[derive(Deserialize, Default)]
@@ -177,6 +178,7 @@ impl Default for Shell {
     fn default() -> Self {
         Self {
             command: "bash".to_string(),
+            finder_command: None,
         }
     }
 }
