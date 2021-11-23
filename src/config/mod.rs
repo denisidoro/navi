@@ -94,11 +94,11 @@ impl Config {
     }
 
     pub fn finder_shell(&self) -> String {
-        if let Some(c) = self.yaml.shell.finder_command.clone() {
-            c
-        } else {
-            self.yaml.shell.command.clone()
-        }
+        self.yaml
+            .shell
+            .finder_command
+            .clone()
+            .unwrap_or_else(|| self.yaml.shell.command.clone())
     }
 
     pub fn tag_rules(&self) -> Option<String> {
