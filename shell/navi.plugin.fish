@@ -16,6 +16,16 @@ function navi-widget -d "Show cheat sheets"
   commandline -f repaint
 end
 
+function smart_replace 
+  #cli_buffer = commandline -
+  # split at last | left/right str
+  # set $user_input
+  # if query = answer : call Navi-widget
+  # else smart_replace : 
+  # set output (navi --print --best-match --query $user_input)
+  # replace userinput string in clibuff or left string += output
+  # commandline append repaint  
+
 bind \cg navi-widget
 if bind -M insert > /dev/null 2>&1
   bind -M insert \cg navi-widget
