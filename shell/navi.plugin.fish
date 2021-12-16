@@ -1,6 +1,3 @@
-
-# navi widget fish | source
-
 function __call_navi
     navi --print
 end 
@@ -27,21 +24,22 @@ function smart_replace
     commandline -f repaint
   else
     set -l best_match (navi --print --best-match --query $current_process)
-    # if [ $navi_last_cmd = $current_process ]
+
+    if not [ $best_match > /dev/null ];
+      commandline -p $current_process
+      commandline -f repaint
+      return
+    end
+
     if [ $best_match = "" ]
-        # set navi_last_cmd (commandline -p)
-        # commandline -p $current_process
         commandline -p (navi --print --query $current_process)
         commandline -f repaint
-    # else
     else if [ $current_process != $best_match ]
       commandline -p $best_match
       commandline -f repaint
     else if [ $current_process = $best_match ]
       commandline -p (navi --print --query $current_process)
       commandline -f repaint
-    # else
-        # commandline -p $current_process
     end
   end
 end
