@@ -16,7 +16,21 @@ function navi-widget -d "Show cheat sheets"
   commandline -f repaint
 end
 
-function smart_replace 
+function smart_replace
+  set -l current_buffer (commandline -b)
+  set -l current_process (commandline -p)
+  set -l best_match (navi --print --best-match --query $current_process)
+  echo $best_match $current_process
+  
+  if [ $current_process != $best_match ]
+    echo "true"
+  else
+    echo "false"
+    navi-widget
+  end
+  
+  
+  
   #cli_buffer = commandline -
   # split at last | left/right str
   # set $user_input
