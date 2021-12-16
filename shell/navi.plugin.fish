@@ -1,4 +1,5 @@
-#!/usr/bin/env fish
+
+# navi widget fish | source
 
 function __call_navi
     navi --print
@@ -16,25 +17,32 @@ function navi-widget -d "Show cheat sheets"
   commandline -f repaint
 end
 
+# set -g navi_last_cmd ""
+
 function smart_replace
-  # set -l current_buffer (commandline -b)
   set -l current_process (commandline -p)
-  # set -l current_job (commandline -j)
-  set -l best_match (navi --print --best-match --query $current_process)
-  
-  if [ $current_process = $best_match ]
-  # if [ $current_process != $best_match ]
-    # echo "true"
-    set -l new_process (navi --print --query $current_process)
-    # echo $new_process
-    commandline -p $new_process
+
+  if [ $current_process = "" ]
+    commandline -p (navi --print)
     commandline -f repaint
   else
-    # echo "false"
-    commandline -p $best_match
-    commandline -f repaint
-    # commandline -p ' '$best_match
-    # navi-widget
+    set -l best_match (navi --print --best-match --query $current_process)
+    # if [ $navi_last_cmd = $current_process ]
+    if [ $best_match = "" ]
+        # set navi_last_cmd (commandline -p)
+        # commandline -p $current_process
+        commandline -p (navi --print --query $current_process)
+        commandline -f repaint
+    # else
+    else if [ $current_process != $best_match ]
+      commandline -p $best_match
+      commandline -f repaint
+    else if [ $current_process = $best_match ]
+      commandline -p (navi --print --query $current_process)
+      commandline -f repaint
+    # else
+        # commandline -p $current_process
+    end
   end
 end
 
