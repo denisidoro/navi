@@ -29,6 +29,7 @@ function smart_replace
     echo "false"
     navi-widget
   end
+end
   
   
   
