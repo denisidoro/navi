@@ -24,6 +24,7 @@ function smart_replace
   
   if [ $current_process != $best_match ]
     echo "true"
+    commandline -i $best_match
   else
     echo "false"
     navi-widget
@@ -40,8 +41,7 @@ function smart_replace
   # replace userinput string in clibuff or left string += output
   # commandline append repaint  
 
-bind \cg navi-widget
+bind \cg smart_replace
 if bind -M insert > /dev/null 2>&1
-  bind -M insert \cg navi-widget
-
+  bind -M insert \cg smart_replace
 end
