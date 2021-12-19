@@ -72,7 +72,7 @@ fn interpolate_paths(paths: String) -> String {
     let mut newtext = paths.to_string();
     for capture in re.captures_iter(&paths) {
         if let Some(c) = capture.get(0) {
-            let varname = c.as_str().replace("$", "").replace("{", "").replace("}", "");
+            let varname = c.as_str().replace('$', "").replace('{', "").replace('}', "");
             if let Ok(replacement) = &env_var::get(&varname) {
                 newtext = newtext
                     .replace(&format!("${}", varname), replacement)
