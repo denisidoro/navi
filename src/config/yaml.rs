@@ -159,21 +159,6 @@ impl Default for Finder {
     }
 }
 
-impl Default for Cheats {
-    fn default() -> Self {
-        Self {
-            path: None,
-            paths: Vec::new(),
-        }
-    }
-}
-
-impl Default for Search {
-    fn default() -> Self {
-        Self { tags: None }
-    }
-}
-
 impl Default for Shell {
     fn default() -> Self {
         Self {
