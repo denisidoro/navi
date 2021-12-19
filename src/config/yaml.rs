@@ -63,14 +63,14 @@ where
         .map_err(|_| de::Error::custom(format!("Failed to deserialize finder: {}", s)))
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Default)]
 #[serde(default)]
 pub struct Cheats {
     pub path: Option<String>,
     pub paths: Vec<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Default)]
 #[serde(default)]
 pub struct Search {
     pub tags: Option<String>,
@@ -156,21 +156,6 @@ impl Default for Finder {
             overrides: None,
             overrides_var: None,
         }
-    }
-}
-
-impl Default for Cheats {
-    fn default() -> Self {
-        Self {
-            path: None,
-            paths: Vec::new(),
-        }
-    }
-}
-
-impl Default for Search {
-    fn default() -> Self {
-        Self { tags: None }
     }
 }
 
