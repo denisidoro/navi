@@ -46,13 +46,26 @@ test::_escape() {
 
 test::equals() {
    local -r actual="$(cat)"
-   local -r expected="$(echo "${1:-}")"
+   local -r expected="${1:-}"
 
    local -r actual2="$(echo "$actual" | test::_escape)"
    local -r expected2="$(echo "$expected" | test::_escape)"
 
    if [[ "$actual2" != "$expected2" ]]; then
       log::error "Expected '${expected}' but got '${actual}'"
+      return 2
+   fi
+}
+
+test::contains() {
+   local -r haystack="$(cat)"
+   local -r needle="${1:-}"
+
+   local -r haystack2="$(echo "$haystack" | test::_escape)"
+   local -r needle2="$(echo "$needle" | test::_escape)"
+
+   if [[ "$haystack2" != *"$needle2"* ]]; then
+      log::error "Expected '${haystack}' to include '${needle2}'"
       return 2
    fi
 }
