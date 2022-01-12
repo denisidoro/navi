@@ -37,7 +37,7 @@ nix-env -iA nixpkgs.navi
 #### Using [cargo](https://github.com/rust-lang/cargo)
 
 ```bash
-cargo install navi
+cargo install --locked navi
 ```
 
 #### Using install script

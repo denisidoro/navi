@@ -1,4 +1,3 @@
-use crate::env_var;
 use crate::finder::FinderChoice;
 use crate::handler::func::Func;
 use crate::handler::info::Info;
@@ -89,11 +88,11 @@ impl FromStr for Info {
     navi --fzf-overrides '--nth 1,2'             # only consider the first two columns for search
     navi --fzf-overrides '--no-exact'            # use looser search algorithm
     navi --tag-rules='git,!checkout'             # show non-checkout git snippets only")]
-#[clap(setting = AppSettings::AllowLeadingHyphen)]
+#[clap(setting = AppSettings::AllowHyphenValues)]
 #[clap(version = crate_version!())]
 pub(super) struct ClapConfig {
     /// Colon-separated list of paths containing .cheat files
-    #[clap(short, long, env = env_var::PATH)]
+    #[clap(short, long)]
     pub path: Option<String>,
 
     /// Instead of executing a snippet, prints it to stdout
@@ -129,7 +128,7 @@ pub(super) struct ClapConfig {
     pub fzf_overrides_var: Option<String>,
 
     /// Finder application to use
-    #[clap(long, possible_values = FINDER_POSSIBLE_VALUES, case_insensitive = true)]
+    #[clap(long, possible_values = FINDER_POSSIBLE_VALUES, ignore_case = true)]
     pub finder: Option<FinderChoice>,
 
     #[clap(subcommand)]
@@ -147,7 +146,7 @@ pub enum Command {
     /// [Experimental] Calls internal functions
     Fn {
         /// Function name (example: "url::open")
-        #[clap(possible_values = FUNC_POSSIBLE_VALUES, case_insensitive = true)]
+        #[clap(possible_values = FUNC_POSSIBLE_VALUES, ignore_case = true)]
         func: Func,
         /// List of arguments (example: "https://google.com")
         args: Vec<String>,
@@ -178,12 +177,12 @@ pub enum Command {
     PreviewVarStdin,
     /// Outputs shell widget source code
     Widget {
-        #[clap(possible_values = WIDGET_POSSIBLE_VALUES, case_insensitive = true, default_value = "bash")]
+        #[clap(possible_values = WIDGET_POSSIBLE_VALUES, ignore_case = true, default_value = "bash")]
         shell: Shell,
     },
     /// Shows info
     Info {
-        #[clap(possible_values = INFO_POSSIBLE_VALUES, case_insensitive = true)]
+        #[clap(possible_values = INFO_POSSIBLE_VALUES, ignore_case = true)]
         info: Info,
     },
 }
