@@ -57,6 +57,19 @@ test::equals() {
    fi
 }
 
+test::contains() {
+   local -r haystack="$(cat)"
+   local -r needle="$(echo "${1:-}")"
+
+   local -r haystack2="$(echo "$haystack" | test::_escape)"
+   local -r needle2="$(echo "$needle" | test::_escape)"
+
+   if [[ "$haystack2" != *"$needle2*" ]]; then
+      log::error "Expected '${haystack}' to include '${needle2}'"
+      return 2
+   fi
+}
+
 test::finish() {
    echo
    if [ $SKIPPED -gt 0 ]; then

@@ -53,12 +53,12 @@ _get_tests() {
 
 _navi_tldr() {
    _navi --tldr docker --query ps --print --best-match \
-      | test::equals "docker ps"
+      | test::contains "docker ps"
 }
 
 _navi_cheatsh() {
    _navi --cheatsh docker --query remove --print --best-match \
-      | test::equals "docker rm container_name"
+      | test::contains "docker rm"
 }
 
 _navi_widget() {
