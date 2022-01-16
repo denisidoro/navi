@@ -26,5 +26,5 @@ function _navi_smart_replace
   end
 end
 
-bind \cg smart_replace
-bind -M insert \cg smart_replace
+bind \cg _navi_smart_replace
+bind -M insert \cg _navi_smart_replace
