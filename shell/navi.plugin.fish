@@ -1,29 +1,25 @@
 function _navi_smart_replace
   set -l current_process (commandline -p | string trim)
 
-  if test $current_process = ""
-    commandline -p (navi --print)
-    commandline -f repaint
+  if test -z $current_process
+    commandline -i (navi --print)
   else
     set -l best_match (navi --print --best-match --query $current_process)
 
     if not test $best_match > /dev/null
-      commandline -p $current_process
-      commandline -f repaint
       return
     end
 
     if test $best_match = ""
-        commandline -p (navi --print --query $current_process)
-        commandline -f repaint
+      commandline -p (navi --print --query $current_process)
     else if test $current_process != $best_match
       commandline -p $best_match
-      commandline -f repaint
     else
       commandline -p (navi --print --query $current_process)
-      commandline -f repaint
     end
   end
+
+  commandline -f repaint
 end
 
 bind \cg _navi_smart_replace
