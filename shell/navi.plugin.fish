@@ -22,5 +22,8 @@ function _navi_smart_replace
   commandline -f repaint
 end
 
-bind \cg _navi_smart_replace
-bind -M insert \cg _navi_smart_replace
+if test $fish_key_bindings = fish_default_key_bindings
+  bind \cg _navi_smart_replace
+else
+  bind -M insert \cg _navi_smart_replace
+end
