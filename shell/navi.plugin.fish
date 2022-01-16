@@ -1,5 +1,5 @@
 function _navi_smart_replace
-  set -l current_process (commandline -p)
+  set -l current_process (commandline -p | string trim)
 
   if test $current_process = ""
     commandline -p (navi --print)
