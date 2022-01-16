@@ -11,11 +11,11 @@ function _navi_smart_replace
         end
 
         if test -z "$best_match"
-            commandline -p (navi --print --query $current_process)
+            commandline -p (navi --print --query "$current_process")
         else if test "$current_process" != "$best_match"
             commandline -p $best_match
         else
-            commandline -p (navi --print --query $current_process)
+            commandline -p (navi --print --query "$current_process")
         end
     end
 
