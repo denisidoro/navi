@@ -1,50 +1,29 @@
-function __call_navi
-    navi --print
-end 
+function _navi_smart_replace
+    set -l current_process (commandline -p | string trim)
 
-function navi-widget -d "Show cheat sheets"
-  begin
-    set ttysettings (stty -g)
-    stty sane
-    __call_navi | perl -pe 'chomp if eof' | read -lz result
-    and commandline -- $result
+    if test -z "$current_process"
+        commandline -i (navi --print)
+    else
+        set -l best_match (navi --print --best-match --query "$current_process")
 
-    stty $ttysettings
-  end
-  commandline -f repaint
-end
+        if not test "$best_match" >/dev/null
+            return
+        end
 
-# set -g navi_last_cmd ""
+        if test -z "$best_match"
+            commandline -p (navi --print --query "$current_process")
+        else if test "$current_process" != "$best_match"
+            commandline -p $best_match
+        else
+            commandline -p (navi --print --query "$current_process")
+        end
+    end
 
-function smart_replace
-  set -l current_process (commandline -p)
-
-  if [ $current_process = "" ]
-    commandline -p (navi --print)
     commandline -f repaint
-  else
-    set -l best_match (navi --print --best-match --query $current_process)
-
-    if not [ $best_match > /dev/null ];
-      commandline -p $current_process
-      commandline -f repaint
-      return
-    end
-
-    if [ $best_match = "" ]
-        commandline -p (navi --print --query $current_process)
-        commandline -f repaint
-    else if [ $current_process != $best_match ]
-      commandline -p $best_match
-      commandline -f repaint
-    else if [ $current_process = $best_match ]
-      commandline -p (navi --print --query $current_process)
-      commandline -f repaint
-    end
-  end
 end
 
-bind \cg smart_replace
-if bind -M insert > /dev/null 2>&1
-  bind -M insert \cg smart_replace
+if test $fish_key_bindings = fish_default_key_bindings
+    bind \cg _navi_smart_replace
+else
+    bind -M insert \cg _navi_smart_replace
 end
