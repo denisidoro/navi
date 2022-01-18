@@ -314,7 +314,7 @@ dependencies = [
 
 [[package]]
 name = "navi"
-version = "2.18.0"
+version = "2.19.0"
 dependencies = [
  "anyhow",
  "clap",
