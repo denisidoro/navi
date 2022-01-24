@@ -97,6 +97,7 @@ pub(super) struct ClapConfig {
 
     /// Instead of executing a snippet, prints it to stdout
     #[clap(long)]
+    #[cfg(not(feature = "disable-command-execution"))]
     pub print: bool,
 
     /// Returns the best match
