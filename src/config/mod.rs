@@ -136,8 +136,18 @@ impl Config {
         self.yaml.style.comment.min_width
     }
 
+    #[cfg(feature = "disable-command-execution")]
+    fn print(&self) -> bool {
+        true
+    }
+
+    #[cfg(not(feature = "disable-command-execution"))]
+    fn print(&self) -> bool {
+        self.clap.print
+    }
+
     pub fn action(&self) -> Action {
-        if self.clap.print {
+        if self.print() {
             Action::Print
         } else {
             Action::Execute
