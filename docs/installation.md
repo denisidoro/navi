@@ -2,7 +2,7 @@ Installation
 ------------
 
 * [Installing the main binary](#installing-the-main-binary)
-    * [Using Homebrew or Linuxbrew](#using-homebrew-or-linuxbrew)
+    * [Using Homebrew](#using-homebrew)
     * [Using Gentoo](#using-gentoo)
     * [Using nix](#using-nix)
     * [Using cargo](#using-cargo)
@@ -14,7 +14,7 @@ Installation
 
 ### Installing the main binary
 
-#### Using [Homebrew](http://brew.sh/) or [Linuxbrew](http://linuxbrew.sh/)
+#### Using [Homebrew](http://brew.sh/)
 
 ```sh
 brew install navi
