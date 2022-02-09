@@ -8,7 +8,9 @@ pub mod repo_add;
 pub mod repo_browse;
 pub mod shell;
 
-use crate::config::Command::{Fn, Info, Preview, PreviewVar, PreviewVarStdin, Repo, Widget};
+#[cfg(not(feature = "disable-repo-management"))]
+use crate::config::Command::Repo;
+use crate::config::Command::{Fn, Info, Preview, PreviewVar, PreviewVarStdin, Widget};
 use crate::config::{RepoCommand, CONFIG};
 use crate::handler;
 use anyhow::Context;
@@ -38,6 +40,7 @@ pub fn handle() -> Result<()> {
                 handler::info::main(info).with_context(|| format!("Failed to fetch info `{:#?}`", info))
             }
 
+            #[cfg(not(feature = "disable-repo-management"))]
             Repo { cmd } => match cmd {
                 RepoCommand::Add { uri } => {
                     handler::repo_add::main(uri.clone())
