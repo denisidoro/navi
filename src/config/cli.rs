@@ -153,6 +153,7 @@ pub enum Command {
         args: Vec<String>,
     },
     /// Manages cheatsheet repositories
+    #[cfg(not(feature = "disable-repo-management"))]
     Repo {
         #[clap(subcommand)]
         cmd: RepoCommand,

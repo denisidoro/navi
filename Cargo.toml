@@ -13,6 +13,7 @@ license = "Apache-2.0"
 
 [features]
 disable-command-execution = []
+disable-repo-management = []
 
 [badges]
 travis-ci = { repository = "denisidoro/navi", branch = "master" }
