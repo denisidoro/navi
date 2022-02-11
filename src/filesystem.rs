@@ -26,12 +26,30 @@ fn paths_from_path_param(env_var: &str) -> impl Iterator<Item = &str> {
     env_var.split(':').filter(|folder| folder != &"")
 }
 
+fn compiled_default_path(path: Option<&str>) -> Option<PathBuf> {
+    match path {
+        Some(path) => {
+            let path = Path::new(path);
+            if path.exists() {
+                Some(path.to_path_buf())
+            } else {
+                None
+            }
+        }
+        None => None,
+    }
+}
+
 pub fn default_cheat_pathbuf() -> Result<PathBuf> {
     let base_dirs = BaseDirs::new().ok_or_else(|| anyhow!("Unable to get base dirs"))?;
-
     let mut pathbuf = PathBuf::from(base_dirs.data_dir());
     pathbuf.push("navi");
     pathbuf.push("cheats");
+    if !pathbuf.exists() {
+        if let Some(path) = compiled_default_path(option_env!("NAVI_CHEATS_DIRECTORY")) {
+            pathbuf = path;
+        }
+    }
     Ok(pathbuf)
 }
 
@@ -41,6 +59,11 @@ pub fn default_config_pathbuf() -> Result<PathBuf> {
     let mut pathbuf = PathBuf::from(base_dirs.config_dir());
     pathbuf.push("navi");
     pathbuf.push("config.yaml");
+    if !pathbuf.exists() {
+        if let Some(path) = compiled_default_path(option_env!("NAVI_CONFIG_FILE")) {
+            pathbuf = path;
+        }
+    }
     Ok(pathbuf)
 }
 
@@ -246,5 +269,39 @@ mod tests {
             let expected = expected_paths.next().unwrap();
             assert_eq!(found, expected)
         }
+    }
+
+    #[test]
+    fn test_default_config_pathbuf() {
+        let base_dirs = BaseDirs::new()
+            .ok_or(anyhow!("bad"))
+            .expect("could not determine base directories");
+        let mut expect = base_dirs.config_dir().to_path_buf();
+        expect.push("navi");
+        expect.push("config.yaml");
+        let expect = match option_env!("NAVI_CONFIG_FILE") {
+            Some(path) => path.to_string(),
+            None => expect.to_string_lossy().to_string(),
+        };
+        let config = default_config_pathbuf().expect("could not find default config path");
+
+        assert_eq!(expect, config.to_string_lossy().to_string())
+    }
+
+    #[test]
+    fn test_default_cheat_pathbuf() {
+        let base_dirs = BaseDirs::new()
+            .ok_or(anyhow!("bad"))
+            .expect("could not determine base directories");
+        let mut expect = base_dirs.data_dir().to_path_buf();
+        expect.push("navi");
+        expect.push("cheats");
+        let expect = match option_env!("NAVI_CHEATS_DIRECTORY") {
+            Some(path) => path.to_string(),
+            None => expect.to_string_lossy().to_string(),
+        };
+        let cheats = default_cheat_pathbuf().expect("could not find default config path");
+
+        assert_eq!(expect, cheats.to_string_lossy().to_string())
     }
 }
