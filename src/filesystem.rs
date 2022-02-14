@@ -9,7 +9,7 @@ use anyhow::Result;
 use directories_next::BaseDirs;
 use regex::Regex;
 use std::collections::HashSet;
-use std::path::{Path, PathBuf};
+use std::path::{Path, PathBuf, MAIN_SEPARATOR};
 use walkdir::WalkDir;
 
 pub fn all_cheat_files(path: &Path) -> Vec<String> {
@@ -29,6 +29,11 @@ fn paths_from_path_param(env_var: &str) -> impl Iterator<Item = &str> {
 fn compiled_default_path(path: Option<&str>) -> Option<PathBuf> {
     match path {
         Some(path) => {
+            let path = if path.contains(MAIN_SEPARATOR) {
+                path.split(MAIN_SEPARATOR).next().unwrap()
+            } else {
+                path
+            };
             let path = Path::new(path);
             if path.exists() {
                 Some(path.to_path_buf())
@@ -46,7 +51,7 @@ pub fn default_cheat_pathbuf() -> Result<PathBuf> {
     pathbuf.push("navi");
     pathbuf.push("cheats");
     if !pathbuf.exists() {
-        if let Some(path) = compiled_default_path(option_env!("NAVI_CHEATS_DIRECTORY")) {
+        if let Some(path) = compiled_default_path(option_env!("NAVI_PATH")) {
             pathbuf = path;
         }
     }
@@ -60,7 +65,7 @@ pub fn default_config_pathbuf() -> Result<PathBuf> {
     pathbuf.push("navi");
     pathbuf.push("config.yaml");
     if !pathbuf.exists() {
-        if let Some(path) = compiled_default_path(option_env!("NAVI_CONFIG_FILE")) {
+        if let Some(path) = compiled_default_path(option_env!("NAVI_CONFIG")) {
             pathbuf = path;
         }
     }
@@ -279,7 +284,7 @@ mod tests {
         let mut expect = base_dirs.config_dir().to_path_buf();
         expect.push("navi");
         expect.push("config.yaml");
-        let expect = match option_env!("NAVI_CONFIG_FILE") {
+        let expect = match option_env!("NAVI_CONFIG") {
             Some(path) => path.to_string(),
             None => expect.to_string_lossy().to_string(),
         };
@@ -296,7 +301,7 @@ mod tests {
         let mut expect = base_dirs.data_dir().to_path_buf();
         expect.push("navi");
         expect.push("cheats");
-        let expect = match option_env!("NAVI_CHEATS_DIRECTORY") {
+        let expect = match option_env!("NAVI_PATH") {
             Some(path) => path.to_string(),
             None => expect.to_string_lossy().to_string(),
         };

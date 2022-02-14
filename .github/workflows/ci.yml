@@ -52,8 +52,8 @@ jobs:
         uses: actions-rs/cargo@v1
         continue-on-error: false
         env:
-          NAVI_CHEATS_DIRECTORY: /tmp/cheats-dir
-          NAVI_CONFIG_FILE: /tmp/config-file
+          NAVI_PATH: /tmp/cheats-dir
+          NAVI_CONFIG: /tmp/config-file
         with:
           command: test
 
