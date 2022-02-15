@@ -43,6 +43,20 @@ jobs:
           toolchain: stable
           override: true
 
+      - name: Prep environment to test compiled-in paths
+        run: |
+          mkdir /tmp/cheats-dir
+          touch /tmp/config-file
+
+      - name: Run cargo test (with compiled-in paths)
+        uses: actions-rs/cargo@v1
+        continue-on-error: false
+        env:
+          NAVI_PATH: /tmp/cheats-dir
+          NAVI_CONFIG: /tmp/config-file
+        with:
+          command: test
+
       - name: Run cargo test
         uses: actions-rs/cargo@v1
         continue-on-error: false

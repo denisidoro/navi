@@ -65,6 +65,13 @@ make install
 # make BIN_DIR=/usr/local/bin install
 ```
 
+##### Compile time environment variables
+
+**navi** supports environment variables at compile time that modify the behavior of the binary at runtime:
+
+- `NAVI_PATH` (directory path value): If the `cheats` directory in the user's directory does not exist, **navi** uses this path (if it exists), as a fallback location to look for cheat files. Use case: system-wide installed, shared used cheatsheets folder.
+- `NAVI_CONFIG` (file path value): If the `config.yaml` file in the user's directory does not exist, **navi** uses this path (if it exists), as a fallback location to look for a configuration file. Use case: system-wide installed, shared used configuration file.
+
 #### Other package managers
 
 You can find **navi** for more package managers by clicking on the image below: 
