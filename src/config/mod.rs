@@ -128,12 +128,20 @@ impl Config {
         self.yaml.style.comment.width_percentage
     }
 
+    pub fn snippet_width_percentage(&self) -> u16 {
+        self.yaml.style.snippet.width_percentage
+    }
+
     pub fn tag_min_width(&self) -> u16 {
         self.yaml.style.tag.min_width
     }
 
     pub fn comment_min_width(&self) -> u16 {
         self.yaml.style.comment.min_width
+    }
+
+    pub fn snippet_min_width(&self) -> u16 {
+        self.yaml.style.snippet.min_width
     }
 
     #[cfg(feature = "disable-command-execution")]
