@@ -4,7 +4,7 @@ use crate::structures::fetcher;
 use anyhow::Context;
 use anyhow::Result;
 use std::collections::HashSet;
-use std::process::{self, Command, Stdio};
+use std::process::{Command, Stdio};
 
 fn map_line(line: &str) -> String {
     line.trim().trim_end_matches(':').to_string()
@@ -26,18 +26,6 @@ fn read_all(query: &str, cheat: &str, stdin: &mut std::process::ChildStdin) -> R
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
 
-    if cheat.starts_with("Unknown topic.") {
-        eprintln!(
-            "`{}` not found in cheatsh.
-
-Output:
-{}
-",
-            query, cheat
-        );
-        process::exit(35)
-    }
-
     parser::read_lines(
         lines(query, cheat),
         "cheat.sh",
@@ -52,7 +40,7 @@ Output:
 }
 
 pub fn fetch(query: &str) -> Result<String> {
-    let args = ["-qO-", &format!("cheat.sh/{}", query)];
+    let args = ["-qO-", &format!("cheat.sh/{}?T", query)];
 
     let child = Command::new("wget")
         .args(&args)
@@ -63,11 +51,10 @@ pub fn fetch(query: &str) -> Result<String> {
     let child = match child {
         Ok(x) => x,
         Err(_) => {
-            eprintln!(
-                "navi was unable to call wget.
-Make sure wget is correctly installed."
-            );
-            process::exit(34)
+            let msg = "navi was unable to call wget.
+Make sure wget is correctly installed.";
+            eprintln!("{}", msg.replace('\n', "\r\n"));
+            return Err(anyhow!("failed"));
         }
     };
 
@@ -75,7 +62,7 @@ Make sure wget is correctly installed."
 
     if let Some(0) = out.status.code() {
     } else {
-        eprintln!(
+        let msg = format!(
             "Failed to call:
 wget {}
 
@@ -89,7 +76,8 @@ Error:
             String::from_utf8(out.stdout).unwrap_or_else(|_e| "Unable to get output message".to_string()),
             String::from_utf8(out.stderr).unwrap_or_else(|_e| "Unable to get error message".to_string())
         );
-        process::exit(35)
+        eprintln!("{}", msg.replace('\n', "\r\n"));
+        return Err(anyhow!("failed"));
     }
 
     let stdout = out.stdout;
@@ -108,13 +96,30 @@ impl Fetcher {
     }
 }
 
+pub const ERROR_MSG: &str = "# Terminate navi
+
+exit 1";
+
 impl fetcher::Fetcher for Fetcher {
     fn fetch(
         &self,
         stdin: &mut std::process::ChildStdin,
         _files: &mut Vec<String>,
     ) -> Result<Option<VariableMap>> {
-        let cheat = fetch(&self.query)?;
+        let mut cheat = fetch(&self.query).unwrap_or_else(|_| ERROR_MSG.into());
+
+        if cheat.starts_with("Unknown topic.") {
+            let msg = format!(
+                "`{}` not found in cheatsh.
+
+Output:
+{} ",
+                &self.query, cheat
+            );
+            eprintln!("{}", msg.replace('\n', " "));
+            cheat = ERROR_MSG.into();
+        }
+
         read_all(&self.query, &cheat, stdin)
     }
 }

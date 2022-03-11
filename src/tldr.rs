@@ -91,7 +91,7 @@ pub fn fetch(query: &str) -> Result<String> {
     let child = match child {
         Ok(x) => x,
         Err(_) => {
-            eprintln!(
+            let msg = format!(
                 "navi was unable to call tldr.
 Make sure tldr is correctly installed.
 Refer to https://github.com/tldr-pages/tldr for more info.
@@ -101,7 +101,9 @@ Note:
 ",
                 VERSION_DISCLAIMER
             );
-            process::exit(34)
+            eprintln!("{}", msg.replace('\n', "\r\n"));
+
+            return Err(anyhow!("failed"));
         }
     };
 
@@ -109,10 +111,10 @@ Note:
 
     if let Some(0) = out.status.code() {
     } else {
-        eprintln!(
-            "Failed to call: 
+        let msg = format!(
+            "Failed to call:
 tldr {}
- 
+
 Output:
 {}
 
@@ -120,16 +122,16 @@ Error:
 {}
 
 Note:
-Please make sure you're using a version that supports the --markdown flag.
-If you are already using a supported version you can ignore this message. 
-{}
-",
+Please make sure you're using a version that supports the --markdown flag.  If you are already using a supported version you can ignore this message.
+{}",
             args.join(" "),
             String::from_utf8(out.stdout).unwrap_or_else(|_e| "Unable to get output message".to_string()),
             String::from_utf8(out.stderr).unwrap_or_else(|_e| "Unable to get error message".to_string()),
             VERSION_DISCLAIMER
         );
-        process::exit(35)
+        eprintln!("{}", msg.replace('\n', "\r\n"));
+
+        return Err(anyhow!("failed"));
     }
 
     let stdout = out.stdout;
@@ -147,13 +149,17 @@ impl Fetcher {
     }
 }
 
+pub const ERROR_MSG: &str = "- Terminate navi:
+
+`exit 1`";
+
 impl fetcher::Fetcher for Fetcher {
     fn fetch(
         &self,
         stdin: &mut std::process::ChildStdin,
         _files: &mut Vec<String>,
     ) -> Result<Option<VariableMap>> {
-        let markdown = fetch(&self.query)?;
+        let markdown = fetch(&self.query).unwrap_or_else(|_| ERROR_MSG.into());
         read_all(&self.query, &markdown, stdin)
     }
 }
