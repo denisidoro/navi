@@ -43,7 +43,7 @@ Variable names should only include alphanumeric characters and `_`.
 
 If there's a corresponding line starting with `$` for a variable, suggestions will be displayed. Otherwise, the user will be able to type any value for it.
 
-If you hit `<tab>` the query typed will be prefered. If you hit `<enter>` the selection will be prefered.
+If you hit `<tab>` the query typed will be preferred. If you hit `<enter>` the selection will be preferred.
 
 ### Advanced variable options
 
