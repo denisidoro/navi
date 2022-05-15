@@ -48,7 +48,7 @@ jobs:
           mkdir /tmp/cheats-dir
           touch /tmp/config-file
 
-      - name: Run cargo test (with compiled-in paths)
+      - name: Run cargo test
         uses: actions-rs/cargo@v1
         continue-on-error: false
         env:
@@ -89,31 +89,31 @@ jobs:
       - name: Run bash tests
         run: ./tests/run
 
-  lints:
-    name: Lints
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
+  # lints:
+  #   name: Lints
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout sources
+  #       uses: actions/checkout@v2
 
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
+  #     - name: Install stable toolchain
+  #       uses: actions-rs/toolchain@v1
+  #       with:
+  #         profile: minimal
+  #         toolchain: stable
+  #         override: true
+  #         components: rustfmt, clippy
 
-      - name: Run cargo fmt
-        uses: actions-rs/cargo@v1
-        continue-on-error: false
-        with:
-          command: fmt
-          args: --all -- --check
+  #     - name: Run cargo fmt
+  #       uses: actions-rs/cargo@v1
+  #       continue-on-error: false
+  #       with:
+  #         command: fmt
+  #         args: --all -- --check
 
-      - name: Run cargo clippy
-        uses: actions-rs/cargo@v1
-        continue-on-error: false
-        with:
-          command: clippy
-          args: -- -D warnings
+  #     - name: Run cargo clippy
+  #       uses: actions-rs/cargo@v1
+  #       continue-on-error: false
+  #       with:
+  #         command: clippy
+  #         args: -- -D warnings
