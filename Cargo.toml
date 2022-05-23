@@ -19,7 +19,7 @@ disable-repo-management = []
 travis-ci = { repository = "denisidoro/navi", branch = "master" }
 
 [dependencies]
-regex = { version = "1.5.5", default-features = false, features = ["std", "unicode-perl"] }
+regex = { version = "1.5.6", default-features = false, features = ["std", "unicode-perl"] }
 clap = { version = "3.1.18", features = ["derive", "cargo"] }
 crossterm = "0.23.2"
 lazy_static = "1.4.0"
