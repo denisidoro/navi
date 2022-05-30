@@ -40,6 +40,31 @@ nix-env -iA nixpkgs.navi
 cargo install --locked navi
 ```
 
+#### Using [choco](https://github.com/rust-lang/cargo](https://community.chocolatey.org/packages/nav)
+
+For Windows user, using powershell
+
+1. Install package via choco
+   ```bash
+   choco install navi
+   ```
+2. Create `$env:USERPROFILE\AppData\Roaming\navi\config.yaml` and override `shell.command` as per [config_file_example.yaml](./config_file_example.yaml)
+   ```
+   style:
+     tag:
+       color: cyan
+     comment:
+       color: grey
+     snippet:
+       color: white
+
+   shell:
+     command: powershell
+   ```
+
+   Remark: Above example also adds custom colors for better readability in case you use standard blue for your Powershell
+
+
 #### Using install script
 
 ```bash
