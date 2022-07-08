@@ -40,7 +40,7 @@ nix-env -iA nixpkgs.navi
 cargo install --locked navi
 ```
 
-#### Using [choco](https://github.com/rust-lang/cargo](https://community.chocolatey.org/packages/nav)
+#### Using [choco](https://community.chocolatey.org/packages/navi)
 
 For Windows user, using powershell
 
