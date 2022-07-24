@@ -1,13 +1,11 @@
 use crate::prelude::*;
 pub use crossterm::style;
 use crossterm::terminal;
+use std::process::Command;
 
 const FALLBACK_WIDTH: u16 = 80;
 
 fn width_with_shell_out() -> Result<u16> {
-    use std::process::Command;
-    use std::process::Stdio;
-
     let output = if cfg!(target_os = "macos") {
         Command::new("stty")
             .arg("-f")
