@@ -1,20 +1,20 @@
-use crate::actor;
+
 use crate::clients::cheatsh;
 use crate::clients::tldr;
 use crate::config::Source;
-use crate::extractor;
+
 use crate::filesystem;
 use crate::finder::structures::Opts as FinderOpts;
-use crate::finder::Finder;
+
 use crate::prelude::*;
-use crate::structures::cheat::VariableMap;
+
 use crate::structures::fetcher::Fetcher;
-use crate::welcome;
+
 use std::process::{Command, Stdio};
 
 pub fn main() -> Result<()> {
     let config = &CONFIG;
-    let opts = FinderOpts::snippet_default();
+    let _opts = FinderOpts::snippet_default();
 
     let mut files = vec![];
     let fetcher: Box<dyn Fetcher> = match config.source() {
@@ -31,7 +31,7 @@ pub fn main() -> Result<()> {
         .as_mut()
         .ok_or_else(|| anyhow!("Unable to acquire stdin of finder"))?;
 
-    let res = fetcher
+    let _res = fetcher
         .fetch(stdin, &mut files)
         .context("Failed to parse variables intended for finder")?;
 
