@@ -32,7 +32,7 @@ pub fn handle() -> Result<()> {
                 .with_context(|| format!("Failed to fetch info `{:#?}`", input.info)),
 
             #[cfg(not(feature = "disable-repo-management"))]
-            Repo(input) => match input.cmd {
+            Repo(input) => match &input.cmd {
                 RepoCommand::Add { uri } => {
                     handler::repo::add::main(uri.clone())
                         .with_context(|| format!("Failed to import cheatsheets from `{}`", uri))?;
