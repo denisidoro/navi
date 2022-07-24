@@ -1,7 +1,5 @@
 use crate::env_var;
-pub use crate::fs::{
-    create_dir, exe_string, pathbuf_to_string, read_lines, remove_dir, InvalidPath, UnreadableDir,
-};
+pub use crate::fs::{create_dir, exe_string, read_lines, remove_dir, InvalidPath, UnreadableDir};
 use crate::parser;
 use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
@@ -75,7 +73,7 @@ pub fn cheat_paths(path: Option<String>) -> Result<String> {
     if let Some(p) = path {
         Ok(p)
     } else {
-        pathbuf_to_string(&default_cheat_pathbuf()?)
+        Ok(default_cheat_pathbuf()?.to_string())
     }
 }
 
@@ -174,7 +172,7 @@ impl fetcher::Fetcher for Fetcher {
         let folders = paths_from_path_param(&interpolated_paths);
 
         let home_regex = Regex::new(r"^~").unwrap();
-        let home = BaseDirs::new().and_then(|b| pathbuf_to_string(b.home_dir()).ok());
+        let home = BaseDirs::new().and_then(|b| b.home_dir().to_string().ok());
 
         for folder in folders {
             let interpolated_folder = match &home {

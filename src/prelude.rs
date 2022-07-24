@@ -25,4 +25,5 @@ pub use std::str::FromStr;
 
 pub use std::process::Stdio;
 
+pub use crate::common::fs::ToStringExt;
 pub use crate::fs::pathbuf_to_string; // TODO

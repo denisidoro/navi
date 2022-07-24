@@ -15,7 +15,7 @@ pub fn main() -> Result<String> {
         p
     };
 
-    let repo_path_str = pathbuf_to_string(&repo_pathbuf)?;
+    let repo_path_str = &repo_pathbuf.to_string()?;
 
     let _ = filesystem::remove_dir(&repo_pathbuf);
     filesystem::create_dir(&repo_pathbuf)?;

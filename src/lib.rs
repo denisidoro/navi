@@ -7,6 +7,7 @@ mod actor;
 mod cheat_variable;
 mod cheatsh;
 mod clipboard;
+mod common;
 mod config;
 mod env_var;
 mod extractor;
