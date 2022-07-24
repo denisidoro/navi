@@ -45,7 +45,7 @@ pub fn main(uri: String) -> Result<()> {
 
     eprintln!("Cloning {} into {}...\n", &actual_uri, &tmp_path_str);
 
-    git::shallow_clone(actual_uri.as_str(), &tmp_path_str)
+    git::shallow_clone(actual_uri.as_str(), tmp_path_str)
         .with_context(|| format!("Failed to clone `{}`", actual_uri))?;
 
     let all_files = filesystem::all_cheat_files(&tmp_pathbuf).join("\n");

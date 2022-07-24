@@ -1,5 +1,29 @@
+use clap::Args;
+
 use crate::prelude::*;
 use crate::shell::Shell;
+
+const WIDGET_POSSIBLE_VALUES: &[&str] = &["bash", "zsh", "fish", "elvish"];
+
+impl FromStr for Shell {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "bash" => Ok(Shell::Bash),
+            "zsh" => Ok(Shell::Zsh),
+            "fish" => Ok(Shell::Fish),
+            "elvish" => Ok(Shell::Elvish),
+            _ => Err("no match"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Args)]
+pub struct Input {
+    #[clap(possible_values = WIDGET_POSSIBLE_VALUES, ignore_case = true, default_value = "bash")]
+    shell: Shell,
+}
 
 pub fn main(shell: &Shell) -> Result<()> {
     let content = match shell {

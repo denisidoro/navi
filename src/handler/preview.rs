@@ -1,8 +1,15 @@
 use crate::prelude::*;
 use crate::ui;
 use crate::writer;
+use clap::Args;
 use crossterm::style::Stylize;
 use std::process;
+
+#[derive(Debug, Clone, Args)]
+pub struct Input {
+    /// Selection line
+    line: String,
+}
 
 fn extract_elements(argstr: &str) -> (&str, &str, &str) {
     let mut parts = argstr.split(writer::DELIMITER).skip(3);

@@ -3,13 +3,40 @@ use crate::prelude::*;
 use crate::shell;
 use crate::url;
 use crate::welcome;
+use clap::Args;
+use clap::Parser;
 
-#[derive(Debug)]
+const FUNC_POSSIBLE_VALUES: &[&str] = &["url::open", "welcome", "widget::last_command", "map::expand"];
+
+impl FromStr for Func {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "url::open" => Ok(Func::UrlOpen),
+            "welcome" => Ok(Func::Welcome),
+            "widget::last_command" => Ok(Func::WidgetLastCommand),
+            "map::expand" => Ok(Func::MapExpand),
+            _ => Err("no match"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Parser)]
 pub enum Func {
     UrlOpen,
     Welcome,
     WidgetLastCommand,
     MapExpand,
+}
+
+#[derive(Debug, Clone, Args)]
+pub struct Input {
+    /// Function name (example: "url::open")
+    #[clap(possible_values = FUNC_POSSIBLE_VALUES, ignore_case = true)]
+    func: Func,
+    /// List of arguments (example: "https://google.com")
+    args: Vec<String>,
 }
 
 pub fn main(func: &Func, args: Vec<String>) -> Result<()> {

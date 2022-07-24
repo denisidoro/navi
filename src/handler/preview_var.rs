@@ -3,9 +3,20 @@ use crate::finder;
 use crate::prelude::*;
 use crate::terminal::style::style;
 use crate::writer;
+use clap::Args;
 use crossterm::style::Stylize;
 use std::iter;
 use std::process;
+
+#[derive(Debug, Clone, Args)]
+pub struct Input {
+    /// Selection line
+    selection: String,
+    /// Query match
+    query: String,
+    /// Typed text
+    variable: String,
+}
 
 pub fn main(selection: &str, query: &str, variable: &str) -> Result<()> {
     let snippet = env_var::must_get(env_var::PREVIEW_INITIAL_SNIPPET);

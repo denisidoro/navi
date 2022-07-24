@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate lazy_static;
-#[macro_use]
-extern crate anyhow;
+// #[macro_use]
+// extern crate anyhow;
 
 mod actor;
 mod cheat_variable;
