@@ -22,17 +22,20 @@ pub struct Input {
     pub cmd: RepoCommand,
 }
 
-pub fn main(input: &Input) -> Result<()> {
-    match &input.cmd {
-        RepoCommand::Add { uri } => {
-            add::main(uri.clone()).with_context(|| format!("Failed to import cheatsheets from `{}`", uri))?;
-            handler::core::main()
-        }
-        RepoCommand::Browse => {
-            let repo = browse::main().context("Failed to browse featured cheatsheets")?;
-            add::main(repo.clone())
-                .with_context(|| format!("Failed to import cheatsheets from `{}`", repo))?;
-            handler::core::main()
+impl Runnable for Input {
+    fn run(&self) -> Result<()> {
+        match &self.cmd {
+            RepoCommand::Add { uri } => {
+                add::main(uri.clone())
+                    .with_context(|| format!("Failed to import cheatsheets from `{}`", uri))?;
+                handler::core::main()
+            }
+            RepoCommand::Browse => {
+                let repo = browse::main().context("Failed to browse featured cheatsheets")?;
+                add::main(repo.clone())
+                    .with_context(|| format!("Failed to import cheatsheets from `{}`", repo))?;
+                handler::core::main()
+            }
         }
     }
 }

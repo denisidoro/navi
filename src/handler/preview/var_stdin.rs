@@ -1,37 +1,43 @@
+use clap::Args;
+
+use super::var;
 use crate::prelude::*;
 use crate::shell::{self, ShellSpawnError, EOF};
 use std::io::{self, Read};
 
-use super::var::Input;
+#[derive(Debug, Clone, Args)]
+pub struct Input {}
 
-pub fn main() -> Result<()> {
-    let mut text = String::new();
-    io::stdin().read_to_string(&mut text)?;
+impl Runnable for Input {
+    fn run(&self) -> Result<()> {
+        let mut text = String::new();
+        io::stdin().read_to_string(&mut text)?;
 
-    let mut parts = text.split(EOF);
-    let selection = parts.next().expect("Unable to get selection").to_owned();
-    let query = parts.next().expect("Unable to get query").to_owned();
-    let variable = parts.next().expect("Unable to get variable").trim().to_owned();
+        let mut parts = text.split(EOF);
+        let selection = parts.next().expect("Unable to get selection").to_owned();
+        let query = parts.next().expect("Unable to get query").to_owned();
+        let variable = parts.next().expect("Unable to get variable").trim().to_owned();
 
-    let input = Input {
-        selection,
-        query,
-        variable,
-    };
+        let input = var::Input {
+            selection,
+            query,
+            variable,
+        };
 
-    super::var::main(&input)?;
+        input.run()?;
 
-    if let Some(extra) = parts.next() {
-        if !extra.is_empty() {
-            print!("");
+        if let Some(extra) = parts.next() {
+            if !extra.is_empty() {
+                print!("");
 
-            shell::out()
-                .arg(extra)
-                .spawn()
-                .map_err(|e| ShellSpawnError::new(extra, e))?
-                .wait()?;
+                shell::out()
+                    .arg(extra)
+                    .spawn()
+                    .map_err(|e| ShellSpawnError::new(extra, e))?
+                    .wait()?;
+            }
         }
-    }
 
-    Ok(())
+        Ok(())
+    }
 }

@@ -25,17 +25,19 @@ pub struct Input {
     pub shell: Shell,
 }
 
-pub fn main(input: &Input) -> Result<()> {
-    let shell = &input.shell;
+impl Runnable for Input {
+    fn run(&self) -> Result<()> {
+        let shell = &self.shell;
 
-    let content = match shell {
-        Shell::Bash => include_str!("../../shell/navi.plugin.bash"),
-        Shell::Zsh => include_str!("../../shell/navi.plugin.zsh"),
-        Shell::Fish => include_str!("../../shell/navi.plugin.fish"),
-        Shell::Elvish => include_str!("../../shell/navi.plugin.elv"),
-    };
+        let content = match shell {
+            Shell::Bash => include_str!("../../shell/navi.plugin.bash"),
+            Shell::Zsh => include_str!("../../shell/navi.plugin.zsh"),
+            Shell::Fish => include_str!("../../shell/navi.plugin.fish"),
+            Shell::Elvish => include_str!("../../shell/navi.plugin.elv"),
+        };
 
-    println!("{}", content);
+        println!("{}", content);
 
-    Ok(())
+        Ok(())
+    }
 }

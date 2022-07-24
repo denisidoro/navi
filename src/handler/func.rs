@@ -39,14 +39,16 @@ pub struct Input {
     pub args: Vec<String>,
 }
 
-pub fn main(input: &Input) -> Result<()> {
-    let func = &input.func;
-    let args = input.args.clone();
+impl Runnable for Input {
+    fn run(&self) -> Result<()> {
+        let func = &self.func;
+        let args = self.args.clone(); // TODO
 
-    match func {
-        Func::UrlOpen => url::open(args),
-        Func::Welcome => welcome::main(),
-        Func::WidgetLastCommand => shell::widget_last_command(),
-        Func::MapExpand => cheat_variable::map_expand(),
+        match func {
+            Func::UrlOpen => url::open(args),
+            Func::Welcome => welcome::main(),
+            Func::WidgetLastCommand => shell::widget_last_command(),
+            Func::MapExpand => cheat_variable::map_expand(),
+        }
     }
 }

@@ -109,7 +109,7 @@ pub enum Command {
     PreviewVar(handler::preview::var::Input),
     /// Used for fzf's preview window when selecting variable suggestions
     #[clap(setting = AppSettings::Hidden)]
-    PreviewVarStdin,
+    PreviewVarStdin(handler::preview::var_stdin::Input),
     /// Outputs shell widget source code
     Widget(handler::shell::Input),
     /// Shows info

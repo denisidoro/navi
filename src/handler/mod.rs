@@ -15,22 +15,24 @@ pub fn handle() -> Result<()> {
         None => handler::core::main(),
 
         Some(c) => match c {
-            Preview(input) => handler::preview::main(input),
+            Preview(input) => input.run(),
 
-            PreviewVarStdin => handler::preview::var_stdin::main(),
+            PreviewVarStdin(input) => input.run(),
 
-            PreviewVar(input) => handler::preview::var::main(input),
+            PreviewVar(input) => input.run(),
 
-            Widget(input) => handler::shell::main(input).context("Failed to print shell widget code"),
+            Widget(input) => input.run().context("Failed to print shell widget code"),
 
-            Fn(input) => handler::func::main(input)
+            Fn(input) => input
+                .run()
                 .with_context(|| format!("Failed to execute function `{:#?}`", input.func)),
 
-            Info(input) => handler::info::main(input)
+            Info(input) => input
+                .run()
                 .with_context(|| format!("Failed to fetch info `{:#?}`", input.info)),
 
             #[cfg(not(feature = "disable-repo-management"))]
-            Repo(input) => handler::repo::main(input),
+            Repo(input) => input.run(),
         },
     }
 }

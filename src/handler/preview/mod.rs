@@ -22,17 +22,19 @@ fn extract_elements(argstr: &str) -> (&str, &str, &str) {
     (tags, comment, snippet)
 }
 
-pub fn main(input: &Input) -> Result<()> {
-    let line = &input.line;
+impl Runnable for Input {
+    fn run(&self) -> Result<()> {
+        let line = &self.line;
 
-    let (tags, comment, snippet) = extract_elements(line);
+        let (tags, comment, snippet) = extract_elements(line);
 
-    println!(
-        "{comment} {tags} \n{snippet}",
-        comment = ui::style(comment).with(CONFIG.comment_color()),
-        tags = ui::style(format!("[{}]", tags)).with(CONFIG.tag_color()),
-        snippet = ui::style(writer::fix_newlines(snippet)).with(CONFIG.snippet_color()),
-    );
+        println!(
+            "{comment} {tags} \n{snippet}",
+            comment = ui::style(comment).with(CONFIG.comment_color()),
+            tags = ui::style(format!("[{}]", tags)).with(CONFIG.tag_color()),
+            snippet = ui::style(writer::fix_newlines(snippet)).with(CONFIG.snippet_color()),
+        );
 
-    process::exit(0)
+        process::exit(0)
+    }
 }
