@@ -48,7 +48,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Build
       id: build
-      run: scripts/release ${{ matrix.target }}
+      run: scripts/dot rust release ${{ matrix.target }}
     - name: Get the version
       id: get_version
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}

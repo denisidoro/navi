@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
+export PROJ_HOME="$NAVI_HOME"
+export PROJ_NAME="navi"
+export CARGO_PATH="${NAVI_HOME}/core/Cargo.toml"
+
+# TODO: bump dotfiles + remove this fn
+log::note() { log::info "$@"; }
+export -f log::note
+
+dot::clone() {
+  git clone 'https://github.com/denisidoro/dotfiles' "$DOTFILES"
+  cd "$DOTFILES"
+  git checkout 'v2022.07.16'
+}
+
+dot::clone_if_necessary() {
+  [ -n "${DOTFILES:-}" ] && [ -x "${DOTFILES}/bin/dot" ] && return
+  export DOTFILES="${NAVI_HOME}/target/dotfiles"
+  dot::clone
+}
+
+dot::clone_if_necessary
+
+"${DOTFILES}/bin/dot" "$@"
