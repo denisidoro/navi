@@ -1,6 +1,7 @@
 use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
 use crate::writer;
+use std::io::Write;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
 pub mod structures;
@@ -31,7 +32,7 @@ impl FromStr for FinderChoice {
 pub trait Finder {
     fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>, Vec<String>)>
     where
-        F: Fn(&mut process::ChildStdin, &mut Vec<String>) -> Result<Option<VariableMap>>;
+        F: Fn(&mut Box<&mut dyn Write>, &mut Vec<String>) -> Result<Option<VariableMap>>;
 }
 
 fn parse(out: Output, opts: Opts) -> Result<String> {
@@ -54,7 +55,7 @@ fn parse(out: Output, opts: Opts) -> Result<String> {
 impl Finder for FinderChoice {
     fn call<F>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>, Vec<String>)>
     where
-        F: Fn(&mut process::ChildStdin, &mut Vec<String>) -> Result<Option<VariableMap>>,
+        F: Fn(&mut Box<&mut dyn Write>, &mut Vec<String>) -> Result<Option<VariableMap>>,
     {
         let finder_str = match self {
             Self::Fzf => "fzf",
@@ -184,9 +185,11 @@ impl Finder for FinderChoice {
             .stdin
             .as_mut()
             .ok_or_else(|| anyhow!("Unable to acquire stdin of finder"))?;
+        let mut writer: Box<&mut dyn Write> = Box::new(stdin);
 
         let mut files = vec![];
-        let result_map = stdin_fn(stdin, &mut files).context("Failed to pass data to finder")?;
+
+        let result_map = stdin_fn(&mut writer, &mut files).context("Failed to pass data to finder")?;
 
         let out = child.wait_with_output().context("Failed to wait for finder")?;
 

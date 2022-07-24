@@ -14,9 +14,8 @@ pub fn main() -> Result<()> {
 
     let (raw_selection, variables, files) = config
         .finder()
-        .call(opts, |stdin, _| {
-            let mut writer: Box<&mut dyn Write> = Box::new(stdin);
-            populate_cheatsheet(&mut writer)?;
+        .call(opts, |writer, _| {
+            populate_cheatsheet(writer)?;
             Ok(Some(VariableMap::new()))
         })
         .context("Failed getting selection and variables from finder")?;

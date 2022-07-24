@@ -19,23 +19,21 @@ pub fn main() -> Result<()> {
 
     let (raw_selection, variables, files) = config
         .finder()
-        .call(opts, |stdin, files| {
+        .call(opts, |writer, files| {
             let fetcher: Box<dyn Fetcher> = match config.source() {
                 Source::Cheats(query) => Box::new(cheatsh::Fetcher::new(query)),
                 Source::Tldr(query) => Box::new(tldr::Fetcher::new(query)),
                 Source::Filesystem(path, rules) => Box::new(filesystem::Fetcher::new(path, rules)),
             };
 
-            let mut writer: Box<&mut dyn Write> = Box::new(stdin);
-
             let res = fetcher
-                .fetch(&mut writer, files)
+                .fetch(writer, files)
                 .context("Failed to parse variables intended for finder")?;
 
             if let Some(variables) = res {
                 Ok(Some(variables))
             } else {
-                welcome::populate_cheatsheet(&mut writer)?;
+                welcome::populate_cheatsheet(writer)?;
                 Ok(Some(VariableMap::new()))
             }
         })
