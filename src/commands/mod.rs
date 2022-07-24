@@ -4,6 +4,7 @@ pub mod info;
 pub mod preview;
 pub mod repo;
 pub mod shell;
+pub mod temp;
 
 use crate::commands;
 use crate::prelude::*;

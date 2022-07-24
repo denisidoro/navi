@@ -1,3 +1,4 @@
+use super::temp;
 use crate::cheat_variable;
 use crate::prelude::*;
 use crate::shell;
@@ -6,7 +7,13 @@ use crate::welcome;
 use clap::Args;
 use clap::Parser;
 
-const FUNC_POSSIBLE_VALUES: &[&str] = &["url::open", "welcome", "widget::last_command", "map::expand"];
+const FUNC_POSSIBLE_VALUES: &[&str] = &[
+    "url::open",
+    "welcome",
+    "widget::last_command",
+    "map::expand",
+    "temp",
+];
 
 impl FromStr for Func {
     type Err = &'static str;
@@ -17,6 +24,7 @@ impl FromStr for Func {
             "welcome" => Ok(Func::Welcome),
             "widget::last_command" => Ok(Func::WidgetLastCommand),
             "map::expand" => Ok(Func::MapExpand),
+            "temp" => Ok(Func::Temp),
             _ => Err("no match"),
         }
     }
@@ -28,6 +36,7 @@ pub enum Func {
     Welcome,
     WidgetLastCommand,
     MapExpand,
+    Temp,
 }
 
 #[derive(Debug, Clone, Args)]
@@ -49,6 +58,7 @@ impl Runnable for Input {
             Func::Welcome => welcome::main(),
             Func::WidgetLastCommand => shell::widget_last_command(),
             Func::MapExpand => cheat_variable::map_expand(),
+            Func::Temp => temp::main(),
         }
     }
 }
