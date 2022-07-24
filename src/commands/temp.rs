@@ -1,14 +1,10 @@
 use crate::clients::cheatsh;
 use crate::clients::tldr;
 use crate::config::Source;
-
 use crate::filesystem;
 use crate::finder::structures::Opts as FinderOpts;
-
 use crate::prelude::*;
-
 use crate::structures::fetcher::Fetcher;
-
 use std::process::{Command, Stdio};
 
 pub fn main() -> Result<()> {
@@ -22,7 +18,7 @@ pub fn main() -> Result<()> {
         Source::Filesystem(path, rules) => Box::new(filesystem::Fetcher::new(path, rules)),
     };
 
-    let mut command = Command::new("cat");
+    let mut command = Command::new("echo");
     let mut child = command.stdin(Stdio::piped()).stdout(Stdio::piped()).spawn()?;
 
     let stdin = child
