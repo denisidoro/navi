@@ -102,7 +102,7 @@ pub fn main(uri: String) -> Result<()> {
     eprintln!(
         "The following .cheat files were imported successfully:\n{}\n\nThey are now located at {}",
         files,
-        pathbuf_to_string(&to_folder)?
+        to_folder.to_string()
     );
 
     Ok(())
