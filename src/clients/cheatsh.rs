@@ -21,7 +21,7 @@ fn lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String>> {
     .into_iter()
 }
 
-fn read_all(query: &str, cheat: &str, writer: &mut Box<&mut dyn Write>) -> Result<Option<VariableMap>> {
+fn read_all(query: &str, cheat: &str, writer: &mut dyn Write) -> Result<Option<VariableMap>> {
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
 
@@ -109,11 +109,7 @@ impl Fetcher {
 }
 
 impl fetcher::Fetcher for Fetcher {
-    fn fetch(
-        &self,
-        writer: &mut Box<&mut dyn Write>,
-        _files: &mut Vec<String>,
-    ) -> Result<Option<VariableMap>> {
+    fn fetch(&self, writer: &mut dyn Write, _files: &mut Vec<String>) -> Result<Option<VariableMap>> {
         let cheat = fetch(&self.query)?;
         read_all(&self.query, &cheat, writer)
     }

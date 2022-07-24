@@ -30,7 +30,7 @@ pub fn main() -> Result<()> {
     Ok(())
 }
 
-pub fn populate_cheatsheet(writer: &mut Box<&mut dyn Write>) -> Result<()> {
+pub fn populate_cheatsheet(writer: &mut dyn Write) -> Result<()> {
     let cheatsheet = include_str!("../docs/navi.cheat");
 
     parser::read_lines(

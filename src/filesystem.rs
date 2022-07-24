@@ -152,11 +152,7 @@ impl Fetcher {
 }
 
 impl fetcher::Fetcher for Fetcher {
-    fn fetch(
-        &self,
-        writer: &mut Box<&mut dyn Write>,
-        files: &mut Vec<String>,
-    ) -> Result<Option<VariableMap>> {
+    fn fetch(&self, writer: &mut dyn Write, files: &mut Vec<String>) -> Result<Option<VariableMap>> {
         let mut variables = VariableMap::new();
         let mut found_something = false;
         let mut visited_lines = HashSet::new();

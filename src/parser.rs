@@ -108,7 +108,7 @@ fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FinderOpts>)> {
 
 fn write_cmd(
     item: &Item,
-    writer: &mut Box<&mut dyn Write>,
+    writer: &mut dyn Write,
     allowlist: Option<&Vec<String>>,
     denylist: Option<&Vec<String>>,
     visited_lines: &mut HashSet<u64>,
@@ -164,7 +164,7 @@ pub fn read_lines(
     file_index: usize,
     variables: &mut VariableMap,
     visited_lines: &mut HashSet<u64>,
-    writer: &mut Box<&mut dyn Write>,
+    writer: &mut dyn Write,
     allowlist: Option<&Vec<String>>,
     denylist: Option<&Vec<String>>,
 ) -> Result<()> {

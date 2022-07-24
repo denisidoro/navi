@@ -32,7 +32,7 @@ impl FromStr for FinderChoice {
 pub trait Finder {
     fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>, Vec<String>)>
     where
-        F: Fn(&mut Box<&mut dyn Write>, &mut Vec<String>) -> Result<Option<VariableMap>>;
+        F: Fn(&mut dyn Write, &mut Vec<String>) -> Result<Option<VariableMap>>;
 }
 
 fn parse(out: Output, opts: Opts) -> Result<String> {
@@ -55,7 +55,7 @@ fn parse(out: Output, opts: Opts) -> Result<String> {
 impl Finder for FinderChoice {
     fn call<F>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>, Vec<String>)>
     where
-        F: Fn(&mut Box<&mut dyn Write>, &mut Vec<String>) -> Result<Option<VariableMap>>,
+        F: Fn(&mut dyn Write, &mut Vec<String>) -> Result<Option<VariableMap>>,
     {
         let finder_str = match self {
             Self::Fzf => "fzf",
