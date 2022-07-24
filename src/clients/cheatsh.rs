@@ -2,6 +2,7 @@ use crate::parser;
 use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
+use std::io::Write;
 use std::process::{self, Command};
 
 fn map_line(line: &str) -> String {
@@ -20,7 +21,7 @@ fn lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String>> {
     .into_iter()
 }
 
-fn read_all(query: &str, cheat: &str, stdin: &mut std::process::ChildStdin) -> Result<Option<VariableMap>> {
+fn read_all(query: &str, cheat: &str, writer: &mut Box<&mut dyn Write>) -> Result<Option<VariableMap>> {
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
 
@@ -42,10 +43,11 @@ Output:
         0,
         &mut variables,
         &mut visited_lines,
-        stdin,
+        writer,
         None,
         None,
     )?;
+
     Ok(Some(variables))
 }
 
@@ -109,10 +111,10 @@ impl Fetcher {
 impl fetcher::Fetcher for Fetcher {
     fn fetch(
         &self,
-        stdin: &mut std::process::ChildStdin,
+        writer: &mut Box<&mut dyn Write>,
         _files: &mut Vec<String>,
     ) -> Result<Option<VariableMap>> {
         let cheat = fetch(&self.query)?;
-        read_all(&self.query, &cheat, stdin)
+        read_all(&self.query, &cheat, writer)
     }
 }

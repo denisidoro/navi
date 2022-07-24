@@ -6,6 +6,7 @@ use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
 use directories_next::BaseDirs;
 use regex::Regex;
+use std::io::Write;
 use std::path::MAIN_SEPARATOR;
 use walkdir::WalkDir;
 
@@ -153,7 +154,7 @@ impl Fetcher {
 impl fetcher::Fetcher for Fetcher {
     fn fetch(
         &self,
-        stdin: &mut std::process::ChildStdin,
+        writer: &mut Box<&mut dyn Write>,
         files: &mut Vec<String>,
     ) -> Result<Option<VariableMap>> {
         let mut variables = VariableMap::new();
@@ -192,7 +193,7 @@ impl fetcher::Fetcher for Fetcher {
                         index,
                         &mut variables,
                         &mut visited_lines,
-                        stdin,
+                        writer,
                         self.allowlist.as_ref(),
                         self.denylist.as_ref(),
                     )

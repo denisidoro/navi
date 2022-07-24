@@ -1,11 +1,12 @@
 use crate::clients::cheatsh;
 use crate::clients::tldr;
+use crate::common::component::AsAny;
 use crate::config::Source;
 use crate::filesystem;
 use crate::finder::structures::Opts as FinderOpts;
 use crate::prelude::*;
 use crate::structures::fetcher::Fetcher;
-use std::process::{Command, Stdio};
+use std::io::{stdout, Write};
 
 pub fn main() -> Result<()> {
     let config = &CONFIG;
@@ -18,16 +19,11 @@ pub fn main() -> Result<()> {
         Source::Filesystem(path, rules) => Box::new(filesystem::Fetcher::new(path, rules)),
     };
 
-    let mut command = Command::new("echo");
-    let mut child = command.stdin(Stdio::piped()).stdout(Stdio::piped()).spawn()?;
-
-    let stdin = child
-        .stdin
-        .as_mut()
-        .ok_or_else(|| anyhow!("Unable to acquire stdin of finder"))?;
+    let mut stdout = stdout();
+    let mut writer: Box<&mut dyn Write> = Box::new(&mut stdout);
 
     let _res = fetcher
-        .fetch(stdin, &mut files)
+        .fetch(&mut writer, &mut files)
         .context("Failed to parse variables intended for finder")?;
 
     /*

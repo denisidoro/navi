@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use crate::actor;
 use crate::clients::cheatsh;
 use crate::clients::tldr;
@@ -24,14 +26,16 @@ pub fn main() -> Result<()> {
                 Source::Filesystem(path, rules) => Box::new(filesystem::Fetcher::new(path, rules)),
             };
 
+            let mut writer: Box<&mut dyn Write> = Box::new(stdin);
+
             let res = fetcher
-                .fetch(stdin, files)
+                .fetch(&mut writer, files)
                 .context("Failed to parse variables intended for finder")?;
 
             if let Some(variables) = res {
                 Ok(Some(variables))
             } else {
-                welcome::populate_cheatsheet(stdin)?;
+                welcome::populate_cheatsheet(&mut writer)?;
                 Ok(Some(VariableMap::new()))
             }
         })

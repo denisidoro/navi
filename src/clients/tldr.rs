@@ -2,7 +2,7 @@ use crate::parser;
 use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
-
+use std::io::Write;
 use std::process::{self, Command, Stdio};
 
 lazy_static! {
@@ -56,11 +56,7 @@ fn markdown_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<St
     .into_iter()
 }
 
-fn read_all(
-    query: &str,
-    markdown: &str,
-    stdin: &mut std::process::ChildStdin,
-) -> Result<Option<VariableMap>> {
+fn read_all(query: &str, markdown: &str, writer: &mut Box<&mut dyn Write>) -> Result<Option<VariableMap>> {
     let mut variables = VariableMap::new();
     let mut visited_lines = HashSet::new();
     parser::read_lines(
@@ -69,7 +65,7 @@ fn read_all(
         0,
         &mut variables,
         &mut visited_lines,
-        stdin,
+        writer,
         None,
         None,
     )?;
@@ -148,10 +144,10 @@ impl Fetcher {
 impl fetcher::Fetcher for Fetcher {
     fn fetch(
         &self,
-        stdin: &mut std::process::ChildStdin,
+        writer: &mut Box<&mut dyn Write>,
         _files: &mut Vec<String>,
     ) -> Result<Option<VariableMap>> {
         let markdown = fetch(&self.query)?;
-        read_all(&self.query, &markdown, stdin)
+        read_all(&self.query, &markdown, writer)
     }
 }

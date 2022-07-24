@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use crate::actor;
 use crate::extractor;
 use crate::finder::structures::Opts as FinderOpts;
@@ -13,7 +15,8 @@ pub fn main() -> Result<()> {
     let (raw_selection, variables, files) = config
         .finder()
         .call(opts, |stdin, _| {
-            populate_cheatsheet(stdin)?;
+            let mut writer: Box<&mut dyn Write> = Box::new(stdin);
+            populate_cheatsheet(&mut writer)?;
             Ok(Some(VariableMap::new()))
         })
         .context("Failed getting selection and variables from finder")?;
@@ -28,7 +31,7 @@ pub fn main() -> Result<()> {
     Ok(())
 }
 
-pub fn populate_cheatsheet(stdin: &mut std::process::ChildStdin) -> Result<()> {
+pub fn populate_cheatsheet(writer: &mut Box<&mut dyn Write>) -> Result<()> {
     let cheatsheet = include_str!("../docs/navi.cheat");
 
     parser::read_lines(
@@ -37,7 +40,7 @@ pub fn populate_cheatsheet(stdin: &mut std::process::ChildStdin) -> Result<()> {
         0,
         &mut VariableMap::new(),
         &mut Default::default(),
-        stdin,
+        writer,
         None,
         None,
     )?;

@@ -108,7 +108,7 @@ fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FinderOpts>)> {
 
 fn write_cmd(
     item: &Item,
-    stdin: &mut std::process::ChildStdin,
+    writer: &mut Box<&mut dyn Write>,
     allowlist: Option<&Vec<String>>,
     denylist: Option<&Vec<String>>,
     visited_lines: &mut HashSet<u64>,
@@ -144,7 +144,7 @@ fn write_cmd(
         }
     }
 
-    return stdin
+    return writer
         .write_all(writer::write(item).as_bytes())
         .context("Failed to write command to finder's stdin");
 }
@@ -164,7 +164,7 @@ pub fn read_lines(
     file_index: usize,
     variables: &mut VariableMap,
     visited_lines: &mut HashSet<u64>,
-    stdin: &mut std::process::ChildStdin,
+    writer: &mut Box<&mut dyn Write>,
     allowlist: Option<&Vec<String>>,
     denylist: Option<&Vec<String>>,
 ) -> Result<()> {
@@ -193,7 +193,7 @@ pub fn read_lines(
         }
         // tag
         else if line.starts_with('%') {
-            should_break = write_cmd(&item, stdin, allowlist, denylist, visited_lines).is_err();
+            should_break = write_cmd(&item, writer, allowlist, denylist, visited_lines).is_err();
             item.snippet = String::from("");
             item.tags = without_prefix(&line);
         }
@@ -207,13 +207,13 @@ pub fn read_lines(
         }
         // comment
         else if line.starts_with('#') {
-            should_break = write_cmd(&item, stdin, allowlist, denylist, visited_lines).is_err();
+            should_break = write_cmd(&item, writer, allowlist, denylist, visited_lines).is_err();
             item.snippet = String::from("");
             item.comment = without_prefix(&line);
         }
         // variable
         else if !variable_cmd.is_empty() || (line.starts_with('$') && line.contains(':')) {
-            should_break = write_cmd(&item, stdin, allowlist, denylist, visited_lines).is_err();
+            should_break = write_cmd(&item, writer, allowlist, denylist, visited_lines).is_err();
 
             item.snippet = String::from("");
 
@@ -243,7 +243,7 @@ pub fn read_lines(
     }
 
     if !should_break {
-        let _ = write_cmd(&item, stdin, allowlist, denylist, visited_lines);
+        let _ = write_cmd(&item, writer, allowlist, denylist, visited_lines);
     }
 
     Ok(())
