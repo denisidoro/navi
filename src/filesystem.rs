@@ -172,7 +172,7 @@ impl fetcher::Fetcher for Fetcher {
         let folders = paths_from_path_param(&interpolated_paths);
 
         let home_regex = Regex::new(r"^~").unwrap();
-        let home = BaseDirs::new().and_then(|b| b.home_dir().to_string().ok());
+        let home = BaseDirs::new().map(|b| b.home_dir().to_string());
 
         for folder in folders {
             let interpolated_folder = match &home {
