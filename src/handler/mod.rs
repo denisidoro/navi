@@ -7,11 +7,12 @@ pub mod shell;
 
 #[cfg(not(feature = "disable-repo-management"))]
 use crate::config::Command::Repo;
-use crate::config::Command::{Fn, Info, Preview, PreviewVar, PreviewVarStdin, Widget};
 use crate::handler;
 use crate::prelude::*;
 
 pub fn handle() -> Result<()> {
+    use crate::config::Command::*;
+
     match CONFIG.cmd() {
         None => handler::core::main(),
 
