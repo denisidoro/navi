@@ -279,7 +279,7 @@ mod tests {
     #[test]
     fn test_default_config_pathbuf() {
         let base_dirs = BaseDirs::new()
-            .ok_or(anyhow!("bad"))
+            .ok_or_else(|| anyhow!("bad"))
             .expect("could not determine base directories");
 
         let expected = {
@@ -297,7 +297,7 @@ mod tests {
     #[test]
     fn test_default_cheat_pathbuf() {
         let base_dirs = BaseDirs::new()
-            .ok_or(anyhow!("bad"))
+            .ok_or_else(|| anyhow!("bad"))
             .expect("could not determine base directories");
 
         let expected = {
