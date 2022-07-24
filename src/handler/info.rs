@@ -22,7 +22,7 @@ impl FromStr for Info {
 #[derive(Debug, Clone, Args)]
 pub struct Input {
     #[clap(possible_values = INFO_POSSIBLE_VALUES, ignore_case = true)]
-    info: Info,
+    pub info: Info,
 }
 
 #[derive(Debug, Clone)]

@@ -11,11 +11,11 @@ use std::process;
 #[derive(Debug, Clone, Args)]
 pub struct Input {
     /// Selection line
-    selection: String,
+    pub selection: String,
     /// Query match
-    query: String,
+    pub query: String,
     /// Typed text
-    variable: String,
+    pub variable: String,
 }
 
 pub fn main(selection: &str, query: &str, variable: &str) -> Result<()> {

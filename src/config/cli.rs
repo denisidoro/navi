@@ -98,38 +98,22 @@ impl ClapConfig {
 pub enum Command {
     /// [Experimental] Calls internal functions
     Fn(handler::func::Input),
-    /*
     /// Manages cheatsheet repositories
     #[cfg(not(feature = "disable-repo-management"))]
-    Repo {
-        #[clap(subcommand)]
-        cmd: RepoCommand,
-    },
-    */
+    Repo(handler::repo::Input),
     /// Used for fzf's preview window when selecting snippets
     #[clap(setting = AppSettings::Hidden)]
     Preview(handler::preview::Input),
     /// Used for fzf's preview window when selecting variable suggestions
     #[clap(setting = AppSettings::Hidden)]
-    PreviewVar(handler::preview_var::Input),
+    PreviewVar(handler::preview::var::Input),
     /// Used for fzf's preview window when selecting variable suggestions
     #[clap(setting = AppSettings::Hidden)]
     PreviewVarStdin,
     /// Outputs shell widget source code
     Widget(handler::shell::Input),
     /// Shows info
-    Info,
-}
-
-#[derive(Debug, Subcommand)]
-pub enum RepoCommand {
-    /// Imports cheatsheets from a repo
-    Add {
-        /// A URI to a git repository containing .cheat files ("user/repo" will download cheats from github.com/user/repo)
-        uri: String,
-    },
-    /// Browses for featured cheatsheet repos
-    Browse,
+    Info(handler::info::Input),
 }
 
 pub enum Source {

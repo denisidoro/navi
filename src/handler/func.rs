@@ -34,9 +34,9 @@ pub enum Func {
 pub struct Input {
     /// Function name (example: "url::open")
     #[clap(possible_values = FUNC_POSSIBLE_VALUES, ignore_case = true)]
-    func: Func,
+    pub func: Func,
     /// List of arguments (example: "https://google.com")
-    args: Vec<String>,
+    pub args: Vec<String>,
 }
 
 pub fn main(func: &Func, args: Vec<String>) -> Result<()> {

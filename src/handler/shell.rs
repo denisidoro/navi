@@ -22,7 +22,7 @@ impl FromStr for Shell {
 #[derive(Debug, Clone, Args)]
 pub struct Input {
     #[clap(possible_values = WIDGET_POSSIBLE_VALUES, ignore_case = true, default_value = "bash")]
-    shell: Shell,
+    pub shell: Shell,
 }
 
 pub fn main(shell: &Shell) -> Result<()> {

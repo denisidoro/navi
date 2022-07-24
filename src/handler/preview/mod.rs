@@ -5,10 +5,13 @@ use clap::Args;
 use crossterm::style::Stylize;
 use std::process;
 
+pub mod var;
+pub mod var_stdin;
+
 #[derive(Debug, Clone, Args)]
 pub struct Input {
     /// Selection line
-    line: String,
+    pub line: String,
 }
 
 fn extract_elements(argstr: &str) -> (&str, &str, &str) {

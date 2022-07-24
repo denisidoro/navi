@@ -2,54 +2,46 @@ pub mod core;
 pub mod func;
 pub mod info;
 pub mod preview;
-pub mod preview_var;
-pub mod preview_var_stdin;
-pub mod repo_add;
-pub mod repo_browse;
+pub mod repo;
 pub mod shell;
 
 #[cfg(not(feature = "disable-repo-management"))]
 use crate::config::Command::Repo;
 use crate::config::Command::{Fn, Info, Preview, PreviewVar, PreviewVarStdin, Widget};
-use crate::config::{RepoCommand, CONFIG};
 use crate::handler;
 use crate::prelude::*;
+use repo::RepoCommand;
 
 pub fn handle() -> Result<()> {
     match CONFIG.cmd() {
         None => handler::core::main(),
 
         Some(c) => match c {
-            Preview { line } => handler::preview::main(line),
+            Preview(input) => handler::preview::main(&input.line),
 
-            PreviewVarStdin => handler::preview_var_stdin::main(),
+            PreviewVarStdin => handler::preview::var_stdin::main(),
 
-            PreviewVar {
-                selection,
-                query,
-                variable,
-            } => handler::preview_var::main(selection, query, variable),
+            PreviewVar(input) => handler::preview::var::main(&input.selection, &input.query, &input.variable),
 
-            Widget { shell } => handler::shell::main(shell).context("Failed to print shell widget code"),
+            Widget(input) => handler::shell::main(&input.shell).context("Failed to print shell widget code"),
 
-            Fn { func, args } => handler::func::main(func, args.to_vec())
-                .with_context(|| format!("Failed to execute function `{:#?}`", func)),
+            Fn(input) => handler::func::main(&input.func, input.args.to_vec())
+                .with_context(|| format!("Failed to execute function `{:#?}`", input.func)),
 
-            Info { info } => {
-                handler::info::main(info).with_context(|| format!("Failed to fetch info `{:#?}`", info))
-            }
+            Info(input) => handler::info::main(&input.info)
+                .with_context(|| format!("Failed to fetch info `{:#?}`", input.info)),
 
             #[cfg(not(feature = "disable-repo-management"))]
-            Repo { cmd } => match cmd {
+            Repo(input) => match input.cmd {
                 RepoCommand::Add { uri } => {
-                    handler::repo_add::main(uri.clone())
+                    handler::repo::add::main(uri.clone())
                         .with_context(|| format!("Failed to import cheatsheets from `{}`", uri))?;
                     handler::core::main()
                 }
                 RepoCommand::Browse => {
                     let repo =
-                        handler::repo_browse::main().context("Failed to browse featured cheatsheets")?;
-                    handler::repo_add::main(repo.clone())
+                        handler::repo::browse::main().context("Failed to browse featured cheatsheets")?;
+                    handler::repo::add::main(repo.clone())
                         .with_context(|| format!("Failed to import cheatsheets from `{}`", repo))?;
                     handler::core::main()
                 }
