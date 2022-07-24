@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use super::prelude::*;
 
 pub trait Component: Any + AsAny + Send + Sync {}
 

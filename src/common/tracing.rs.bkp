@@ -1,6 +1,6 @@
 use std::env;
 
-use crate::prelude::*;
+use super::prelude::*;
 
 static RUST_LOG: &str = "RUST_LOG";
 
