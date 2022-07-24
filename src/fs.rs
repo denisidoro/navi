@@ -18,9 +18,7 @@ pub struct UnreadableDir {
 
 pub fn open(filename: &Path) -> Result<File> {
     File::open(filename).with_context(|| {
-        let x = filename
-            .to_string()
-            .unwrap_or_else(|e| format!("Unable to get path string: {}", e));
+        let x = filename.to_string();
         format!("Failed to open file {}", &x)
     })
 }

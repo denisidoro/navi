@@ -93,13 +93,8 @@ pub fn main(uri: String) -> Result<()> {
             p
         };
         fs::create_dir_all(&to_folder).unwrap_or(());
-        fs::copy(&from, &to).with_context(|| {
-            format!(
-                "Failed to copy `{}` to `{}`",
-                &from.to_string().expect("unable to parse {from}"),
-                &to.to_string().expect("unable to parse {to}")
-            )
-        })?;
+        fs::copy(&from, &to)
+            .with_context(|| format!("Failed to copy `{}` to `{}`", &from.to_string(), &to.to_string()))?;
     }
 
     filesystem::remove_dir(&tmp_pathbuf)?;
