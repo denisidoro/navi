@@ -1,11 +1,9 @@
-use crate::config::CONFIG;
 use crate::env_var;
 use crate::finder;
+use crate::prelude::*;
 use crate::terminal::style::style;
 use crate::writer;
-use anyhow::Result;
 use crossterm::style::Stylize;
-use std::collections::HashSet;
 use std::iter;
 use std::process;
 

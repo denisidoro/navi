@@ -1,5 +1,5 @@
+use crate::prelude::*;
 use crate::shell::{self, ShellSpawnError, EOF};
-use anyhow::Result;
 use std::io::{self, Read};
 
 pub fn main() -> Result<()> {

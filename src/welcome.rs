@@ -1,12 +1,10 @@
 use crate::actor;
-use crate::config::CONFIG;
 use crate::extractor;
 use crate::finder::structures::Opts as FinderOpts;
 use crate::finder::Finder;
 use crate::parser;
+use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
-use anyhow::Context;
-use anyhow::Result;
 
 pub fn main() -> Result<()> {
     let config = &CONFIG;

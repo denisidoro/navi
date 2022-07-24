@@ -1,5 +1,5 @@
+use crate::prelude::*;
 use crate::shell::{self, ShellSpawnError, EOF};
-use anyhow::Result;
 
 pub fn copy(text: String) -> Result<()> {
     let cmd = r#"

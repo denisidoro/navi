@@ -1,5 +1,5 @@
-use crate::config::CONFIG;
 use crate::filesystem;
+use crate::prelude::*;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Opts {

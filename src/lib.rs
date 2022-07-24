@@ -17,6 +17,7 @@ mod git;
 mod handler;
 mod hash;
 mod parser;
+mod prelude;
 mod shell;
 mod structures;
 mod terminal;

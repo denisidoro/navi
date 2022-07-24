@@ -1,11 +1,8 @@
 use crate::cheat_variable;
-
-use crate::shell::{self};
-
+use crate::prelude::*;
+use crate::shell;
 use crate::url;
 use crate::welcome;
-
-use anyhow::Result;
 
 #[derive(Debug)]
 pub enum Func {

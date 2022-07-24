@@ -1,7 +1,6 @@
-use crate::config::CONFIG;
+use crate::prelude::*;
 use crate::ui;
 use crate::writer;
-use anyhow::Result;
 use crossterm::style::Stylize;
 use std::process;
 

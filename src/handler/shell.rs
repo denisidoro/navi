@@ -1,5 +1,5 @@
+use crate::prelude::*;
 use crate::shell::Shell;
-use anyhow::Result;
 
 pub fn main(shell: &Shell) -> Result<()> {
     let content = match shell {

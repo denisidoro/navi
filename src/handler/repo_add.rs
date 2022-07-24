@@ -1,11 +1,8 @@
-use crate::config::CONFIG;
 use crate::filesystem;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::{Finder, FinderChoice};
-use crate::fs::pathbuf_to_string;
 use crate::git;
-use anyhow::Context;
-use anyhow::Result;
+use crate::prelude::*;
 use std::fs;
 use std::io::Write;
 use std::path;

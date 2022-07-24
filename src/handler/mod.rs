@@ -13,8 +13,7 @@ use crate::config::Command::Repo;
 use crate::config::Command::{Fn, Info, Preview, PreviewVar, PreviewVarStdin, Widget};
 use crate::config::{RepoCommand, CONFIG};
 use crate::handler;
-use anyhow::Context;
-use anyhow::Result;
+use crate::prelude::*;
 
 pub fn handle() -> Result<()> {
     match CONFIG.cmd() {

@@ -1,17 +1,14 @@
-use crate::config::CONFIG;
+use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
 use crate::writer;
-use anyhow::Context;
-use anyhow::Result;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
-mod post;
 pub mod structures;
 pub use post::process;
-use serde::Deserialize;
-use std::str::FromStr;
 use structures::Opts;
 use structures::SuggestionType;
+
+mod post;
 
 #[derive(Debug, Clone, Copy, Deserialize)]
 pub enum FinderChoice {

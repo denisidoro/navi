@@ -1,9 +1,7 @@
 use crate::parser;
+use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
-use anyhow::{Context, Result};
-use regex::Regex;
-use std::collections::HashSet;
 
 use std::process::{self, Command, Stdio};
 

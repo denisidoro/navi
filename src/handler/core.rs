@@ -1,17 +1,15 @@
 use crate::actor;
 use crate::cheatsh;
 use crate::config::Source;
-use crate::config::CONFIG;
 use crate::extractor;
 use crate::filesystem;
 use crate::finder::structures::Opts as FinderOpts;
 use crate::finder::Finder;
+use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher::Fetcher;
 use crate::tldr;
 use crate::welcome;
-use anyhow::Context;
-use anyhow::Result;
 
 pub fn main() -> Result<()> {
     let config = &CONFIG;

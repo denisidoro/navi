@@ -1,20 +1,17 @@
 use crate::clipboard;
 use crate::config::Action;
-use crate::config::CONFIG;
 use crate::env_var;
 use crate::extractor;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::Finder;
 use crate::fs;
+use crate::prelude::*;
 use crate::shell;
 use crate::shell::ShellSpawnError;
 use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::writer;
-use anyhow::Context;
-use anyhow::Result;
 use shell::EOF;
 use std::io::Write;
-use std::path::Path;
 use std::process::Stdio;
 
 fn prompt_finder(

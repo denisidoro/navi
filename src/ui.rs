@@ -1,4 +1,4 @@
-use crate::config::CONFIG;
+use crate::prelude::*;
 use crate::terminal;
 pub use crate::terminal::style::style;
 use std::cmp::max;

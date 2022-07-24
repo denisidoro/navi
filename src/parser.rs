@@ -1,12 +1,10 @@
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::fs;
 use crate::hash::fnv;
+use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
 use crate::structures::item::Item;
 use crate::writer;
-use anyhow::{Context, Result};
-use regex::Regex;
-use std::collections::HashSet;
 use std::io::Write;
 
 lazy_static! {

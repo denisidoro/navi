@@ -1,5 +1,5 @@
+use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
-use anyhow::Result;
 
 pub trait Fetcher {
     fn fetch(

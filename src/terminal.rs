@@ -1,7 +1,6 @@
-use anyhow::Result;
+use crate::prelude::*;
 pub use crossterm::style;
 use crossterm::terminal;
-use std::str::FromStr;
 
 const FALLBACK_WIDTH: u16 = 80;
 

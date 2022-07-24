@@ -3,13 +3,12 @@ pub use crate::fs::{
     create_dir, exe_string, pathbuf_to_string, read_lines, remove_dir, InvalidPath, UnreadableDir,
 };
 use crate::parser;
+use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
-use anyhow::Result;
 use directories_next::BaseDirs;
 use regex::Regex;
-use std::collections::HashSet;
-use std::path::{Path, PathBuf, MAIN_SEPARATOR};
+use std::path::MAIN_SEPARATOR;
 use walkdir::WalkDir;
 
 pub fn all_cheat_files(path: &Path) -> Vec<String> {

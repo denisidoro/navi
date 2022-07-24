@@ -1,10 +1,8 @@
 use crate::parser;
+use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
-use anyhow::Context;
-use anyhow::Result;
-use std::collections::HashSet;
-use std::process::{self, Command, Stdio};
+use std::process::{self, Command};
 
 fn map_line(line: &str) -> String {
     line.trim().trim_end_matches(':').to_string()
