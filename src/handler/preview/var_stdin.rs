@@ -11,7 +11,7 @@ pub fn main() -> Result<()> {
     let query = parts.next().expect("Unable to get query");
     let variable = parts.next().expect("Unable to get variable").trim();
 
-    super::handler::preview_var::main(selection, query, variable)?;
+    super::var::main(selection, query, variable)?;
 
     if let Some(extra) = parts.next() {
         if !extra.is_empty() {

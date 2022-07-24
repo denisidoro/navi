@@ -5,7 +5,7 @@ use thiserror::Error;
 
 pub const EOF: &str = "NAVIEOF";
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Shell {
     Bash,
     Zsh,
