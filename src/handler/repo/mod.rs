@@ -1,3 +1,4 @@
+use crate::handler;
 use crate::prelude::*;
 use clap::{Args, Subcommand};
 
@@ -19,4 +20,19 @@ pub enum RepoCommand {
 pub struct Input {
     #[clap(subcommand)]
     pub cmd: RepoCommand,
+}
+
+pub fn main(input: &Input) -> Result<()> {
+    match &input.cmd {
+        RepoCommand::Add { uri } => {
+            add::main(uri.clone()).with_context(|| format!("Failed to import cheatsheets from `{}`", uri))?;
+            handler::core::main()
+        }
+        RepoCommand::Browse => {
+            let repo = browse::main().context("Failed to browse featured cheatsheets")?;
+            add::main(repo.clone())
+                .with_context(|| format!("Failed to import cheatsheets from `{}`", repo))?;
+            handler::core::main()
+        }
+    }
 }

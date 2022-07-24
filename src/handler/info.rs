@@ -33,7 +33,9 @@ pub enum Info {
     ConfigExample,
 }
 
-pub fn main(info: &Info) -> Result<()> {
+pub fn main(input: &Input) -> Result<()> {
+    let info = &input.info;
+
     match info {
         Info::CheatsExample => println!("{}", include_str!("../../docs/cheat_example.cheat")),
         Info::CheatsPath => println!("{}", &filesystem::default_cheat_pathbuf()?.to_string()),

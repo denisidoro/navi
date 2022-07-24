@@ -18,7 +18,11 @@ pub struct Input {
     pub variable: String,
 }
 
-pub fn main(selection: &str, query: &str, variable: &str) -> Result<()> {
+pub fn main(input: &Input) -> Result<()> {
+    let selection = &input.selection;
+    let query = &input.query;
+    let variable = &input.variable;
+
     let snippet = env_var::must_get(env_var::PREVIEW_INITIAL_SNIPPET);
     let tags = env_var::must_get(env_var::PREVIEW_TAGS);
     let comment = env_var::must_get(env_var::PREVIEW_COMMENT);

@@ -39,7 +39,10 @@ pub struct Input {
     pub args: Vec<String>,
 }
 
-pub fn main(func: &Func, args: Vec<String>) -> Result<()> {
+pub fn main(input: &Input) -> Result<()> {
+    let func = &input.func;
+    let args = input.args;
+
     match func {
         Func::UrlOpen => url::open(args),
         Func::Welcome => welcome::main(),

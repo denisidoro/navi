@@ -25,7 +25,9 @@ pub struct Input {
     pub shell: Shell,
 }
 
-pub fn main(shell: &Shell) -> Result<()> {
+pub fn main(input: &Input) -> Result<()> {
+    let shell = &input.shell;
+
     let content = match shell {
         Shell::Bash => include_str!("../../shell/navi.plugin.bash"),
         Shell::Zsh => include_str!("../../shell/navi.plugin.zsh"),

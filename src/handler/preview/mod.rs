@@ -22,7 +22,9 @@ fn extract_elements(argstr: &str) -> (&str, &str, &str) {
     (tags, comment, snippet)
 }
 
-pub fn main(line: &str) -> Result<()> {
+pub fn main(input: &Input) -> Result<()> {
+    let line = &input.line;
+
     let (tags, comment, snippet) = extract_elements(line);
 
     println!(
