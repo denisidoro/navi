@@ -5,8 +5,6 @@ pub mod preview;
 pub mod repo;
 pub mod shell;
 
-#[cfg(not(feature = "disable-repo-management"))]
-use crate::config::Command::Repo;
 use crate::handler;
 use crate::prelude::*;
 

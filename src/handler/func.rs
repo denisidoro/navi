@@ -41,7 +41,7 @@ pub struct Input {
 
 pub fn main(input: &Input) -> Result<()> {
     let func = &input.func;
-    let args = input.args;
+    let args = input.args.clone();
 
     match func {
         Func::UrlOpen => url::open(args),
