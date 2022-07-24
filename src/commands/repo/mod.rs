@@ -1,4 +1,4 @@
-use crate::handler;
+use crate::commands;
 use crate::prelude::*;
 use clap::{Args, Subcommand};
 
@@ -28,13 +28,13 @@ impl Runnable for Input {
             RepoCommand::Add { uri } => {
                 add::main(uri.clone())
                     .with_context(|| format!("Failed to import cheatsheets from `{}`", uri))?;
-                handler::core::main()
+                commands::core::main()
             }
             RepoCommand::Browse => {
                 let repo = browse::main().context("Failed to browse featured cheatsheets")?;
                 add::main(repo.clone())
                     .with_context(|| format!("Failed to import cheatsheets from `{}`", repo))?;
-                handler::core::main()
+                commands::core::main()
             }
         }
     }

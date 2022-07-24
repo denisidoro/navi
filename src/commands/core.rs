@@ -1,5 +1,6 @@
 use crate::actor;
-use crate::cheatsh;
+use crate::clients::cheatsh;
+use crate::clients::tldr;
 use crate::config::Source;
 use crate::extractor;
 use crate::filesystem;
@@ -8,7 +9,6 @@ use crate::finder::Finder;
 use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher::Fetcher;
-use crate::tldr;
 use crate::welcome;
 
 pub fn main() -> Result<()> {

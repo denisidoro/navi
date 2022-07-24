@@ -1,5 +1,5 @@
+use crate::commands;
 use crate::finder::FinderChoice;
-use crate::handler;
 use crate::prelude::*;
 use clap::{crate_version, AppSettings, Parser, Subcommand};
 
@@ -97,23 +97,23 @@ impl ClapConfig {
 #[derive(Subcommand, Debug, Clone)]
 pub enum Command {
     /// [Experimental] Calls internal functions
-    Fn(handler::func::Input),
+    Fn(commands::func::Input),
     /// Manages cheatsheet repositories
     #[cfg(not(feature = "disable-repo-management"))]
-    Repo(handler::repo::Input),
+    Repo(commands::repo::Input),
     /// Used for fzf's preview window when selecting snippets
     #[clap(setting = AppSettings::Hidden)]
-    Preview(handler::preview::Input),
+    Preview(commands::preview::Input),
     /// Used for fzf's preview window when selecting variable suggestions
     #[clap(setting = AppSettings::Hidden)]
-    PreviewVar(handler::preview::var::Input),
+    PreviewVar(commands::preview::var::Input),
     /// Used for fzf's preview window when selecting variable suggestions
     #[clap(setting = AppSettings::Hidden)]
-    PreviewVarStdin(handler::preview::var_stdin::Input),
+    PreviewVarStdin(commands::preview::var_stdin::Input),
     /// Outputs shell widget source code
-    Widget(handler::shell::Input),
+    Widget(commands::shell::Input),
     /// Shows info
-    Info(handler::info::Input),
+    Info(commands::info::Input),
 }
 
 pub enum Source {

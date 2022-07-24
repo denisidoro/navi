@@ -5,14 +5,14 @@ pub mod preview;
 pub mod repo;
 pub mod shell;
 
-use crate::handler;
+use crate::commands;
 use crate::prelude::*;
 
 pub fn handle() -> Result<()> {
     use crate::config::Command::*;
 
     match CONFIG.cmd() {
-        None => handler::core::main(),
+        None => commands::core::main(),
 
         Some(c) => match c {
             Preview(input) => input.run(),
