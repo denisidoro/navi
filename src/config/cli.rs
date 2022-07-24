@@ -127,6 +127,7 @@ pub enum Action {
     Execute,
 }
 
+/*
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -159,3 +160,4 @@ mod tests {
         }
     }
 }
+*/
