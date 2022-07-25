@@ -1,5 +1,5 @@
-pub use super::component::Component;
-pub use super::deps::HasDeps;
+// pub use super::component::Component;
+// pub use super::deps::HasDeps;
 pub use super::fs::ToStringExt;
 pub use anyhow::{anyhow, Context, Error, Result};
 pub use serde::de::Deserializer;
