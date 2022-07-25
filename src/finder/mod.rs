@@ -47,7 +47,11 @@ fn parse(out: Output, opts: Opts) -> Result<String> {
 }
 
 impl FinderChoice {
-    fn call<F>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>, Vec<String>)>
+    pub fn call<F>(
+        &self,
+        finder_opts: Opts,
+        stdin_fn: F,
+    ) -> Result<(String, Option<VariableMap>, Vec<String>)>
     where
         F: Fn(&mut dyn Write, &mut Vec<String>) -> Result<Option<VariableMap>>,
     {
