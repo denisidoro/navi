@@ -3,7 +3,7 @@ use crate::config::Action;
 use crate::env_var;
 use crate::extractor;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
-use crate::finder::FinderChoice;
+
 use crate::fs;
 use crate::prelude::*;
 use crate::serializer;

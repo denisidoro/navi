@@ -1,7 +1,7 @@
 use crate::actor;
 use crate::extractor;
 use crate::finder::structures::Opts as FinderOpts;
-use crate::finder::FinderChoice;
+
 use crate::parser::Parser;
 use crate::prelude::*;
 
