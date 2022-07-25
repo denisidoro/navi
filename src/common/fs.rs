@@ -1,5 +1,5 @@
 use super::prelude::*;
-use directories_next::BaseDirs;
+
 use std::ffi::OsStr;
 
 pub trait ToStringExt {
