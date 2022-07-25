@@ -46,7 +46,7 @@ pub fn write(item: &Item) -> String {
             comment = item.comment,
             delimiter = DELIMITER,
             snippet = &item.snippet.trim_end_matches(LINE_SEPARATOR),
-            file_index = item.file_index,
+            file_index = item.file_index.unwrap_or(0),
         )
 }
 
@@ -61,6 +61,6 @@ pub fn write_raw(item: &Item) -> String {
             comment = item.comment,
             delimiter = DELIMITER,
             snippet = &item.snippet.trim_end_matches(LINE_SEPARATOR),
-            file_index = item.file_index,
+            file_index = item.file_index.unwrap_or(0),
         )
 }

@@ -1,4 +1,5 @@
 use crate::parser;
+use crate::parser::Parser;
 use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
@@ -22,8 +23,7 @@ fn lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String>> {
 }
 
 fn read_all(query: &str, cheat: &str, writer: &mut dyn Write) -> Result<Option<VariableMap>> {
-    let mut variables = VariableMap::new();
-    let mut visited_lines = HashSet::new();
+    let mut parser = Parser::new(writer);
 
     if cheat.starts_with("Unknown topic.") {
         eprintln!(
@@ -37,18 +37,9 @@ Output:
         process::exit(35)
     }
 
-    parser::read_lines(
-        lines(query, cheat),
-        "cheat.sh",
-        0,
-        &mut variables,
-        &mut visited_lines,
-        writer,
-        None,
-        None,
-    )?;
+    parser.read_lines(lines(query, cheat), "cheat.sh", None)?;
 
-    Ok(Some(variables))
+    Ok(Some(parser.variables))
 }
 
 pub fn fetch(query: &str) -> Result<String> {

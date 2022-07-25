@@ -120,7 +120,7 @@ struct FilterOpts {
     denylist: Vec<String>,
 }
 
-struct Parser<'a> {
+pub struct Parser<'a> {
     pub variables: VariableMap,
     visited_lines: HashSet<u64>,
     filter: Option<FilterOpts>,
@@ -150,10 +150,10 @@ impl<'a> Parser<'a> {
         }
         self.visited_lines.insert(hash);
 
-        if let Some(filter) = self.filter {
+        if let Some(filter) = self.filter.as_ref() {
             if !filter.denylist.is_empty() {
-                for v in filter.denylist {
-                    if item.tags.contains(&v) {
+                for v in &filter.denylist {
+                    if item.tags.contains(v) {
                         return Ok(());
                     }
                 }
@@ -161,8 +161,8 @@ impl<'a> Parser<'a> {
 
             if !filter.allowlist.is_empty() {
                 let mut should_allow = false;
-                for v in filter.allowlist {
-                    if item.tags.contains(&v) {
+                for v in &filter.allowlist {
+                    if item.tags.contains(v) {
                         should_allow = true;
                         break;
                     }
@@ -176,7 +176,7 @@ impl<'a> Parser<'a> {
         let write_fn = if self.is_terminal {
             serializer::write
         } else {
-            serializer::write
+            serializer::write_raw
         };
 
         return self
@@ -185,15 +185,13 @@ impl<'a> Parser<'a> {
             .context("Failed to write command to finder's stdin");
     }
 
-    #[allow(clippy::too_many_arguments)]
     pub fn read_lines(
         &mut self,
         lines: impl Iterator<Item = Result<String>>,
         id: &str,
         file_index: Option<usize>,
     ) -> Result<()> {
-        let mut item = Item::default();
-        item.file_index = file_index;
+        let mut item = Item::new(file_index);
 
         let mut should_break = false;
 

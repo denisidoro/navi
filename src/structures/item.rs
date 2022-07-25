@@ -5,3 +5,12 @@ pub struct Item {
     pub snippet: String,
     pub file_index: Option<usize>,
 }
+
+impl Item {
+    pub fn new(file_index: Option<usize>) -> Self {
+        Self {
+            file_index,
+            ..Default::default()
+        }
+    }
+}

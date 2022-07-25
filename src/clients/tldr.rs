@@ -1,4 +1,5 @@
 use crate::parser;
+use crate::parser::Parser;
 use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
@@ -57,19 +58,11 @@ fn markdown_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<St
 }
 
 fn read_all(query: &str, markdown: &str, writer: &mut dyn Write) -> Result<Option<VariableMap>> {
-    let mut variables = VariableMap::new();
-    let mut visited_lines = HashSet::new();
-    parser::read_lines(
-        markdown_lines(query, markdown),
-        "markdown",
-        0,
-        &mut variables,
-        &mut visited_lines,
-        writer,
-        None,
-        None,
-    )?;
-    Ok(Some(variables))
+    let mut parser = Parser::new(writer);
+
+    parser.read_lines(markdown_lines(query, markdown), "markdown", None)?;
+
+    Ok(Some(parser.variables))
 }
 
 pub fn fetch(query: &str) -> Result<String> {

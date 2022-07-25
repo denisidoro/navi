@@ -4,9 +4,8 @@ use crate::actor;
 use crate::extractor;
 use crate::finder::structures::Opts as FinderOpts;
 use crate::finder::Finder;
-use crate::parser;
+use crate::parser::Parser;
 use crate::prelude::*;
-use crate::structures::cheat::VariableMap;
 
 pub fn main() -> Result<()> {
     let config = &CONFIG;
@@ -15,8 +14,9 @@ pub fn main() -> Result<()> {
     let (raw_selection, variables, files) = config
         .finder()
         .call(opts, |writer, _| {
-            populate_cheatsheet(writer)?;
-            Ok(Some(VariableMap::new()))
+            let mut parser = Parser::new(writer);
+            populate_cheatsheet(&mut parser);
+            Ok(Some(parser.variables))
         })
         .context("Failed getting selection and variables from finder")?;
 
@@ -30,17 +30,12 @@ pub fn main() -> Result<()> {
     Ok(())
 }
 
-pub fn populate_cheatsheet(writer: &mut dyn Write) -> Result<()> {
+pub fn populate_cheatsheet(parser: &mut Parser) -> Result<()> {
     let cheatsheet = include_str!("../docs/navi.cheat");
 
-    parser::read_lines(
+    parser.read_lines(
         cheatsheet.split('\n').into_iter().map(|s| Ok(s.to_string())),
         "welcome",
-        0,
-        &mut VariableMap::new(),
-        &mut Default::default(),
-        writer,
-        None,
         None,
     )?;
 

@@ -6,8 +6,8 @@ use crate::extractor;
 use crate::filesystem;
 use crate::finder::structures::Opts as FinderOpts;
 use crate::finder::Finder;
+use crate::parser::Parser;
 use crate::prelude::*;
-use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher::Fetcher;
 use crate::welcome;
 
@@ -31,8 +31,9 @@ pub fn main() -> Result<()> {
             if let Some(variables) = res {
                 Ok(Some(variables))
             } else {
-                welcome::populate_cheatsheet(writer)?;
-                Ok(Some(VariableMap::new()))
+                let mut parser = Parser::new(writer);
+                welcome::populate_cheatsheet(&mut parser)?;
+                Ok(Some(parser.variables))
             }
         })
         .context("Failed getting selection and variables from finder")?;

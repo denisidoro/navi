@@ -1,6 +1,7 @@
 use crate::env_var;
 pub use crate::fs::{create_dir, exe_string, read_lines, remove_dir, InvalidPath, UnreadableDir};
 use crate::parser;
+use crate::parser::Parser;
 use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
@@ -153,9 +154,7 @@ impl Fetcher {
 
 impl fetcher::Fetcher for Fetcher {
     fn fetch(&self, writer: &mut dyn Write, files: &mut Vec<String>) -> Result<Option<VariableMap>> {
-        let mut variables = VariableMap::new();
         let mut found_something = false;
-        let mut visited_lines = HashSet::new();
 
         let path = self.path.clone();
         let paths = cheat_paths(path);
@@ -171,6 +170,8 @@ impl fetcher::Fetcher for Fetcher {
         let home_regex = Regex::new(r"^~").unwrap();
         let home = BaseDirs::new().map(|b| b.home_dir().to_string());
 
+        let mut parser = Parser::new(writer);
+
         for folder in folders {
             let interpolated_folder = match &home {
                 Some(h) => home_regex.replace(folder, h).to_string(),
@@ -183,16 +184,7 @@ impl fetcher::Fetcher for Fetcher {
                 let read_file_result = {
                     let path = PathBuf::from(&file);
                     let lines = read_lines(&path)?;
-                    parser::read_lines(
-                        lines,
-                        &file,
-                        index,
-                        &mut variables,
-                        &mut visited_lines,
-                        writer,
-                        self.allowlist.as_ref(),
-                        self.denylist.as_ref(),
-                    )
+                    parser.read_lines(lines, &file, Some(index))
                 };
 
                 if read_file_result.is_ok() && !found_something {
@@ -205,7 +197,7 @@ impl fetcher::Fetcher for Fetcher {
             return Ok(None);
         }
 
-        Ok(Some(variables))
+        Ok(Some(parser.variables))
     }
 }
 
