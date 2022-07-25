@@ -11,7 +11,6 @@ use crate::shell;
 use crate::shell::ShellSpawnError;
 use crate::structures::cheat::{Suggestion, VariableMap};
 use shell::EOF;
-use std::io::Write;
 use std::process::Stdio;
 
 fn prompt_finder(
