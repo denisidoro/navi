@@ -1,7 +1,6 @@
 use crate::env_var;
 pub use crate::fs::{create_dir, exe_string, read_lines, remove_dir, InvalidPath, UnreadableDir};
-
-use crate::parser::Parser;
+use crate::parser::{FilterOpts, Parser};
 use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
@@ -110,26 +109,22 @@ fn interpolate_paths(paths: String) -> String {
     newtext
 }
 
-fn gen_lists(tag_rules: Option<String>) -> (Option<Vec<String>>, Option<Vec<String>>) {
-    let mut allowlist = None;
-    let mut denylist: Option<Vec<String>> = None;
+fn gen_lists(tag_rules: Option<String>) -> (Vec<String>, Vec<String>) {
+    let mut allowlist = vec![];
+    let mut denylist = vec![];
 
     if let Some(rules) = tag_rules {
         let words: Vec<_> = rules.split(',').collect();
-        allowlist = Some(
-            words
-                .iter()
-                .filter(|w| !w.starts_with('!'))
-                .map(|w| w.to_string())
-                .collect(),
-        );
-        denylist = Some(
-            words
-                .iter()
-                .filter(|w| w.starts_with('!'))
-                .map(|w| without_first(w))
-                .collect(),
-        );
+        allowlist = words
+            .iter()
+            .filter(|w| !w.starts_with('!'))
+            .map(|w| w.to_string())
+            .collect();
+        denylist = words
+            .iter()
+            .filter(|w| w.starts_with('!'))
+            .map(|w| without_first(w))
+            .collect();
     }
 
     (allowlist, denylist)
@@ -137,18 +132,15 @@ fn gen_lists(tag_rules: Option<String>) -> (Option<Vec<String>>, Option<Vec<Stri
 
 pub struct Fetcher {
     path: Option<String>,
-    allowlist: Option<Vec<String>>,
-    denylist: Option<Vec<String>>,
+    filter: FilterOpts,
 }
 
 impl Fetcher {
     pub fn new(path: Option<String>, tag_rules: Option<String>) -> Self {
         let (allowlist, denylist) = gen_lists(tag_rules);
-        Self {
-            path,
-            allowlist,
-            denylist,
-        }
+        let filter = FilterOpts { allowlist, denylist };
+
+        Self { path, filter }
     }
 }
 
@@ -171,6 +163,7 @@ impl fetcher::Fetcher for Fetcher {
         let home = BaseDirs::new().map(|b| b.home_dir().to_string());
 
         let mut parser = Parser::new(writer);
+        parser.filter = Some(self.filter.clone()); // TODO
 
         for folder in folders {
             let interpolated_folder = match &home {

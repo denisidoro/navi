@@ -18,10 +18,10 @@ impl ToStringExt for OsStr {
     }
 }
 
-pub fn config_dir(project_name: &str) -> Result<PathBuf> {
-    let base_dirs = BaseDirs::new().context("unable to get base dirs")?;
-
-    let mut pathbuf = PathBuf::from(base_dirs.config_dir());
-    pathbuf.push(project_name);
-    Ok(pathbuf)
-}
+// pub fn config_dir(project_name: &str) -> Result<PathBuf> {
+//     let base_dirs = BaseDirs::new().context("unable to get base dirs")?;
+//
+//     let mut pathbuf = PathBuf::from(base_dirs.config_dir());
+//     pathbuf.push(project_name);
+//     Ok(pathbuf)
+// }

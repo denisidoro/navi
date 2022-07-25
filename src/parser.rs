@@ -115,15 +115,16 @@ fn without_prefix(line: &str) -> String {
     }
 }
 
-struct FilterOpts {
-    allowlist: Vec<String>,
-    denylist: Vec<String>,
+#[derive(Clone)]
+pub struct FilterOpts {
+    pub allowlist: Vec<String>,
+    pub denylist: Vec<String>,
 }
 
 pub struct Parser<'a> {
     pub variables: VariableMap,
     visited_lines: HashSet<u64>,
-    filter: Option<FilterOpts>,
+    pub filter: Option<FilterOpts>,
     writer: &'a mut dyn Write,
     is_terminal: bool,
 }
