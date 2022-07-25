@@ -2,7 +2,7 @@ mod cli;
 mod env;
 mod yaml;
 
-use crate::finder::{FinderChoice, FinderChoiceChoice};
+use crate::finder::{FinderChoice, FinderChoice};
 use crate::terminal::style::Color;
 pub use cli::*;
 
