@@ -1,5 +1,5 @@
 use crate::commands;
-use crate::finder::FinderChoice;
+use crate::finder::FinderChoiceChoice;
 use crate::prelude::*;
 use clap::{crate_version, AppSettings, Parser, Subcommand};
 

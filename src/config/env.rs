@@ -1,5 +1,5 @@
 use crate::env_var;
-use crate::finder::FinderChoice;
+use crate::finder::FinderChoiceChoice;
 use crate::prelude::*;
 
 pub struct EnvConfig {

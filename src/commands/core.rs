@@ -5,7 +5,7 @@ use crate::config::Source;
 use crate::extractor;
 use crate::filesystem;
 use crate::finder::structures::Opts as FinderOpts;
-use crate::finder::Finder;
+use crate::finder::FinderChoice;
 use crate::parser::Parser;
 use crate::prelude::*;
 use crate::structures::fetcher::Fetcher;
