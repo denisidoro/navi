@@ -4,6 +4,7 @@ use crate::clients::tldr;
 use crate::config::Source;
 use crate::filesystem;
 use crate::finder::structures::Opts as FinderOpts;
+use crate::parser::Parser;
 use crate::prelude::*;
 use crate::structures::fetcher::Fetcher;
 use std::io::{stdout, Write};
@@ -21,6 +22,7 @@ pub fn main() -> Result<()> {
 
     let mut stdout = stdout();
     let mut writer: Box<&mut dyn Write> = Box::new(&mut stdout);
+    // let mut parser = Parser::new(&mut writer, false);
 
     let _res = fetcher
         .fetch(&mut writer, &mut files)

@@ -22,11 +22,7 @@ fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
         })
         .context("Unable to get response")?;
 
-    if response.to_lowercase().starts_with('y') {
-        Ok(true)
-    } else {
-        Ok(false)
-    }
+    Ok(response.to_lowercase().starts_with('y'))
 }
 
 pub fn main(uri: String) -> Result<()> {
