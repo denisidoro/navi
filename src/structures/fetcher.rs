@@ -1,7 +1,6 @@
+use crate::parser::Parser;
 use crate::prelude::*;
-use crate::structures::cheat::VariableMap;
-use std::io::Write;
 
 pub trait Fetcher {
-    fn fetch(&self, writer: &mut dyn Write, files: &mut Vec<String>) -> Result<Option<VariableMap>>;
+    fn fetch(&self, parser: &mut Parser, files: &mut Vec<String>) -> Result<bool>;
 }

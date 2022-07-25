@@ -2,7 +2,6 @@ use crate::parser::Parser;
 use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
 use crate::structures::fetcher;
-use std::io::Write;
 use std::process::{self, Command};
 
 fn map_line(line: &str) -> String {
@@ -19,26 +18,6 @@ fn lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String>> {
     .map(|line| Ok(map_line(line)))
     .collect::<Vec<Result<String>>>()
     .into_iter()
-}
-
-fn read_all(query: &str, cheat: &str, writer: &mut dyn Write) -> Result<Option<VariableMap>> {
-    let mut parser = Parser::new(writer, true);
-
-    if cheat.starts_with("Unknown topic.") {
-        eprintln!(
-            "`{}` not found in cheatsh.
-
-Output:
-{}
-",
-            query, cheat
-        );
-        process::exit(35)
-    }
-
-    parser.read_lines(lines(query, cheat), "cheat.sh", None)?;
-
-    Ok(Some(parser.variables))
 }
 
 pub fn fetch(query: &str) -> Result<String> {
@@ -99,8 +78,23 @@ impl Fetcher {
 }
 
 impl fetcher::Fetcher for Fetcher {
-    fn fetch(&self, writer: &mut dyn Write, _files: &mut Vec<String>) -> Result<Option<VariableMap>> {
-        let cheat = fetch(&self.query)?;
-        read_all(&self.query, &cheat, writer)
+    fn fetch(&self, parser: &mut Parser, _files: &mut Vec<String>) -> Result<bool> {
+        let cheat = &fetch(&self.query)?;
+
+        if cheat.starts_with("Unknown topic.") {
+            eprintln!(
+                "`{}` not found in cheatsh.
+
+Output:
+{}
+",
+                &self.query, cheat
+            );
+            process::exit(35)
+        }
+
+        parser.read_lines(lines(&self.query, cheat), "cheat.sh", None)?;
+
+        Ok(true)
     }
 }

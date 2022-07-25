@@ -25,16 +25,15 @@ pub fn main() -> Result<()> {
 
             let mut parser = Parser::new(writer, true);
 
-            let res = fetcher
-                .fetch(writer, files)
+            let found_something = fetcher
+                .fetch(&mut parser, files)
                 .context("Failed to parse variables intended for finder")?;
 
-            if let Some(variables) = res {
-                Ok(Some(variables))
-            } else {
+            if !found_something {
                 welcome::populate_cheatsheet(&mut parser)?;
-                Ok(Some(parser.variables))
             }
+
+            Ok(Some(parser.variables))
         })
         .context("Failed getting selection and variables from finder")?;
 

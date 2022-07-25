@@ -145,14 +145,14 @@ impl Fetcher {
 }
 
 impl fetcher::Fetcher for Fetcher {
-    fn fetch(&self, writer: &mut dyn Write, files: &mut Vec<String>) -> Result<Option<VariableMap>> {
+    fn fetch(&self, parser: &mut Parser, files: &mut Vec<String>) -> Result<bool> {
         let mut found_something = false;
 
         let path = self.path.clone();
         let paths = cheat_paths(path);
 
         if paths.is_err() {
-            return Ok(None);
+            return Ok(false);
         };
 
         let paths = paths.expect("Unable to get paths");
@@ -161,9 +161,6 @@ impl fetcher::Fetcher for Fetcher {
 
         let home_regex = Regex::new(r"^~").unwrap();
         let home = BaseDirs::new().map(|b| b.home_dir().to_string());
-
-        let mut parser = Parser::new(writer, true);
-        parser.filter = Some(self.filter.clone()); // TODO
 
         for folder in folders {
             let interpolated_folder = match &home {
@@ -186,11 +183,7 @@ impl fetcher::Fetcher for Fetcher {
             }
         }
 
-        if !found_something {
-            return Ok(None);
-        }
-
-        Ok(Some(parser.variables))
+        Ok(found_something)
     }
 }
 

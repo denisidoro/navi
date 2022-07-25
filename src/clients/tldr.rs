@@ -56,14 +56,6 @@ fn markdown_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<St
     .into_iter()
 }
 
-fn read_all(query: &str, markdown: &str, writer: &mut dyn Write) -> Result<Option<VariableMap>> {
-    let mut parser = Parser::new(writer, true);
-
-    parser.read_lines(markdown_lines(query, markdown), "markdown", None)?;
-
-    Ok(Some(parser.variables))
-}
-
 pub fn fetch(query: &str) -> Result<String> {
     let args = [query, "--markdown"];
 
@@ -134,8 +126,9 @@ impl Fetcher {
 }
 
 impl fetcher::Fetcher for Fetcher {
-    fn fetch(&self, writer: &mut dyn Write, _files: &mut Vec<String>) -> Result<Option<VariableMap>> {
+    fn fetch(&self, parser: &mut Parser, _files: &mut Vec<String>) -> Result<bool> {
         let markdown = fetch(&self.query)?;
-        read_all(&self.query, &markdown, writer)
+        parser.read_lines(markdown_lines(&self.query, &markdown), "markdown", None)?;
+        Ok(true)
     }
 }
