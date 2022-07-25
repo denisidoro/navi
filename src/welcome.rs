@@ -13,7 +13,7 @@ pub fn main() -> Result<()> {
         .finder()
         .call(opts, |writer, _| {
             let mut parser = Parser::new(writer);
-            populate_cheatsheet(&mut parser);
+            populate_cheatsheet(&mut parser)?;
             Ok(Some(parser.variables))
         })
         .context("Failed getting selection and variables from finder")?;
