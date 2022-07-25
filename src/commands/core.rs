@@ -31,7 +31,7 @@ pub fn main() -> Result<()> {
             if let Some(variables) = res {
                 Ok(Some(variables))
             } else {
-                let mut parser = Parser::new(writer);
+                let mut parser = Parser::new(writer, true);
                 welcome::populate_cheatsheet(&mut parser)?;
                 Ok(Some(parser.variables))
             }

@@ -130,12 +130,12 @@ pub struct Parser<'a> {
 }
 
 impl<'a> Parser<'a> {
-    pub fn new(writer: &'a mut dyn Write) -> Self {
+    pub fn new(writer: &'a mut dyn Write, is_terminal: bool) -> Self {
         Self {
             variables: Default::default(),
             visited_lines: Default::default(),
             filter: Default::default(),
-            is_terminal: true,
+            is_terminal,
             writer,
         }
     }

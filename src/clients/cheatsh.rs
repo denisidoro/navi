@@ -22,7 +22,7 @@ fn lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String>> {
 }
 
 fn read_all(query: &str, cheat: &str, writer: &mut dyn Write) -> Result<Option<VariableMap>> {
-    let mut parser = Parser::new(writer);
+    let mut parser = Parser::new(writer, true);
 
     if cheat.starts_with("Unknown topic.") {
         eprintln!(

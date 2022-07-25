@@ -57,7 +57,7 @@ fn markdown_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<St
 }
 
 fn read_all(query: &str, markdown: &str, writer: &mut dyn Write) -> Result<Option<VariableMap>> {
-    let mut parser = Parser::new(writer);
+    let mut parser = Parser::new(writer, true);
 
     parser.read_lines(markdown_lines(query, markdown), "markdown", None)?;
 

@@ -162,7 +162,7 @@ impl fetcher::Fetcher for Fetcher {
         let home_regex = Regex::new(r"^~").unwrap();
         let home = BaseDirs::new().map(|b| b.home_dir().to_string());
 
-        let mut parser = Parser::new(writer);
+        let mut parser = Parser::new(writer, true);
         parser.filter = Some(self.filter.clone()); // TODO
 
         for folder in folders {
