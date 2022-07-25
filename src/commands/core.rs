@@ -23,6 +23,8 @@ pub fn main() -> Result<()> {
                 Source::Filesystem(path, rules) => Box::new(filesystem::Fetcher::new(path, rules)),
             };
 
+            let mut parser = Parser::new(writer, true);
+
             let res = fetcher
                 .fetch(writer, files)
                 .context("Failed to parse variables intended for finder")?;
@@ -30,7 +32,6 @@ pub fn main() -> Result<()> {
             if let Some(variables) = res {
                 Ok(Some(variables))
             } else {
-                let mut parser = Parser::new(writer, true);
                 welcome::populate_cheatsheet(&mut parser)?;
                 Ok(Some(parser.variables))
             }
