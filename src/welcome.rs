@@ -1,5 +1,3 @@
-
-
 use crate::actor;
 use crate::extractor;
 use crate::finder::structures::Opts as FinderOpts;

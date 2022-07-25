@@ -1,4 +1,3 @@
-
 use crate::parser::Parser;
 use crate::prelude::*;
 use crate::structures::cheat::VariableMap;
