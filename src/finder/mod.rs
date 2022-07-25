@@ -1,6 +1,6 @@
 use crate::prelude::*;
+use crate::serializer;
 use crate::structures::cheat::VariableMap;
-use crate::writer;
 use std::io::Write;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
@@ -84,7 +84,7 @@ impl Finder for FinderChoice {
             "--with-nth",
             "1,2,3",
             "--delimiter",
-            writer::DELIMITER.to_string().as_str(),
+            serializer::DELIMITER.to_string().as_str(),
             "--ansi",
             "--bind",
             format!("ctrl-j:down,ctrl-k:up{}", bindings).as_str(),

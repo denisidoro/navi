@@ -6,10 +6,10 @@ use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::Finder;
 use crate::fs;
 use crate::prelude::*;
+use crate::serializer;
 use crate::shell;
 use crate::shell::ShellSpawnError;
 use crate::structures::cheat::{Suggestion, VariableMap};
-use crate::writer;
 use shell::EOF;
 use std::io::Write;
 use std::process::Stdio;
@@ -147,7 +147,10 @@ fn unique_result_count(results: &[&str]) -> usize {
 
 fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: VariableMap) -> Result<String> {
     let mut interpolated_snippet = String::from(snippet);
-    let variables_found: Vec<&str> = writer::VAR_REGEX.find_iter(snippet).map(|m| m.as_str()).collect();
+    let variables_found: Vec<&str> = serializer::VAR_REGEX
+        .find_iter(snippet)
+        .map(|m| m.as_str())
+        .collect();
     let variable_count = unique_result_count(&variables_found);
 
     for bracketed_variable_name in variables_found {
@@ -210,7 +213,7 @@ pub fn act(
         )
         .context("Failed to replace variables from snippet")?;
         s = with_absolute_path(s);
-        s = writer::with_new_lines(s);
+        s = serializer::with_new_lines(s);
         s
     };
 

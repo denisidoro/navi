@@ -19,12 +19,12 @@ mod git;
 mod hash;
 mod parser;
 mod prelude;
+mod serializer;
 mod shell;
 mod structures;
 mod terminal;
 mod ui;
 mod url;
 mod welcome;
-mod writer;
 
 pub use commands::handle;

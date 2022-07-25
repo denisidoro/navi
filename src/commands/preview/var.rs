@@ -1,8 +1,8 @@
 use crate::env_var;
 use crate::finder;
 use crate::prelude::*;
+use crate::serializer;
 use crate::terminal::style::style;
-use crate::writer;
 use clap::Args;
 use crossterm::style::Stylize;
 use std::iter;
@@ -49,7 +49,7 @@ impl Runnable for Input {
 
         let bracketed_variables: Vec<&str> = {
             if snippet.contains(&bracketed_current_variable) {
-                writer::VAR_REGEX
+                serializer::VAR_REGEX
                     .find_iter(&snippet)
                     .map(|m| m.as_str())
                     .collect()
@@ -98,7 +98,7 @@ impl Runnable for Input {
             );
         }
 
-        println!("{snippet}", snippet = writer::fix_newlines(&colored_snippet));
+        println!("{snippet}", snippet = serializer::fix_newlines(&colored_snippet));
         println!("{variables}", variables = variables);
 
         process::exit(0)

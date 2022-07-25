@@ -49,3 +49,18 @@ pub fn write(item: &Item) -> String {
             file_index = item.file_index,
         )
 }
+
+pub fn write_raw(item: &Item) -> String {
+    let (tag_width_percentage, comment_width_percentage, snippet_width_percentage) = *COLUMN_WIDTHS;
+    format!(
+            "{tags_short}{delimiter}{comment_short}{delimiter}{snippet_short}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}{file_index}{delimiter}\n",
+            tags_short = ui::style(limit_str(&item.tags, tag_width_percentage)).with(CONFIG.tag_color()),
+            comment_short = ui::style(limit_str(&item.comment, comment_width_percentage)).with(CONFIG.comment_color()),
+            snippet_short = ui::style(limit_str(&fix_newlines(&item.snippet), snippet_width_percentage)).with(CONFIG.snippet_color()),
+            tags = item.tags,
+            comment = item.comment,
+            delimiter = DELIMITER,
+            snippet = &item.snippet.trim_end_matches(LINE_SEPARATOR),
+            file_index = item.file_index,
+        )
+}
