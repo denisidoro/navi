@@ -29,6 +29,12 @@ impl FromStr for FinderChoice {
     }
 }
 
+pub trait Finder {
+    fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>, Vec<String>)>
+    where
+        F: Fn(&mut dyn Write, &mut Vec<String>) -> Result<Option<VariableMap>>;
+}
+
 fn parse(out: Output, opts: Opts) -> Result<String> {
     let text = match out.status.code() {
         Some(0) | Some(1) | Some(2) => {
@@ -46,7 +52,7 @@ fn parse(out: Output, opts: Opts) -> Result<String> {
     post::process(output, opts.column, opts.delimiter.as_deref(), opts.map)
 }
 
-impl FinderChoice {
+impl Finder for FinderChoice {
     fn call<F>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>, Vec<String>)>
     where
         F: Fn(&mut dyn Write, &mut Vec<String>) -> Result<Option<VariableMap>>,
