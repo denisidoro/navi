@@ -4,7 +4,6 @@ use crate::finder::Finder;
 use crate::git;
 use crate::prelude::*;
 use std::fs;
-use std::io::Write;
 
 pub fn main() -> Result<String> {
     let finder = CONFIG.finder();

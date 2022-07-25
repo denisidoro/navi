@@ -4,7 +4,6 @@ use crate::finder::{Finder, FinderChoice};
 use crate::git;
 use crate::prelude::*;
 use std::fs;
-use std::io::Write;
 use std::path;
 
 fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
