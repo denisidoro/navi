@@ -2,11 +2,11 @@ use crate::env_var;
 pub use crate::fs::{create_dir, exe_string, read_lines, remove_dir, InvalidPath, UnreadableDir};
 use crate::parser::{FilterOpts, Parser};
 use crate::prelude::*;
-use crate::structures::cheat::VariableMap;
+
 use crate::structures::fetcher;
 use directories_next::BaseDirs;
 use regex::Regex;
-use std::io::Write;
+
 use std::path::MAIN_SEPARATOR;
 use walkdir::WalkDir;
 

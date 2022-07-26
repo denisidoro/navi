@@ -1,8 +1,8 @@
 use crate::parser::Parser;
 use crate::prelude::*;
-use crate::structures::cheat::VariableMap;
+
 use crate::structures::fetcher;
-use std::io::Write;
+
 use std::process::{self, Command, Stdio};
 
 lazy_static! {
