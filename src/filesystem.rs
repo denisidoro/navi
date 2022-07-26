@@ -109,37 +109,31 @@ fn interpolate_paths(paths: String) -> String {
     newtext
 }
 
-fn gen_lists(tag_rules: Option<String>) -> (Vec<String>, Vec<String>) {
-    let mut allowlist = vec![];
-    let mut denylist = vec![];
+fn gen_lists(tag_rules: String) -> FilterOpts {
+    let words: Vec<_> = tag_rules.split(',').collect();
 
-    if let Some(rules) = tag_rules {
-        let words: Vec<_> = rules.split(',').collect();
-        allowlist = words
-            .iter()
-            .filter(|w| !w.starts_with('!'))
-            .map(|w| w.to_string())
-            .collect();
-        denylist = words
-            .iter()
-            .filter(|w| w.starts_with('!'))
-            .map(|w| without_first(w))
-            .collect();
-    }
+    let allowlist = words
+        .iter()
+        .filter(|w| !w.starts_with('!'))
+        .map(|w| w.to_string())
+        .collect();
+    let denylist = words
+        .iter()
+        .filter(|w| w.starts_with('!'))
+        .map(|w| without_first(w))
+        .collect();
 
-    (allowlist, denylist)
+    FilterOpts { allowlist, denylist }
 }
 
 pub struct Fetcher {
     path: Option<String>,
-    filter: FilterOpts,
+    filter: Option<FilterOpts>,
 }
 
 impl Fetcher {
     pub fn new(path: Option<String>, tag_rules: Option<String>) -> Self {
-        let (allowlist, denylist) = gen_lists(tag_rules);
-        let filter = FilterOpts { allowlist, denylist };
-
+        let filter = tag_rules.map(|rules| gen_lists(rules));
         Self { path, filter }
     }
 }
@@ -174,6 +168,7 @@ impl fetcher::Fetcher for Fetcher {
                 let read_file_result = {
                     let path = PathBuf::from(&file);
                     let lines = read_lines(&path)?;
+                    parser.filter = self.filter;
                     parser.read_lines(lines, &file, Some(index))
                 };
 
