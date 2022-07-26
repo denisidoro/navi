@@ -126,16 +126,22 @@ pub struct Parser<'a> {
     visited_lines: HashSet<u64>,
     pub filter: Option<FilterOpts>,
     writer: &'a mut dyn Write,
-    is_terminal: bool,
+    write_fn: fn(&Item) -> String,
 }
 
 impl<'a> Parser<'a> {
     pub fn new(writer: &'a mut dyn Write, is_terminal: bool) -> Self {
+        let write_fn = if is_terminal {
+            serializer::write
+        } else {
+            serializer::write_raw
+        };
+
         Self {
             variables: Default::default(),
             visited_lines: Default::default(),
             filter: Default::default(),
-            is_terminal,
+            write_fn,
             writer,
         }
     }
@@ -174,11 +180,7 @@ impl<'a> Parser<'a> {
             }
         }
 
-        let write_fn = if self.is_terminal {
-            serializer::write
-        } else {
-            serializer::write_raw
-        };
+        let write_fn = self.write_fn;
 
         return self
             .writer

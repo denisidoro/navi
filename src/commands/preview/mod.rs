@@ -1,8 +1,7 @@
 use crate::prelude::*;
 use crate::serializer;
-use crate::ui;
 use clap::Args;
-use crossterm::style::Stylize;
+use crossterm::style::{style, Stylize};
 use std::process;
 
 pub mod var;
@@ -30,9 +29,9 @@ impl Runnable for Input {
 
         println!(
             "{comment} {tags} \n{snippet}",
-            comment = ui::style(comment).with(CONFIG.comment_color()),
-            tags = ui::style(format!("[{}]", tags)).with(CONFIG.tag_color()),
-            snippet = ui::style(serializer::fix_newlines(snippet)).with(CONFIG.snippet_color()),
+            comment = style(comment).with(CONFIG.comment_color()),
+            tags = style(format!("[{}]", tags)).with(CONFIG.tag_color()),
+            snippet = style(serializer::fix_newlines(snippet)).with(CONFIG.snippet_color()),
         );
 
         process::exit(0)

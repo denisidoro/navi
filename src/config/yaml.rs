@@ -3,7 +3,7 @@ use crate::filesystem::default_config_pathbuf;
 use crate::finder::FinderChoice;
 use crate::fs;
 use crate::prelude::*;
-use crate::terminal::style::Color as TerminalColor;
+use crossterm::style::Color as TerminalColor;
 use serde::de;
 
 #[derive(Deserialize)]

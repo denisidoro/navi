@@ -23,7 +23,6 @@ mod serializer;
 mod shell;
 mod structures;
 mod terminal;
-mod ui;
 mod url;
 mod welcome;
 

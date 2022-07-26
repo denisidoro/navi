@@ -1,6 +1,7 @@
 use crate::prelude::*;
-pub use crossterm::style;
+use crossterm::style;
 use crossterm::terminal;
+use std::cmp::max;
 use std::process::Command;
 
 const FALLBACK_WIDTH: u16 = 80;
@@ -46,6 +47,27 @@ pub fn width() -> u16 {
 
 pub fn parse_ansi(ansi: &str) -> Option<style::Color> {
     style::Color::parse_ansi(&format!("5;{}", ansi))
+}
+
+pub fn get_widths() -> (usize, usize, usize) {
+    let width = width();
+    let tag_width_percentage = max(
+        CONFIG.tag_min_width(),
+        width * CONFIG.tag_width_percentage() / 100,
+    );
+    let comment_width_percentage = max(
+        CONFIG.comment_min_width(),
+        width * CONFIG.comment_width_percentage() / 100,
+    );
+    let snippet_width_percentage = max(
+        CONFIG.snippet_min_width(),
+        width * CONFIG.snippet_width_percentage() / 100,
+    );
+    (
+        usize::from(tag_width_percentage),
+        usize::from(comment_width_percentage),
+        usize::from(snippet_width_percentage),
+    )
 }
 
 #[derive(Debug, Clone)]

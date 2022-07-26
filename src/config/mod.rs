@@ -3,8 +3,8 @@ mod env;
 mod yaml;
 
 use crate::finder::FinderChoice;
-use crate::terminal::style::Color;
 pub use cli::*;
+use crossterm::style::Color;
 
 use env::EnvConfig;
 use yaml::YamlConfig;
