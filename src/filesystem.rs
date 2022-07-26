@@ -109,7 +109,7 @@ fn interpolate_paths(paths: String) -> String {
     newtext
 }
 
-fn gen_lists(tag_rules: &String) -> FilterOpts {
+fn gen_lists(tag_rules: &str) -> FilterOpts {
     let words: Vec<_> = tag_rules.split(',').collect();
 
     let allowlist = words
@@ -155,7 +155,7 @@ impl fetcher::Fetcher for Fetcher {
         let home_regex = Regex::new(r"^~").unwrap();
         let home = BaseDirs::new().map(|b| b.home_dir().to_string());
 
-        parser.filter = self.tag_rules.as_ref().map(gen_lists);
+        parser.filter = self.tag_rules.as_ref().map(|r| gen_lists(r.as_str()));
 
         for folder in folders {
             let interpolated_folder = match &home {
