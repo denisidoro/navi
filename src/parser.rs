@@ -9,7 +9,6 @@ use std::io::Write;
 
 lazy_static! {
     pub static ref VAR_LINE_REGEX: Regex = Regex::new(r"^\$\s*([^:]+):(.*)").expect("Invalid regex");
-    pub static ref WRITE_FN: fn(&Item) -> String = serializer::write;
 }
 
 fn parse_opts(text: &str) -> Result<FinderOpts> {
@@ -126,7 +125,7 @@ pub struct Parser<'a> {
     visited_lines: HashSet<u64>,
     pub filter: Option<FilterOpts>,
     writer: &'a mut dyn Write,
-    write_fn: fn(&Item) -> String,
+    write_fn: fn(&Item, u64) -> String,
 }
 
 impl<'a> Parser<'a> {
@@ -184,7 +183,7 @@ impl<'a> Parser<'a> {
 
         return self
             .writer
-            .write_all(write_fn(item).as_bytes())
+            .write_all(write_fn(item, hash).as_bytes())
             .context("Failed to write command to finder's stdin");
     }
 
@@ -226,6 +225,10 @@ impl<'a> Parser<'a> {
             else if line.starts_with('@') {
                 let tags_dependency = without_prefix(&line);
                 self.variables.insert_dependency(&item.tags, &tags_dependency);
+            }
+            // raycast icon
+            else if line.starts_with("; raycast.icon:") {
+                item.icon = Some(line[15..].trim().into());
             }
             // metacomment
             else if line.starts_with(';') {

@@ -36,7 +36,7 @@ fn limit_str(text: &str, length: usize) -> String {
     }
 }
 
-pub fn write(item: &Item) -> String {
+pub fn write(item: &Item, _hash: u64) -> String {
     let (tag_width_percentage, comment_width_percentage, snippet_width_percentage) = *COLUMN_WIDTHS;
     format!(
             "{tags_short}{delimiter}{comment_short}{delimiter}{snippet_short}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}{file_index}{delimiter}\n",
@@ -51,12 +51,14 @@ pub fn write(item: &Item) -> String {
         )
 }
 
-pub fn write_raw(item: &Item) -> String {
+pub fn write_raw(item: &Item, hash: u64) -> String {
     format!(
-        "{tags}{delimiter}{comment}{delimiter}{snippet}\n",
+        "{hash}{delimiter}{tags}{delimiter}{comment}{delimiter}{icon}{delimiter}{snippet}\n",
+        hash = hash,
         tags = item.tags,
         comment = item.comment,
         delimiter = FIELD_SEP_ESCAPE_CHAR,
+        icon = item.icon.clone().unwrap_or_default(),
         snippet = &item.snippet.trim_end_matches(LINE_SEPARATOR),
     )
 }

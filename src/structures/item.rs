@@ -4,6 +4,7 @@ pub struct Item {
     pub comment: String,
     pub snippet: String,
     pub file_index: Option<usize>,
+    pub icon: Option<String>,
 }
 
 impl Item {
