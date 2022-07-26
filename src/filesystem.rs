@@ -168,7 +168,7 @@ impl fetcher::Fetcher for Fetcher {
                 let read_file_result = {
                     let path = PathBuf::from(&file);
                     let lines = read_lines(&path)?;
-                    parser.filter = self.filter;
+                    parser.filter = self.filter.clone();
                     parser.read_lines(lines, &file, Some(index))
                 };
 
