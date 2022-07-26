@@ -109,7 +109,7 @@ fn interpolate_paths(paths: String) -> String {
     newtext
 }
 
-fn gen_lists(tag_rules: String) -> FilterOpts {
+fn gen_lists(tag_rules: &String) -> FilterOpts {
     let words: Vec<_> = tag_rules.split(',').collect();
 
     let allowlist = words
@@ -128,13 +128,12 @@ fn gen_lists(tag_rules: String) -> FilterOpts {
 
 pub struct Fetcher {
     path: Option<String>,
-    filter: Option<FilterOpts>,
+    tag_rules: Option<String>,
 }
 
 impl Fetcher {
     pub fn new(path: Option<String>, tag_rules: Option<String>) -> Self {
-        let filter = tag_rules.map(|rules| gen_lists(rules));
-        Self { path, filter }
+        Self { path, tag_rules }
     }
 }
 
@@ -156,6 +155,8 @@ impl fetcher::Fetcher for Fetcher {
         let home_regex = Regex::new(r"^~").unwrap();
         let home = BaseDirs::new().map(|b| b.home_dir().to_string());
 
+        parser.filter = self.tag_rules.as_ref().map(gen_lists);
+
         for folder in folders {
             let interpolated_folder = match &home {
                 Some(h) => home_regex.replace(folder, h).to_string(),
@@ -168,7 +169,6 @@ impl fetcher::Fetcher for Fetcher {
                 let read_file_result = {
                     let path = PathBuf::from(&file);
                     let lines = read_lines(&path)?;
-                    parser.filter = self.filter.clone();
                     parser.read_lines(lines, &file, Some(index))
                 };
 
