@@ -126,7 +126,7 @@ impl Fetcher {
 }
 
 impl fetcher::Fetcher for Fetcher {
-    fn fetch(&self, parser: &mut Parser, _files: &mut Vec<String>) -> Result<bool> {
+    fn fetch(&mut self, parser: &mut Parser) -> Result<bool> {
         let markdown = fetch(&self.query)?;
         parser.read_lines(markdown_lines(&self.query, &markdown), "markdown", None)?;
         Ok(true)

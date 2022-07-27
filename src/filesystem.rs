@@ -8,6 +8,7 @@ use directories_next::BaseDirs;
 use regex::Regex;
 
 use std::path::MAIN_SEPARATOR;
+use std::vec;
 use walkdir::WalkDir;
 
 pub fn all_cheat_files(path: &Path) -> Vec<String> {
@@ -117,28 +118,38 @@ fn gen_lists(tag_rules: &str) -> FilterOpts {
         .filter(|w| !w.starts_with('!'))
         .map(|w| w.to_string())
         .collect();
+
     let denylist = words
         .iter()
         .filter(|w| w.starts_with('!'))
         .map(|w| without_first(w))
         .collect();
 
-    FilterOpts { allowlist, denylist }
+    FilterOpts {
+        allowlist,
+        denylist,
+        ..Default::default()
+    }
 }
 
 pub struct Fetcher {
     path: Option<String>,
     tag_rules: Option<String>,
+    files: Vec<String>,
 }
 
 impl Fetcher {
     pub fn new(path: Option<String>, tag_rules: Option<String>) -> Self {
-        Self { path, tag_rules }
+        Self {
+            path,
+            tag_rules,
+            files: vec![],
+        }
     }
 }
 
 impl fetcher::Fetcher for Fetcher {
-    fn fetch(&self, parser: &mut Parser, files: &mut Vec<String>) -> Result<bool> {
+    fn fetch(&mut self, parser: &mut Parser) -> Result<bool> {
         let mut found_something = false;
 
         let path = self.path.clone();
@@ -164,8 +175,8 @@ impl fetcher::Fetcher for Fetcher {
             };
             let folder_pathbuf = PathBuf::from(interpolated_folder);
             for file in all_cheat_files(&folder_pathbuf) {
-                files.push(file.clone());
-                let index = files.len() - 1;
+                self.files.push(file.clone());
+                let index = self.files.len() - 1;
                 let read_file_result = {
                     let path = PathBuf::from(&file);
                     let lines = read_lines(&path)?;
@@ -179,6 +190,10 @@ impl fetcher::Fetcher for Fetcher {
         }
 
         Ok(found_something)
+    }
+
+    fn files(&self) -> Vec<String> {
+        self.files.clone()
     }
 }
 

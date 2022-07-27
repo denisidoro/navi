@@ -37,8 +37,8 @@ pub fn main() -> Result<String> {
         ..Default::default()
     };
 
-    let (repo, _, _) = finder
-        .call(opts, |stdin, _| {
+    let (repo, _) = finder
+        .call(opts, |stdin| {
             stdin
                 .write_all(repos.as_bytes())
                 .context("Unable to prompt featured repositories")?;

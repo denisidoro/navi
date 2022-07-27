@@ -114,10 +114,11 @@ fn without_prefix(line: &str) -> String {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct FilterOpts {
     pub allowlist: Vec<String>,
     pub denylist: Vec<String>,
+    pub hash: Option<u64>,
 }
 
 pub struct Parser<'a> {
@@ -174,6 +175,12 @@ impl<'a> Parser<'a> {
                     }
                 }
                 if !should_allow {
+                    return Ok(());
+                }
+            }
+
+            if let Some(h) = filter.hash {
+                if h != hash {
                     return Ok(());
                 }
             }

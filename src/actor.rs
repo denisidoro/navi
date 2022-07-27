@@ -124,9 +124,9 @@ fn prompt_finder(
         opts.suggestion_type = SuggestionType::Disabled;
     };
 
-    let (output, _, _) = CONFIG
+    let (output, _) = CONFIG
         .finder()
-        .call(opts, |stdin, _| {
+        .call(opts, |stdin| {
             stdin
                 .write_all(suggestions.as_bytes())
                 .context("Could not write to finder's stdin")?;

@@ -13,8 +13,8 @@ fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
         ..Default::default()
     };
 
-    let (response, _, _) = finder
-        .call(opts, |stdin, _| {
+    let (response, _) = finder
+        .call(opts, |stdin| {
             stdin
                 .write_all(b"Yes\nNo")
                 .context("Unable to writer alternatives")?;
@@ -56,8 +56,8 @@ pub fn main(uri: String) -> Result<()> {
     let files = if should_import_all {
         all_files
     } else {
-        let (files, _, _) = finder
-            .call(opts, |stdin, _| {
+        let (files, _) = finder
+            .call(opts, |stdin| {
                 stdin
                     .write_all(all_files.as_bytes())
                     .context("Unable to prompt cheats to import")?;

@@ -13,19 +13,20 @@ pub fn main() -> Result<()> {
     let config = &CONFIG;
     let _opts = FinderOpts::snippet_default();
 
-    let mut files = vec![];
-    let fetcher: Box<dyn Fetcher> = match config.source() {
+    let mut fetcher: Box<dyn Fetcher> = match config.source() {
         Source::Cheats(query) => Box::new(cheatsh::Fetcher::new(query)),
         Source::Tldr(query) => Box::new(tldr::Fetcher::new(query)),
         Source::Filesystem(path, rules) => Box::new(filesystem::Fetcher::new(path, rules)),
     };
+
+    let hash: u64 = 1531163706200719240;
 
     let mut stdout = stdout();
     let mut writer: Box<&mut dyn Write> = Box::new(&mut stdout);
     let mut parser = Parser::new(&mut writer, false);
 
     let _res = fetcher
-        .fetch(&mut parser, &mut files)
+        .fetch(&mut parser)
         .context("Failed to parse variables intended for finder")?;
 
     /*

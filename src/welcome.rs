@@ -9,9 +9,9 @@ pub fn main() -> Result<()> {
     let config = &CONFIG;
     let opts = FinderOpts::snippet_default();
 
-    let (raw_selection, variables, files) = config
+    let (raw_selection, variables) = config
         .finder()
-        .call(opts, |writer, _| {
+        .call(opts, |writer| {
             let mut parser = Parser::new(writer, true);
             populate_cheatsheet(&mut parser)?;
             Ok(Some(parser.variables))
@@ -24,7 +24,7 @@ pub fn main() -> Result<()> {
         return main();
     }
 
-    actor::act(extractions, files, variables)?;
+    actor::act(extractions, vec![], variables)?;
     Ok(())
 }
 

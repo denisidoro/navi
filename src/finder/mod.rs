@@ -47,13 +47,9 @@ fn parse(out: Output, opts: Opts) -> Result<String> {
 }
 
 impl FinderChoice {
-    pub fn call<F>(
-        &self,
-        finder_opts: Opts,
-        stdin_fn: F,
-    ) -> Result<(String, Option<VariableMap>, Vec<String>)>
+    pub fn call<F>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>)>
     where
-        F: Fn(&mut dyn Write, &mut Vec<String>) -> Result<Option<VariableMap>>,
+        F: Fn(&mut dyn Write) -> Result<Option<VariableMap>>,
     {
         let finder_str = match self {
             Self::Fzf => "fzf",
@@ -185,13 +181,11 @@ impl FinderChoice {
             .ok_or_else(|| anyhow!("Unable to acquire stdin of finder"))?;
         let mut writer: Box<&mut dyn Write> = Box::new(stdin);
 
-        let mut files = vec![];
-
-        let result_map = stdin_fn(&mut writer, &mut files).context("Failed to pass data to finder")?;
+        let result_map = stdin_fn(&mut writer).context("Failed to pass data to finder")?;
 
         let out = child.wait_with_output().context("Failed to wait for finder")?;
 
         let output = parse(out, finder_opts).context("Unable to get output")?;
-        Ok((output, result_map, files))
+        Ok((output, result_map))
     }
 }

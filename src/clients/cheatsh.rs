@@ -78,7 +78,7 @@ impl Fetcher {
 }
 
 impl fetcher::Fetcher for Fetcher {
-    fn fetch(&self, parser: &mut Parser, _files: &mut Vec<String>) -> Result<bool> {
+    fn fetch(&mut self, parser: &mut Parser) -> Result<bool> {
         let cheat = &fetch(&self.query)?;
 
         if cheat.starts_with("Unknown topic.") {
