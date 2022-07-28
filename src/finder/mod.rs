@@ -142,9 +142,8 @@ impl FinderChoice {
         }
 
         if let Some(o) = opts.overrides {
-            o.as_str()
-                .split(' ')
-                .map(|s| s.to_string())
+            shellwords::split(&o)?
+                .into_iter()
                 .filter(|s| !s.is_empty())
                 .for_each(|s| {
                     command.arg(s);
