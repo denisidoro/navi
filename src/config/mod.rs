@@ -4,7 +4,7 @@ mod yaml;
 
 use crate::clients::cheatsh;
 use crate::clients::tldr;
-use crate::commands::func::Func;
+
 use crate::config::Source;
 use crate::filesystem;
 use crate::finder::FinderChoice;
