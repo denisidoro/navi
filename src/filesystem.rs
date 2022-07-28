@@ -1,6 +1,6 @@
 use crate::env_var;
 pub use crate::fs::{create_dir, exe_string, read_lines, remove_dir, InvalidPath, UnreadableDir};
-use crate::parser::{FilterOpts, Parser};
+use crate::parser::{Parser};
 use crate::prelude::*;
 
 use crate::structures::fetcher;
@@ -9,7 +9,7 @@ use regex::Regex;
 
 use std::cell::RefCell;
 use std::path::MAIN_SEPARATOR;
-use std::vec;
+
 use walkdir::WalkDir;
 
 pub fn all_cheat_files(path: &Path) -> Vec<String> {

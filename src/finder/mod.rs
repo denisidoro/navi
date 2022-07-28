@@ -1,6 +1,6 @@
 use crate::prelude::*;
 use crate::serializer;
-use crate::structures::cheat::VariableMap;
+
 use std::io::Write;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
