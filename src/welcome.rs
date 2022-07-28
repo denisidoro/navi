@@ -12,7 +12,7 @@ pub fn main() -> Result<()> {
     let (raw_selection, variables) = config
         .finder()
         .call(opts, |writer| {
-            let mut parser = Parser::new(writer, true, config.tag_rules());
+            let mut parser = Parser::new(writer, true);
             populate_cheatsheet(&mut parser)?;
             Ok(Some(parser.variables))
         })

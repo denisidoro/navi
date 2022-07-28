@@ -11,9 +11,10 @@ pub fn main() -> Result<()> {
 
     // let mut stdout = stdout();
     // let mut writer: Box<&mut dyn Write> = Box::new(&mut stdout);
-    let mut buf = vec![];
     // let mut parser = Parser::new(&mut writer, false);
-    let mut parser = Parser::new(&mut buf, false, config.tag_rules());
+
+    let mut buf = vec![];
+    let mut parser = Parser::new(&mut buf, false);
     parser.set_hash(hash);
 
     let _res = fetcher

@@ -14,7 +14,7 @@ pub fn main() -> Result<()> {
         .call(opts, |writer| {
             let fetcher = config.fetcher();
 
-            let mut parser = Parser::new(writer, true, config.tag_rules());
+            let mut parser = Parser::new(writer, true);
 
             let found_something = fetcher
                 .fetch(&mut parser)

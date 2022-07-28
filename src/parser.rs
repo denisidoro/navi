@@ -161,14 +161,14 @@ fn gen_lists(tag_rules: &str) -> FilterOpts {
 }
 
 impl<'a> Parser<'a> {
-    pub fn new(writer: &'a mut dyn Write, is_terminal: bool, tag_rules: Option<String>) -> Self {
+    pub fn new(writer: &'a mut dyn Write, is_terminal: bool) -> Self {
         let write_fn = if is_terminal {
             serializer::write
         } else {
             serializer::write_raw
         };
 
-        let filter = match tag_rules {
+        let filter = match CONFIG.tag_rules() {
             Some(tr) => gen_lists(&tr),
             None => Default::default(),
         };
