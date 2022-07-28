@@ -11,8 +11,6 @@ use crossterm::style::Color;
 use crate::config::Source;
 use crate::filesystem;
 
-
-
 use crate::structures::fetcher::Fetcher;
 
 use env::EnvConfig;
