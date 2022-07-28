@@ -1,9 +1,9 @@
+use super::core;
 use super::temp;
 use crate::cheat_variable;
 use crate::prelude::*;
 use crate::shell;
 use crate::url;
-use crate::welcome;
 use clap::Args;
 use clap::Parser;
 
@@ -55,7 +55,7 @@ impl Runnable for Input {
 
         match func {
             Func::UrlOpen => url::open(args),
-            Func::Welcome => welcome::main(),
+            Func::Welcome => core::main(),
             Func::WidgetLastCommand => shell::widget_last_command(),
             Func::MapExpand => cheat_variable::map_expand(),
             Func::Temp => temp::main(),

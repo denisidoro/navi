@@ -1,8 +1,6 @@
 use crate::parser::Parser;
 use crate::prelude::*;
-
 use crate::structures::fetcher;
-
 use std::process::{self, Command, Stdio};
 
 lazy_static! {

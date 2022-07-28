@@ -4,15 +4,14 @@ mod yaml;
 
 use crate::clients::cheatsh;
 use crate::clients::tldr;
-use crate::finder::FinderChoice;
-pub use cli::*;
-use crossterm::style::Color;
-
+use crate::commands::func::Func;
 use crate::config::Source;
 use crate::filesystem;
-
+use crate::finder::FinderChoice;
 use crate::structures::fetcher::Fetcher;
-
+use crate::welcome;
+pub use cli::*;
+use crossterm::style::Color;
 use env::EnvConfig;
 use yaml::YamlConfig;
 
@@ -51,6 +50,12 @@ impl Config {
             Source::Tldr(query)
         } else if let Some(query) = self.clap.cheatsh.clone() {
             Source::Cheats(query)
+        } else if let Some(cmd) = self.cmd() {
+            if let Command::Fn(_) = cmd {
+                Source::Welcome
+            } else {
+                Source::Filesystem(self.path())
+            }
         } else {
             Source::Filesystem(self.path())
         }
@@ -61,6 +66,7 @@ impl Config {
             Source::Cheats(query) => Box::new(cheatsh::Fetcher::new(query)),
             Source::Tldr(query) => Box::new(tldr::Fetcher::new(query)),
             Source::Filesystem(path) => Box::new(filesystem::Fetcher::new(path)),
+            Source::Welcome => Box::new(welcome::Fetcher::new()),
         }
     }
 

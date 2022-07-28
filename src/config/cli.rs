@@ -120,6 +120,7 @@ pub enum Source {
     Filesystem(Option<String>),
     Tldr(String),
     Cheats(String),
+    Welcome,
 }
 
 pub enum Action {
