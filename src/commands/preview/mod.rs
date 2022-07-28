@@ -13,19 +13,19 @@ pub struct Input {
     pub line: String,
 }
 
-fn extract_elements(argstr: &str) -> (&str, &str, &str) {
+fn extract_elements(argstr: &str) -> Result<(&str, &str, &str)> {
     let mut parts = argstr.split(serializer::DELIMITER).skip(3);
-    let tags = parts.next().expect("No `tags` element provided.");
-    let comment = parts.next().expect("No `comment` element provided.");
-    let snippet = parts.next().expect("No `snippet` element provided.");
-    (tags, comment, snippet)
+    let tags = parts.next().context("No `tags` element provided.")?;
+    let comment = parts.next().context("No `comment` element provided.")?;
+    let snippet = parts.next().context("No `snippet` element provided.")?;
+    Ok((tags, comment, snippet))
 }
 
 impl Runnable for Input {
     fn run(&self) -> Result<()> {
         let line = &self.line;
 
-        let (tags, comment, snippet) = extract_elements(line);
+        let (tags, comment, snippet) = extract_elements(line)?;
 
         println!(
             "{comment} {tags} \n{snippet}",

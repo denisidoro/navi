@@ -1,5 +1,6 @@
 use crate::finder::structures::Opts as FinderOpts;
 use crate::parser::Parser;
+use crate::shell::{self, ShellSpawnError};
 use crate::{prelude::*, serializer};
 use std::io::{self, Write};
 
@@ -10,10 +11,6 @@ pub fn main() -> Result<()> {
     let fetcher = config.fetcher();
     let hash: u64 = 2087294461664323320;
 
-    // let mut stdout = stdout();
-    // let mut writer: Box<&mut dyn Write> = Box::new(&mut stdout);
-    // let mut parser = Parser::new(&mut writer, false);
-
     let mut buf = vec![];
     let mut parser = Parser::new(&mut buf, false);
     parser.set_hash(hash);
@@ -22,24 +19,30 @@ pub fn main() -> Result<()> {
         .fetch(&mut parser)
         .context("Failed to parse variables intended for finder")?;
 
-    /*
-    if let Some(variables) = res {
-        Ok(Some(variables))
-    } else {
-        welcome::populate_cheatsheet(stdin)?;
-        Ok(Some(VariableMap::new()))
-    }
-    */
-
-    // Do writing here.
-
     let variables = parser.variables;
     let item_str = String::from_utf8(buf)?;
     let item = serializer::raycast_deser(&item_str)?;
     dbg!(&item);
 
-    let x = variables.get_suggestion(&item.tags, "local_branch");
+    let x = variables.get_suggestion(&item.tags, "local_branch").expect("foo");
     dbg!(&x);
+
+    let suggestion_command = x.0.clone();
+    let child = shell::out()
+        .stdout(Stdio::piped())
+        .arg(&suggestion_command)
+        .spawn()
+        .map_err(|e| ShellSpawnError::new(suggestion_command, e))?;
+
+    let text = String::from_utf8(
+        child
+            .wait_with_output()
+            .context("Failed to wait and collect output from bash")?
+            .stdout,
+    )
+    .context("Suggestions are invalid utf8")?;
+
+    dbg!(&text);
 
     Ok(())
 }
