@@ -9,25 +9,25 @@ on: [push]
 name: CI
 
 jobs:
-  check:
-    name: Check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
+  # check:
+  #   name: Check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout sources
+  #       uses: actions/checkout@v2
 
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
+  #     - name: Install stable toolchain
+  #       uses: actions-rs/toolchain@v1
+  #       with:
+  #         profile: minimal
+  #         toolchain: stable
+  #         override: true
 
-      - name: Run cargo check
-        uses: actions-rs/cargo@v1
-        continue-on-error: false
-        with:
-          command: check
+  #     - name: Run cargo check
+  #       uses: actions-rs/cargo@v1
+  #       continue-on-error: false
+  #       with:
+  #         command: check
 
   test:
     name: Tests
@@ -64,21 +64,7 @@ jobs:
           command: test
 
       - name: Install deps
-        run: |
-           _install() { 
-              if command -v "$1"; then 
-                 return 0; 
-              fi
-              sudo apt-get install "$1" || sudo apt install "$1" || brew install "$1"
-           }; 
-           
-           _install_many() { 
-              for dep in $@; do 
-                 _install "$dep"
-              done
-           }  
-           
-           _install_many git bash npm tmux
+        run: ./script/dot pkg add git bash npm tmux
 
       - name: Install fzf
         run: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; yes | ~/.fzf/install;
@@ -89,31 +75,31 @@ jobs:
       - name: Run bash tests
         run: ./tests/run
 
-  # lints:
-  #   name: Lints
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout sources
-  #       uses: actions/checkout@v2
+  lints:
+    name: Lints
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
 
-  #     - name: Install stable toolchain
-  #       uses: actions-rs/toolchain@v1
-  #       with:
-  #         profile: minimal
-  #         toolchain: stable
-  #         override: true
-  #         components: rustfmt, clippy
+      # - name: Install stable toolchain
+      #   uses: actions-rs/toolchain@v1
+      #   with:
+      #     profile: minimal
+      #     toolchain: stable
+      #     override: true
+      #     components: rustfmt, clippy
 
-  #     - name: Run cargo fmt
-  #       uses: actions-rs/cargo@v1
-  #       continue-on-error: false
-  #       with:
-  #         command: fmt
-  #         args: --all -- --check
+      - name: Run cargo fmt
+        uses: actions-rs/cargo@v1
+        continue-on-error: false
+        with:
+          command: fmt
+          args: --all -- --check
 
-  #     - name: Run cargo clippy
-  #       uses: actions-rs/cargo@v1
-  #       continue-on-error: false
-  #       with:
-  #         command: clippy
-  #         args: -- -D warnings
+      - name: Run cargo clippy
+        uses: actions-rs/cargo@v1
+        continue-on-error: false
+        with:
+          command: clippy
+          args: -- -D warnings
