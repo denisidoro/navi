@@ -1,6 +1,6 @@
+use crate::common::shell;
 use crate::finder::structures::SuggestionType;
 use crate::prelude::*;
-use crate::shell;
 use shell::EOF;
 use std::process::Stdio;
 

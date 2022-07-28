@@ -1,7 +1,29 @@
+use crate::common::terminal;
 use crate::prelude::*;
 use crate::structures::item::Item;
-use crate::terminal;
 use crossterm::style::{style, Stylize};
+use std::cmp::max;
+
+pub fn get_widths() -> (usize, usize, usize) {
+    let width = terminal::width();
+    let tag_width_percentage = max(
+        CONFIG.tag_min_width(),
+        width * CONFIG.tag_width_percentage() / 100,
+    );
+    let comment_width_percentage = max(
+        CONFIG.comment_min_width(),
+        width * CONFIG.comment_width_percentage() / 100,
+    );
+    let snippet_width_percentage = max(
+        CONFIG.snippet_min_width(),
+        width * CONFIG.snippet_width_percentage() / 100,
+    );
+    (
+        usize::from(tag_width_percentage),
+        usize::from(comment_width_percentage),
+        usize::from(snippet_width_percentage),
+    )
+}
 
 const NEWLINE_ESCAPE_CHAR: char = '\x15';
 const FIELD_SEP_ESCAPE_CHAR: char = '\x16';
@@ -11,7 +33,7 @@ pub const DELIMITER: &str = r"  ⠀";
 lazy_static! {
     pub static ref NEWLINE_REGEX: Regex = Regex::new(r"\\\s+").expect("Invalid regex");
     pub static ref VAR_REGEX: Regex = Regex::new(r"\\?<(\w[\w\d\-_]*)>").expect("Invalid regex");
-    pub static ref COLUMN_WIDTHS: (usize, usize, usize) = terminal::get_widths();
+    pub static ref COLUMN_WIDTHS: (usize, usize, usize) = get_widths();
 }
 
 pub fn with_new_lines(txt: String) -> String {

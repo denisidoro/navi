@@ -1,7 +1,7 @@
 use crate::filesystem;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 
-use crate::git;
+use crate::common::git;
 use crate::prelude::*;
 use std::fs;
 

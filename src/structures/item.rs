@@ -1,4 +1,4 @@
-use crate::hash::fnv;
+use crate::common::hash::fnv;
 
 #[derive(Default, Debug)]
 pub struct Item {

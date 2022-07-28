@@ -1,8 +1,8 @@
 use clap::Args;
 
 use super::var;
+use crate::common::shell::{self, ShellSpawnError, EOF};
 use crate::prelude::*;
-use crate::shell::{self, ShellSpawnError, EOF};
 use std::io::{self, Read};
 
 #[derive(Debug, Clone, Args)]

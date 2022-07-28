@@ -1,5 +1,5 @@
+use crate::common::hash::fnv;
 use crate::finder::structures::Opts;
-use crate::hash::fnv;
 use crate::prelude::*;
 
 pub type Suggestion = (String, Option<Opts>);

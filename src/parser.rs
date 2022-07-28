@@ -1,5 +1,5 @@
+use crate::common::fs;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
-use crate::fs;
 use crate::prelude::*;
 use crate::serializer;
 use crate::structures::cheat::VariableMap;

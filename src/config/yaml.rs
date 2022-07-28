@@ -1,7 +1,7 @@
 use super::env::EnvConfig;
+use crate::common::fs;
 use crate::filesystem::default_config_pathbuf;
 use crate::finder::FinderChoice;
-use crate::fs;
 use crate::prelude::*;
 use crossterm::style::Color as TerminalColor;
 use serde::de;

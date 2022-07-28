@@ -1,5 +1,5 @@
+use crate::common::shell::ShellSpawnError;
 use crate::prelude::*;
-use crate::shell::ShellSpawnError;
 use std::process::Command;
 
 pub fn shallow_clone(uri: &str, target: &str) -> Result<()> {

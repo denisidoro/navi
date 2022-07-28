@@ -1,5 +1,5 @@
+use crate::common::shell::{self, ShellSpawnError};
 use crate::prelude::*;
-use crate::shell::{self, ShellSpawnError};
 use anyhow::Result;
 use shell::EOF;
 

@@ -1,6 +1,6 @@
+use crate::common::shell::{self, ShellSpawnError};
 use crate::finder::structures::Opts as FinderOpts;
 use crate::parser::Parser;
-use crate::shell::{self, ShellSpawnError};
 use crate::{prelude::*, serializer};
 use std::io::{self, Write};
 

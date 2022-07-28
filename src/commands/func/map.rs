@@ -1,7 +1,7 @@
+use crate::common::shell::{self, ShellSpawnError};
 use crate::prelude::*;
-use crate::shell::{self, ShellSpawnError};
 
-pub fn map_expand() -> Result<()> {
+pub fn expand() -> Result<()> {
     let cmd = r#"sed -e 's/^.*$/"&"/' | tr '\n' ' '"#;
     shell::out()
         .arg(cmd)

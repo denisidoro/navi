@@ -1,13 +1,13 @@
 use super::extractor;
-use crate::clipboard;
+use crate::common::clipboard;
+use crate::common::fs;
+use crate::common::shell;
+use crate::common::shell::ShellSpawnError;
 use crate::config::Action;
 use crate::env_var;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
-use crate::fs;
 use crate::prelude::*;
 use crate::serializer;
-use crate::shell;
-use crate::shell::ShellSpawnError;
 use crate::structures::cheat::{Suggestion, VariableMap};
 use shell::EOF;
 use std::process::Stdio;

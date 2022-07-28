@@ -1,7 +1,7 @@
 use clap::Args;
 
+use crate::common::shell::Shell;
 use crate::prelude::*;
-use crate::shell::Shell;
 
 const WIDGET_POSSIBLE_VALUES: &[&str] = &["bash", "zsh", "fish", "elvish"];
 
