@@ -9,7 +9,7 @@ navi repo browse
 # Edit main local cheatsheets
 f="$(navi info cheats-path)/main.cheat"
 [ -f "$f" ] || navi info cheats-example > "$f"
-$EDITOR "$f"
+${EDITOR:-nano} "$f"
 
 
 % config
@@ -17,7 +17,7 @@ $EDITOR "$f"
 # Edit config file
 f="$(navi info config-path)"
 [ -f "$f" ] || navi info config-example > "$f"
-$EDITOR "$f"
+${EDITOR:-nano} "$f"
 
 
 % 3rd-party
