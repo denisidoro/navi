@@ -47,7 +47,7 @@ pub fn main() -> Result<()> {
     Ok(())
 }
 
-pub fn main0() -> Result<()> {
+pub fn _main0() -> Result<()> {
     let config = &CONFIG;
 
     let fetcher = config.fetcher();

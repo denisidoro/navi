@@ -1,6 +1,4 @@
 use crate::prelude::*;
-use anyhow::Result;
-
 use std::io::{self, Read};
 
 pub fn last_command() -> Result<()> {
