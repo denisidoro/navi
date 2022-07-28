@@ -64,7 +64,7 @@ jobs:
           command: test
 
       - name: Install deps
-        run: ./script/dot pkg add git bash npm tmux
+        run: ./scripts/dot pkg add git bash npm tmux
 
       - name: Install fzf
         run: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; yes | ~/.fzf/install;
