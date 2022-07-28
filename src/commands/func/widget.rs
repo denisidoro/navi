@@ -1,10 +1,10 @@
-use crate::config::CONFIG;
+
 use crate::prelude::*;
 use anyhow::Result;
-use std::fmt::Debug;
+
 use std::io::{self, Read};
-use std::process::Command;
-use thiserror::Error;
+
+
 
 pub fn last_command() -> Result<()> {
     let mut text = String::new();

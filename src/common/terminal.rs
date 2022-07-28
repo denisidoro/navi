@@ -1,7 +1,7 @@
 use crate::prelude::*;
 use crossterm::style;
 use crossterm::terminal;
-use std::cmp::max;
+
 use std::process::Command;
 
 const FALLBACK_WIDTH: u16 = 80;
