@@ -272,8 +272,8 @@ impl<'a> Parser<'a> {
                 self.variables.insert_dependency(&item.tags, &tags_dependency);
             }
             // raycast icon
-            else if line.starts_with("; raycast.icon:") {
-                item.icon = Some(line[15..].trim().into());
+            else if let Some(icon) = line.strip_prefix("; raycast.icon:") {
+                item.icon = Some(icon.trim().into());
             }
             // metacomment
             else if line.starts_with(';') {
