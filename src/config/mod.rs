@@ -5,6 +5,7 @@ mod yaml;
 use crate::clients::cheatsh;
 use crate::clients::tldr;
 
+use crate::commands::func::Func;
 use crate::config::Source;
 use crate::filesystem;
 use crate::finder::FinderChoice;
@@ -50,8 +51,8 @@ impl Config {
             Source::Tldr(query)
         } else if let Some(query) = self.clap.cheatsh.clone() {
             Source::Cheats(query)
-        } else if let Some(cmd) = self.cmd() {
-            if let Command::Fn(_) = cmd {
+        } else if let Some(Command::Fn(input)) = self.cmd() {
+            if let Func::Welcome = input.func {
                 Source::Welcome
             } else {
                 Source::Filesystem(self.path())

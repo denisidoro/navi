@@ -1,5 +1,6 @@
-use crate::actor;
-use crate::extractor;
+mod actor;
+mod extractor;
+
 use crate::finder::structures::Opts as FinderOpts;
 use crate::parser::Parser;
 use crate::prelude::*;

@@ -1,9 +1,8 @@
+use super::extractor;
 use crate::clipboard;
 use crate::config::Action;
 use crate::env_var;
-use crate::extractor;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
-
 use crate::fs;
 use crate::prelude::*;
 use crate::serializer;
