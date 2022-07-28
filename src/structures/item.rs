@@ -1,4 +1,6 @@
-#[derive(Default)]
+use crate::hash::fnv;
+
+#[derive(Default, Debug)]
 pub struct Item {
     pub tags: String,
     pub comment: String,
@@ -13,5 +15,9 @@ impl Item {
             file_index,
             ..Default::default()
         }
+    }
+
+    pub fn hash(&self) -> u64 {
+        fnv(&format!("{}{}", &self.tags.trim(), &self.comment.trim()))
     }
 }

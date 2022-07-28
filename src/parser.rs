@@ -1,6 +1,5 @@
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::fs;
-use crate::hash::fnv;
 use crate::prelude::*;
 use crate::serializer;
 use crate::structures::cheat::VariableMap;
@@ -126,7 +125,7 @@ pub struct Parser<'a> {
     visited_lines: HashSet<u64>,
     filter: FilterOpts,
     writer: &'a mut dyn Write,
-    write_fn: fn(&Item, u64) -> String,
+    write_fn: fn(&Item) -> String,
 }
 
 fn without_first(string: &str) -> String {
@@ -191,7 +190,7 @@ impl<'a> Parser<'a> {
             return Ok(());
         }
 
-        let hash = fnv(&format!("{}{}", &item.comment, &item.snippet));
+        let hash = item.hash();
         if self.visited_lines.contains(&hash) {
             return Ok(());
         }
@@ -228,7 +227,7 @@ impl<'a> Parser<'a> {
 
         return self
             .writer
-            .write_all(write_fn(item, hash).as_bytes())
+            .write_all(write_fn(item).as_bytes())
             .context("Failed to write command to finder's stdin");
     }
 
