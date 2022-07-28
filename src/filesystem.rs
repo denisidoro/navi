@@ -85,15 +85,6 @@ pub fn tmp_pathbuf() -> Result<PathBuf> {
     Ok(root)
 }
 
-fn without_first(string: &str) -> String {
-    string
-        .char_indices()
-        .next()
-        .and_then(|(i, _)| string.get(i + 1..))
-        .expect("Should have at least one char")
-        .to_string()
-}
-
 fn interpolate_paths(paths: String) -> String {
     let re = Regex::new(r#"\$\{?[a-zA-Z_][a-zA-Z_0-9]*"#).unwrap();
     let mut newtext = paths.to_string();
@@ -108,28 +99,6 @@ fn interpolate_paths(paths: String) -> String {
         }
     }
     newtext
-}
-
-fn gen_lists(tag_rules: &str) -> FilterOpts {
-    let words: Vec<_> = tag_rules.split(',').collect();
-
-    let allowlist = words
-        .iter()
-        .filter(|w| !w.starts_with('!'))
-        .map(|w| w.to_string())
-        .collect();
-
-    let denylist = words
-        .iter()
-        .filter(|w| w.starts_with('!'))
-        .map(|w| without_first(w))
-        .collect();
-
-    FilterOpts {
-        allowlist,
-        denylist,
-        ..Default::default()
-    }
 }
 
 pub struct Fetcher {

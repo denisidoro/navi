@@ -124,26 +124,66 @@ pub struct FilterOpts {
 pub struct Parser<'a> {
     pub variables: VariableMap,
     visited_lines: HashSet<u64>,
-    pub filter: Option<FilterOpts>,
+    filter: FilterOpts,
     writer: &'a mut dyn Write,
     write_fn: fn(&Item, u64) -> String,
 }
 
+fn without_first(string: &str) -> String {
+    string
+        .char_indices()
+        .next()
+        .and_then(|(i, _)| string.get(i + 1..))
+        .expect("Should have at least one char")
+        .to_string()
+}
+
+fn gen_lists(tag_rules: &str) -> FilterOpts {
+    let words: Vec<_> = tag_rules.split(',').collect();
+
+    let allowlist = words
+        .iter()
+        .filter(|w| !w.starts_with('!'))
+        .map(|w| w.to_string())
+        .collect();
+
+    let denylist = words
+        .iter()
+        .filter(|w| w.starts_with('!'))
+        .map(|w| without_first(w))
+        .collect();
+
+    FilterOpts {
+        allowlist,
+        denylist,
+        ..Default::default()
+    }
+}
+
 impl<'a> Parser<'a> {
-    pub fn new(writer: &'a mut dyn Write, is_terminal: bool) -> Self {
+    pub fn new(writer: &'a mut dyn Write, is_terminal: bool, tag_rules: Option<String>) -> Self {
         let write_fn = if is_terminal {
             serializer::write
         } else {
             serializer::write_raw
         };
 
+        let filter = match tag_rules {
+            Some(tr) => gen_lists(&tr),
+            None => Default::default(),
+        };
+
         Self {
             variables: Default::default(),
             visited_lines: Default::default(),
-            filter: Default::default(),
+            filter,
             write_fn,
             writer,
         }
+    }
+
+    pub fn set_hash(&mut self, hash: u64) {
+        self.filter.hash = Some(hash)
     }
 
     fn write_cmd(&mut self, item: &Item) -> Result<()> {
@@ -157,32 +197,30 @@ impl<'a> Parser<'a> {
         }
         self.visited_lines.insert(hash);
 
-        if let Some(filter) = self.filter.as_ref() {
-            if !filter.denylist.is_empty() {
-                for v in &filter.denylist {
-                    if item.tags.contains(v) {
-                        return Ok(());
-                    }
-                }
-            }
-
-            if !filter.allowlist.is_empty() {
-                let mut should_allow = false;
-                for v in &filter.allowlist {
-                    if item.tags.contains(v) {
-                        should_allow = true;
-                        break;
-                    }
-                }
-                if !should_allow {
+        if !self.filter.denylist.is_empty() {
+            for v in &self.filter.denylist {
+                if item.tags.contains(v) {
                     return Ok(());
                 }
             }
+        }
 
-            if let Some(h) = filter.hash {
-                if h != hash {
-                    return Ok(());
+        if !self.filter.allowlist.is_empty() {
+            let mut should_allow = false;
+            for v in &self.filter.allowlist {
+                if item.tags.contains(v) {
+                    should_allow = true;
+                    break;
                 }
+            }
+            if !should_allow {
+                return Ok(());
+            }
+        }
+
+        if let Some(h) = self.filter.hash {
+            if h != hash {
+                return Ok(());
             }
         }
 

@@ -7,13 +7,14 @@ pub fn main() -> Result<()> {
     let _opts = FinderOpts::snippet_default();
 
     let mut fetcher = config.fetcher();
-    // let hash: u64 = 1531163706200719240;
+    let hash: u64 = 1531163706200719240;
 
     // let mut stdout = stdout();
     // let mut writer: Box<&mut dyn Write> = Box::new(&mut stdout);
     let mut buf = vec![];
     // let mut parser = Parser::new(&mut writer, false);
-    let mut parser = Parser::new(&mut buf, false);
+    let mut parser = Parser::new(&mut buf, false, config.tag_rules());
+    parser.set_hash(hash);
 
     let _res = fetcher
         .fetch(&mut parser)
