@@ -18,7 +18,7 @@ fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
             stdin
                 .write_all(b"Yes\nNo")
                 .context("Unable to writer alternatives")?;
-            Ok(None)
+            Ok(())
         })
         .context("Unable to get response")?;
 
@@ -61,7 +61,7 @@ pub fn main(uri: String) -> Result<()> {
                 stdin
                     .write_all(all_files.as_bytes())
                     .context("Unable to prompt cheats to import")?;
-                Ok(None)
+                Ok(())
             })
             .context("Failed to get cheatsheet files from finder")?;
         files

@@ -9,12 +9,10 @@ pub fn main() -> Result<()> {
     let config = &CONFIG;
     let opts = FinderOpts::snippet_default();
 
-    let files = vec![];
-
-    let (raw_selection, variables) = config
+    let (raw_selection, (variables, files)) = config
         .finder()
         .call(opts, |writer| {
-            let mut fetcher = config.fetcher();
+            let fetcher = config.fetcher();
 
             let mut parser = Parser::new(writer, true, config.tag_rules());
 
@@ -26,8 +24,7 @@ pub fn main() -> Result<()> {
                 welcome::populate_cheatsheet(&mut parser)?;
             }
 
-            // files = fetcher.files(); // TODO
-            Ok(Some(parser.variables))
+            Ok((Some(parser.variables), fetcher.files()))
         })
         .context("Failed getting selection and variables from finder")?;
 

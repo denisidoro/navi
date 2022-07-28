@@ -6,7 +6,7 @@ pub fn main() -> Result<()> {
     let config = &CONFIG;
     let _opts = FinderOpts::snippet_default();
 
-    let mut fetcher = config.fetcher();
+    let fetcher = config.fetcher();
     let hash: u64 = 1531163706200719240;
 
     // let mut stdout = stdout();

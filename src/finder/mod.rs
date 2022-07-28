@@ -47,9 +47,9 @@ fn parse(out: Output, opts: Opts) -> Result<String> {
 }
 
 impl FinderChoice {
-    pub fn call<F>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>)>
+    pub fn call<F, R>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, R)>
     where
-        F: Fn(&mut dyn Write) -> Result<Option<VariableMap>>,
+        F: Fn(&mut dyn Write) -> Result<R>,
     {
         let finder_str = match self {
             Self::Fzf => "fzf",
@@ -179,13 +179,14 @@ impl FinderChoice {
             .stdin
             .as_mut()
             .ok_or_else(|| anyhow!("Unable to acquire stdin of finder"))?;
+
         let mut writer: Box<&mut dyn Write> = Box::new(stdin);
 
-        let result_map = stdin_fn(&mut writer).context("Failed to pass data to finder")?;
+        let return_value = stdin_fn(&mut writer).context("Failed to pass data to finder")?;
 
         let out = child.wait_with_output().context("Failed to wait for finder")?;
 
         let output = parse(out, finder_opts).context("Unable to get output")?;
-        Ok((output, result_map))
+        Ok((output, return_value))
     }
 }

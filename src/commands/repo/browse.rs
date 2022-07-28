@@ -42,7 +42,7 @@ pub fn main() -> Result<String> {
             stdin
                 .write_all(repos.as_bytes())
                 .context("Unable to prompt featured repositories")?;
-            Ok(None)
+            Ok(())
         })
         .context("Failed to get repo URL from finder")?;
 

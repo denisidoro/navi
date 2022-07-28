@@ -130,7 +130,7 @@ fn prompt_finder(
             stdin
                 .write_all(suggestions.as_bytes())
                 .context("Could not write to finder's stdin")?;
-            Ok(None)
+            Ok(())
         })
         .context("finder was unable to prompt with suggestions")?;
 

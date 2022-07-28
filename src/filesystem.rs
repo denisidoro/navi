@@ -7,6 +7,7 @@ use crate::structures::fetcher;
 use directories_next::BaseDirs;
 use regex::Regex;
 
+use std::cell::RefCell;
 use std::path::MAIN_SEPARATOR;
 use std::vec;
 use walkdir::WalkDir;
@@ -103,17 +104,20 @@ fn interpolate_paths(paths: String) -> String {
 
 pub struct Fetcher {
     path: Option<String>,
-    files: Vec<String>,
+    files: RefCell<Vec<String>>,
 }
 
 impl Fetcher {
     pub fn new(path: Option<String>) -> Self {
-        Self { path, files: vec![] }
+        Self {
+            path,
+            files: Default::default(),
+        }
     }
 }
 
 impl fetcher::Fetcher for Fetcher {
-    fn fetch(&mut self, parser: &mut Parser) -> Result<bool> {
+    fn fetch(&self, parser: &mut Parser) -> Result<bool> {
         let mut found_something = false;
 
         let path = self.path.clone();
@@ -139,8 +143,8 @@ impl fetcher::Fetcher for Fetcher {
             };
             let folder_pathbuf = PathBuf::from(interpolated_folder);
             for file in all_cheat_files(&folder_pathbuf) {
-                self.files.push(file.clone());
-                let index = self.files.len() - 1;
+                self.files.borrow_mut().push(file.clone());
+                let index = self.files.borrow().len() - 1;
                 let read_file_result = {
                     let path = PathBuf::from(&file);
                     let lines = read_lines(&path)?;
@@ -157,7 +161,7 @@ impl fetcher::Fetcher for Fetcher {
     }
 
     fn files(&self) -> Vec<String> {
-        self.files.clone()
+        self.files.borrow().clone()
     }
 }
 
