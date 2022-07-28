@@ -1,10 +1,10 @@
-use crate::structures::cheat::VariableMap;
-use anyhow::Result;
+use crate::parser::Parser;
+use crate::prelude::*;
 
 pub trait Fetcher {
-    fn fetch(
-        &self,
-        stdin: &mut std::process::ChildStdin,
-        files: &mut Vec<String>,
-    ) -> Result<Option<VariableMap>>;
+    fn fetch(&self, parser: &mut Parser) -> Result<bool>;
+
+    fn files(&self) -> Vec<String> {
+        vec![]
+    }
 }

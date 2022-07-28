@@ -1,8 +1,6 @@
-use crate::config::CONFIG;
+use crate::common::shell;
 use crate::finder::structures::SuggestionType;
-use crate::shell;
-use anyhow::Context;
-use anyhow::Result;
+use crate::prelude::*;
 use shell::EOF;
 use std::process::Stdio;
 

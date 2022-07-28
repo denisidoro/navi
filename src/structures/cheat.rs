@@ -1,23 +1,16 @@
+use crate::common::hash::fnv;
 use crate::finder::structures::Opts;
-use crate::hash::fnv;
-use std::collections::HashMap;
+use crate::prelude::*;
 
 pub type Suggestion = (String, Option<Opts>);
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct VariableMap {
     variables: HashMap<u64, HashMap<String, Suggestion>>,
     dependencies: HashMap<u64, Vec<u64>>,
 }
 
 impl VariableMap {
-    pub fn new() -> Self {
-        Self {
-            variables: HashMap::new(),
-            dependencies: HashMap::new(),
-        }
-    }
-
     pub fn insert_dependency(&mut self, tags: &str, tags_dependency: &str) {
         let k = fnv(&tags);
         if let Some(v) = self.dependencies.get_mut(&k) {

@@ -1,17 +1,15 @@
-use crate::config::CONFIG;
-use crate::structures::cheat::VariableMap;
-use crate::writer;
-use anyhow::Context;
-use anyhow::Result;
+use crate::prelude::*;
+use crate::serializer;
+
+use std::io::Write;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
-mod post;
 pub mod structures;
 pub use post::process;
-use serde::Deserialize;
-use std::str::FromStr;
 use structures::Opts;
 use structures::SuggestionType;
+
+mod post;
 
 #[derive(Debug, Clone, Copy, Deserialize)]
 pub enum FinderChoice {
@@ -31,12 +29,6 @@ impl FromStr for FinderChoice {
     }
 }
 
-pub trait Finder {
-    fn call<F>(&self, opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>, Vec<String>)>
-    where
-        F: Fn(&mut process::ChildStdin, &mut Vec<String>) -> Result<Option<VariableMap>>;
-}
-
 fn parse(out: Output, opts: Opts) -> Result<String> {
     let text = match out.status.code() {
         Some(0) | Some(1) | Some(2) => {
@@ -54,10 +46,10 @@ fn parse(out: Output, opts: Opts) -> Result<String> {
     post::process(output, opts.column, opts.delimiter.as_deref(), opts.map)
 }
 
-impl Finder for FinderChoice {
-    fn call<F>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, Option<VariableMap>, Vec<String>)>
+impl FinderChoice {
+    pub fn call<F, R>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, R)>
     where
-        F: Fn(&mut process::ChildStdin, &mut Vec<String>) -> Result<Option<VariableMap>>,
+        F: Fn(&mut dyn Write) -> Result<R>,
     {
         let finder_str = match self {
             Self::Fzf => "fzf",
@@ -86,7 +78,7 @@ impl Finder for FinderChoice {
             "--with-nth",
             "1,2,3",
             "--delimiter",
-            writer::DELIMITER.to_string().as_str(),
+            serializer::DELIMITER.to_string().as_str(),
             "--ansi",
             "--bind",
             format!("ctrl-j:down,ctrl-k:up{}", bindings).as_str(),
@@ -188,12 +180,13 @@ impl Finder for FinderChoice {
             .as_mut()
             .ok_or_else(|| anyhow!("Unable to acquire stdin of finder"))?;
 
-        let mut files = vec![];
-        let result_map = stdin_fn(stdin, &mut files).context("Failed to pass data to finder")?;
+        let mut writer: Box<&mut dyn Write> = Box::new(stdin);
+
+        let return_value = stdin_fn(&mut writer).context("Failed to pass data to finder")?;
 
         let out = child.wait_with_output().context("Failed to wait for finder")?;
 
         let output = parse(out, finder_opts).context("Unable to get output")?;
-        Ok((output, result_map, files))
+        Ok((output, return_value))
     }
 }

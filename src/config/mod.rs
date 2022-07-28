@@ -2,11 +2,17 @@ mod cli;
 mod env;
 mod yaml;
 
+use crate::clients::cheatsh;
+use crate::clients::tldr;
+
+use crate::commands::func::Func;
+use crate::config::Source;
+use crate::filesystem;
 use crate::finder::FinderChoice;
-
-use crate::terminal::style::Color;
+use crate::structures::fetcher::Fetcher;
+use crate::welcome;
 pub use cli::*;
-
+use crossterm::style::Color;
 use env::EnvConfig;
 use yaml::YamlConfig;
 
@@ -45,8 +51,23 @@ impl Config {
             Source::Tldr(query)
         } else if let Some(query) = self.clap.cheatsh.clone() {
             Source::Cheats(query)
+        } else if let Some(Command::Fn(input)) = self.cmd() {
+            if let Func::Welcome = input.func {
+                Source::Welcome
+            } else {
+                Source::Filesystem(self.path())
+            }
         } else {
-            Source::Filesystem(self.path(), self.tag_rules())
+            Source::Filesystem(self.path())
+        }
+    }
+
+    pub fn fetcher(&self) -> Box<dyn Fetcher> {
+        match self.source() {
+            Source::Cheats(query) => Box::new(cheatsh::Fetcher::new(query)),
+            Source::Tldr(query) => Box::new(tldr::Fetcher::new(query)),
+            Source::Filesystem(path) => Box::new(filesystem::Fetcher::new(path)),
+            Source::Welcome => Box::new(welcome::Fetcher::new()),
         }
     }
 

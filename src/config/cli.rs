@@ -1,58 +1,9 @@
+use crate::commands;
 use crate::finder::FinderChoice;
-use crate::handler::func::Func;
-use crate::handler::info::Info;
-use crate::shell::Shell;
-
+use crate::prelude::*;
 use clap::{crate_version, AppSettings, Parser, Subcommand};
 
-use std::str::FromStr;
-
 const FINDER_POSSIBLE_VALUES: &[&str] = &["fzf", "skim"];
-const WIDGET_POSSIBLE_VALUES: &[&str] = &["bash", "zsh", "fish", "elvish"];
-const FUNC_POSSIBLE_VALUES: &[&str] = &["url::open", "welcome", "widget::last_command", "map::expand"];
-const INFO_POSSIBLE_VALUES: &[&str] = &["cheats-example", "cheats-path", "config-path", "config-example"];
-
-impl FromStr for Shell {
-    type Err = &'static str;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "bash" => Ok(Shell::Bash),
-            "zsh" => Ok(Shell::Zsh),
-            "fish" => Ok(Shell::Fish),
-            "elvish" => Ok(Shell::Elvish),
-            _ => Err("no match"),
-        }
-    }
-}
-
-impl FromStr for Func {
-    type Err = &'static str;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "url::open" => Ok(Func::UrlOpen),
-            "welcome" => Ok(Func::Welcome),
-            "widget::last_command" => Ok(Func::WidgetLastCommand),
-            "map::expand" => Ok(Func::MapExpand),
-            _ => Err("no match"),
-        }
-    }
-}
-
-impl FromStr for Info {
-    type Err = &'static str;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "cheats-example" => Ok(Info::CheatsExample),
-            "cheats-path" => Ok(Info::CheatsPath),
-            "config-example" => Ok(Info::ConfigExample),
-            "config-path" => Ok(Info::ConfigPath),
-            _ => Err("no match"),
-        }
-    }
-}
 
 #[derive(Debug, Parser)]
 #[clap(after_help = "\x1b[0;33mMORE INFO:\x1b[0;0m
@@ -142,68 +93,34 @@ impl ClapConfig {
     }
 }
 
-#[derive(Debug, Parser)]
+// #[derive(Subcommand, Debug, Clone, Runnable, HasDeps)]
+#[derive(Subcommand, Debug, Clone)]
 pub enum Command {
     /// [Experimental] Calls internal functions
-    Fn {
-        /// Function name (example: "url::open")
-        #[clap(possible_values = FUNC_POSSIBLE_VALUES, ignore_case = true)]
-        func: Func,
-        /// List of arguments (example: "https://google.com")
-        args: Vec<String>,
-    },
+    Fn(commands::func::Input),
     /// Manages cheatsheet repositories
     #[cfg(not(feature = "disable-repo-management"))]
-    Repo {
-        #[clap(subcommand)]
-        cmd: RepoCommand,
-    },
+    Repo(commands::repo::Input),
     /// Used for fzf's preview window when selecting snippets
     #[clap(setting = AppSettings::Hidden)]
-    Preview {
-        /// Selection line
-        line: String,
-    },
+    Preview(commands::preview::Input),
     /// Used for fzf's preview window when selecting variable suggestions
     #[clap(setting = AppSettings::Hidden)]
-    PreviewVar {
-        /// Selection line
-        selection: String,
-        /// Query match
-        query: String,
-        /// Typed text
-        variable: String,
-    },
+    PreviewVar(commands::preview::var::Input),
     /// Used for fzf's preview window when selecting variable suggestions
     #[clap(setting = AppSettings::Hidden)]
-    PreviewVarStdin,
+    PreviewVarStdin(commands::preview::var_stdin::Input),
     /// Outputs shell widget source code
-    Widget {
-        #[clap(possible_values = WIDGET_POSSIBLE_VALUES, ignore_case = true, default_value = "bash")]
-        shell: Shell,
-    },
+    Widget(commands::shell::Input),
     /// Shows info
-    Info {
-        #[clap(possible_values = INFO_POSSIBLE_VALUES, ignore_case = true)]
-        info: Info,
-    },
-}
-
-#[derive(Debug, Subcommand)]
-pub enum RepoCommand {
-    /// Imports cheatsheets from a repo
-    Add {
-        /// A URI to a git repository containing .cheat files ("user/repo" will download cheats from github.com/user/repo)
-        uri: String,
-    },
-    /// Browses for featured cheatsheet repos
-    Browse,
+    Info(commands::info::Input),
 }
 
 pub enum Source {
-    Filesystem(Option<String>, Option<String>),
+    Filesystem(Option<String>),
     Tldr(String),
     Cheats(String),
+    Welcome,
 }
 
 pub enum Action {
@@ -211,6 +128,7 @@ pub enum Action {
     Execute,
 }
 
+/*
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -243,3 +161,4 @@ mod tests {
         }
     }
 }
+*/

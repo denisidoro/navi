@@ -1,15 +1,15 @@
+pub use crate::common::fs::{create_dir, exe_string, read_lines, remove_dir, InvalidPath, UnreadableDir};
 use crate::env_var;
-pub use crate::fs::{
-    create_dir, exe_string, pathbuf_to_string, read_lines, remove_dir, InvalidPath, UnreadableDir,
-};
-use crate::parser;
-use crate::structures::cheat::VariableMap;
+use crate::parser::Parser;
+use crate::prelude::*;
+
 use crate::structures::fetcher;
-use anyhow::Result;
 use directories_next::BaseDirs;
 use regex::Regex;
-use std::collections::HashSet;
-use std::path::{Path, PathBuf, MAIN_SEPARATOR};
+
+use std::cell::RefCell;
+use std::path::MAIN_SEPARATOR;
+
 use walkdir::WalkDir;
 
 pub fn all_cheat_files(path: &Path) -> Vec<String> {
@@ -76,7 +76,7 @@ pub fn cheat_paths(path: Option<String>) -> Result<String> {
     if let Some(p) = path {
         Ok(p)
     } else {
-        pathbuf_to_string(&default_cheat_pathbuf()?)
+        Ok(default_cheat_pathbuf()?.to_string())
     }
 }
 
@@ -84,15 +84,6 @@ pub fn tmp_pathbuf() -> Result<PathBuf> {
     let mut root = default_cheat_pathbuf()?;
     root.push("tmp");
     Ok(root)
-}
-
-fn without_first(string: &str) -> String {
-    string
-        .char_indices()
-        .next()
-        .and_then(|(i, _)| string.get(i + 1..))
-        .expect("Should have at least one char")
-        .to_string()
 }
 
 fn interpolate_paths(paths: String) -> String {
@@ -111,63 +102,29 @@ fn interpolate_paths(paths: String) -> String {
     newtext
 }
 
-fn gen_lists(tag_rules: Option<String>) -> (Option<Vec<String>>, Option<Vec<String>>) {
-    let mut allowlist = None;
-    let mut denylist: Option<Vec<String>> = None;
-
-    if let Some(rules) = tag_rules {
-        let words: Vec<_> = rules.split(',').collect();
-        allowlist = Some(
-            words
-                .iter()
-                .filter(|w| !w.starts_with('!'))
-                .map(|w| w.to_string())
-                .collect(),
-        );
-        denylist = Some(
-            words
-                .iter()
-                .filter(|w| w.starts_with('!'))
-                .map(|w| without_first(w))
-                .collect(),
-        );
-    }
-
-    (allowlist, denylist)
-}
-
 pub struct Fetcher {
     path: Option<String>,
-    allowlist: Option<Vec<String>>,
-    denylist: Option<Vec<String>>,
+    files: RefCell<Vec<String>>,
 }
 
 impl Fetcher {
-    pub fn new(path: Option<String>, tag_rules: Option<String>) -> Self {
-        let (allowlist, denylist) = gen_lists(tag_rules);
+    pub fn new(path: Option<String>) -> Self {
         Self {
             path,
-            allowlist,
-            denylist,
+            files: Default::default(),
         }
     }
 }
 
 impl fetcher::Fetcher for Fetcher {
-    fn fetch(
-        &self,
-        stdin: &mut std::process::ChildStdin,
-        files: &mut Vec<String>,
-    ) -> Result<Option<VariableMap>> {
-        let mut variables = VariableMap::new();
+    fn fetch(&self, parser: &mut Parser) -> Result<bool> {
         let mut found_something = false;
-        let mut visited_lines = HashSet::new();
 
         let path = self.path.clone();
         let paths = cheat_paths(path);
 
         if paths.is_err() {
-            return Ok(None);
+            return Ok(false);
         };
 
         let paths = paths.expect("Unable to get paths");
@@ -175,7 +132,9 @@ impl fetcher::Fetcher for Fetcher {
         let folders = paths_from_path_param(&interpolated_paths);
 
         let home_regex = Regex::new(r"^~").unwrap();
-        let home = BaseDirs::new().and_then(|b| pathbuf_to_string(b.home_dir()).ok());
+        let home = BaseDirs::new().map(|b| b.home_dir().to_string());
+
+        // parser.filter = self.tag_rules.as_ref().map(|r| gen_lists(r.as_str()));
 
         for folder in folders {
             let interpolated_folder = match &home {
@@ -184,21 +143,12 @@ impl fetcher::Fetcher for Fetcher {
             };
             let folder_pathbuf = PathBuf::from(interpolated_folder);
             for file in all_cheat_files(&folder_pathbuf) {
-                files.push(file.clone());
-                let index = files.len() - 1;
+                self.files.borrow_mut().push(file.clone());
+                let index = self.files.borrow().len() - 1;
                 let read_file_result = {
                     let path = PathBuf::from(&file);
                     let lines = read_lines(&path)?;
-                    parser::read_lines(
-                        lines,
-                        &file,
-                        index,
-                        &mut variables,
-                        &mut visited_lines,
-                        stdin,
-                        self.allowlist.as_ref(),
-                        self.denylist.as_ref(),
-                    )
+                    parser.read_lines(lines, &file, Some(index))
                 };
 
                 if read_file_result.is_ok() && !found_something {
@@ -207,11 +157,11 @@ impl fetcher::Fetcher for Fetcher {
             }
         }
 
-        if !found_something {
-            return Ok(None);
-        }
+        Ok(found_something)
+    }
 
-        Ok(Some(variables))
+    fn files(&self) -> Vec<String> {
+        self.files.borrow().clone()
     }
 }
 
@@ -279,7 +229,7 @@ mod tests {
     #[test]
     fn test_default_config_pathbuf() {
         let base_dirs = BaseDirs::new()
-            .ok_or(anyhow!("bad"))
+            .ok_or_else(|| anyhow!("bad"))
             .expect("could not determine base directories");
 
         let expected = {
@@ -297,7 +247,7 @@ mod tests {
     #[test]
     fn test_default_cheat_pathbuf() {
         let base_dirs = BaseDirs::new()
-            .ok_or(anyhow!("bad"))
+            .ok_or_else(|| anyhow!("bad"))
             .expect("could not determine base directories");
 
         let expected = {

@@ -1,6 +1,6 @@
 [package]
 name = "navi"
-version = "2.20.1"
+version = "2.21.0"
 authors = ["Denis Isidoro <denis_isidoro@live.com>"]
 edition = "2021"
 description = "An interactive cheatsheet tool for the command-line"
@@ -19,8 +19,8 @@ disable-repo-management = []
 travis-ci = { repository = "denisidoro/navi", branch = "master" }
 
 [dependencies]
-regex = { version = "1.5.6", default-features = false, features = ["std", "unicode-perl"] }
-clap = { version = "3.2.8", features = ["derive", "cargo"] }
+regex = { version = "1.6.0", default-features = false, features = ["std", "unicode-perl"] }
+clap = { version = "3.2.14", features = ["derive", "cargo"] }
 crossterm = "0.24.0"
 lazy_static = "1.4.0"
 directories-next = "2.0.0"
@@ -31,8 +31,8 @@ thiserror = "1.0.31"
 strip-ansi-escapes = "0.1.1"
 edit = "0.1.4"
 remove_dir_all = "0.7.0"
-serde = { version = "1.0.138", features = ["derive"] }
-serde_yaml = "0.8.24"
+serde = { version = "1.0.140", features = ["derive"] }
+serde_yaml = "0.8.26"
 
 [lib]
 name = "navi"

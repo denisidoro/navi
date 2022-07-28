@@ -1,12 +1,9 @@
+use crate::common::fs;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
-use crate::fs;
-use crate::hash::fnv;
+use crate::prelude::*;
+use crate::serializer;
 use crate::structures::cheat::VariableMap;
 use crate::structures::item::Item;
-use crate::writer;
-use anyhow::{Context, Result};
-use regex::Regex;
-use std::collections::HashSet;
 use std::io::Write;
 
 lazy_static! {
@@ -108,49 +105,6 @@ fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FinderOpts>)> {
     Ok((variable, command, command_options))
 }
 
-fn write_cmd(
-    item: &Item,
-    stdin: &mut std::process::ChildStdin,
-    allowlist: Option<&Vec<String>>,
-    denylist: Option<&Vec<String>>,
-    visited_lines: &mut HashSet<u64>,
-) -> Result<()> {
-    if item.comment.is_empty() || item.snippet.trim().is_empty() {
-        return Ok(());
-    }
-
-    let hash = fnv(&format!("{}{}", &item.comment, &item.snippet));
-    if visited_lines.contains(&hash) {
-        return Ok(());
-    }
-    visited_lines.insert(hash);
-
-    if let Some(list) = denylist {
-        for v in list {
-            if item.tags.contains(v) {
-                return Ok(());
-            }
-        }
-    }
-
-    if let Some(list) = allowlist {
-        let mut should_allow = false;
-        for v in list {
-            if item.tags.contains(v) {
-                should_allow = true;
-                break;
-            }
-        }
-        if !should_allow {
-            return Ok(());
-        }
-    }
-
-    return stdin
-        .write_all(writer::write(item).as_bytes())
-        .context("Failed to write command to finder's stdin");
-}
-
 fn without_prefix(line: &str) -> String {
     if line.len() > 2 {
         String::from(line[2..].trim())
@@ -159,96 +113,214 @@ fn without_prefix(line: &str) -> String {
     }
 }
 
-#[allow(clippy::too_many_arguments)]
-pub fn read_lines(
-    lines: impl Iterator<Item = Result<String>>,
-    id: &str,
-    file_index: usize,
-    variables: &mut VariableMap,
-    visited_lines: &mut HashSet<u64>,
-    stdin: &mut std::process::ChildStdin,
-    allowlist: Option<&Vec<String>>,
-    denylist: Option<&Vec<String>>,
-) -> Result<()> {
-    let mut item = Item::new();
-    item.file_index = file_index;
+#[derive(Clone, Default)]
+pub struct FilterOpts {
+    pub allowlist: Vec<String>,
+    pub denylist: Vec<String>,
+    pub hash: Option<u64>,
+}
 
-    let mut should_break = false;
+pub struct Parser<'a> {
+    pub variables: VariableMap,
+    visited_lines: HashSet<u64>,
+    filter: FilterOpts,
+    writer: &'a mut dyn Write,
+    write_fn: fn(&Item) -> String,
+}
 
-    let mut variable_cmd = String::from("");
+fn without_first(string: &str) -> String {
+    string
+        .char_indices()
+        .next()
+        .and_then(|(i, _)| string.get(i + 1..))
+        .expect("Should have at least one char")
+        .to_string()
+}
 
-    for (line_nr, line_result) in lines.enumerate() {
-        let line = line_result
-            .with_context(|| format!("Failed to read line number {} in cheatsheet `{}`", line_nr, id))?;
+fn gen_lists(tag_rules: &str) -> FilterOpts {
+    let words: Vec<_> = tag_rules.split(',').collect();
 
-        if should_break {
-            break;
-        }
+    let allowlist = words
+        .iter()
+        .filter(|w| !w.starts_with('!'))
+        .map(|w| w.to_string())
+        .collect();
 
-        // duplicate
-        if !item.tags.is_empty() && !item.comment.is_empty() {}
-        // blank
-        if line.is_empty() {
-            if !(&item.snippet).is_empty() {
-                item.snippet.push_str(writer::LINE_SEPARATOR);
-            }
-        }
-        // tag
-        else if line.starts_with('%') {
-            should_break = write_cmd(&item, stdin, allowlist, denylist, visited_lines).is_err();
-            item.snippet = String::from("");
-            item.tags = without_prefix(&line);
-        }
-        // dependency
-        else if line.starts_with('@') {
-            let tags_dependency = without_prefix(&line);
-            variables.insert_dependency(&item.tags, &tags_dependency);
-        }
-        // metacomment
-        else if line.starts_with(';') {
-        }
-        // comment
-        else if line.starts_with('#') {
-            should_break = write_cmd(&item, stdin, allowlist, denylist, visited_lines).is_err();
-            item.snippet = String::from("");
-            item.comment = without_prefix(&line);
-        }
-        // variable
-        else if !variable_cmd.is_empty() || (line.starts_with('$') && line.contains(':')) {
-            should_break = write_cmd(&item, stdin, allowlist, denylist, visited_lines).is_err();
+    let denylist = words
+        .iter()
+        .filter(|w| w.starts_with('!'))
+        .map(|w| without_first(w))
+        .collect();
 
-            item.snippet = String::from("");
+    FilterOpts {
+        allowlist,
+        denylist,
+        ..Default::default()
+    }
+}
 
-            variable_cmd.push_str(line.trim_end_matches('\\'));
+impl<'a> Parser<'a> {
+    pub fn new(writer: &'a mut dyn Write, is_terminal: bool) -> Self {
+        let write_fn = if is_terminal {
+            serializer::write
+        } else {
+            serializer::write_raw
+        };
 
-            if !line.ends_with('\\') {
-                let full_variable_cmd = variable_cmd.clone();
-                let (variable, command, opts) =
-                    parse_variable_line(&full_variable_cmd).with_context(|| {
-                        format!(
-                            "Failed to parse variable line. See line number {} in cheatsheet `{}`",
-                            line_nr + 1,
-                            id
-                        )
-                    })?;
-                variable_cmd = String::from("");
-                variables.insert_suggestion(&item.tags, variable, (String::from(command), opts));
-            }
-        }
-        // snippet
-        else {
-            if !(&item.snippet).is_empty() {
-                item.snippet.push_str(writer::LINE_SEPARATOR);
-            }
-            item.snippet.push_str(&line);
+        let filter = match CONFIG.tag_rules() {
+            Some(tr) => gen_lists(&tr),
+            None => Default::default(),
+        };
+
+        Self {
+            variables: Default::default(),
+            visited_lines: Default::default(),
+            filter,
+            write_fn,
+            writer,
         }
     }
 
-    if !should_break {
-        let _ = write_cmd(&item, stdin, allowlist, denylist, visited_lines);
+    pub fn set_hash(&mut self, hash: u64) {
+        self.filter.hash = Some(hash)
     }
 
-    Ok(())
+    fn write_cmd(&mut self, item: &Item) -> Result<()> {
+        if item.comment.is_empty() || item.snippet.trim().is_empty() {
+            return Ok(());
+        }
+
+        let hash = item.hash();
+        if self.visited_lines.contains(&hash) {
+            return Ok(());
+        }
+        self.visited_lines.insert(hash);
+
+        if !self.filter.denylist.is_empty() {
+            for v in &self.filter.denylist {
+                if item.tags.contains(v) {
+                    return Ok(());
+                }
+            }
+        }
+
+        if !self.filter.allowlist.is_empty() {
+            let mut should_allow = false;
+            for v in &self.filter.allowlist {
+                if item.tags.contains(v) {
+                    should_allow = true;
+                    break;
+                }
+            }
+            if !should_allow {
+                return Ok(());
+            }
+        }
+
+        if let Some(h) = self.filter.hash {
+            if h != hash {
+                return Ok(());
+            }
+        }
+
+        let write_fn = self.write_fn;
+
+        return self
+            .writer
+            .write_all(write_fn(item).as_bytes())
+            .context("Failed to write command to finder's stdin");
+    }
+
+    pub fn read_lines(
+        &mut self,
+        lines: impl Iterator<Item = Result<String>>,
+        id: &str,
+        file_index: Option<usize>,
+    ) -> Result<()> {
+        let mut item = Item::new(file_index);
+
+        let mut should_break = false;
+
+        let mut variable_cmd = String::from("");
+
+        for (line_nr, line_result) in lines.enumerate() {
+            let line = line_result
+                .with_context(|| format!("Failed to read line number {} in cheatsheet `{}`", line_nr, id))?;
+
+            if should_break {
+                break;
+            }
+
+            // duplicate
+            if !item.tags.is_empty() && !item.comment.is_empty() {}
+            // blank
+            if line.is_empty() {
+                if !(&item.snippet).is_empty() {
+                    item.snippet.push_str(serializer::LINE_SEPARATOR);
+                }
+            }
+            // tag
+            else if line.starts_with('%') {
+                should_break = self.write_cmd(&item).is_err();
+                item.snippet = String::from("");
+                item.tags = without_prefix(&line);
+            }
+            // dependency
+            else if line.starts_with('@') {
+                let tags_dependency = without_prefix(&line);
+                self.variables.insert_dependency(&item.tags, &tags_dependency);
+            }
+            // raycast icon
+            else if let Some(icon) = line.strip_prefix("; raycast.icon:") {
+                item.icon = Some(icon.trim().into());
+            }
+            // metacomment
+            else if line.starts_with(';') {
+            }
+            // comment
+            else if line.starts_with('#') {
+                should_break = self.write_cmd(&item).is_err();
+                item.snippet = String::from("");
+                item.comment = without_prefix(&line);
+            }
+            // variable
+            else if !variable_cmd.is_empty() || (line.starts_with('$') && line.contains(':')) {
+                should_break = self.write_cmd(&item).is_err();
+
+                item.snippet = String::from("");
+
+                variable_cmd.push_str(line.trim_end_matches('\\'));
+
+                if !line.ends_with('\\') {
+                    let full_variable_cmd = variable_cmd.clone();
+                    let (variable, command, opts) =
+                        parse_variable_line(&full_variable_cmd).with_context(|| {
+                            format!(
+                                "Failed to parse variable line. See line number {} in cheatsheet `{}`",
+                                line_nr + 1,
+                                id
+                            )
+                        })?;
+                    variable_cmd = String::from("");
+                    self.variables
+                        .insert_suggestion(&item.tags, variable, (String::from(command), opts));
+                }
+            }
+            // snippet
+            else {
+                if !(&item.snippet).is_empty() {
+                    item.snippet.push_str(serializer::LINE_SEPARATOR);
+                }
+                item.snippet.push_str(&line);
+            }
+        }
+
+        if !should_break {
+            let _ = self.write_cmd(&item);
+        }
+
+        Ok(())
+    }
 }
 
 #[cfg(test)]
