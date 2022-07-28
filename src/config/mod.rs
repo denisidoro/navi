@@ -10,9 +10,9 @@ use crossterm::style::Color;
 
 use crate::config::Source;
 use crate::filesystem;
-use crate::finder::structures::Opts as FinderOpts;
-use crate::parser::Parser;
-use crate::prelude::*;
+
+
+
 use crate::structures::fetcher::Fetcher;
 
 use env::EnvConfig;
