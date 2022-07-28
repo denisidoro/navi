@@ -1,13 +1,8 @@
 use crate::actor;
-use crate::clients::cheatsh;
-use crate::clients::tldr;
-use crate::config::Source;
 use crate::extractor;
-use crate::filesystem;
 use crate::finder::structures::Opts as FinderOpts;
 use crate::parser::Parser;
 use crate::prelude::*;
-use crate::structures::fetcher::Fetcher;
 use crate::welcome;
 
 pub fn main() -> Result<()> {
@@ -19,11 +14,7 @@ pub fn main() -> Result<()> {
     let (raw_selection, variables) = config
         .finder()
         .call(opts, |writer| {
-            let mut fetcher: Box<dyn Fetcher> = match config.source() {
-                Source::Cheats(query) => Box::new(cheatsh::Fetcher::new(query)),
-                Source::Tldr(query) => Box::new(tldr::Fetcher::new(query)),
-                Source::Filesystem(path, rules) => Box::new(filesystem::Fetcher::new(path, rules)),
-            };
+            let mut fetcher = config.fetcher();
 
             let mut parser = Parser::new(writer, true);
 

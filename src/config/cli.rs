@@ -117,7 +117,7 @@ pub enum Command {
 }
 
 pub enum Source {
-    Filesystem(Option<String>, Option<String>),
+    Filesystem(Option<String>),
     Tldr(String),
     Cheats(String),
 }

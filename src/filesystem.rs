@@ -134,17 +134,12 @@ fn gen_lists(tag_rules: &str) -> FilterOpts {
 
 pub struct Fetcher {
     path: Option<String>,
-    tag_rules: Option<String>,
     files: Vec<String>,
 }
 
 impl Fetcher {
-    pub fn new(path: Option<String>, tag_rules: Option<String>) -> Self {
-        Self {
-            path,
-            tag_rules,
-            files: vec![],
-        }
+    pub fn new(path: Option<String>) -> Self {
+        Self { path, files: vec![] }
     }
 }
 
@@ -166,7 +161,7 @@ impl fetcher::Fetcher for Fetcher {
         let home_regex = Regex::new(r"^~").unwrap();
         let home = BaseDirs::new().map(|b| b.home_dir().to_string());
 
-        parser.filter = self.tag_rules.as_ref().map(|r| gen_lists(r.as_str()));
+        // parser.filter = self.tag_rules.as_ref().map(|r| gen_lists(r.as_str()));
 
         for folder in folders {
             let interpolated_folder = match &home {
