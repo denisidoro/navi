@@ -1,6 +1,6 @@
 mod actor;
 
-use crate::clients::cheatsh;
+use crate::clients::{cheatsh, tldr};
 use crate::config::Source;
 use crate::deser;
 use crate::filesystem;
@@ -51,7 +51,7 @@ pub fn get_fetcher() -> Result<Box<dyn Fetcher>> {
             Ok(fetcher)
         }
         Source::Tldr(query) => {
-            let lines = cheatsh::call(&query)?;
+            let lines = tldr::call(&query)?;
             let fetcher = Box::new(StaticFetcher::new(lines));
             Ok(fetcher)
         }

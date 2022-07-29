@@ -4,7 +4,6 @@ pub mod raycast;
 pub mod terminal;
 
 const NEWLINE_ESCAPE_CHAR: char = '\x15';
-const FIELD_SEP_ESCAPE_CHAR: char = '\x16';
 pub const LINE_SEPARATOR: &str = " \x15 ";
 
 lazy_static! {
