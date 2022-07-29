@@ -2,15 +2,8 @@ mod cli;
 mod env;
 mod yaml;
 
-use crate::clients::cheatsh;
-use crate::clients::tldr;
-
 use crate::commands::func::Func;
-use crate::config::Source;
-use crate::filesystem;
 use crate::finder::FinderChoice;
-use crate::structures::fetcher::Fetcher;
-use crate::welcome;
 pub use cli::*;
 use crossterm::style::Color;
 use env::EnvConfig;
@@ -59,15 +52,6 @@ impl Config {
             }
         } else {
             Source::Filesystem(self.path())
-        }
-    }
-
-    pub fn fetcher(&self) -> Box<dyn Fetcher> {
-        match self.source() {
-            Source::Cheats(query) => Box::new(cheatsh::Fetcher::new(query)),
-            Source::Tldr(query) => Box::new(tldr::Fetcher::new(query)),
-            Source::Filesystem(path) => Box::new(filesystem::Fetcher::new(path)),
-            Source::Welcome => Box::new(welcome::Fetcher::new()),
         }
     }
 
