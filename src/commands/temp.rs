@@ -6,7 +6,7 @@ use crate::{deser, prelude::*};
 use std::io::{self, Write};
 
 pub fn main() -> Result<()> {
-    let config = &CONFIG;
+    let _config = &CONFIG;
     let _opts = FinderOpts::snippet_default();
 
     let fetcher = get_fetcher()?;
@@ -49,7 +49,7 @@ pub fn main() -> Result<()> {
 }
 
 pub fn _main0() -> Result<()> {
-    let config = &CONFIG;
+    let _config = &CONFIG;
 
     let fetcher = get_fetcher()?;
 
