@@ -1,3 +1,4 @@
+use crate::commands::core::get_fetcher;
 use crate::common::shell::{self, ShellSpawnError};
 use crate::finder::structures::Opts as FinderOpts;
 use crate::parser::Parser;
@@ -8,7 +9,7 @@ pub fn main() -> Result<()> {
     let config = &CONFIG;
     let _opts = FinderOpts::snippet_default();
 
-    let fetcher = config.fetcher();
+    let fetcher = get_fetcher()?;
     let hash: u64 = 2087294461664323320;
 
     let mut buf = vec![];
@@ -50,7 +51,7 @@ pub fn main() -> Result<()> {
 pub fn _main0() -> Result<()> {
     let config = &CONFIG;
 
-    let fetcher = config.fetcher();
+    let fetcher = get_fetcher()?;
 
     let mut stdout = io::stdout();
     let mut writer: Box<&mut dyn Write> = Box::new(&mut stdout);

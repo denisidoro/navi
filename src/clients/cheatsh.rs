@@ -5,19 +5,18 @@ fn map_line(line: &str) -> String {
     line.trim().trim_end_matches(':').to_string()
 }
 
-fn as_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String>> {
+fn as_lines(query: &str, markdown: &str) -> Vec<String> {
     format!(
         "% {}, cheat.sh
 {}",
         query, markdown
     )
     .lines()
-    .map(|line| Ok(map_line(line)))
-    .collect::<Vec<Result<String>>>()
-    .into_iter()
+    .map(map_line)
+    .collect()
 }
 
-pub fn call(query: &str) -> Result<impl Iterator<Item = Result<String>>> {
+pub fn call(query: &str) -> Result<Vec<String>> {
     let args = ["-qO-", &format!("cheat.sh/{}", query)];
 
     let child = Command::new("wget")

@@ -40,19 +40,18 @@ fn convert_tldr(line: &str) -> String {
     }
 }
 
-fn markdown_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<String>> {
+fn markdown_lines(query: &str, markdown: &str) -> Vec<String> {
     format!(
         "% {}, tldr
  {}",
         query, markdown
     )
     .lines()
-    .map(|line| Ok(convert_tldr(line)))
-    .collect::<Vec<Result<String>>>()
-    .into_iter()
+    .map(convert_tldr)
+    .collect()
 }
 
-pub fn call(query: &str) -> Result<impl Iterator<Item = Result<String>>> {
+pub fn call(query: &str) -> Result<Vec<String>> {
     let args = [query, "--markdown"];
 
     let child = Command::new("tldr")

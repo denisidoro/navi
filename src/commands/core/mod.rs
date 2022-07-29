@@ -35,7 +35,7 @@ pub fn init(fetcher: Box<dyn Fetcher>) -> Result<()> {
     let extractions = extractor::extract_from_selections(&raw_selection, config.best_match());
 
     if extractions.is_err() {
-        return main(fetcher);
+        return init(fetcher);
     }
 
     actor::act(extractions, files, variables)?;
@@ -47,12 +47,12 @@ pub fn get_fetcher() -> Result<Box<dyn Fetcher>> {
     match CONFIG.source() {
         Source::Cheats(query) => {
             let lines = cheatsh::call(&query)?;
-            let fetcher = Box::new(StaticFetcher::new(Box::new(lines)));
+            let fetcher = Box::new(StaticFetcher::new(lines));
             Ok(fetcher)
         }
         Source::Tldr(query) => {
             let lines = cheatsh::call(&query)?;
-            let fetcher = Box::new(StaticFetcher::new(Box::new(lines)));
+            let fetcher = Box::new(StaticFetcher::new(lines));
             Ok(fetcher)
         }
         Source::Filesystem(path) => {
@@ -66,7 +66,7 @@ pub fn get_fetcher() -> Result<Box<dyn Fetcher>> {
     }
 }
 
-pub fn main(fetcher: Box<dyn Fetcher>) -> Result<()> {
+pub fn main() -> Result<()> {
     let fetcher = get_fetcher()?;
     init(fetcher)
 }
