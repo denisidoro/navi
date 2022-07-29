@@ -9,8 +9,14 @@ pub trait Fetcher {
     }
 }
 
-struct StaticFetcher {
+pub struct StaticFetcher {
     lines: Box<dyn Iterator<Item = Result<String>>>,
+}
+
+impl StaticFetcher {
+    pub fn new(lines: Box<dyn Iterator<Item = Result<String>>>) -> Self {
+        Self { lines }
+    }
 }
 
 impl Fetcher for StaticFetcher {

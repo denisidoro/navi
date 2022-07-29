@@ -2,14 +2,8 @@ mod cli;
 mod env;
 mod yaml;
 
-use crate::clients::cheatsh;
-use crate::clients::tldr;
-
 use crate::commands::func::Func;
-use crate::filesystem;
 use crate::finder::FinderChoice;
-use crate::structures::fetcher::Fetcher;
-use crate::welcome;
 pub use cli::*;
 use crossterm::style::Color;
 use env::EnvConfig;
@@ -43,6 +37,22 @@ impl Config {
 
     pub fn cmd(&self) -> Option<&Command> {
         self.clap.cmd.as_ref()
+    }
+
+    pub fn source(&self) -> Source {
+        if let Some(query) = self.clap.tldr.clone() {
+            Source::Tldr(query)
+        } else if let Some(query) = self.clap.cheatsh.clone() {
+            Source::Cheats(query)
+        } else if let Some(Command::Fn(input)) = self.cmd() {
+            if let Func::Welcome = input.func {
+                Source::Welcome
+            } else {
+                Source::Filesystem(self.path())
+            }
+        } else {
+            Source::Filesystem(self.path())
+        }
     }
 
     pub fn path(&self) -> Option<String> {
