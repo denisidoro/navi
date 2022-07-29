@@ -8,7 +8,7 @@ use crate::prelude::*;
 use clap::Args;
 use clap::Parser;
 
-const FUNC_POSSIBLE_VALUES: &[&str] = &[
+const POSSIBLE_VALUES: &[&str] = &[
     "url::open",
     "welcome",
     "widget::last_command",
@@ -43,7 +43,7 @@ pub enum Func {
 #[derive(Debug, Clone, Args)]
 pub struct Input {
     /// Function name (example: "url::open")
-    #[clap(possible_values = FUNC_POSSIBLE_VALUES, ignore_case = true)]
+    #[clap(possible_values = POSSIBLE_VALUES, ignore_case = true)]
     pub func: Func,
     /// List of arguments (example: "https://google.com")
     pub args: Vec<String>,
@@ -61,5 +61,12 @@ impl Runnable for Input {
             Func::MapExpand => map::expand(),
             Func::Temp => temp::main(),
         }
+    }
+}
+
+#[test]
+fn test_possible_values() {
+    for v in POSSIBLE_VALUES {
+        assert!(Func::from_str(v).is_ok())
     }
 }

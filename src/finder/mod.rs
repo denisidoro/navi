@@ -17,6 +17,8 @@ pub enum FinderChoice {
     Skim,
 }
 
+pub const POSSIBLE_VALUES: &[&str] = &["fzf", "skim"];
+
 impl FromStr for FinderChoice {
     type Err = &'static str;
 
@@ -187,5 +189,12 @@ impl FinderChoice {
 
         let output = parse(out, finder_opts).context("Unable to get output")?;
         Ok((output, return_value))
+    }
+}
+
+#[test]
+fn test_possible_values() {
+    for v in POSSIBLE_VALUES {
+        assert!(FinderChoice::from_str(v).is_ok())
     }
 }
