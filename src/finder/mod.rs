@@ -1,6 +1,5 @@
+use crate::deser;
 use crate::prelude::*;
-use crate::serializer;
-
 use std::io::Write;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
@@ -80,7 +79,7 @@ impl FinderChoice {
             "--with-nth",
             "1,2,3",
             "--delimiter",
-            serializer::DELIMITER.to_string().as_str(),
+            deser::terminal::DELIMITER.to_string().as_str(),
             "--ansi",
             "--bind",
             format!("ctrl-j:down,ctrl-k:up{}", bindings).as_str(),

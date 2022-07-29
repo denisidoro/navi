@@ -2,7 +2,7 @@ use crate::commands::core::get_fetcher;
 use crate::common::shell::{self, ShellSpawnError};
 use crate::finder::structures::Opts as FinderOpts;
 use crate::parser::Parser;
-use crate::{prelude::*, serializer};
+use crate::{deser, prelude::*};
 use std::io::{self, Write};
 
 pub fn main() -> Result<()> {
@@ -22,7 +22,7 @@ pub fn main() -> Result<()> {
 
     let variables = parser.variables;
     let item_str = String::from_utf8(buf)?;
-    let item = serializer::raycast_deser(&item_str)?;
+    let item = deser::raycast::read(&item_str)?;
     dbg!(&item);
 
     let x = variables.get_suggestion(&item.tags, "local_branch").expect("foo");

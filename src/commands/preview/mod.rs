@@ -1,5 +1,5 @@
+use crate::deser;
 use crate::prelude::*;
-use crate::serializer;
 use clap::Args;
 use crossterm::style::{style, Stylize};
 use std::process;
@@ -14,7 +14,7 @@ pub struct Input {
 }
 
 fn extract_elements(argstr: &str) -> Result<(&str, &str, &str)> {
-    let mut parts = argstr.split(serializer::DELIMITER).skip(3);
+    let mut parts = argstr.split(deser::terminal::DELIMITER).skip(3);
     let tags = parts.next().context("No `tags` element provided.")?;
     let comment = parts.next().context("No `comment` element provided.")?;
     let snippet = parts.next().context("No `snippet` element provided.")?;
@@ -31,7 +31,7 @@ impl Runnable for Input {
             "{comment} {tags} \n{snippet}",
             comment = style(comment).with(CONFIG.comment_color()),
             tags = style(format!("[{}]", tags)).with(CONFIG.tag_color()),
-            snippet = style(serializer::fix_newlines(snippet)).with(CONFIG.snippet_color()),
+            snippet = style(deser::fix_newlines(snippet)).with(CONFIG.snippet_color()),
         );
 
         process::exit(0)
