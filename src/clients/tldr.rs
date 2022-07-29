@@ -1,6 +1,4 @@
-use crate::parser::Parser;
 use crate::prelude::*;
-use crate::structures::fetcher;
 use std::process::{self, Command, Stdio};
 
 lazy_static! {
@@ -54,7 +52,7 @@ fn markdown_lines(query: &str, markdown: &str) -> impl Iterator<Item = Result<St
     .into_iter()
 }
 
-pub fn fetch(query: &str) -> Result<String> {
+pub fn call(query: &str) -> Result<impl Iterator<Item = Result<String>>> {
     let args = [query, "--markdown"];
 
     let child = Command::new("tldr")
@@ -67,7 +65,7 @@ pub fn fetch(query: &str) -> Result<String> {
     let child = match child {
         Ok(x) => x,
         Err(_) => {
-            eprintln!(
+            let msg = format!(
                 "navi was unable to call tldr.
 Make sure tldr is correctly installed.
 Refer to https://github.com/tldr-pages/tldr for more info.
@@ -77,15 +75,20 @@ Note:
 ",
                 VERSION_DISCLAIMER
             );
-            process::exit(34)
+            return Err(anyhow!(msg));
         }
     };
 
     let out = child.wait_with_output().context("Failed to wait for tldr")?;
 
     if let Some(0) = out.status.code() {
+        let stdout = out.stdout;
+
+        let markdown = String::from_utf8(stdout).context("Output is invalid utf8")?;
+        let lines = markdown_lines(query, &markdown);
+        Ok(lines)
     } else {
-        eprintln!(
+        let msg = format!(
             "Failed to call: 
 tldr {}
  
@@ -103,30 +106,8 @@ If you are already using a supported version you can ignore this message.
             args.join(" "),
             String::from_utf8(out.stdout).unwrap_or_else(|_e| "Unable to get output message".to_string()),
             String::from_utf8(out.stderr).unwrap_or_else(|_e| "Unable to get error message".to_string()),
-            VERSION_DISCLAIMER
+            VERSION_DISCLAIMER,
         );
-        process::exit(35)
-    }
-
-    let stdout = out.stdout;
-
-    String::from_utf8(stdout).context("Output is invalid utf8")
-}
-
-pub struct Fetcher {
-    query: String,
-}
-
-impl Fetcher {
-    pub fn new(query: String) -> Self {
-        Self { query }
-    }
-}
-
-impl fetcher::Fetcher for Fetcher {
-    fn fetch(&self, parser: &mut Parser) -> Result<bool> {
-        let markdown = fetch(&self.query)?;
-        parser.read_lines(markdown_lines(&self.query, &markdown), "markdown", None)?;
-        Ok(true)
+        Err(anyhow!(msg))
     }
 }

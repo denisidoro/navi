@@ -116,13 +116,6 @@ pub enum Command {
     Info(commands::info::Input),
 }
 
-pub enum Source {
-    Filesystem(Option<String>),
-    Tldr(String),
-    Cheats(String),
-    Welcome,
-}
-
 pub enum Action {
     Print,
     Execute,
