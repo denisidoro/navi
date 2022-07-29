@@ -1,7 +1,7 @@
 use crate::common::fs;
+use crate::deser;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::prelude::*;
-use crate::serializer;
 use crate::structures::cheat::VariableMap;
 use crate::structures::item::Item;
 use std::io::Write;
@@ -162,9 +162,9 @@ fn gen_lists(tag_rules: &str) -> FilterOpts {
 impl<'a> Parser<'a> {
     pub fn new(writer: &'a mut dyn Write, is_terminal: bool) -> Self {
         let write_fn = if is_terminal {
-            serializer::write
+            deser::terminal::write
         } else {
-            serializer::write_raw
+            deser::raycast::write
         };
 
         let filter = match CONFIG.tag_rules() {
@@ -256,7 +256,7 @@ impl<'a> Parser<'a> {
             // blank
             if line.is_empty() {
                 if !(&item.snippet).is_empty() {
-                    item.snippet.push_str(serializer::LINE_SEPARATOR);
+                    item.snippet.push_str(deser::LINE_SEPARATOR);
                 }
             }
             // tag
@@ -309,7 +309,7 @@ impl<'a> Parser<'a> {
             // snippet
             else {
                 if !(&item.snippet).is_empty() {
-                    item.snippet.push_str(serializer::LINE_SEPARATOR);
+                    item.snippet.push_str(deser::LINE_SEPARATOR);
                 }
                 item.snippet.push_str(&line);
             }

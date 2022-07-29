@@ -1,9 +1,7 @@
 use crate::commands;
-use crate::finder::FinderChoice;
+use crate::finder::{self, FinderChoice};
 use crate::prelude::*;
 use clap::{crate_version, AppSettings, Parser, Subcommand};
-
-const FINDER_POSSIBLE_VALUES: &[&str] = &["fzf", "skim"];
 
 #[derive(Debug, Parser)]
 #[clap(after_help = "\x1b[0;33mMORE INFO:\x1b[0;0m
@@ -80,7 +78,7 @@ pub(super) struct ClapConfig {
     pub fzf_overrides_var: Option<String>,
 
     /// Finder application to use
-    #[clap(long, possible_values = FINDER_POSSIBLE_VALUES, ignore_case = true)]
+    #[clap(long, possible_values = finder::POSSIBLE_VALUES, ignore_case = true)]
     pub finder: Option<FinderChoice>,
 
     #[clap(subcommand)]
@@ -127,38 +125,3 @@ pub enum Action {
     Print,
     Execute,
 }
-
-/*
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_widget_possible_values() {
-        for v in WIDGET_POSSIBLE_VALUES {
-            assert!(Shell::from_str(v).is_ok())
-        }
-    }
-
-    #[test]
-    fn test_info_possible_values() {
-        for v in INFO_POSSIBLE_VALUES {
-            assert!(Info::from_str(v).is_ok())
-        }
-    }
-
-    #[test]
-    fn test_func_possible_values() {
-        for v in FUNC_POSSIBLE_VALUES {
-            assert!(Func::from_str(v).is_ok())
-        }
-    }
-
-    #[test]
-    fn test_finder_possible_values() {
-        for v in FINDER_POSSIBLE_VALUES {
-            assert!(FinderChoice::from_str(v).is_ok())
-        }
-    }
-}
-*/

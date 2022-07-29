@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use std::process::{self, Command, Stdio};
+use std::process::{Command, Stdio};
 
 lazy_static! {
     pub static ref VAR_TLDR_REGEX: Regex = Regex::new(r"\{\{(.*?)\}\}").expect("Invalid regex");

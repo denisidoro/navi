@@ -1,6 +1,5 @@
+use crate::deser;
 use crate::prelude::*;
-use crate::serializer;
-
 use std::io::Write;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
@@ -16,6 +15,8 @@ pub enum FinderChoice {
     Fzf,
     Skim,
 }
+
+pub const POSSIBLE_VALUES: &[&str] = &["fzf", "skim"];
 
 impl FromStr for FinderChoice {
     type Err = &'static str;
@@ -78,7 +79,7 @@ impl FinderChoice {
             "--with-nth",
             "1,2,3",
             "--delimiter",
-            serializer::DELIMITER.to_string().as_str(),
+            deser::terminal::DELIMITER.to_string().as_str(),
             "--ansi",
             "--bind",
             format!("ctrl-j:down,ctrl-k:up{}", bindings).as_str(),
@@ -187,5 +188,12 @@ impl FinderChoice {
 
         let output = parse(out, finder_opts).context("Unable to get output")?;
         Ok((output, return_value))
+    }
+}
+
+#[test]
+fn test_possible_values() {
+    for v in POSSIBLE_VALUES {
+        assert!(FinderChoice::from_str(v).is_ok())
     }
 }

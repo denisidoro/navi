@@ -1,8 +1,8 @@
 mod actor;
-mod extractor;
 
-use crate::clients::cheatsh;
+use crate::clients::{cheatsh, tldr};
 use crate::config::Source;
+use crate::deser;
 use crate::filesystem;
 use crate::finder::structures::Opts as FinderOpts;
 use crate::parser::Parser;
@@ -32,7 +32,7 @@ pub fn init(fetcher: Box<dyn Fetcher>) -> Result<()> {
         })
         .context("Failed getting selection and variables from finder")?;
 
-    let extractions = extractor::extract_from_selections(&raw_selection, config.best_match());
+    let extractions = deser::terminal::read(&raw_selection, config.best_match());
 
     if extractions.is_err() {
         return init(fetcher);
@@ -51,7 +51,7 @@ pub fn get_fetcher() -> Result<Box<dyn Fetcher>> {
             Ok(fetcher)
         }
         Source::Tldr(query) => {
-            let lines = cheatsh::call(&query)?;
+            let lines = tldr::call(&query)?;
             let fetcher = Box::new(StaticFetcher::new(lines));
             Ok(fetcher)
         }

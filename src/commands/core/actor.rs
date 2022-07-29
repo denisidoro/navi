@@ -1,14 +1,14 @@
-use super::extractor;
 use crate::common::clipboard;
 use crate::common::fs;
 use crate::common::shell;
 use crate::common::shell::ShellSpawnError;
 use crate::config::Action;
+use crate::deser;
 use crate::env_var;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::prelude::*;
-use crate::serializer;
 use crate::structures::cheat::{Suggestion, VariableMap};
+use crate::structures::item::Item;
 use shell::EOF;
 use std::process::Stdio;
 
@@ -145,10 +145,7 @@ fn unique_result_count(results: &[&str]) -> usize {
 
 fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: VariableMap) -> Result<String> {
     let mut interpolated_snippet = String::from(snippet);
-    let variables_found: Vec<&str> = serializer::VAR_REGEX
-        .find_iter(snippet)
-        .map(|m| m.as_str())
-        .collect();
+    let variables_found: Vec<&str> = deser::VAR_REGEX.find_iter(snippet).map(|m| m.as_str()).collect();
     let variable_count = unique_result_count(&variables_found);
 
     for bracketed_variable_name in variables_found {
@@ -187,11 +184,20 @@ pub fn with_absolute_path(snippet: String) -> String {
 }
 
 pub fn act(
-    extractions: Result<extractor::Output>,
+    extractions: Result<(&str, Item)>,
     files: Vec<String>,
     variables: Option<VariableMap>,
 ) -> Result<()> {
-    let (key, tags, comment, snippet, file_index) = extractions.unwrap();
+    let (
+        key,
+        Item {
+            tags,
+            comment,
+            snippet,
+            file_index,
+            ..
+        },
+    ) = extractions.unwrap();
 
     if key == "ctrl-o" {
         edit::edit_file(Path::new(&files[file_index.expect("No files found")]))
@@ -205,13 +211,13 @@ pub fn act(
 
     let interpolated_snippet = {
         let mut s = replace_variables_from_snippet(
-            snippet,
-            tags,
+            &snippet,
+            &tags,
             variables.expect("No variables received from finder"),
         )
         .context("Failed to replace variables from snippet")?;
         s = with_absolute_path(s);
-        s = serializer::with_new_lines(s);
+        s = deser::with_new_lines(s);
         s
     };
 

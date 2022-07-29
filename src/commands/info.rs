@@ -3,7 +3,7 @@ use clap::Args;
 use crate::filesystem;
 use crate::prelude::*;
 
-const INFO_POSSIBLE_VALUES: &[&str] = &["cheats-example", "cheats-path", "config-path", "config-example"];
+const POSSIBLE_VALUES: &[&str] = &["cheats-example", "cheats-path", "config-path", "config-example"];
 
 impl FromStr for Info {
     type Err = &'static str;
@@ -21,7 +21,7 @@ impl FromStr for Info {
 
 #[derive(Debug, Clone, Args)]
 pub struct Input {
-    #[clap(possible_values = INFO_POSSIBLE_VALUES, ignore_case = true)]
+    #[clap(possible_values = POSSIBLE_VALUES, ignore_case = true)]
     pub info: Info,
 }
 
@@ -44,5 +44,12 @@ impl Runnable for Input {
             Info::ConfigExample => println!("{}", include_str!("../../docs/config_file_example.yaml")),
         }
         Ok(())
+    }
+}
+
+#[test]
+fn test_possible_values() {
+    for v in POSSIBLE_VALUES {
+        assert!(Info::from_str(v).is_ok())
     }
 }
