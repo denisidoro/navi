@@ -90,8 +90,14 @@ impl Runnable for Input {
                 "{variables}\n{variable} = {value}",
                 variables = variables,
                 variable = style(variable_name).with(variable_color),
-                value = finder::process(value, column, delimiter.as_deref(), map.clone())
-                    .expect("Unable to process value"),
+                value = if env_var::get(&env_variable_name).is_ok() {
+                    value
+                } else if is_current {
+                    finder::process(value, column, delimiter.as_deref(), map.clone())
+                            .expect("Unable to process value")
+                } else {
+                    "".to_string()
+                }
             );
         }
 
