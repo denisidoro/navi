@@ -32,7 +32,7 @@ strip-ansi-escapes = "0.1.1"
 edit = "0.1.4"
 remove_dir_all = "0.7.0"
 serde = { version = "1.0.140", features = ["derive"] }
-serde_yaml = "0.8.26"
+serde_yaml = "0.9.11"
 
 [lib]
 name = "navi"
