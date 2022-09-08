@@ -1,19 +1,18 @@
-Customization
--------------
+## Customization
 
-* [Changing colors](#changing-colors)
-* [Resizing columns](#resizing-columns)
-* [Overriding fzf options](#overriding-fzf-options)
+- [Changing colors](#changing-colors)
+- [Resizing columns](#resizing-columns)
+- [Overriding fzf options](#overriding-fzf-options)
 
 ### Changing colors
 
 You can change the [color scheme](https://github.com/junegunn/fzf/wiki/Color-schemes) by [overriding fzf options](#overriding-fzf-options).
 
-In addition, you can change the text color for each column by properly configuring *navi*'s `config.yaml`. Please check `navi --help` for more instructions.
+In addition, you can change the text color for each column by properly configuring _navi_'s `config.yaml`. Please check `navi --help` for more instructions.
 
 ### Resizing columns
 
-You can change the column widths by properly configuring *navi*'s `config.yaml`. Please check `navi --help` for more instructions.
+You can change the column widths by properly configuring _navi_'s `config.yaml`. Please check `navi --help` for more instructions.
 
 ### Overriding fzf options
 
@@ -38,4 +37,4 @@ export NAVI_FZF_OVERRIDES_VAR='--height 3'
 FZF_DEFAULT_OPTS="--height 3" navi
 ```
 
-In addition, this can be set by properly configuring *navi*'s `config.yaml`. Please check `navi --help` for more instructions.
+In addition, this can be set by properly configuring _navi_'s `config.yaml`. Please check `navi --help` for more instructions.

@@ -1,13 +1,12 @@
-Cheatsheet syntax
------------------
+## Cheatsheet syntax
 
-* [Syntax overview](#syntax-overview)
-* [Folder structure](#folder-structure)
-* [Variables](#variables)
-* [Advanced variable options](#advanced-variable-options)
-* [Variable dependency](#variable-dependency)
-* [Multiline snippets](#multiline-snippets)
-* [Variable as multiple arguments](#variable-as-multiple-arguments)
+- [Syntax overview](#syntax-overview)
+- [Folder structure](#folder-structure)
+- [Variables](#variables)
+- [Advanced variable options](#advanced-variable-options)
+- [Variable dependency](#variable-dependency)
+- [Multiline snippets](#multiline-snippets)
+- [Variable as multiple arguments](#variable-as-multiple-arguments)
 
 ### Syntax overview
 
@@ -23,6 +22,7 @@ $ branch: git branch | awk '{print $NF}'
 ```
 
 Lines starting with:
+
 - `%`: determine the start of a new cheatsheet and should contain tags
 - `#`: should be descriptions of commands
 - `;`: are ignored. You can use them for metacomments
@@ -37,7 +37,7 @@ It's irrelevant how many files are used to store cheatsheets. They can be all in
 
 ### Variables
 
-The interface prompts for variable names inside brackets (eg `<branch>`). 
+The interface prompts for variable names inside brackets (eg `<branch>`).
 
 Variable names should only include alphanumeric characters and `_`.
 
@@ -61,13 +61,15 @@ $ mapped: echo 'false true' | tr ' ' '\n' --- --map "grep -q t && echo 1 || echo
 ```
 
 The supported parameters are:
+
 - `--column <number>`: extracts a single column from the selected result
-- `--map <bash_code>`: *(experimental)* applies a map function to the selected variable value
-- `--prevent-extra`: *(experimental)* limits the user to select one of the suggestions
-- `--fzf-overrides <arg>`: *(experimental)* applies arbitrary `fzf` overrides
-- `--expand`: *(experimental)* converts each line into a separate argument
+- `--map <bash_code>`: _(experimental)_ applies a map function to the selected variable value
+- `--prevent-extra`: _(experimental)_ limits the user to select one of the suggestions
+- `--fzf-overrides <arg>`: _(experimental)_ applies arbitrary `fzf` overrides
+- `--expand`: _(experimental)_ converts each line into a separate argument
 
 In addition, it's possible to forward the following parameters to `fzf`:
+
 - `--multi`
 - `--header-lines <number>`
 - `--delimiter <regex>`
@@ -80,6 +82,7 @@ In addition, it's possible to forward the following parameters to `fzf`:
 ### Variable dependency
 
 The command for generating possible inputs can implicitly refer other variables by using the `<varname>` syntax:
+
 ```sh
 # Should print /my/pictures/wallpapers
 echo "<wallpaper_folder>"
@@ -89,6 +92,7 @@ $ wallpaper_folder: echo "<pictures_folder>/wallpapers"
 ```
 
 If you want to make dependencies explicit, you can use the `$varname` syntax:
+
 ```sh
 # If you select "hello" for <x>, the possible values of <y> will be "hello foo" and "hello bar"
 echo <x> <y>
@@ -102,7 +106,7 @@ $ y: echo "$x foo;$x bar" | tr ';' '\n'
 
 ### Extending cheatsheets
 
-With the `@ same tags from other cheatsheet` syntax you can reuse the same variable in multiple cheatsheets. 
+With the `@ same tags from other cheatsheet` syntax you can reuse the same variable in multiple cheatsheets.
 
 ```sh
 % dirs, common
@@ -125,6 +129,7 @@ echo "<pictures_folder>/screenshots"
 ### Multiline snippets
 
 Commands may be multiline:
+
 ```sh
 # This will output "foo\nyes"
 echo foo

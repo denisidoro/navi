@@ -1,16 +1,14 @@
-Alfred
-------
+## Alfred
 
-This is *experimental*. If you face any issues, please report [here](https://github.com/denisidoro/navi/issues/348).
+This is _experimental_. If you face any issues, please report [here](https://github.com/denisidoro/navi/issues/348).
 
 ![Alfred demo](https://user-images.githubusercontent.com/3226564/80294838-582b1b00-8743-11ea-9eb5-a335d8eed833.gif)
 
 ### Note
 
-Support for alfred has been removed. 
+Support for alfred has been removed.
 
 The latest version which has some support for it is [2.15.1](https://github.com/denisidoro/navi/releases/tag/v2.15.1).
-
 
 ### Instructions
 

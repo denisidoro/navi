@@ -1,5 +1,4 @@
-Aliases
-----------------------------
+## Aliases
 
 **navi** doesn't have support for aliases as first-class citizens at the moment.
 

@@ -3,10 +3,9 @@ name: Publish
 on:
   push:
     tags:
-      - '*'
+      - "*"
 
 jobs:
-
   binary:
     name: Publish ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
@@ -15,7 +14,7 @@ jobs:
       matrix:
         # This should work with only the `include`s but it currently doesn't because of this bug:
         # https://github.community/t5/How-to-use-Git-and-GitHub/GitHub-Actions-Matrix-options-dont-work-as-documented/td-p/29558
-        target: 
+        target:
           - x86_64-apple-darwin
           - x86_64-unknown-linux-musl
           - x86_64-pc-windows-gnu
@@ -42,20 +41,20 @@ jobs:
           - os: macos-latest
             target: aarch64-apple-ios
     steps:
-    - uses: hecrj/setup-rust-action@v1.3.4
-      with:
-        rust-version: stable
-    - uses: actions/checkout@v1
-    - name: Build
-      id: build
-      run: scripts/dot rust release ${{ matrix.target }}
-    - name: Get the version
-      id: get_version
-      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v1-release
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: target/tar/navi.${{ steps.build.outputs.EXTENSION }}
-        tag: ${{ github.ref }}
-        asset_name: navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
+      - uses: hecrj/setup-rust-action@v1.3.4
+        with:
+          rust-version: stable
+      - uses: actions/checkout@v1
+      - name: Build
+        id: build
+        run: scripts/dot rust release ${{ matrix.target }}
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/tar/navi.${{ steps.build.outputs.EXTENSION }}
+          tag: ${{ github.ref }}
+          asset_name: navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
