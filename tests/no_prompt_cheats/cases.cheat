@@ -101,5 +101,5 @@ $ wallpaper_folder: echo "<pictures_folder>/wallpapers"
 
 % test, third
 
-; this cheathsheet doesnt have any commands
+; this cheathsheet doesn't have any commands
 $ country: echo "br"
