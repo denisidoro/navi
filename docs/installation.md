@@ -1,16 +1,15 @@
-Installation
-------------
+## Installation
 
-* [Installing the main binary](#installing-the-main-binary)
-    * [Using Homebrew](#using-homebrew)
-    * [Using Gentoo](#using-gentoo)
-    * [Using nix](#using-nix)
-    * [Using cargo](#using-cargo)
-    * [Using install script](#using-install-script)
-    * [Downloading pre-compiled binaries](#downloading-pre-compiled-binaries)
-    * [Building from source](#building-from-source)
-    * [Other package managers](#other-package-managers)
-* [Installing the shell widget](#installing-the-shell-widget)
+- [Installing the main binary](#installing-the-main-binary)
+  - [Using Homebrew](#using-homebrew)
+  - [Using Gentoo](#using-gentoo)
+  - [Using nix](#using-nix)
+  - [Using cargo](#using-cargo)
+  - [Using install script](#using-install-script)
+  - [Downloading pre-compiled binaries](#downloading-pre-compiled-binaries)
+  - [Building from source](#building-from-source)
+  - [Other package managers](#other-package-managers)
+- [Installing the shell widget](#installing-the-shell-widget)
 
 ### Installing the main binary
 
@@ -49,6 +48,7 @@ For Windows user, using powershell
    choco install navi
    ```
 2. Create `$env:USERPROFILE\AppData\Roaming\navi\config.yaml` and override `shell.command` as per [config_file_example.yaml](./config_file_example.yaml)
+
    ```
    style:
      tag:
@@ -63,7 +63,6 @@ For Windows user, using powershell
    ```
 
    Remark: Above example also adds custom colors for better readability in case you use standard blue for your Powershell
-
 
 #### Using install script
 
@@ -84,7 +83,7 @@ bash <(curl -sL https://raw.githubusercontent.com/denisidoro/navi/master/scripts
 ```bash
 git clone https://github.com/denisidoro/navi ~/.navi
 cd ~/.navi
-make install 
+make install
 
 # (optional) to set the install directory:
 # make BIN_DIR=/usr/local/bin install
@@ -99,7 +98,7 @@ make install
 
 #### Other package managers
 
-You can find **navi** for more package managers by clicking on the image below: 
+You can find **navi** for more package managers by clicking on the image below:
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/navi.svg)](https://repology.org/project/navi/versions)
 
@@ -108,6 +107,7 @@ Feel free to be the maintainer of **navi** for any package manager you'd like!
 ### Installing the shell widget
 
 If you want to install it, add this line to your `.bashrc`-like file:
+
 ```sh
 # bash
 eval "$(navi widget bash)"
@@ -125,6 +125,7 @@ eval (navi widget elvish | slurp)
 By default, `Ctrl+G` is assigned to launching **navi**.
 
 There's currently no way to customize the widget behavior out-of-the-box. If you want to change the keybinding or the **navi** flags used by the widget, please:
+
 1. run, e.g., `navi widget bash` in your terminal
 2. copy the output
 3. paste the output in your `.bashrc`-like file
