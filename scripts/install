@@ -279,10 +279,10 @@ install_navi() {
    log::success "navi is now available at ${navi_bin_path}"
    echoerr
 
-   if echo "$PATH" | grep -q "$navi_bin_path"; then
+   if echo "$PATH" | grep -q "$navi_bin_dir"; then
       :
    else
-      local -r cmd="$(export_path_cmd "$navi_bin_path")"
+      local -r cmd="$(export_path_cmd "$navi_bin_dir")"
       append_to_file "${HOME}/.bashrc" "$cmd"
       append_to_file "${ZDOTDIR:-"$HOME"}/.zshrc" "$cmd"
       append_to_file "${HOME}/.fishrc" "$cmd"
@@ -292,7 +292,7 @@ install_navi() {
    echo
    log::note "Check https://github.com/denisidoro/navi for more info"
 
-   export PATH="${PATH}:${navi_bin_path}"
+   export PATH="${PATH}:${navi_bin_dir}"
 
    return 0
 }
