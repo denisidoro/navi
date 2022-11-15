@@ -49,6 +49,8 @@ There are multiple ways to use **navi**:
   - pros: you have access to all possible subcommands and flags
 - as a [shell widget](docs/installation.md#installing-the-shell-widget) for the terminal
   - pros: the shell history is correctly populated (i.e. with the actual command you ran instead of `navi`) and you can edit the command as you wish before executing it
+- as a [Tmux widget](docs/tmux.md)
+  - pros: you can use your cheatsheets in any command-line app even in SSH sessions
 - as [aliases](docs/aliases.md)
 - as a [shell scripting tool](docs/shell_scripting.md)
 - as an [Alfred workflow](docs/alfred.md)
@@ -66,6 +68,7 @@ You can also:
 - [write your own cheatsheets](#cheatsheet-syntax) (and [share them](docs/cheatsheet_repositories.md#submitting-cheatsheets), if you want)
 - [use cheatsheets from other tools](docs/cheatsheet_repositories.md#using-cheatsheets-from-other-tools), such as [tldr](https://github.com/tldr-pages/tldr) and [cheat.sh](https://github.com/chubin/cheat.sh)
 - [auto-update repositories](docs/cheatsheet_repositories.md#auto-updating-repositories)
+- auto-export cheatsheets from your [TiddlyWiki](https://tiddlywiki.com/) notes using a [TiddlyWiki plugin](https://bimlas.gitlab.io/tw5-navi-cheatsheet/)
 
 ## Cheatsheet syntax
 
