@@ -68,6 +68,7 @@ You can also:
 - [write your own cheatsheets](#cheatsheet-syntax) (and [share them](docs/cheatsheet_repositories.md#submitting-cheatsheets), if you want)
 - [use cheatsheets from other tools](docs/cheatsheet_repositories.md#using-cheatsheets-from-other-tools), such as [tldr](https://github.com/tldr-pages/tldr) and [cheat.sh](https://github.com/chubin/cheat.sh)
 - [auto-update repositories](docs/cheatsheet_repositories.md#auto-updating-repositories)
+- auto-export cheatsheets from your [TiddlyWiki](https://tiddlywiki.com/) notes using a [TiddlyWiki plugin](https://bimlas.gitlab.io/tw5-navi-cheatsheet/)
 
 ## Cheatsheet syntax
 
