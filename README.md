@@ -49,6 +49,8 @@ There are multiple ways to use **navi**:
   - pros: you have access to all possible subcommands and flags
 - as a [shell widget](docs/installation.md#installing-the-shell-widget) for the terminal
   - pros: the shell history is correctly populated (i.e. with the actual command you ran instead of `navi`) and you can edit the command as you wish before executing it
+- as a [Tmux widget](docs/tmux.md)
+  - pros: you can use your cheatsheets in any command-line app even in SSH sessions
 - as [aliases](docs/aliases.md)
 - as a [shell scripting tool](docs/shell_scripting.md)
 - as an [Alfred workflow](docs/alfred.md)
