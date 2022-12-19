@@ -243,6 +243,8 @@ impl<'a> Parser<'a> {
 
         let mut variable_cmd = String::from("");
 
+        let mut inside_snippet: bool = false;
+
         for (line_nr, line_result) in lines.enumerate() {
             let line = line_result
                 .with_context(|| format!("Failed to read line number {} in cheatsheet `{}`", line_nr, id))?;
@@ -284,7 +286,9 @@ impl<'a> Parser<'a> {
                 item.comment = without_prefix(&line);
             }
             // variable
-            else if !variable_cmd.is_empty() || (line.starts_with('$') && line.contains(':')) {
+            else if !variable_cmd.is_empty()
+                || (line.starts_with('$') && line.contains(':')) && !inside_snippet
+            {
                 should_break = self.write_cmd(&item).is_err();
 
                 item.snippet = String::from("");
@@ -305,6 +309,10 @@ impl<'a> Parser<'a> {
                     self.variables
                         .insert_suggestion(&item.tags, variable, (String::from(command), opts));
                 }
+            }
+            // markdown snippet
+            else if line.starts_with("```") {
+                inside_snippet = !inside_snippet;
             }
             // snippet
             else {
