@@ -18,7 +18,7 @@ pub fn all_cheat_files(path: &Path) -> Vec<String> {
         .into_iter()
         .filter_map(|e| e.ok())
         .map(|e| e.path().to_str().unwrap_or("").to_string())
-        .filter(|e| e.ends_with(".cheat"))
+        .filter(|e| e.ends_with(".cheat") || e.ends_with(".cheat.md"))
         .collect::<Vec<String>>()
 }
 
