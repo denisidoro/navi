@@ -1,27 +1,27 @@
+use std::fmt;
+use std::fmt::Display;
+
 use clap::Args;
 
 use crate::common::shell::Shell;
 use crate::prelude::*;
 
-const POSSIBLE_VALUES: &[&str] = &["bash", "zsh", "fish", "elvish"];
+impl Display for Shell {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = match self {
+            Self::Bash => "bash",
+            Self::Zsh => "zsh",
+            Self::Fish => "fish",
+            Self::Elvish => "elvish",
+        };
 
-impl FromStr for Shell {
-    type Err = &'static str;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "bash" => Ok(Shell::Bash),
-            "zsh" => Ok(Shell::Zsh),
-            "fish" => Ok(Shell::Fish),
-            "elvish" => Ok(Shell::Elvish),
-            _ => Err("no match"),
-        }
+        write!(f, "{s}")
     }
 }
 
 #[derive(Debug, Clone, Args)]
 pub struct Input {
-    #[clap(possible_values = POSSIBLE_VALUES, ignore_case = true, default_value = "bash")]
+    #[clap(ignore_case = true, default_value_t = Shell::Bash)]
     pub shell: Shell,
 }
 
@@ -39,12 +39,5 @@ impl Runnable for Input {
         println!("{}", content);
 
         Ok(())
-    }
-}
-
-#[test]
-fn test_possible_values() {
-    for v in POSSIBLE_VALUES {
-        assert!(Shell::from_str(v).is_ok())
     }
 }
