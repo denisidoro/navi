@@ -1,6 +1,6 @@
 use crate::commands;
 use crate::finder::FinderChoice;
-use crate::prelude::*;
+
 use clap::{crate_version, Parser, Subcommand};
 
 #[derive(Debug, Parser)]
