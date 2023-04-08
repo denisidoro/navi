@@ -120,9 +120,13 @@ navi widget fish | source
 
 # elvish
 eval (navi widget elvish | slurp)
+
+# xonsh
+# xpip install xontrib-navi # ← run in your xonsh session to install xontrib
+xontrib load navi # ← add to your xonsh run control file
 ```
 
-By default, `Ctrl+G` is assigned to launching **navi**.
+By default, `Ctrl+G` is assigned to launching **navi** (in xonsh can be customized with `$X_NAVI_KEY`, see [xontrib-navi](https://github.com/eugenesvk/xontrib-navi) for details).
 
 There's currently no way to customize the widget behavior out-of-the-box. If you want to change the keybinding or the **navi** flags used by the widget, please:
 
