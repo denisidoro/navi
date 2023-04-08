@@ -4,7 +4,7 @@ use std::process::Command;
 
 pub fn shallow_clone(uri: &str, target: &str) -> Result<()> {
     Command::new("git")
-        .args(&["clone", uri, target, "--depth", "1"])
+        .args(["clone", uri, target, "--depth", "1"])
         .spawn()
         .map_err(|e| ShellSpawnError::new("git clone", e))?
         .wait()

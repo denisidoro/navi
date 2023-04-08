@@ -20,7 +20,7 @@ pub fn call(query: &str) -> Result<Vec<String>> {
     let args = ["-qO-", &format!("cheat.sh/{}", query)];
 
     let child = Command::new("wget")
-        .args(&args)
+        .args(args)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .spawn();
@@ -38,7 +38,7 @@ Make sure wget is correctly installed.";
 
     if let Some(0) = out.status.code() {
         let stdout = out.stdout;
-        let plain_bytes = strip_ansi_escapes::strip(&stdout)?;
+        let plain_bytes = strip_ansi_escapes::strip(stdout)?;
 
         let markdown = String::from_utf8(plain_bytes).context("Output is invalid utf8")?;
         if markdown.starts_with("Unknown topic.") {

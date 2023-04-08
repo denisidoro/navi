@@ -89,7 +89,7 @@ pub(super) fn parse_output_single(mut text: String, suggestion_type: SuggestionT
         SuggestionType::SingleRecommendation => {
             let lines: Vec<&str> = text.lines().collect();
 
-            match (lines.get(0), lines.get(1), lines.get(2)) {
+            match (lines.first(), lines.get(1), lines.get(2)) {
                 (Some(one), Some(termination), Some(two))
                     if *termination == "enter" || termination.is_empty() =>
                 {

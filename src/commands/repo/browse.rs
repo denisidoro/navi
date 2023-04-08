@@ -29,7 +29,7 @@ pub fn main() -> Result<String> {
         p
     };
 
-    let repos = fs::read_to_string(&feature_repos_file).context("Unable to fetch featured repositories")?;
+    let repos = fs::read_to_string(feature_repos_file).context("Unable to fetch featured repositories")?;
 
     let opts = FinderOpts {
         column: Some(1),

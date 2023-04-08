@@ -55,7 +55,7 @@ pub fn call(query: &str) -> Result<Vec<String>> {
     let args = [query, "--markdown"];
 
     let child = Command::new("tldr")
-        .args(&args)
+        .args(args)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())

@@ -4,7 +4,7 @@ use crate::structures::fetcher;
 
 pub fn populate_cheatsheet(parser: &mut Parser) -> Result<()> {
     let cheatsheet = include_str!("../docs/navi.cheat");
-    let lines = cheatsheet.split('\n').into_iter().map(|s| Ok(s.to_string()));
+    let lines = cheatsheet.split('\n').map(|s| Ok(s.to_string()));
 
     parser.read_lines(lines, "welcome", None)?;
 
