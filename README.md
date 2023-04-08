@@ -104,10 +104,6 @@ navi --help
 
 In addition, please check the [/docs](docs) folder.
 
-## Trying out online
-
-If you don't have access to a Unix shell at the moment and you want to live preview **navi**, head to [this playground](https://www.katacoda.com/denisidoro/scenarios/navi). It'll start a docker container with instructions for you to install and use the tool. Note: login required.
-
 ## Similar tools
 
 There are many similar projects out there ([beavr](https://github.com/denisidoro/beavr), [bro](https://github.com/hubsmoke/bro), [cheat](https://github.com/cheat/cheat), [cheat.sh](https://github.com/chubin/cheat.sh), [cmdmenu](https://github.com/amacfie/cmdmenu), [eg](https://github.com/srsudar/eg), [how2](https://github.com/santinic/how2), [howdoi](https://github.com/gleitz/howdoi), [Command Line Interface Pages](https://github.com/command-line-interface-pages) and [tldr](https://github.com/tldr-pages/tldr), to name a few).
