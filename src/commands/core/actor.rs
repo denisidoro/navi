@@ -43,7 +43,7 @@ fn prompt_finder(
 
         let child = shell::out()
             .stdout(Stdio::piped())
-            .arg(&suggestion_command)
+            .arg(suggestion_command)
             .spawn()
             .map_err(|e| ShellSpawnError::new(suggestion_command, e))?;
 
@@ -207,7 +207,7 @@ pub fn act(
 
     env_var::set(env_var::PREVIEW_INITIAL_SNIPPET, &snippet);
     env_var::set(env_var::PREVIEW_TAGS, &tags);
-    env_var::set(env_var::PREVIEW_COMMENT, &comment);
+    env_var::set(env_var::PREVIEW_COMMENT, comment);
 
     let interpolated_snippet = {
         let mut s = replace_variables_from_snippet(

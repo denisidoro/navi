@@ -56,7 +56,7 @@ impl FinderChoice {
             Self::Skim => "sk",
         };
 
-        let mut command = Command::new(&finder_str);
+        let mut command = Command::new(finder_str);
         let opts = finder_opts.clone();
 
         let preview_height = match self {
@@ -70,7 +70,7 @@ impl FinderChoice {
             ""
         };
 
-        command.args(&[
+        command.args([
             "--preview",
             "",
             "--preview-window",
@@ -97,48 +97,48 @@ impl FinderChoice {
             }
             SuggestionType::Disabled => {
                 if let Self::Fzf = self {
-                    command.args(&["--print-query", "--no-select-1"]);
+                    command.args(["--print-query", "--no-select-1"]);
                 };
             }
             SuggestionType::SnippetSelection => {
-                command.args(&["--expect", "ctrl-y,ctrl-o,enter"]);
+                command.args(["--expect", "ctrl-y,ctrl-o,enter"]);
             }
             SuggestionType::SingleRecommendation => {
-                command.args(&["--print-query", "--expect", "tab,enter"]);
+                command.args(["--print-query", "--expect", "tab,enter"]);
             }
             _ => {}
         }
 
         if let Some(p) = opts.preview {
-            command.args(&["--preview", &p]);
+            command.args(["--preview", &p]);
         }
 
         if let Some(q) = opts.query {
-            command.args(&["--query", &q]);
+            command.args(["--query", &q]);
         }
 
         if let Some(f) = opts.filter {
-            command.args(&["--filter", &f]);
+            command.args(["--filter", &f]);
         }
 
         if let Some(d) = opts.delimiter {
-            command.args(&["--delimiter", &d]);
+            command.args(["--delimiter", &d]);
         }
 
         if let Some(h) = opts.header {
-            command.args(&["--header", &h]);
+            command.args(["--header", &h]);
         }
 
         if let Some(p) = opts.prompt {
-            command.args(&["--prompt", &p]);
+            command.args(["--prompt", &p]);
         }
 
         if let Some(pw) = opts.preview_window {
-            command.args(&["--preview-window", &pw]);
+            command.args(["--preview-window", &pw]);
         }
 
         if opts.header_lines > 0 {
-            command.args(&["--header-lines", format!("{}", opts.header_lines).as_str()]);
+            command.args(["--header-lines", format!("{}", opts.header_lines).as_str()]);
         }
 
         if let Some(o) = opts.overrides {

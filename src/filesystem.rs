@@ -13,7 +13,7 @@ use std::path::MAIN_SEPARATOR;
 use walkdir::WalkDir;
 
 pub fn all_cheat_files(path: &Path) -> Vec<String> {
-    WalkDir::new(&path)
+    WalkDir::new(path)
         .follow_links(true)
         .into_iter()
         .filter_map(|e| e.ok())
@@ -91,7 +91,7 @@ fn interpolate_paths(paths: String) -> String {
     let mut newtext = paths.to_string();
     for capture in re.captures_iter(&paths) {
         if let Some(c) = capture.get(0) {
-            let varname = c.as_str().replace('$', "").replace('{', "").replace('}', "");
+            let varname = c.as_str().replace(['$', '{', '}'], "");
             if let Ok(replacement) = &env_var::get(&varname) {
                 newtext = newtext
                     .replace(&format!("${}", varname), replacement)

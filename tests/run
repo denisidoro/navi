@@ -58,7 +58,7 @@ _navi_tldr() {
 
 _navi_cheatsh() {
    _navi --cheatsh docker --query remove --print --best-match \
-      | test::contains "docker rm"
+      | test::contains "docker container prune"
 }
 
 _navi_widget() {

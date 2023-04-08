@@ -257,7 +257,7 @@ impl<'a> Parser<'a> {
             if !item.tags.is_empty() && !item.comment.is_empty() {}
             // blank
             if line.is_empty() {
-                if !(&item.snippet).is_empty() {
+                if !item.snippet.is_empty() {
                     item.snippet.push_str(deser::LINE_SEPARATOR);
                 }
             }
@@ -316,7 +316,7 @@ impl<'a> Parser<'a> {
             }
             // snippet
             else {
-                if !(&item.snippet).is_empty() {
+                if !item.snippet.is_empty() {
                     item.snippet.push_str(deser::LINE_SEPARATOR);
                 }
                 item.snippet.push_str(&line);
