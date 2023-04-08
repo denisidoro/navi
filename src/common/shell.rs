@@ -1,10 +1,11 @@
 use crate::prelude::*;
+use clap::ValueEnum;
 use std::process::Command;
 use thiserror::Error;
 
 pub const EOF: &str = "NAVIEOF";
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, ValueEnum)]
 pub enum Shell {
     Bash,
     Zsh,

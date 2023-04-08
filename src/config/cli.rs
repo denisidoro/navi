@@ -1,10 +1,10 @@
 use crate::commands;
-use crate::finder::{self, FinderChoice};
+use crate::finder::FinderChoice;
 use crate::prelude::*;
-use clap::{crate_version, AppSettings, Parser, Subcommand};
+use clap::{crate_version, Parser, Subcommand};
 
 #[derive(Debug, Parser)]
-#[clap(after_help = "\x1b[0;33mMORE INFO:\x1b[0;0m
+#[command(after_help = "\x1b[0;33mMORE INFO:\x1b[0;0m
     Please refer to \x1b[0;32mhttps://github.com/denisidoro/navi\x1b[0;0m
 
 \x1b[0;33mENVIRONMENT VARIABLES:\x1b[0m
@@ -37,51 +37,50 @@ use clap::{crate_version, AppSettings, Parser, Subcommand};
     navi --fzf-overrides '--nth 1,2'             # only consider the first two columns for search
     navi --fzf-overrides '--no-exact'            # use looser search algorithm
     navi --tag-rules='git,!checkout'             # show non-checkout git snippets only")]
-#[clap(setting = AppSettings::AllowHyphenValues)]
 #[clap(version = crate_version!())]
 pub(super) struct ClapConfig {
     /// Colon-separated list of paths containing .cheat files
-    #[clap(short, long)]
+    #[arg(short, long)]
     pub path: Option<String>,
 
     /// Instead of executing a snippet, prints it to stdout
-    #[clap(long)]
+    #[arg(long)]
     #[cfg(not(feature = "disable-command-execution"))]
     pub print: bool,
 
     /// Returns the best match
-    #[clap(long)]
+    #[arg(long)]
     pub best_match: bool,
 
     /// Searches for cheatsheets using the tldr-pages repository
-    #[clap(long)]
+    #[arg(long)]
     pub tldr: Option<String>,
 
     /// [Experimental] Comma-separated list that acts as filter for tags. Parts starting with ! represent negation
-    #[clap(long)]
+    #[arg(long)]
     pub tag_rules: Option<String>,
 
     /// Searches for cheatsheets using the cheat.sh repository
-    #[clap(long)]
+    #[arg(long)]
     pub cheatsh: Option<String>,
 
     /// Prepopulates the search field
-    #[clap(short, long)]
+    #[arg(short, long, allow_hyphen_values = true)]
     pub query: Option<String>,
 
     /// Finder overrides for snippet selection
-    #[clap(long)]
+    #[arg(long, allow_hyphen_values = true)]
     pub fzf_overrides: Option<String>,
 
     /// Finder overrides for variable selection
-    #[clap(long)]
+    #[arg(long, allow_hyphen_values = true)]
     pub fzf_overrides_var: Option<String>,
 
     /// Finder application to use
-    #[clap(long, possible_values = finder::POSSIBLE_VALUES, ignore_case = true)]
+    #[arg(long, ignore_case = true)]
     pub finder: Option<FinderChoice>,
 
-    #[clap(subcommand)]
+    #[command(subcommand)]
     pub cmd: Option<Command>,
 }
 
@@ -100,13 +99,13 @@ pub enum Command {
     #[cfg(not(feature = "disable-repo-management"))]
     Repo(commands::repo::Input),
     /// Used for fzf's preview window when selecting snippets
-    #[clap(setting = AppSettings::Hidden)]
+    #[command(hide = true)]
     Preview(commands::preview::Input),
     /// Used for fzf's preview window when selecting variable suggestions
-    #[clap(setting = AppSettings::Hidden)]
+    #[command(hide = true)]
     PreviewVar(commands::preview::var::Input),
     /// Used for fzf's preview window when selecting variable suggestions
-    #[clap(setting = AppSettings::Hidden)]
+    #[command(hide = true)]
     PreviewVarStdin(commands::preview::var_stdin::Input),
     /// Outputs shell widget source code
     Widget(commands::shell::Input),

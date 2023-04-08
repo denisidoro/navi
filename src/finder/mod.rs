@@ -4,19 +4,18 @@ use std::io::Write;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
 pub mod structures;
+use clap::ValueEnum;
 pub use post::process;
 use structures::Opts;
 use structures::SuggestionType;
 
 mod post;
 
-#[derive(Debug, Clone, Copy, Deserialize)]
+#[derive(Debug, Clone, Copy, Deserialize, ValueEnum)]
 pub enum FinderChoice {
     Fzf,
     Skim,
 }
-
-pub const POSSIBLE_VALUES: &[&str] = &["fzf", "skim"];
 
 impl FromStr for FinderChoice {
     type Err = &'static str;
@@ -188,12 +187,5 @@ impl FinderChoice {
 
         let output = parse(out, finder_opts).context("Unable to get output")?;
         Ok((output, return_value))
-    }
-}
-
-#[test]
-fn test_possible_values() {
-    for v in POSSIBLE_VALUES {
-        assert!(FinderChoice::from_str(v).is_ok())
     }
 }
