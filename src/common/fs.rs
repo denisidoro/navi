@@ -1,4 +1,4 @@
-use super::prelude::*;
+use crate::prelude::*;
 use remove_dir_all::remove_dir_all;
 use std::ffi::OsStr;
 use std::fs::{self, create_dir_all, File};
@@ -20,14 +20,6 @@ impl ToStringExt for OsStr {
         self.to_string_lossy().to_string()
     }
 }
-
-// pub fn config_dir(project_name: &str) -> Result<PathBuf> {
-//     let base_dirs = BaseDirs::new().context("unable to get base dirs")?;
-//
-//     let mut pathbuf = PathBuf::from(base_dirs.config_dir());
-//     pathbuf.push(project_name);
-//     Ok(pathbuf)
-// }
 
 #[derive(Error, Debug)]
 #[error("Invalid path `{0}`")]
