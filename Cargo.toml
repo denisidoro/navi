@@ -33,6 +33,8 @@ edit = "0.1.4"
 remove_dir_all = "0.8.2"
 serde = { version = "1.0.159", features = ["derive"] }
 serde_yaml = "0.9.21"
+dns_common_derive = { version = "0.2.1" }
+dns_common = { version = "0.2.1", default-features = false, features = ["yaml", "json"] }
 
 [lib]
 name = "navi"
