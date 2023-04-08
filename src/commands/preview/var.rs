@@ -94,7 +94,7 @@ impl Runnable for Input {
                     value
                 } else if is_current {
                     finder::process(value, column, delimiter.as_deref(), map.clone())
-                            .expect("Unable to process value")
+                        .expect("Unable to process value")
                 } else {
                     "".to_string()
                 }
