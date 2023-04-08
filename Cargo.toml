@@ -19,20 +19,20 @@ disable-repo-management = []
 travis-ci = { repository = "denisidoro/navi", branch = "master" }
 
 [dependencies]
-regex = { version = "1.6.0", default-features = false, features = ["std", "unicode-perl"] }
+regex = { version = "1.7.3", default-features = false, features = ["std", "unicode-perl"] }
 clap = { version = "4.2.1", features = ["derive", "cargo"] }
-crossterm = "0.24.0"
+crossterm = "0.26.1"
 lazy_static = "1.4.0"
 directories-next = "2.0.0"
-walkdir = "2.3.2"
+walkdir = "2.3.3"
 shellwords = "1.1.0"
-anyhow = "1.0.58"
-thiserror = "1.0.31"
+anyhow = "1.0.70"
+thiserror = "1.0.40"
 strip-ansi-escapes = "0.1.1"
 edit = "0.1.4"
-remove_dir_all = "0.7.0"
-serde = { version = "1.0.140", features = ["derive"] }
-serde_yaml = "0.8.26"
+remove_dir_all = "0.8.2"
+serde = { version = "1.0.159", features = ["derive"] }
+serde_yaml = "0.9.21"
 
 [lib]
 name = "navi"
