@@ -35,6 +35,10 @@ impl Config {
         self.clap.best_match
     }
 
+    pub fn prevent_interpolation(&self) -> bool {
+        self.clap.prevent_interpolation
+    }
+
     pub fn cmd(&self) -> Option<&Command> {
         self.clap.cmd.as_ref()
     }

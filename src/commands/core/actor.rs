@@ -146,6 +146,11 @@ fn unique_result_count(results: &[&str]) -> usize {
 
 fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: VariableMap) -> Result<String> {
     let mut interpolated_snippet = String::from(snippet);
+
+    if CONFIG.prevent_interpolation() {
+        return Ok(interpolated_snippet);
+    }
+
     let variables_found: Vec<&str> = deser::VAR_REGEX.find_iter(snippet).map(|m| m.as_str()).collect();
     let variable_count = unique_result_count(&variables_found);
 
