@@ -1,6 +1,9 @@
 name: Publish
 
-on: [push]
+on:
+  push:
+    tags:
+      - "*"
 
 jobs:
   binary:
@@ -19,7 +22,7 @@ jobs:
           - armv7-linux-androideabi
           - aarch64-linux-android
           - aarch64-unknown-linux-gnu
-          - aarch64-apple-darwin
+          - aarch64-apple-ios
         include:
           - os: macos-latest
             target: x86_64-apple-darwin
@@ -36,25 +39,25 @@ jobs:
           - os: ubuntu-latest
             target: aarch64-unknown-linux-gnu
           - os: macos-latest
-            target: aarch64-apple-darwin
+            target: aarch64-apple-ios
     steps:
       - uses: hecrj/setup-rust-action@v1.3.4
         with:
           rust-version: stable
       - uses: actions/checkout@v1
-      - name: Install target
-        id: installtarget
-        run: rustup target add ${{ matrix.target }}
       - name: Build
         id: build
         run: scripts/dot rust release ${{ matrix.target }}
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-      # - name: Upload binaries to release
-      #   uses: svenstaro/upload-release-action@v1-release
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file: target/tar/navi.${{ steps.build.outputs.EXTENSION }}
-      #     tag: ${{ github.ref }}
-      #     asset_name: navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
+      - name: Install target
+        id: installtarget
+        run: rustup target add ${{ matrix.target }}
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/tar/navi.${{ steps.build.outputs.EXTENSION }}
+          tag: ${{ github.ref }}
+          asset_name: navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
