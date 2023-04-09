@@ -75,8 +75,6 @@ impl FinderChoice {
             "",
             "--preview-window",
             format!("up:{}:nohidden", preview_height).as_str(),
-            "--with-nth",
-            "1,2,3",
             "--delimiter",
             deser::terminal::DELIMITER.to_string().as_str(),
             "--ansi",
@@ -84,6 +82,10 @@ impl FinderChoice {
             format!("ctrl-j:down,ctrl-k:up{}", bindings).as_str(),
             "--exact",
         ]);
+
+        if !opts.show_all_columns {
+            command.args(["--with-nth", "1,2,3"]);
+        }
 
         if !opts.prevent_select1 {
             if let Self::Fzf = self {
