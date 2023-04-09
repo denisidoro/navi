@@ -247,7 +247,7 @@ impl<'a> Parser<'a> {
 
         for (line_nr, line_result) in lines.enumerate() {
             let line = line_result
-                .with_context(|| format!("Failed to read line number {} in cheatsheet `{}`", line_nr, id))?;
+                .with_context(|| format!("Failed to read line number {line_nr} in cheatsheet `{id}`"))?;
 
             if should_break {
                 break;

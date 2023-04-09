@@ -7,9 +7,8 @@ fn map_line(line: &str) -> String {
 
 fn as_lines(query: &str, markdown: &str) -> Vec<String> {
     format!(
-        "% {}, cheat.sh
-{}",
-        query, markdown
+        "% {query}, cheat.sh
+{markdown}"
     )
     .lines()
     .map(map_line)
@@ -17,7 +16,7 @@ fn as_lines(query: &str, markdown: &str) -> Vec<String> {
 }
 
 pub fn call(query: &str) -> Result<Vec<String>> {
-    let args = ["-qO-", &format!("cheat.sh/{}", query)];
+    let args = ["-qO-", &format!("cheat.sh/{query}")];
 
     let child = Command::new("wget")
         .args(args)

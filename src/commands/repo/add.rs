@@ -41,13 +41,13 @@ pub fn main(uri: String) -> Result<()> {
     eprintln!("Cloning {} into {}...\n", &actual_uri, &tmp_path_str);
 
     git::shallow_clone(actual_uri.as_str(), tmp_path_str)
-        .with_context(|| format!("Failed to clone `{}`", actual_uri))?;
+        .with_context(|| format!("Failed to clone `{actual_uri}`"))?;
 
     let all_files = filesystem::all_cheat_files(&tmp_pathbuf).join("\n");
 
     let opts = FinderOpts {
         suggestion_type: SuggestionType::MultipleSelections,
-        preview: Some(format!("cat '{}/{{}}'", tmp_path_str)),
+        preview: Some(format!("cat '{tmp_path_str}/{{}}'")),
         header: Some("Select the cheatsheets you want to import with <TAB> then hit <Enter>\nUse Ctrl-R for (de)selecting all".to_string()),
         preview_window: Some("right:30%".to_string()),
         ..Default::default()
@@ -69,7 +69,7 @@ pub fn main(uri: String) -> Result<()> {
 
     let to_folder = {
         let mut p = cheat_pathbuf;
-        p.push(format!("{}__{}", user, repo));
+        p.push(format!("{user}__{repo}"));
         p
     };
 

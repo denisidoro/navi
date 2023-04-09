@@ -21,7 +21,7 @@ where
 {
     let s: String = Deserialize::deserialize(deserializer)?;
     TerminalColor::try_from(s.as_str())
-        .map_err(|_| de::Error::custom(format!("Failed to deserialize color: {}", s)))
+        .map_err(|_| de::Error::custom(format!("Failed to deserialize color: {s}")))
 }
 
 #[derive(Deserialize)]
@@ -55,7 +55,7 @@ where
 {
     let s: String = Deserialize::deserialize(deserializer)?;
     FinderChoice::from_str(s.to_lowercase().as_str())
-        .map_err(|_| de::Error::custom(format!("Failed to deserialize finder: {}", s)))
+        .map_err(|_| de::Error::custom(format!("Failed to deserialize finder: {s}")))
 }
 
 #[derive(Deserialize, Default)]

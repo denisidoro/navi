@@ -30,7 +30,7 @@ impl Runnable for Input {
         println!(
             "{comment} {tags} \n{snippet}",
             comment = style(comment).with(CONFIG.comment_color()),
-            tags = style(format!("[{}]", tags)).with(CONFIG.tag_color()),
+            tags = style(format!("[{tags}]")).with(CONFIG.tag_color()),
             snippet = style(deser::fix_newlines(snippet)).with(CONFIG.snippet_color()),
         );
 

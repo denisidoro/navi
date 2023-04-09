@@ -7,13 +7,13 @@ use std::process::Stdio;
 fn apply_map(text: String, map_fn: Option<String>) -> Result<String> {
     if let Some(m) = map_fn {
         let cmd = if CONFIG.shell().contains("fish") {
-            format!(r#"printf "%s" "{text}" | {m}"#, m = m, text = text)
+            format!(r#"printf "%s" "{text}" | {m}"#)
         } else {
             format!(
                 r#"_navi_input() {{
-cat <<'{eof}'
+cat <<'{EOF}'
 {text}
-{eof}
+{EOF}
 }}
 
 _navi_map_fn() {{
@@ -24,10 +24,7 @@ _navi_nonewline() {{
   printf "%s" "$(cat)"
 }}
 
-_navi_input | _navi_map_fn | _navi_nonewline"#,
-                m = m,
-                text = text,
-                eof = EOF
+_navi_input | _navi_map_fn | _navi_nonewline"#
             )
         };
 

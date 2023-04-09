@@ -26,14 +26,11 @@ _open_url() {
     let cmd = format!(
         r#"{code}
                 
-read -r -d '' url <<'{eof}'
+read -r -d '' url <<'{EOF}'
 {url}
-{eof}
+{EOF}
 
 _open_url "$url""#,
-        code = code,
-        url = url,
-        eof = EOF,
     );
     shell::out()
         .arg(cmd.as_str())

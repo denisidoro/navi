@@ -94,8 +94,8 @@ fn interpolate_paths(paths: String) -> String {
             let varname = c.as_str().replace(['$', '{', '}'], "");
             if let Ok(replacement) = &env_var::get(&varname) {
                 newtext = newtext
-                    .replace(&format!("${}", varname), replacement)
-                    .replace(&format!("${{{}}}", varname), replacement);
+                    .replace(&format!("${varname}"), replacement)
+                    .replace(&format!("${{{varname}}}"), replacement);
             }
         }
     }

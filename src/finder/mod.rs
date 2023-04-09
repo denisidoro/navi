@@ -38,7 +38,7 @@ fn parse(out: Output, opts: Opts) -> Result<String> {
         _ => {
             let err = String::from_utf8(out.stderr)
                 .unwrap_or_else(|_| "<stderr contains invalid UTF-8>".to_owned());
-            panic!("External command failed:\n {}", err)
+            panic!("External command failed:\n {err}")
         }
     };
 
@@ -74,12 +74,12 @@ impl FinderChoice {
             "--preview",
             "",
             "--preview-window",
-            format!("up:{}:nohidden", preview_height).as_str(),
+            format!("up:{preview_height}:nohidden").as_str(),
             "--delimiter",
             deser::terminal::DELIMITER.to_string().as_str(),
             "--ansi",
             "--bind",
-            format!("ctrl-j:down,ctrl-k:up{}", bindings).as_str(),
+            format!("ctrl-j:down,ctrl-k:up{bindings}").as_str(),
             "--exact",
         ]);
 

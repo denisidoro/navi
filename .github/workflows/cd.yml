@@ -51,6 +51,9 @@ jobs:
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: Install target
+        id: installtarget
+        run: rustup target add ${{ matrix.target }}
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v1-release
         with:

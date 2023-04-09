@@ -16,7 +16,7 @@ pub fn meta(uri: &str) -> (String, String, String) {
     let actual_uri = if uri.contains("://") || uri.contains('@') {
         uri.to_string()
     } else {
-        format!("https://github.com/{}", uri)
+        format!("https://github.com/{uri}")
     };
 
     let uri_to_split = actual_uri.replace(':', "/");
