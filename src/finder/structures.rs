@@ -16,6 +16,7 @@ pub struct Opts {
     pub column: Option<u8>,
     pub map: Option<String>,
     pub prevent_select1: bool,
+    pub show_all_columns: bool,
 }
 
 impl Default for Opts {
@@ -34,6 +35,7 @@ impl Default for Opts {
             delimiter: None,
             map: None,
             prevent_select1: true,
+            show_all_columns: false,
         }
     }
 }

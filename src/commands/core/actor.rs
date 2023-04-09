@@ -101,6 +101,7 @@ fn prompt_finder(
 
     let mut opts = FinderOpts {
         preview: Some(preview),
+        show_all_columns: true,
         ..initial_opts.clone().unwrap_or_else(FinderOpts::var_default)
     };
 
