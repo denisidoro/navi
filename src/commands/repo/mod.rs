@@ -27,13 +27,13 @@ impl Runnable for Input {
         match &self.cmd {
             RepoCommand::Add { uri } => {
                 add::main(uri.clone())
-                    .with_context(|| format!("Failed to import cheatsheets from `{}`", uri))?;
+                    .with_context(|| format!("Failed to import cheatsheets from `{uri}`"))?;
                 commands::core::main()
             }
             RepoCommand::Browse => {
                 let repo = browse::main().context("Failed to browse featured cheatsheets")?;
                 add::main(repo.clone())
-                    .with_context(|| format!("Failed to import cheatsheets from `{}`", repo))?;
+                    .with_context(|| format!("Failed to import cheatsheets from `{repo}`"))?;
                 commands::core::main()
             }
         }

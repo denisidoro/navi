@@ -23,14 +23,11 @@ _copy() {
         .arg(
             format!(
                 r#"{cmd} 
-        read -r -d '' x <<'{eof}'
+        read -r -d '' x <<'{EOF}'
 {text}
-{eof}
+{EOF}
 
 echo -n "$x" | _copy"#,
-                cmd = cmd,
-                text = text,
-                eof = EOF,
             )
             .as_str(),
         )

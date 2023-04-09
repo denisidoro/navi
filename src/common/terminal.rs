@@ -46,7 +46,7 @@ pub fn width() -> u16 {
 }
 
 pub fn parse_ansi(ansi: &str) -> Option<style::Color> {
-    style::Color::parse_ansi(&format!("5;{}", ansi))
+    style::Color::parse_ansi(&format!("5;{ansi}"))
 }
 
 #[derive(Debug, Clone)]

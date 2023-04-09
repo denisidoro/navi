@@ -11,7 +11,7 @@ pub fn last_command() -> Result<()> {
 
     for p in parts {
         for (pattern, escaped) in replacements.clone() {
-            if p.contains(pattern) && p != pattern && p != format!("{}{}", pattern, pattern) {
+            if p.contains(pattern) && p != pattern && p != format!("{pattern}{pattern}") {
                 let replacement = p.replace(pattern, escaped);
                 text = text.replace(&p, &replacement);
             }

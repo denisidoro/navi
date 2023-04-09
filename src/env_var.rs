@@ -31,7 +31,7 @@ pub fn must_get(name: &str) -> String {
     if let Ok(v) = env::var(name) {
         v
     } else {
-        panic!("{} not set", name)
+        panic!("{name} not set")
     }
 }
 

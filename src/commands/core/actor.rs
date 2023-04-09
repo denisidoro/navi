@@ -77,7 +77,7 @@ fn prompt_finder(
             name = variable_name,
             extra = extra_preview
                 .clone()
-                .map(|e| format!(" echo; {}", e))
+                .map(|e| format!(" echo; {e}"))
                 .unwrap_or_default(),
         )
     } else {
@@ -93,7 +93,7 @@ fn prompt_finder(
             name = variable_name,
             extra = extra_preview
                 .clone()
-                .map(|e| format!(" echo; {}", e))
+                .map(|e| format!(" echo; {e}"))
                 .unwrap_or_default(),
             eof = EOF,
         )
@@ -105,9 +105,9 @@ fn prompt_finder(
         ..initial_opts.clone().unwrap_or_else(FinderOpts::var_default)
     };
 
-    opts.query = env_var::get(format!("{}__query", variable_name)).ok();
+    opts.query = env_var::get(format!("{variable_name}__query")).ok();
 
-    if let Ok(f) = env_var::get(format!("{}__best", variable_name)) {
+    if let Ok(f) = env_var::get(format!("{variable_name}__best")) {
         opts.filter = Some(f);
         opts.suggestion_type = SuggestionType::SingleSelection;
     }
@@ -229,7 +229,7 @@ pub fn act(
 
     match CONFIG.action() {
         Action::Print => {
-            println!("{}", interpolated_snippet);
+            println!("{interpolated_snippet}");
         }
         Action::Execute => match key {
             "ctrl-y" => {

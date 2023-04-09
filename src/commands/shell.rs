@@ -36,7 +36,7 @@ impl Runnable for Input {
             Shell::Elvish => include_str!("../../shell/navi.plugin.elv"),
         };
 
-        println!("{}", content);
+        println!("{content}");
 
         Ok(())
     }

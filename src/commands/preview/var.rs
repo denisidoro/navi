@@ -42,10 +42,10 @@ impl Runnable for Input {
         println!(
             "{comment} {tags}",
             comment = style(comment).with(CONFIG.comment_color()),
-            tags = style(format!("[{}]", tags)).with(CONFIG.tag_color()),
+            tags = style(format!("[{tags}]")).with(CONFIG.tag_color()),
         );
 
-        let bracketed_current_variable = format!("<{}>", variable);
+        let bracketed_current_variable = format!("<{variable}>");
 
         let bracketed_variables: Vec<&str> = {
             if snippet.contains(&bracketed_current_variable) {
@@ -102,7 +102,7 @@ impl Runnable for Input {
         }
 
         println!("{snippet}", snippet = deser::fix_newlines(&colored_snippet));
-        println!("{variables}", variables = variables);
+        println!("{variables}");
 
         process::exit(0)
     }
