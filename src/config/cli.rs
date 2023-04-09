@@ -52,6 +52,10 @@ pub(super) struct ClapConfig {
     #[arg(long)]
     pub best_match: bool,
 
+    /// Prevents variable interpolation
+    #[arg(long)]
+    pub prevent_interpolation: bool,
+
     /// Searches for cheatsheets using the tldr-pages repository
     #[arg(long)]
     pub tldr: Option<String>,
