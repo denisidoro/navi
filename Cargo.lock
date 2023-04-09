@@ -429,7 +429,7 @@ dependencies = [
 
 [[package]]
 name = "navi"
-version = "2.22.0"
+version = "2.22.1"
 dependencies = [
  "anyhow",
  "clap",
