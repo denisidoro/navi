@@ -12,17 +12,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # This should work with only the `include`s but it currently doesn't because of this bug:
-        # https://github.community/t5/How-to-use-Git-and-GitHub/GitHub-Actions-Matrix-options-dont-work-as-documented/td-p/29558
-        target:
-          - x86_64-apple-darwin
-          - x86_64-unknown-linux-musl
-          - x86_64-pc-windows-gnu
-          - armv7-unknown-linux-musleabihf
-          - armv7-linux-androideabi
-          - aarch64-linux-android
-          - aarch64-unknown-linux-gnu
-          - aarch64-apple-darwin
         include:
           - os: macos-latest
             target: x86_64-apple-darwin
@@ -45,15 +34,15 @@ jobs:
         with:
           rust-version: stable
       - uses: actions/checkout@v1
+      - name: Install target
+        id: installtarget
+        run: rustup target add ${{ matrix.target }}
       - name: Build
         id: build
         run: scripts/dot rust release ${{ matrix.target }}
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-      - name: Install target
-        id: installtarget
-        run: rustup target add ${{ matrix.target }}
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v1-release
         with:
