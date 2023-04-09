@@ -19,7 +19,7 @@ jobs:
           - armv7-linux-androideabi
           - aarch64-linux-android
           - aarch64-unknown-linux-gnu
-          - aarch64-apple-ios
+          - aarch64-apple-darwin
         include:
           - os: macos-latest
             target: x86_64-apple-darwin
@@ -36,7 +36,7 @@ jobs:
           - os: ubuntu-latest
             target: aarch64-unknown-linux-gnu
           - os: macos-latest
-            target: aarch64-apple-ios
+            target: aarch64-apple-darwin
     steps:
       - uses: hecrj/setup-rust-action@v1.3.4
         with:
