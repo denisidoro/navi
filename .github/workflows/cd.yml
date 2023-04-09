@@ -1,9 +1,6 @@
 name: Publish
 
-on:
-  push:
-    tags:
-      - "*"
+on: [push]
 
 jobs:
   binary:
@@ -45,16 +42,20 @@ jobs:
         with:
           rust-version: stable
       - uses: actions/checkout@v1
+      - name: Install target
+        id: installtarget
+        run: rustup target add ${{ matrix.target }}
+      rustup target add aarch64-apple-ios
       - name: Build
         id: build
         run: scripts/dot rust release ${{ matrix.target }}
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v1-release
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/tar/navi.${{ steps.build.outputs.EXTENSION }}
-          tag: ${{ github.ref }}
-          asset_name: navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
+      # - name: Upload binaries to release
+      #   uses: svenstaro/upload-release-action@v1-release
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: target/tar/navi.${{ steps.build.outputs.EXTENSION }}
+      #     tag: ${{ github.ref }}
+      #     asset_name: navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
