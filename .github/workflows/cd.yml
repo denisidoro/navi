@@ -45,7 +45,6 @@ jobs:
       - name: Install target
         id: installtarget
         run: rustup target add ${{ matrix.target }}
-      rustup target add aarch64-apple-ios
       - name: Build
         id: build
         run: scripts/dot rust release ${{ matrix.target }}
