@@ -5,7 +5,7 @@
 # trivial case -> "foo"
 echo "foo"
 
-# map -> "_foo_"
+# map with underscores -> "_foo_"
 echo "<map1>"
 
 # expand -> "foo"
