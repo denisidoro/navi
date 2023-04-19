@@ -27,6 +27,12 @@ Be sure to [enable](https://wiki.gentoo.org/wiki/Ebuild_repository) the [GURU ov
 emerge -a app-misc/navi
 ```
 
+#### Using [pacman](https://wiki.archlinux.org/title/Pacman)
+
+```sh
+pacman -S navi
+```
+
 #### Using [nix](https://nixos.org/)
 
 ```sh
