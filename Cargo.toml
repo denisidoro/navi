@@ -23,7 +23,7 @@ regex = { version = "1.7.3", default-features = false, features = ["std", "unico
 clap = { version = "4.2.1", features = ["derive", "cargo"] }
 crossterm = "0.26.1"
 lazy_static = "1.4.0"
-directories-next = "2.0.0"
+etcetera = "0.7.1"
 walkdir = "2.3.3"
 shellwords = "1.1.0"
 anyhow = "1.0.70"
