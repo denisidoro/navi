@@ -4,7 +4,7 @@ use crate::parser::Parser;
 use crate::prelude::*;
 
 use crate::structures::fetcher;
-use directories_next::BaseDirs;
+use etcetera::BaseStrategy;
 use regex::Regex;
 
 use std::cell::RefCell;
@@ -46,8 +46,20 @@ fn compiled_default_path(path: Option<&str>) -> Option<PathBuf> {
 }
 
 pub fn default_cheat_pathbuf() -> Result<PathBuf> {
-    let base_dirs = BaseDirs::new().ok_or_else(|| anyhow!("Unable to get base dirs"))?;
-    let mut pathbuf = PathBuf::from(base_dirs.data_dir());
+    if cfg!(target_os = "macos") {
+        let base_dirs = etcetera::base_strategy::Apple::new()?;
+
+        let mut pathbuf = base_dirs.data_dir();
+        pathbuf.push("navi");
+        pathbuf.push("cheats");
+        if pathbuf.exists() {
+            return Ok(pathbuf);
+        }
+    }
+
+    let base_dirs = etcetera::choose_base_strategy()?;
+
+    let mut pathbuf = base_dirs.data_dir();
     pathbuf.push("navi");
     pathbuf.push("cheats");
     if !pathbuf.exists() {
@@ -59,9 +71,20 @@ pub fn default_cheat_pathbuf() -> Result<PathBuf> {
 }
 
 pub fn default_config_pathbuf() -> Result<PathBuf> {
-    let base_dirs = BaseDirs::new().ok_or_else(|| anyhow!("Unable to get base dirs"))?;
+    if cfg!(target_os = "macos") {
+        let base_dirs = etcetera::base_strategy::Apple::new()?;
 
-    let mut pathbuf = PathBuf::from(base_dirs.config_dir());
+        let mut pathbuf = base_dirs.config_dir();
+        pathbuf.push("navi");
+        pathbuf.push("config.yaml");
+        if pathbuf.exists() {
+            return Ok(pathbuf);
+        }
+    }
+
+    let base_dirs = etcetera::choose_base_strategy()?;
+
+    let mut pathbuf = base_dirs.config_dir();
     pathbuf.push("navi");
     pathbuf.push("config.yaml");
     if !pathbuf.exists() {
@@ -132,13 +155,13 @@ impl fetcher::Fetcher for Fetcher {
         let folders = paths_from_path_param(&interpolated_paths);
 
         let home_regex = Regex::new(r"^~").unwrap();
-        let home = BaseDirs::new().map(|b| b.home_dir().to_string());
+        let home = etcetera::home_dir().ok();
 
         // parser.filter = self.tag_rules.as_ref().map(|r| gen_lists(r.as_str()));
 
         for folder in folders {
             let interpolated_folder = match &home {
-                Some(h) => home_regex.replace(folder, h).to_string(),
+                Some(h) => home_regex.replace(folder, h.to_string_lossy()).to_string(),
                 None => folder.to_string(),
             };
             let folder_pathbuf = PathBuf::from(interpolated_folder);
@@ -228,12 +251,10 @@ mod tests {
 
     #[test]
     fn test_default_config_pathbuf() {
-        let base_dirs = BaseDirs::new()
-            .ok_or_else(|| anyhow!("bad"))
-            .expect("could not determine base directories");
+        let base_dirs = etcetera::choose_base_strategy().expect("could not determine base directories");
 
         let expected = {
-            let mut e = base_dirs.config_dir().to_path_buf();
+            let mut e = base_dirs.config_dir();
             e.push("navi");
             e.push("config.yaml");
             e.to_string_lossy().to_string()
@@ -246,12 +267,10 @@ mod tests {
 
     #[test]
     fn test_default_cheat_pathbuf() {
-        let base_dirs = BaseDirs::new()
-            .ok_or_else(|| anyhow!("bad"))
-            .expect("could not determine base directories");
+        let base_dirs = etcetera::choose_base_strategy().expect("could not determine base directories");
 
         let expected = {
-            let mut e = base_dirs.data_dir().to_path_buf();
+            let mut e = base_dirs.data_dir();
             e.push("navi");
             e.push("cheats");
             e.to_string_lossy().to_string()

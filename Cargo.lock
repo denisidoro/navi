@@ -282,6 +282,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "etcetera"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "51822eedc6129d8c4d96cec86d56b785e983f943c9ce9fb892e0c2a99a7f47a0"
+dependencies = [
+ "cfg-if",
+ "home",
+]
+
+[[package]]
 name = "fs_at"
 version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -324,6 +334,15 @@ name = "hermit-abi"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fed44880c466736ef9a5c5b5facefb5ed0785676d0c02d612db14e54f0d84286"
+
+[[package]]
+name = "home"
+version = "0.5.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "747309b4b440c06d57b0b25f2aee03ee9b5e5397d288c60e21fc709bb98a7408"
+dependencies = [
+ "winapi",
+]
 
 [[package]]
 name = "indexmap"
@@ -434,10 +453,10 @@ dependencies = [
  "anyhow",
  "clap",
  "crossterm",
- "directories-next",
  "dns_common",
  "dns_common_derive",
  "edit",
+ "etcetera",
  "lazy_static",
  "regex",
  "remove_dir_all 0.8.2",
