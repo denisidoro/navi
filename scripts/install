@@ -132,8 +132,8 @@ sha256() {
 
 latest_version_released() {
    curl -s 'https://api.github.com/repos/denisidoro/navi/releases/latest' \
-      | grep -Eo 'releases/tag/v([0-9\.]+)' \
-      | sed 's|releases/tag/v||'
+      | grep -Eo '"html_url": "https://github.com/denisidoro/navi/releases/tag/v([0-9\.]+)' \
+      | sed 's|"html_url": "https://github.com/denisidoro/navi/releases/tag/v||'
 }
 
 asset_url() {
