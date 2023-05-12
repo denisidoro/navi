@@ -1,6 +1,5 @@
 extern crate navi;
 
-use std::fmt::Debug;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -25,5 +24,18 @@ impl FileAnIssue {
 }
 
 fn main() -> Result<(), anyhow::Error> {
-    navi::handle().map_err(|e| FileAnIssue::new(e).into())
+    init_logger()?;
+    navi::handle().map_err(|e| {
+        log::error!("{e:?}");
+        FileAnIssue::new(e).into()
+    })
+}
+
+fn init_logger() -> anyhow::Result<()> {
+    let file = std::fs::File::create("navi.log")?;
+    env_logger::builder()
+        .target(env_logger::Target::Pipe(Box::new(file)))
+        .init();
+
+    Ok(())
 }

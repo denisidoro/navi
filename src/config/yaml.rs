@@ -6,7 +6,7 @@ use crate::prelude::*;
 use crossterm::style::Color as TerminalColor;
 use serde::de;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct Color(#[serde(deserialize_with = "color_deserialize")] TerminalColor);
 
 impl Color {
@@ -24,7 +24,7 @@ where
         .map_err(|_| de::Error::custom(format!("Failed to deserialize color: {s}")))
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(default)]
 pub struct ColorWidth {
     pub color: Color,
@@ -32,7 +32,7 @@ pub struct ColorWidth {
     pub min_width: u16,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(default)]
 pub struct Style {
     pub tag: ColorWidth,
@@ -40,7 +40,7 @@ pub struct Style {
     pub snippet: ColorWidth,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(default)]
 pub struct Finder {
     #[serde(deserialize_with = "finder_deserialize")]
@@ -58,27 +58,27 @@ where
         .map_err(|_| de::Error::custom(format!("Failed to deserialize finder: {s}")))
 }
 
-#[derive(Deserialize, Default)]
+#[derive(Deserialize, Default, Debug)]
 #[serde(default)]
 pub struct Cheats {
     pub path: Option<String>,
     pub paths: Vec<String>,
 }
 
-#[derive(Deserialize, Default)]
+#[derive(Deserialize, Default, Debug)]
 #[serde(default)]
 pub struct Search {
     pub tags: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(default)]
 pub struct Shell {
     pub command: String,
     pub finder_command: Option<String>,
 }
 
-#[derive(Deserialize, Default)]
+#[derive(Deserialize, Default, Debug)]
 #[serde(default)]
 pub struct YamlConfig {
     pub style: Style,

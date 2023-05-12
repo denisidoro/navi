@@ -125,6 +125,7 @@ fn interpolate_paths(paths: String) -> String {
     newtext
 }
 
+#[derive(Debug)]
 pub struct Fetcher {
     path: Option<String>,
     files: RefCell<Vec<String>>,
@@ -180,6 +181,7 @@ impl fetcher::Fetcher for Fetcher {
             }
         }
 
+        log::debug!("filesystem::Fetcher = {self:#?}");
         Ok(found_something)
     }
 

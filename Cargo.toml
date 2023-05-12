@@ -36,6 +36,8 @@ serde_yaml = "0.9.21"
 dns_common_derive = { version = "0.2.1" }
 dns_common = { version = "0.2.1", default-features = false, features = ["yaml", "json"] }
 unicode-width = "0.1.10"
+log = "0.4"
+env_logger = { version = "0.10", default_features = false, features = ["humantime"] }
 
 [lib]
 name = "navi"

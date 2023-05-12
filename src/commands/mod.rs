@@ -12,6 +12,7 @@ use crate::prelude::*;
 pub fn handle() -> Result<()> {
     use crate::config::Command::*;
 
+    log::debug!("CONFIG = {:#?}", &*CONFIG);
     match CONFIG.cmd() {
         None => commands::core::main(),
 
