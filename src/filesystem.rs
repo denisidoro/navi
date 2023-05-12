@@ -166,7 +166,9 @@ impl fetcher::Fetcher for Fetcher {
                 None => folder.to_string(),
             };
             let folder_pathbuf = PathBuf::from(interpolated_folder);
-            for file in all_cheat_files(&folder_pathbuf) {
+            let cheat_files = all_cheat_files(&folder_pathbuf);
+            debug!("read cheat files in `{folder_pathbuf:?}`: {cheat_files:#?}");
+            for file in cheat_files {
                 self.files.borrow_mut().push(file.clone());
                 let index = self.files.borrow().len() - 1;
                 let read_file_result = {
@@ -181,7 +183,7 @@ impl fetcher::Fetcher for Fetcher {
             }
         }
 
-        debug!("filesystem::Fetcher = {self:#?}");
+        debug!("{self:#?}");
         Ok(found_something)
     }
 
