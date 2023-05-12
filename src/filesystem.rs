@@ -181,7 +181,7 @@ impl fetcher::Fetcher for Fetcher {
             }
         }
 
-        log::debug!("filesystem::Fetcher = {self:#?}");
+        debug!("filesystem::Fetcher = {self:#?}");
         Ok(found_something)
     }
 
