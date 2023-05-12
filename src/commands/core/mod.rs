@@ -44,7 +44,9 @@ pub fn init(fetcher: Box<dyn Fetcher>) -> Result<()> {
 }
 
 pub fn get_fetcher() -> Result<Box<dyn Fetcher>> {
-    match CONFIG.source() {
+    let source = CONFIG.source();
+    log::debug!("{source:#?}");
+    match source {
         Source::Cheats(query) => {
             let lines = cheatsh::call(&query)?;
             let fetcher = Box::new(StaticFetcher::new(lines));

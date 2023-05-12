@@ -117,6 +117,7 @@ pub enum Command {
     Info(commands::info::Input),
 }
 
+#[derive(Debug)]
 pub enum Source {
     Filesystem(Option<String>),
     Tldr(String),

@@ -12,6 +12,7 @@ use yaml::YamlConfig;
 lazy_static! {
     pub static ref CONFIG: Config = Config::new();
 }
+#[derive(Debug)]
 pub struct Config {
     yaml: YamlConfig,
     clap: ClapConfig,
