@@ -1,5 +1,6 @@
 extern crate navi;
 
+use dns_common::prelude::{debug, error, tracing, tracing_subscriber};
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -26,16 +27,20 @@ impl FileAnIssue {
 fn main() -> Result<(), anyhow::Error> {
     init_logger()?;
     navi::handle().map_err(|e| {
-        log::error!("{e:?}");
+        error!("{e:?}");
         FileAnIssue::new(e).into()
     })
 }
 
 fn init_logger() -> anyhow::Result<()> {
-    let file = std::fs::File::create("navi.log")?;
-    env_logger::builder()
-        .target(env_logger::Target::Pipe(Box::new(file)))
-        .init();
-
+    tracing::subscriber::set_global_default(
+        tracing_subscriber::fmt()
+            .with_ansi(false)
+            // TODO: config_path/navi.log
+            .with_writer(std::fs::File::create("navi.log")?)
+            .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+            .finish(),
+    )?;
+    debug!("tracing initialized");
     Ok(())
 }
