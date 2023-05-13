@@ -40,10 +40,16 @@ fn init_logger() -> anyhow::Result<()> {
     let mut file = navi::default_config_pathbuf()?;
     file.set_file_name(FILE_NAME);
 
+    // If config path doesn't exist, navi won't log.
+    if file.parent().map(|p| !p.exists()).unwrap_or(true) {
+        return Ok(());
+    }
+
+    let writer = std::fs::File::create(&file).with_context(|| format!("{file:?} is not created"))?;
     tracing::subscriber::set_global_default(
         tracing_subscriber::fmt()
             .with_ansi(false)
-            .with_writer(std::fs::File::create(file)?)
+            .with_writer(writer)
             .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
             .finish(),
     )?;
