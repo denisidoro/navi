@@ -152,11 +152,13 @@ impl FinderChoice {
                 });
         }
 
-        let child = command
+        command
             .env("SHELL", CONFIG.finder_shell())
             .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .spawn();
+            .stdout(Stdio::piped());
+        debug!(cmd = ?command);
+
+        let child = command.spawn();
 
         let mut child = match child {
             Ok(x) => x,
