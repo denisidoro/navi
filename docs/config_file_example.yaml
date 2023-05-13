@@ -19,9 +19,9 @@ finder:
   # overrides_var: --tac # equivalent to the --fzf-overrides-var option
 
 # cheats:
-# paths:
-# - /path/to/some/dir
-# - /path/to/another/dir
+#   paths:
+#     - /path/to/some/dir # on unix-like os
+#     - F:\\path\\to\\dir # on Windows
 # path: /path/to/some/dir # (DEPRECATED) equivalent to the --path option
 
 # search:
