@@ -70,7 +70,7 @@ impl Config {
                 if p.is_empty() {
                     None
                 } else {
-                    Some(p.join(":"))
+                    Some(p.join(crate::filesystem::JOIN_SEPARATOR))
                 }
             })
             .or_else(|| self.yaml.cheats.path.clone())
