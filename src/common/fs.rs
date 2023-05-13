@@ -78,6 +78,11 @@ fn follow_symlink(pathbuf: PathBuf) -> Result<PathBuf> {
 
 fn exe_pathbuf() -> Result<PathBuf> {
     let pathbuf = std::env::current_exe().context("Unable to acquire executable's path")?;
+
+    #[cfg(target_family = "windows")]
+    let pathbuf = dunce::canonicalize(pathbuf)?;
+
+    debug!(current_exe = ?pathbuf);
     follow_symlink(pathbuf)
 }
 
