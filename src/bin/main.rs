@@ -24,8 +24,11 @@ impl FileAnIssue {
     }
 }
 
-fn main() -> Result<(), anyhow::Error> {
-    init_logger()?;
+fn main() -> anyhow::Result<()> {
+    if let Err(err) = init_logger() {
+        // may need redir stderr to a file to show this log initialization error
+        eprintln!("failed to initialize logging: {err:?}");
+    }
     navi::handle().map_err(|e| {
         error!("{e:?}");
         FileAnIssue::new(e).into()
