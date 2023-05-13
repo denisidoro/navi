@@ -190,7 +190,7 @@ impl fetcher::Fetcher for Fetcher {
             }
         }
 
-        debug!("{self:#?}");
+        debug!("FilesystemFetcher = {self:#?}");
         Ok(found_something)
     }
 

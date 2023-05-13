@@ -13,6 +13,7 @@ use crate::welcome;
 pub fn init(fetcher: Box<dyn Fetcher>) -> Result<()> {
     let config = &CONFIG;
     let opts = FinderOpts::snippet_default();
+    debug!("opts = {opts:#?}");
     // let fetcher = config.fetcher();
 
     let (raw_selection, (variables, files)) = config
@@ -32,6 +33,7 @@ pub fn init(fetcher: Box<dyn Fetcher>) -> Result<()> {
         })
         .context("Failed getting selection and variables from finder")?;
 
+    debug!(raw_selection = ?raw_selection);
     let extractions = deser::terminal::read(&raw_selection, config.best_match());
 
     if extractions.is_err() {
@@ -45,7 +47,7 @@ pub fn init(fetcher: Box<dyn Fetcher>) -> Result<()> {
 
 pub fn get_fetcher() -> Result<Box<dyn Fetcher>> {
     let source = CONFIG.source();
-    debug!("{source:#?}");
+    debug!(source = ?source);
     match source {
         Source::Cheats(query) => {
             let lines = cheatsh::call(&query)?;

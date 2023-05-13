@@ -42,6 +42,5 @@ pub fn out() -> Command {
     cmd.args(words);
     let dash_c = if words_str.contains("cmd.exe") { "/c" } else { "-c" };
     cmd.arg(dash_c);
-    debug!("shell cmd = `{cmd:#?}`");
     cmd
 }
