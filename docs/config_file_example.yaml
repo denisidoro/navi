@@ -28,5 +28,8 @@ finder:
 # tags: git,!checkout # equivalent to the --tag-rules option
 
 shell:
-  command: bash # shell used for shell out. possible values: bash, zsh, dash, ...
+  # Shell used for shell out. Possible values: bash, zsh, dash, ...
+  # For Windows, use `cmd.exe` instead.
+  command: bash
+  
   # finder_command: bash # similar, but for fzf's internals
