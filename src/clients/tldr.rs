@@ -51,7 +51,7 @@ fn markdown_lines(query: &str, markdown: &str) -> Vec<String> {
 }
 
 pub fn call(query: &str) -> Result<Vec<String>> {
-    let args = [query, "--markdown"];
+    let args = [query, "--raw"];
 
     let child = Command::new("tldr")
         .args(args)
@@ -96,7 +96,7 @@ Error:
 {}
 
 Note:
-Please make sure you're using a version that supports the --markdown flag.
+Please make sure you're using a version that supports the --raw flag.
 If you are already using a supported version you can ignore this message. 
 {}
 ",
