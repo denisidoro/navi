@@ -12,7 +12,7 @@ environment variables:
 export NAVI_CONFIG="~/.config/navi/config.yaml"
 export NAVI_PATH="~/.local/share/navi"
 ```
-Note! Even when set, `$NAVI_PATH` will not be used when installing cheat
+Despite `$NAVI_PATH` being set, it will not be used when installing cheat
 sheets directly via navi's own commands. 
 
 For example when running `navi add repo <repo>`, the default paths as per the `directories-next` 
@@ -20,3 +20,6 @@ package will still be used.
 
 To avoid this, you may simply clone repos via a regular `git clone` command,
 directly into `$NAVI_PATH`.
+
+Note! `navi info cheats-path` and `navi info config-path` display the *default* path, not 
+the path set by the user. [It is known that this is a little misleading!](https://github.com/denisidoro/navi/issues/664#issuecomment-1004721178).
