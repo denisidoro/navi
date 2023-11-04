@@ -90,7 +90,7 @@ The full syntax and examples can be found [here](docs/cheatsheet_syntax.md).
 You can:
 
 - [setup your own config file](docs/config_file.md)
-- [set custom paths for your config file and cheat sheets](docs/paths_and_environment_variables.md)
+- [set custom paths for your config file and cheat sheets](docs/paths_and_env_vars.md)
 - [change colors](docs/customization.md#changing-colors)
 - [resize columns](docs/customization.md#resizing-columns)
 - [change how search is performed](docs/customization.md#overriding-fzf-options)
