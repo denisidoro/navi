@@ -15,7 +15,8 @@ export NAVI_PATH="~/.local/share/navi"
 Note! Even when set, `$NAVI_PATH` will not be used when installing cheat
 sheets directly via navi's own commands. 
 
-For example when running `navi add repo <repo>`, `~/Library/...` will still be used.
+For example when running `navi add repo <repo>`, the default paths as per the `directories-next` 
+package will still be used.
 
-Instead, you may clone repos directly into `$NAVI_PATH`, or write your own 
-manually.
+To avoid this, you may simply clone repos via a regular `git clone` command,
+directly into `$NAVI_PATH`.
