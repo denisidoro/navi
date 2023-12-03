@@ -59,7 +59,7 @@ In particular, check [these instructions](https://github.com/denisidoro/navi/iss
 
 ## Cheatsheet repositories
 
-Running **navi** for the first time will help you download and manage cheatsheets. They are stored at `~/.local/share/navi/cheats`.
+Running **navi** for the first time will help you download and manage cheatsheets. By default, they are soted at `~/.local/share/navi/cheats`.
 
 You can also:
 
