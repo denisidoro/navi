@@ -33,7 +33,7 @@ All the other non-empty lines are considered as executable commands.
 
 ### Folder structure
 
-It's irrelevant how many files are used to store cheatsheets. They can be all in a single file if you wish, as long as you split them accordingly with lines starting with `%`.
+The cheat file should be stored at `~/.local/share/navi/cheats`. It's irrelevant how many files are used to store cheatsheets. They can be all in a single file if you wish, as long as you split them accordingly with lines starting with `%`.
 
 ### Variables
 
