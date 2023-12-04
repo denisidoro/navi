@@ -7,6 +7,7 @@
 - [Variable dependency](#variable-dependency)
 - [Multiline snippets](#multiline-snippets)
 - [Variable as multiple arguments](#variable-as-multiple-arguments)
+- [Aliases](#aliases)
 
 ### Syntax overview
 
