@@ -16,7 +16,7 @@ navi info config-example > "$(navi info config-path)"
 ## Cheat sheet paths
 
 The default `.cheat` files paths are defined in the `$NAVI_PATH` environment variable in a colon-separated list, e.g.,
-```
+```sh
 export NAVI_PATH='/path/to/a/dir:/path/to/another/dir:/yet/another/dir'
 ```
 If this environment variable is unset or if all directories do not exist, `navi` uses that paths defined in its config files. Finally, if there is no config file or if there is no `.cheat` file paths settings there, the default `.cheat` file path fallbacks to `~/.local/share/navi/cheats/`. The command
