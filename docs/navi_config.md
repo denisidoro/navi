@@ -1,6 +1,6 @@
 ## Config file path
 
-The default config file path is set by the `$NAVI_CONFIG`environment variable. If it is not set, it fallbacks to `~/.config/navi/config.yaml`. The command
+The default config file path is set by the `$NAVI_CONFIG` environment variable. If it is not set, it fallbacks to `~/.config/navi/config.yaml`. The command
 ```sh
 navi info config-path
 ```
