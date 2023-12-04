@@ -8,7 +8,7 @@ prints which config file path is being used. You can get an config file example 
 ```sh
 navi info config-example
 ```
-or by clicking [here](./config_file_example.yaml). To turn this this example your config file, run
+or by clicking [here](./config_file_example.yaml). To turn this example your config file, run
 
 ```sh
 navi info config-example > "$(navi info config-path)"
