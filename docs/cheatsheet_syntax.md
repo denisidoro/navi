@@ -31,18 +31,6 @@ Lines starting with:
 
 All the other non-empty lines are considered as executable commands.
 
-### Folder structure
-
-By default, the `.cheat` files should be stored at `~/.local/share/navi/cheats/`, but you can add more paths in the in the [config file](https://github.com/denisidoro/navi/blob/master/docs/config_file.md). The command
-```
-navi info cheats-path
-```
-prints to you all paths used to search for `.cheat` files. You can also use the `--path` option to pass custom colon-separed paths to `navi` at runtime, e.g.,
-```
-navi --path '/some/dir:/other/dir'
-```
-It's irrelevant how many files are used to store cheatsheets. They can be all in a single file if you wish, as long as you split them accordingly with lines starting with `%`.
-
 ### Variables
 
 The interface prompts for variable names inside brackets (eg `<branch>`).
