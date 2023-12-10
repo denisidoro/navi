@@ -41,9 +41,10 @@ fn prompt_finder(
             }
         }
 
-        let child = shell::out()
-            .stdout(Stdio::piped())
-            .arg(suggestion_command)
+        let mut cmd = shell::out();
+        cmd.stdout(Stdio::piped()).arg(suggestion_command);
+        debug!(cmd = ?cmd);
+        let child = cmd
             .spawn()
             .map_err(|e| ShellSpawnError::new(suggestion_command, e))?;
 
@@ -236,9 +237,10 @@ pub fn act(
                 clipboard::copy(interpolated_snippet)?;
             }
             _ => {
-                shell::out()
-                    .arg(&interpolated_snippet[..])
-                    .spawn()
+                let mut cmd = shell::out();
+                cmd.arg(&interpolated_snippet[..]);
+                debug!(cmd = ?cmd);
+                cmd.spawn()
                     .map_err(|e| ShellSpawnError::new(&interpolated_snippet[..], e))?
                     .wait()
                     .context("bash was not running")?;

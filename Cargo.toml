@@ -37,6 +37,9 @@ dns_common_derive = { version = "0.2.1" }
 dns_common = { version = "0.2.1", default-features = false, features = ["yaml", "json"] }
 unicode-width = "0.1.10"
 
+[target.'cfg(windows)'.dependencies]
+dunce = "1"
+
 [lib]
 name = "navi"
 path = "src/lib.rs"

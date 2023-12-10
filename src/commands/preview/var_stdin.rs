@@ -30,11 +30,10 @@ impl Runnable for Input {
             if !extra.is_empty() {
                 print!("");
 
-                shell::out()
-                    .arg(extra)
-                    .spawn()
-                    .map_err(|e| ShellSpawnError::new(extra, e))?
-                    .wait()?;
+                let mut cmd = shell::out();
+                cmd.arg(extra);
+                debug!(?cmd);
+                cmd.spawn().map_err(|e| ShellSpawnError::new(extra, e))?.wait()?;
             }
         }
 

@@ -12,6 +12,7 @@ use yaml::YamlConfig;
 lazy_static! {
     pub static ref CONFIG: Config = Config::new();
 }
+#[derive(Debug)]
 pub struct Config {
     yaml: YamlConfig,
     clap: ClapConfig,
@@ -69,7 +70,7 @@ impl Config {
                 if p.is_empty() {
                     None
                 } else {
-                    Some(p.join(":"))
+                    Some(p.join(crate::filesystem::JOIN_SEPARATOR))
                 }
             })
             .or_else(|| self.yaml.cheats.path.clone())

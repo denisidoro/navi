@@ -29,3 +29,9 @@ Run the following command to generate a config file with the default parameters:
 ```sh
 navi info config-example > "$(navi info config-path)"
 ```
+
+### Logging
+
+The log file will be created under the same directory where the config locates.
+
+And you can use the `RUST_LOG` env to set the log level, e.g. `RUST_LOG=debug navi`.

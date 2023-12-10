@@ -1,7 +1,5 @@
 #[macro_use]
 extern crate lazy_static;
-// #[macro_use]
-// extern crate anyhow;
 
 mod clients;
 mod commands;
@@ -16,4 +14,4 @@ mod prelude;
 mod structures;
 mod welcome;
 
-pub use commands::handle;
+pub use {commands::handle, filesystem::default_config_pathbuf};

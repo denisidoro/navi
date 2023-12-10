@@ -12,6 +12,13 @@ use std::path::MAIN_SEPARATOR;
 
 use walkdir::WalkDir;
 
+/// Multiple paths are joint by a platform-specific separator.
+/// FIXME: it's actually incorrect to assume a path doesn't containing this separator
+#[cfg(target_family = "windows")]
+pub const JOIN_SEPARATOR: &str = ";";
+#[cfg(not(target_family = "windows"))]
+pub const JOIN_SEPARATOR: &str = ":";
+
 pub fn all_cheat_files(path: &Path) -> Vec<String> {
     WalkDir::new(path)
         .follow_links(true)
@@ -23,7 +30,7 @@ pub fn all_cheat_files(path: &Path) -> Vec<String> {
 }
 
 fn paths_from_path_param(env_var: &str) -> impl Iterator<Item = &str> {
-    env_var.split(':').filter(|folder| folder != &"")
+    env_var.split(JOIN_SEPARATOR).filter(|folder| folder != &"")
 }
 
 fn compiled_default_path(path: Option<&str>) -> Option<PathBuf> {
@@ -125,6 +132,7 @@ fn interpolate_paths(paths: String) -> String {
     newtext
 }
 
+#[derive(Debug)]
 pub struct Fetcher {
     path: Option<String>,
     files: RefCell<Vec<String>>,
@@ -165,7 +173,9 @@ impl fetcher::Fetcher for Fetcher {
                 None => folder.to_string(),
             };
             let folder_pathbuf = PathBuf::from(interpolated_folder);
-            for file in all_cheat_files(&folder_pathbuf) {
+            let cheat_files = all_cheat_files(&folder_pathbuf);
+            debug!("read cheat files in `{folder_pathbuf:?}`: {cheat_files:#?}");
+            for file in cheat_files {
                 self.files.borrow_mut().push(file.clone());
                 let index = self.files.borrow().len() - 1;
                 let read_file_result = {
@@ -180,6 +190,7 @@ impl fetcher::Fetcher for Fetcher {
             }
         }
 
+        debug!("FilesystemFetcher = {self:#?}");
         Ok(found_something)
     }
 
@@ -279,5 +290,13 @@ mod tests {
         let cheats = default_cheat_pathbuf().expect("could not find default config path");
 
         assert_eq!(expected, cheats.to_string_lossy().to_string())
+    }
+
+    #[test]
+    #[cfg(target_family = "windows")]
+    fn multiple_paths() {
+        let p = r#"C:\Users\Administrator\AppData\Roaming\navi\config.yaml"#;
+        let paths = &[p; 2].join(JOIN_SEPARATOR);
+        assert_eq!(paths_from_path_param(paths).collect::<Vec<_>>(), [p; 2]);
     }
 }

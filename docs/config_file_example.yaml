@@ -19,14 +19,17 @@ finder:
   # overrides_var: --tac # equivalent to the --fzf-overrides-var option
 
 # cheats:
-# paths:
-# - /path/to/some/dir
-# - /path/to/another/dir
+#   paths:
+#     - /path/to/some/dir # on unix-like os
+#     - F:\\path\\to\\dir # on Windows
 # path: /path/to/some/dir # (DEPRECATED) equivalent to the --path option
 
 # search:
 # tags: git,!checkout # equivalent to the --tag-rules option
 
 shell:
-  command: bash # shell used for shell out. possible values: bash, zsh, dash, ...
+  # Shell used for shell out. Possible values: bash, zsh, dash, ...
+  # For Windows, use `cmd.exe` instead.
+  command: bash
+  
   # finder_command: bash # similar, but for fzf's internals
