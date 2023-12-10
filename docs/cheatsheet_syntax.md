@@ -7,6 +7,7 @@
 - [Variable dependency](#variable-dependency)
 - [Multiline snippets](#multiline-snippets)
 - [Variable as multiple arguments](#variable-as-multiple-arguments)
+- [Aliases](#aliases)
 
 ### Syntax overview
 
@@ -30,10 +31,6 @@ Lines starting with:
 - `@`: should contain tags whose associated cheatsheet you want to base on [:information_source:](#extending-cheatsheets)
 
 All the other non-empty lines are considered as executable commands.
-
-### Folder structure
-
-It's irrelevant how many files are used to store cheatsheets. They can be all in a single file if you wish, as long as you split them accordingly with lines starting with `%`.
 
 ### Variables
 
@@ -145,4 +142,43 @@ true \
 cat <jsons>
 
 $ jsons: find . -iname '*.json' -type f -print --- --multi --expand
+```
+### Aliases
+
+**navi** doesn't have support for aliases as first-class citizens at the moment.
+
+However, it is trivial to create aliases using **navi** + a few conventions.
+
+For example, suppose you decide to end some of your commands with `:: <some_alias>`:
+
+```bash
+% aliases
+
+# This is one command :: el
+echo lorem ipsum
+
+# This is another command :: ef
+echo foo bar
+```
+
+Then, if you use **navi** as a [shell scripting tool](shell_scripting.md), you could add something similar to this in your `.bashrc`-like file:
+
+```bash
+navialias() {
+    navi --query ":: $1" --best-match
+}
+
+alias el="navialias el"
+alias ef="navialias ef"
+```
+
+If you don't want to use these conventions, you can even add full comments in your aliases:
+
+```bash
+navibestmatch() {
+    navi --query "$1" --best-match
+}
+
+alias el="navibestmatch 'This is one command'"
+alias ef="navibestmatch 'This is another command'"
 ```
