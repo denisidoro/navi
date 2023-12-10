@@ -1,6 +1,6 @@
 [package]
 name = "navi"
-version = "2.22.1"
+version = "2.23.0"
 authors = ["Denis Isidoro <denis_isidoro@live.com>"]
 edition = "2021"
 description = "An interactive cheatsheet tool for the command-line"
@@ -19,7 +19,10 @@ disable-repo-management = []
 travis-ci = { repository = "denisidoro/navi", branch = "master" }
 
 [dependencies]
-regex = { version = "1.7.3", default-features = false, features = ["std", "unicode-perl"] }
+regex = { version = "1.7.3", default-features = false, features = [
+   "std",
+   "unicode-perl",
+] }
 clap = { version = "4.2.1", features = ["derive", "cargo"] }
 crossterm = "0.26.1"
 lazy_static = "1.4.0"
@@ -34,7 +37,10 @@ remove_dir_all = "0.8.2"
 serde = { version = "1.0.159", features = ["derive"] }
 serde_yaml = "0.9.21"
 dns_common_derive = { version = "0.2.1" }
-dns_common = { version = "0.2.1", default-features = false, features = ["yaml", "json"] }
+dns_common = { version = "0.2.1", default-features = false, features = [
+   "yaml",
+   "json",
+] }
 unicode-width = "0.1.10"
 
 [target.'cfg(windows)'.dependencies]
