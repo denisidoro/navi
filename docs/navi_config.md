@@ -1,3 +1,8 @@
+# Paths and Environment Variables
+
+Navi uses the [`directories-next`](https://crates.io/crates/directories-next) package, which 
+defines platform-specific standard locations of directories for config, cache and other data (Mac users, this is why your files are being stored in `~/Library/Application Support/navi`).
+
 ## Config file path
 
 The default config file path is set by the `$NAVI_CONFIG` environment variable. If it is not set, it fallbacks to `~/.config/navi/config.yaml`. The command
@@ -31,7 +36,12 @@ navi --path '/some/dir:/other/dir'
 ```
 It's irrelevant the directory structure within each path. They can even be all in a single file if you wish, as long as you split them accordingly with lines starting with `%`.
 
-## Logging
+Despite `$NAVI_PATH` being set, it will not be used when installing cheat sheets directly via navi's own commands.  For example when running `navi add repo <repo>`, the default paths as per the `directories-next` package will still be used. To avoid this, you may simply clone repos via a regular `git clone` command, directly into `$NAVI_PATH`.
+
+Note! `navi info cheats-path` and `navi info config-path` display the *default* path, not 
+the path set by the user. [It is known that this is a little misleading!](https://github.com/denisidoro/navi/issues/664#issuecomment-1004721178).
+
+# Logging
 
 The log file will be created under the same directory where the config locates.
 
