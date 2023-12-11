@@ -4,7 +4,7 @@ The default config file path is set by the `$NAVI_CONFIG` environment variable. 
 ```sh
 navi info config-path
 ```
-prints which config file path is being used. You can get an config file example by running
+prints which config file path is being used. You can get a config file example by running
 ```sh
 navi info config-example
 ```
@@ -30,3 +30,9 @@ You can also add other paths at runtime by running `navi` with the `--path` opti
 navi --path '/some/dir:/other/dir'
 ```
 It's irrelevant the directory structure within each path. They can even be all in a single file if you wish, as long as you split them accordingly with lines starting with `%`.
+
+## Logging
+
+The log file will be created under the same directory where the config locates.
+
+And you can use the `RUST_LOG` env to set the log level, e.g. `RUST_LOG=debug navi`.
