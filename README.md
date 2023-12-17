@@ -51,7 +51,7 @@ There are multiple ways to use **navi**:
   - pros: the shell history is correctly populated (i.e. with the actual command you ran instead of `navi`) and you can edit the command as you wish before executing it
 - as a [Tmux widget](docs/tmux.md)
   - pros: you can use your cheatsheets in any command-line app even in SSH sessions
-- as [aliases](docs/aliases.md)
+- as [aliases](docs/cheatsheet_syntax.md#aliases)
 - as a [shell scripting tool](docs/shell_scripting.md)
 - as an [Alfred workflow](docs/alfred.md)
 
@@ -89,8 +89,8 @@ The full syntax and examples can be found [here](docs/cheatsheet_syntax.md).
 
 You can:
 
-- [setup your own config file](docs/config_file.md)
-- [set custom paths for your config file and cheat sheets](docs/paths_and_env_vars.md)
+- [setup your own config file](docs/navi_config.md)
+- [set custom paths for your config file and cheat sheets](docs/navi_config.md#paths-and-environment-variables)
 - [change colors](docs/customization.md#changing-colors)
 - [resize columns](docs/customization.md#resizing-columns)
 - [change how search is performed](docs/customization.md#overriding-fzf-options)
