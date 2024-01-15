@@ -1,3 +1,12 @@
+- [Paths and Environment Variables](#paths-and-environment-variables)
+  - [Config file path](#config-file-path)
+  - [Cheat sheet paths](#cheat-sheet-paths)
+- [Logging](#logging)
+- [Customization](#customization)
+  - [Changing colors](#changing-colors)
+  - [Resizing columns](#resizing-columns)
+  - [Overriding fzf options](#overriding-fzf-options)
+
 # Paths and Environment Variables
 
 Navi uses the [`directories-next`](https://crates.io/crates/directories-next) package, which 
@@ -46,3 +55,40 @@ the path set by the user. [It is known that this is a little misleading!](https:
 The log file will be created under the same directory where the config locates.
 
 And you can use the `RUST_LOG` env to set the log level, e.g. `RUST_LOG=debug navi`.
+
+# Customization
+
+## Changing colors
+
+You can change the [color scheme](https://github.com/junegunn/fzf/wiki/Color-schemes) by [overriding fzf options](#overriding-fzf-options).
+
+In addition, you can change the text color for each column by properly configuring _navi_'s `config.yaml`. Please check `navi --help` for more instructions.
+
+## Resizing columns
+
+You can change the column widths by properly configuring _navi_'s `config.yaml`. Please check `navi --help` for more instructions.
+
+## Overriding fzf options
+
+Let's say you want to override [$FZF_DEFAULT_OPTS](https://github.com/junegunn/fzf#layout) with `--height 3`.
+
+This can be overridden in the following ways:
+
+```sh
+# if you want to override only when selecting snippets
+navi --fzf-overrides '--height 3'
+
+# alternatively, using an environment variable in your .bashrc-like file:
+export NAVI_FZF_OVERRIDES='--height 3'
+
+# if you want to override only when selecting argument values
+navi --fzf-overrides-var '--height 3'
+
+# alternatively, using an environment variable in your .bashrc-like file:
+export NAVI_FZF_OVERRIDES_VAR='--height 3'
+
+# if you want to override for all cases
+FZF_DEFAULT_OPTS="--height 3" navi
+```
+
+In addition, this can be set by properly configuring _navi_'s `config.yaml`. Please check `navi --help` for more instructions.
