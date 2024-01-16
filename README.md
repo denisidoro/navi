@@ -91,9 +91,9 @@ You can:
 
 - [setup your own config file](docs/navi_config.md)
 - [set custom paths for your config file and cheat sheets](docs/navi_config.md#paths-and-environment-variables)
-- [change colors](docs/customization.md#changing-colors)
-- [resize columns](docs/customization.md#resizing-columns)
-- [change how search is performed](docs/customization.md#overriding-fzf-options)
+- [change colors](docs/navi_config.md#changing-colors)
+- [resize columns](docs/navi_config.md#resizing-columns)
+- [change how search is performed](docs/navi_config.md#overriding-fzf-options)
 
 ## More info
 
