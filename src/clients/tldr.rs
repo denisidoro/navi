@@ -1,4 +1,5 @@
 use crate::prelude::*;
+use crate::config::CONFIG;
 use std::process::{Command, Stdio};
 
 lazy_static! {
@@ -51,7 +52,9 @@ fn markdown_lines(query: &str, markdown: &str) -> Vec<String> {
 }
 
 pub fn call(query: &str) -> Result<Vec<String>> {
-    let args = [query, "--markdown"];
+    let tealdeer = CONFIG.tealdeer();
+    let output_flag = if tealdeer { "--raw" } else { "--markdown" };
+    let args = [query, output_flag];
 
     let child = Command::new("tldr")
         .args(args)
@@ -86,9 +89,9 @@ Note:
         Ok(lines)
     } else {
         let msg = format!(
-            "Failed to call: 
+            "Failed to call:
 tldr {}
- 
+
 Output:
 {}
 
@@ -96,8 +99,9 @@ Error:
 {}
 
 Note:
+The client.tealdeer config option can be set to enable tealdeer support.
 Please make sure you're using a version that supports the --markdown flag.
-If you are already using a supported version you can ignore this message. 
+If you are already using a supported version you can ignore this message.
 {}
 ",
             args.join(" "),

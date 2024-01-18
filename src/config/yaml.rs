@@ -78,6 +78,12 @@ pub struct Shell {
     pub finder_command: Option<String>,
 }
 
+#[derive(Deserialize, Debug)]
+#[serde(default)]
+pub struct Client {
+    pub tealdeer: bool,
+}
+
 #[derive(Deserialize, Default, Debug)]
 #[serde(default)]
 pub struct YamlConfig {
@@ -86,6 +92,7 @@ pub struct YamlConfig {
     pub cheats: Cheats,
     pub search: Search,
     pub shell: Shell,
+    pub client: Client,
 }
 
 impl YamlConfig {
@@ -159,6 +166,14 @@ impl Default for Shell {
         Self {
             command: "bash".to_string(),
             finder_command: None,
+        }
+    }
+}
+
+impl Default for Client {
+    fn default() -> Self {
+        Self {
+            tealdeer: false,
         }
     }
 }

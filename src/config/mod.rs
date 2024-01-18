@@ -99,6 +99,10 @@ impl Config {
             .or_else(|| self.yaml.finder.overrides_var.clone())
     }
 
+    pub fn tealdeer(&self) -> bool {
+        self.yaml.client.tealdeer.clone()
+    }
+
     pub fn shell(&self) -> String {
         self.yaml.shell.command.clone()
     }
