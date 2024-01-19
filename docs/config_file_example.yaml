@@ -25,11 +25,14 @@ finder:
 # path: /path/to/some/dir # (DEPRECATED) equivalent to the --path option
 
 # search:
-# tags: git,!checkout # equivalent to the --tag-rules option
+#   tags: git,!checkout # equivalent to the --tag-rules option
+
+# client:
+#   tealdeer: true # enables tealdeer support for navi --tldr
 
 shell:
   # Shell used for shell out. Possible values: bash, zsh, dash, ...
   # For Windows, use `cmd.exe` instead.
   command: bash
-  
+
   # finder_command: bash # similar, but for fzf's internals
