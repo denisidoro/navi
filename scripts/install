@@ -251,13 +251,13 @@ install_navi() {
 
    elif command_exists brew; then
       brew install navi
-
-   elif command_exists cargo; then
-      cargo install navi
-
+   
    elif [[ -n "$target" ]]; then
       local -r version="$(latest_version_released)"
       download_asset "$version" "$target" || error_installing
+
+   elif command_exists cargo; then
+      cargo install navi
 
    else
       error_installing
