@@ -3,7 +3,6 @@ use crate::prelude::*;
 use std::io::Write;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
-
 pub mod structures;
 use clap::ValueEnum;
 pub use post::process;
