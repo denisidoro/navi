@@ -9,6 +9,10 @@ pub use post::process;
 use structures::Opts;
 use structures::SuggestionType;
 
+const MIN_FZF_VERSION_MAJOR: u32 = 0;
+const MIN_FZF_VERSION_MINOR: u32 = 23;
+const MIN_FZF_VERSION_PATCH: u32 = 1;
+
 mod post;
 
 #[derive(Debug, Clone, Copy, Deserialize, ValueEnum)]
@@ -47,6 +51,24 @@ fn parse(out: Output, opts: Opts) -> Result<String> {
 }
 
 impl FinderChoice {
+    fn check_fzf_version() -> Option<(u32, u32, u32)> {
+        let output = Command::new("fzf")
+            .arg("--version")
+            .output()
+            .ok()?
+            .stdout;
+        let version_string = String::from_utf8(output).ok()?;
+        let version_parts: Vec<_> = version_string.split('.').collect();
+        if version_parts.len() == 3 {
+            let major = version_parts[0].parse().ok()?;
+            let minor = version_parts[1].parse().ok()?;
+            let patch = version_parts[2].split_whitespace().next()?.parse().ok()?;
+            Some((major, minor, patch))
+        } else {
+            None
+        }
+    }
+
     pub fn call<F, R>(&self, finder_opts: Opts, stdin_fn: F) -> Result<(String, R)>
     where
         F: Fn(&mut dyn Write) -> Result<R>,
@@ -55,6 +77,20 @@ impl FinderChoice {
             Self::Fzf => "fzf",
             Self::Skim => "sk",
         };
+
+        if let Self::Fzf = self {
+            if let Some((major, minor, patch)) = Self::check_fzf_version() {
+                if major == MIN_FZF_VERSION_MAJOR && minor < MIN_FZF_VERSION_MINOR && patch < MIN_FZF_VERSION_PATCH {
+                    eprintln!("Warning: Fzf version {}.{} does not support the preview window layout used by navi.", major, minor);
+                    eprintln!("Consider updating Fzf to a version >= {}.{}.{} or use a compatible layout.",
+                              MIN_FZF_VERSION_MAJOR,
+                              MIN_FZF_VERSION_MINOR,
+                              MIN_FZF_VERSION_PATCH
+                    );
+                    process::exit(1);
+                }
+            }
+        }
 
         let mut command = Command::new(finder_str);
         let opts = finder_opts.clone();
