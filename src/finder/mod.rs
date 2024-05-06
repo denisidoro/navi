@@ -52,11 +52,7 @@ fn parse(out: Output, opts: Opts) -> Result<String> {
 
 impl FinderChoice {
     fn check_fzf_version() -> Option<(u32, u32, u32)> {
-        let output = Command::new("fzf")
-            .arg("--version")
-            .output()
-            .ok()?
-            .stdout;
+        let output = Command::new("fzf").arg("--version").output().ok()?.stdout;
         let version_string = String::from_utf8(output).ok()?;
         let version_parts: Vec<_> = version_string.split('.').collect();
         if version_parts.len() == 3 {
@@ -80,12 +76,17 @@ impl FinderChoice {
 
         if let Self::Fzf = self {
             if let Some((major, minor, patch)) = Self::check_fzf_version() {
-                if major == MIN_FZF_VERSION_MAJOR && minor < MIN_FZF_VERSION_MINOR && patch < MIN_FZF_VERSION_PATCH {
-                    eprintln!("Warning: Fzf version {}.{} does not support the preview window layout used by navi.", major, minor);
-                    eprintln!("Consider updating Fzf to a version >= {}.{}.{} or use a compatible layout.",
-                              MIN_FZF_VERSION_MAJOR,
-                              MIN_FZF_VERSION_MINOR,
-                              MIN_FZF_VERSION_PATCH
+                if major == MIN_FZF_VERSION_MAJOR
+                    && minor < MIN_FZF_VERSION_MINOR
+                    && patch < MIN_FZF_VERSION_PATCH
+                {
+                    eprintln!(
+                        "Warning: Fzf version {}.{} does not support the preview window layout used by navi.",
+                        major, minor
+                    );
+                    eprintln!(
+                        "Consider updating Fzf to a version >= {}.{}.{} or use a compatible layout.",
+                        MIN_FZF_VERSION_MAJOR, MIN_FZF_VERSION_MINOR, MIN_FZF_VERSION_PATCH
                     );
                     process::exit(1);
                 }

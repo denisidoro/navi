@@ -172,8 +172,6 @@ impl Default for Shell {
 
 impl Default for Client {
     fn default() -> Self {
-        Self {
-            tealdeer: false,
-        }
+        Self { tealdeer: false }
     }
 }
