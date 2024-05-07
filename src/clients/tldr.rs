@@ -1,5 +1,5 @@
-use crate::prelude::*;
 use crate::config::CONFIG;
+use crate::prelude::*;
 use std::process::{Command, Stdio};
 
 lazy_static! {
