@@ -100,7 +100,7 @@ impl Config {
     }
 
     pub fn tealdeer(&self) -> bool {
-        self.yaml.client.tealdeer.clone()
+        self.yaml.client.tealdeer
     }
 
     pub fn shell(&self) -> String {

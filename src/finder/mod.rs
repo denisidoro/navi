@@ -81,12 +81,10 @@ impl FinderChoice {
                     && patch < MIN_FZF_VERSION_PATCH
                 {
                     eprintln!(
-                        "Warning: Fzf version {}.{} does not support the preview window layout used by navi.",
-                        major, minor
+                        "Warning: Fzf version {major}.{minor} does not support the preview window layout used by navi.",
                     );
                     eprintln!(
-                        "Consider updating Fzf to a version >= {}.{}.{} or use a compatible layout.",
-                        MIN_FZF_VERSION_MAJOR, MIN_FZF_VERSION_MINOR, MIN_FZF_VERSION_PATCH
+                        "Consider updating Fzf to a version >= {MIN_FZF_VERSION_MAJOR}.{MIN_FZF_VERSION_MINOR}.{MIN_FZF_VERSION_PATCH} or use a compatible layout.",
                     );
                     process::exit(1);
                 }
