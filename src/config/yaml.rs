@@ -80,6 +80,7 @@ pub struct Shell {
 
 #[derive(Deserialize, Debug)]
 #[serde(default)]
+#[derive(Default)]
 pub struct Client {
     pub tealdeer: bool,
 }
@@ -167,11 +168,5 @@ impl Default for Shell {
             command: "bash".to_string(),
             finder_command: None,
         }
-    }
-}
-
-impl Default for Client {
-    fn default() -> Self {
-        Self { tealdeer: false }
     }
 }
