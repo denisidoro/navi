@@ -13,6 +13,7 @@ impl Display for Shell {
             Self::Zsh => "zsh",
             Self::Fish => "fish",
             Self::Elvish => "elvish",
+            Self::Nushell => "nushell",
         };
 
         write!(f, "{s}")
@@ -34,6 +35,7 @@ impl Runnable for Input {
             Shell::Zsh => include_str!("../../shell/navi.plugin.zsh"),
             Shell::Fish => include_str!("../../shell/navi.plugin.fish"),
             Shell::Elvish => include_str!("../../shell/navi.plugin.elv"),
+            Shell::Nushell => include_str!("../../shell/navi.plugin.nu"),
         };
 
         println!("{content}");
