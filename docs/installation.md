@@ -132,6 +132,16 @@ eval (navi widget elvish | slurp)
 xontrib load navi # ← add to your xonsh run control file
 ```
 
+#### Nushell
+
+Due to Nushell's [unique design](https://www.nushell.sh/book/thinking_in_nu.html#think-of-nushell-as-a-compiled-language), it is not possible to `eval` a piece of code dynamically like in other shells therefore the integration process is a bit more involved. Here is an example: 
+1. run `^navi widget nushell | save ($nu.default-config-dir | path join "navi-integration.nu")`
+2. add the following lines to `config.nu`:
+    ```nushell
+    source ($nu.default-config-dir | path join "navi-integration.nu")
+    ```
+
+
 By default, `Ctrl+G` is assigned to launching **navi** (in xonsh can be customized with `$X_NAVI_KEY`, see [xontrib-navi](https://github.com/eugenesvk/xontrib-navi) for details).
 
 There's currently no way to customize the widget behavior out-of-the-box. If you want to change the keybinding or the **navi** flags used by the widget, please:
