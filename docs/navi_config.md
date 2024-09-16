@@ -39,7 +39,7 @@ navi info cheats-path
 ```
 prints to you all paths used to search for `.cheat` files. 
 
-You can also add other paths at runtime by running `navi` with the `--path` option and a colon-separed paths list, e.g.,
+You can also add other paths at runtime by running `navi` with the `--path` option and a colon-separated paths list, e.g.,
 ```sh
 navi --path '/some/dir:/other/dir'
 ```
