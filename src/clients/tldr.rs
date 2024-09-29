@@ -7,8 +7,8 @@ lazy_static! {
     pub static ref NON_VAR_CHARS_REGEX: Regex = Regex::new(r"[^\da-zA-Z_]").expect("Invalid regex");
 }
 
-static VERSION_DISCLAIMER: &str = "The tldr client written in C (the default one in Homebrew) doesn't support markdown files, so navi can't use it.
-The client written in Rust is recommended. The one available in npm works, too.";
+static VERSION_DISCLAIMER: &str = "tldr-c-client (the default one in Homebrew) doesn't support markdown files, so navi can't use it.
+The recommended client is tealdeer(https://github.com/dbrgn/tealdeer).";
 
 fn convert_tldr_vars(line: &str) -> String {
     let caps = VAR_TLDR_REGEX.find_iter(line);
@@ -69,7 +69,6 @@ pub fn call(query: &str) -> Result<Vec<String>> {
             let msg = format!(
                 "navi was unable to call tldr.
 Make sure tldr is correctly installed.
-Refer to https://github.com/tldr-pages/tldr for more info.
 
 Note:
 {VERSION_DISCLAIMER}
@@ -100,7 +99,7 @@ Error:
 
 Note:
 The client.tealdeer config option can be set to enable tealdeer support.
-Please make sure you're using a version that supports the --markdown flag.
+If you want to use another client, please make sure it supports the --markdown flag.
 If you are already using a supported version you can ignore this message.
 {}
 ",
