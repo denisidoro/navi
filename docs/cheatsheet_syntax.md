@@ -32,6 +32,9 @@ Lines starting with:
 
 All the other non-empty lines are considered as executable commands.
 
+Tip: if you are editing cheatsheets in Visual Studio Code, you could enable syntax highlighting
+by installing [this extension](https://marketplace.visualstudio.com/items?itemName=yanivmo.navi-cheatsheet-language).
+
 ### Variables
 
 The interface prompts for variable names inside brackets (eg `<branch>`).
