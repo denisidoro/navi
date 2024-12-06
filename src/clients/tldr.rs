@@ -52,9 +52,7 @@ fn markdown_lines(query: &str, markdown: &str) -> Vec<String> {
 }
 
 pub fn call(query: &str) -> Result<Vec<String>> {
-    let tealdeer = CONFIG.tealdeer();
-    let output_flag = if tealdeer { "--raw" } else { "--markdown" };
-    let args = [query, output_flag];
+    let args = [query, "--raw"];
 
     let child = Command::new("tldr")
         .args(args)
