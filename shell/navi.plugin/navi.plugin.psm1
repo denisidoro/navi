@@ -48,5 +48,9 @@ function Invoke-NaviWidget {
     }
 
     [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
-    [Microsoft.PowerShell.PSConsoleReadLine]::Insert([String]$output)
+
+    ### Handling the case when the user escapes without selecting any entry
+    if (-Not([String]::IsNullOrEmpty($output))) {
+        [Microsoft.PowerShell.PSConsoleReadLine]::Insert([String]$output)
+    }
 }
