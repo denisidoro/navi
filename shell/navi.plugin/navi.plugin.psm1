@@ -6,12 +6,7 @@ param (
     ### Be sure to disable Verbose output before calling any other shell modules or scripts.
     [Parameter()]
     [bool]
-    $VerboseOutput,
-
-    # Should the function be invoked when called?
-    [Parameter()]
-    [bool]
-    $Invoke
+    $VerboseOutput
 )
 
 if ($VerboseOutput) {
