@@ -63,7 +63,7 @@ fn prompt_finder(
 
     let exe = fs::exe_string();
 
-    let preview = if cfg!(target_os = "windows") {
+    let preview = if CONFIG.shell().contains("cmd.exe") {
         format!(
             r#"(@echo.{{+}}{eof}{{q}}{eof}{name}{eof}{extra}) | {exe} preview-var-stdin"#,
             exe = exe,
