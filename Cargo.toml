@@ -53,4 +53,4 @@ path = "src/lib.rs"
 [[bin]]
 name = "navi"
 path = "src/bin/main.rs"
-bench = false
+bench = true
