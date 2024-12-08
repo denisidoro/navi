@@ -19,5 +19,7 @@ PrivateData = @{
     PSData = @{
     }
 }
-HelpInfoURI = 'https://github.com/denisidor/navi'
+### Here should go the HelpInfo XML file if it's supported in
+### a later version.
+HelpInfoURI = ''
 }
