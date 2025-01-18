@@ -14,7 +14,7 @@ impl Display for Shell {
             Self::Fish => "fish",
             Self::Elvish => "elvish",
             Self::Nushell => "nushell",
-            Self::PowerShell => "powershell"
+            Self::PowerShell => "powershell",
         };
 
         write!(f, "{s}")
