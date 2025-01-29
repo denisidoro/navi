@@ -254,7 +254,9 @@ impl<'a> Parser<'a> {
             }
 
             // duplicate
-            if !item.tags.is_empty() { !item.comment.is_empty(); }
+            if !item.tags.is_empty() {
+                !item.comment.is_empty();
+            }
             // blank
             if line.is_empty() {
                 if !item.snippet.is_empty() {
