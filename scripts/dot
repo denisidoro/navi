@@ -8,7 +8,17 @@ export CARGO_PATH="${NAVI_HOME}/core/Cargo.toml"
 
 # TODO: bump dotfiles + remove this fn
 log::note() { log::info "$@"; }
-export -f log::note
+
+cargo() {
+   if [ "${1:-}" = "install" ] && [ "${2:-}" = "cross" ]; then
+      shift 2 || true
+      command cargo install cross --git https://github.com/cross-rs/cross "$@"
+   else
+      command cargo "$@"
+   fi
+}
+
+export -f log::note cargo
 
 dot::clone() {
   git clone 'https://github.com/denisidoro/dotfiles' "$DOTFILES"
