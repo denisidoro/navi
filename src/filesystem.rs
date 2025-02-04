@@ -92,12 +92,13 @@ pub fn default_config_pathbuf() -> Result<PathBuf> {
     let base_dirs = etcetera::choose_base_strategy()?;
 
     let mut pathbuf = base_dirs.config_dir();
-    pathbuf.push("navi");
-    pathbuf.push("config.yaml");
-    if !pathbuf.exists() {
-        if let Some(path) = compiled_default_path(option_env!("NAVI_CONFIG")) {
-            pathbuf = path;
-        }
+
+
+    if let Some(path) = compiled_default_path(option_env!("NAVI_CONFIG")) {
+        pathbuf = path;
+    } else {
+        pathbuf.push("navi");
+        pathbuf.push("config.yaml");
     }
     Ok(pathbuf)
 }
