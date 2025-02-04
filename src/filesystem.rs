@@ -77,6 +77,21 @@ pub fn default_cheat_pathbuf() -> Result<PathBuf> {
     Ok(pathbuf)
 }
 
+pub fn current_cheat_pathbuf() -> Result<PathBuf> {
+    let base_dirs = etcetera::choose_base_strategy()?;
+    let mut pathbuf = base_dirs.data_dir();
+
+    // We're searching for the current environment variable
+    match env_var::get("NAVI_PATH") {
+        Ok(path) => pathbuf = path.into(),
+        Err(_e) => {
+            pathbuf.push("navi");
+            pathbuf.push("cheats");
+        }
+    }
+    Ok(pathbuf)
+}
+
 pub fn default_config_pathbuf() -> Result<PathBuf> {
     if cfg!(target_os = "macos") {
         let base_dirs = etcetera::base_strategy::Apple::new()?;
@@ -105,7 +120,7 @@ pub fn current_config_pathbuf() -> Result<PathBuf> {
     let base_dirs = etcetera::choose_base_strategy()?;
     let mut pathbuf = base_dirs.config_dir();
 
-    // We're searching  for the current environment variable
+    // We're searching for the current environment variable
     match env_var::get("NAVI_CONFIG") {
         Ok(path) => pathbuf = path.into(),
         Err(_e) => {
