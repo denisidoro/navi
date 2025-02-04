@@ -90,15 +90,28 @@ pub fn default_config_pathbuf() -> Result<PathBuf> {
     }
 
     let base_dirs = etcetera::choose_base_strategy()?;
-
     let mut pathbuf = base_dirs.config_dir();
-
 
     if let Some(path) = compiled_default_path(option_env!("NAVI_CONFIG")) {
         pathbuf = path;
     } else {
         pathbuf.push("navi");
         pathbuf.push("config.yaml");
+    }
+    Ok(pathbuf)
+}
+
+pub fn current_config_pathbuf() -> Result<PathBuf> {
+    let base_dirs = etcetera::choose_base_strategy()?;
+    let mut pathbuf = base_dirs.config_dir();
+
+    // We're searching  for the current environment variable
+    match env_var::get("NAVI_CONFIG") {
+        Ok(path) => pathbuf = path.into(),
+        Err(_e) => {
+            pathbuf.push("navi");
+            pathbuf.push("config.yaml");
+        },
     }
     Ok(pathbuf)
 }
