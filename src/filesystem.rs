@@ -9,7 +9,6 @@ use regex::Regex;
 
 use std::cell::RefCell;
 use std::path::MAIN_SEPARATOR;
-
 use walkdir::WalkDir;
 
 /// Multiple paths are joint by a platform-specific separator.
@@ -33,6 +32,12 @@ fn paths_from_path_param(env_var: &str) -> impl Iterator<Item = &str> {
     env_var.split(JOIN_SEPARATOR).filter(|folder| folder != &"")
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Here are the functions for the default values
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 fn compiled_default_path(path: Option<&str>) -> Option<PathBuf> {
     match path {
         Some(path) => {
@@ -52,21 +57,11 @@ fn compiled_default_path(path: Option<&str>) -> Option<PathBuf> {
     }
 }
 
+/// Returns the default path for the cheatsheets.
+///
+/// The path is defined at compile time.
 pub fn default_cheat_pathbuf() -> Result<PathBuf> {
-    if cfg!(target_os = "macos") {
-        let base_dirs = etcetera::base_strategy::Apple::new()?;
-
-        let mut pathbuf = base_dirs.data_dir();
-        pathbuf.push("navi");
-        pathbuf.push("cheats");
-        if pathbuf.exists() {
-            return Ok(pathbuf);
-        }
-    }
-
-    let base_dirs = etcetera::choose_base_strategy()?;
-
-    let mut pathbuf = base_dirs.data_dir();
+    let mut pathbuf = get_config_dir_by_platform()?;
     pathbuf.push("navi");
     pathbuf.push("cheats");
     if !pathbuf.exists() {
@@ -77,9 +72,32 @@ pub fn default_cheat_pathbuf() -> Result<PathBuf> {
     Ok(pathbuf)
 }
 
+/// Returns the default path for the configuration file of navi.
+///
+/// The path is defined at compile time.
+pub fn default_config_pathbuf() -> Result<PathBuf> {
+    let mut pathbuf = get_config_dir_by_platform()?;
+
+    if let Some(path) = compiled_default_path(option_env!("NAVI_CONFIG")) {
+        pathbuf = path;
+    } else {
+        pathbuf.push("navi");
+        pathbuf.push("config.yaml");
+    }
+    Ok(pathbuf)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Here are the functions for the running values
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/// Returns the currently used path for the cheatsheets, pulls from the environment variable `NAVI_PATH`.
+///
+/// The path is defined at execution time.
 pub fn current_cheat_pathbuf() -> Result<PathBuf> {
-    let base_dirs = etcetera::choose_base_strategy()?;
-    let mut pathbuf = base_dirs.data_dir();
+    let mut pathbuf = get_data_dir_by_platform()?;
 
     // We're searching for the current environment variable
     match env_var::get("NAVI_PATH") {
@@ -92,33 +110,11 @@ pub fn current_cheat_pathbuf() -> Result<PathBuf> {
     Ok(pathbuf)
 }
 
-pub fn default_config_pathbuf() -> Result<PathBuf> {
-    if cfg!(target_os = "macos") {
-        let base_dirs = etcetera::base_strategy::Apple::new()?;
-
-        let mut pathbuf = base_dirs.config_dir();
-        pathbuf.push("navi");
-        pathbuf.push("config.yaml");
-        if pathbuf.exists() {
-            return Ok(pathbuf);
-        }
-    }
-
-    let base_dirs = etcetera::choose_base_strategy()?;
-    let mut pathbuf = base_dirs.config_dir();
-
-    if let Some(path) = compiled_default_path(option_env!("NAVI_CONFIG")) {
-        pathbuf = path;
-    } else {
-        pathbuf.push("navi");
-        pathbuf.push("config.yaml");
-    }
-    Ok(pathbuf)
-}
-
+/// Returns the currently used path for the configuration file of navi, pulls from the environment variable `NAVI_CONFIG`.
+///
+/// The path is defined at execution time.
 pub fn current_config_pathbuf() -> Result<PathBuf> {
-    let base_dirs = etcetera::choose_base_strategy()?;
-    let mut pathbuf = base_dirs.config_dir();
+    let mut pathbuf = get_data_dir_by_platform()?;
 
     // We're searching for the current environment variable
     match env_var::get("NAVI_CONFIG") {
@@ -130,6 +126,50 @@ pub fn current_config_pathbuf() -> Result<PathBuf> {
     }
     Ok(pathbuf)
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Here are other functions, unrelated to CLI commands (or at least not directly related)
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/// Returns the data dir computed for each platform.
+///
+/// We are currently handling two cases: When the platform is `macos` and when the platform isn't (including `Windows` and `Linux/Unix` platforms)
+fn get_data_dir_by_platform() -> Result<PathBuf> {
+    let mut pathbuf;
+
+    if cfg!(target_os = "macos") {
+        let base_dirs = etcetera::base_strategy::Apple::new()?;
+
+        pathbuf = base_dirs.data_dir();
+    } else {
+        let base_dirs = etcetera::choose_base_strategy()?;
+        pathbuf = base_dirs.data_dir()
+    }
+
+    Ok(pathbuf)
+}
+
+/// Returns the config dir computed for each platform.
+///
+/// We are currently handling two cases: When the platform is `macos` and when the platform isn't (including `Windows` and `Linux/Unix` platforms)
+fn get_config_dir_by_platform() -> Result<PathBuf> {
+    let mut pathbuf;
+
+    if cfg!(target_os = "macos") {
+        let base_dirs = etcetera::base_strategy::Apple::new()?;
+
+        pathbuf = base_dirs.config_dir();
+    } else {
+        let base_dirs = etcetera::choose_base_strategy()?;
+
+        pathbuf = base_dirs.config_dir();
+    }
+
+    Ok(pathbuf)
+}
+
 
 pub fn cheat_paths(path: Option<String>) -> Result<String> {
     if let Some(p) = path {
