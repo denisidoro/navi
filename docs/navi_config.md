@@ -14,19 +14,44 @@ defines platform-specific standard locations of directories for config, cache an
 
 ## Config file path
 
-The default config file path is set by the `$NAVI_CONFIG` environment variable. If it is not set, it fallbacks to `~/.config/navi/config.yaml`. The command
+The default config file path is set by the `$NAVI_CONFIG` environment variable.\
+If it is not set, it fallbacks to `~/.config/navi/config.yaml` in most cases.
+
+There are available commands for you to see which path is used or its default value.
+
+### Default config path
+
+```sh
+navi info default-config-path
+```
+
+will print the default configuration path used by navi when no environment variables are defined.
+
+### Currently used config path
+
 ```sh
 navi info config-path
 ```
-prints which config file path is being used. You can get a config file example by running
+
+will print the configuration path currently used by navi.
+
+### Example config file
+
+You can get an example of a config file by running:
+
 ```sh
 navi info config-example
 ```
-or by clicking [here](./config_file_example.yaml). To turn this example your config file, run
+
+> [!NOTE]
+> You can also get the example file [here](./config_file_example.yaml).
+
+To turn this example into your config file, you just need to run:
 
 ```sh
 navi info config-example > "$(navi info config-path)"
 ```
+
 ## Cheat sheet paths
 
 The default `.cheat` files paths are defined in the `$NAVI_PATH` environment variable in a colon-separated list, e.g.,
