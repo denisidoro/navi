@@ -137,7 +137,7 @@ pub fn current_config_pathbuf() -> Result<PathBuf> {
 ///
 /// We are currently handling two cases: When the platform is `macos` and when the platform isn't (including `Windows` and `Linux/Unix` platforms)
 fn get_data_dir_by_platform() -> Result<PathBuf> {
-    let mut pathbuf;
+    let pathbuf;
 
     if cfg!(target_os = "macos") {
         let base_dirs = etcetera::base_strategy::Apple::new()?;
@@ -155,7 +155,7 @@ fn get_data_dir_by_platform() -> Result<PathBuf> {
 ///
 /// We are currently handling two cases: When the platform is `macos` and when the platform isn't (including `Windows` and `Linux/Unix` platforms)
 fn get_config_dir_by_platform() -> Result<PathBuf> {
-    let mut pathbuf;
+    let pathbuf;
 
     if cfg!(target_os = "macos") {
         let base_dirs = etcetera::base_strategy::Apple::new()?;
