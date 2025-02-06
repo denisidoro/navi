@@ -32,8 +32,8 @@ your changes to be accepted.
     If you implement a new feature, you will need to create a new entry in the project's
     documentation for users to know what has changed.
 
-    No significant modification in Navi's behaviour should be merged without being
-    documented. For more details I recommend you to see [contributions/documentation/](../documentation/README.md).
+    No significant modification in Navi's behaviour should be merged without being documented.\
+    For more details I recommend you to see [contributions/documentation/](../documentation/README.md).
 
 5. Open a PR on [denisidoro/navi](https://github.com/denisidoro/navi/pulls) and request a review
 6. [Optional] Your PR needs revisions and changes before it can be merged
