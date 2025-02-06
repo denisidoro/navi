@@ -7,8 +7,15 @@ Widgets are 3rd-party contributions and integrates Navi with 3rd-party software 
 
 ## List of shell widgets
 
-- Navi widget for Bash
-- Navi widget for Fish
-- Navi widget for Ash
-- Navi widget for NuShell
-- Navi widget for PowerShell
+| Shell | Navi support |
+|-------|--------------|
+| Bash  | :white_check_mark: |
+| Fish ||
+| Zsh ||
+| NuShell ||
+| PowerShell ||
+
+## Other widgets
+
+- Tmux
+- Vim
