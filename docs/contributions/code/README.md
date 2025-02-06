@@ -17,10 +17,10 @@ your changes to be accepted.
 
 1. First, open an issue if no opened issues are related to the change you want to contribute.
 2. [Optional] Wait to have an opinion from the maintainers, developers or contributors from Navi.
-   > [!NOTE]  
+
    > This step is marked as *Optional* as you can open a Merge Request (MR)/Pull Request (PR)  
    > without having to open an issue beforehand, although it is recommended to not do so.
-   
+
    We ask you to wait before working on a PR as the way you see a feature and its implementation
    might not be similar on how a maintainer or Navi sees it.
 
