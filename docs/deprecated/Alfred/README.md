@@ -1,18 +1,14 @@
 # Alfred 
 
 > [!CAUTION]
-> This feature has been deprecated
+> This feature has been deprecated and support has been dropped since 2.16.0.
+>
+> The latest version with support is [2.15.1](https://github.com/denisidoro/navi/releases/tag/v2.15.1).
 
 
 This is _experimental_. If you face any issues, please report [here](https://github.com/denisidoro/navi/issues/348).
 
 ![Alfred demo](https://user-images.githubusercontent.com/3226564/80294838-582b1b00-8743-11ea-9eb5-a335d8eed833.gif)
-
-### Note
-
-Support for alfred has been removed.
-
-The latest version which has some support for it is [2.15.1](https://github.com/denisidoro/navi/releases/tag/v2.15.1).
 
 ### Instructions
 
