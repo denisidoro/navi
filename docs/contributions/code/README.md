@@ -22,7 +22,7 @@ your changes to be accepted.
    > without having to open an issue beforehand, although it is recommended to not do so.
 
    We ask you to wait before working on a PR as the way you see a feature and its implementation
-   might not be similar on how a maintainer or Navi sees it.
+   might not be similar on how a maintainer of Navi sees it.
 
    This will save you and the maintainers time.
 
