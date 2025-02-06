@@ -1,0 +1,1 @@
+# The syntax of a Navi cheatsheet
