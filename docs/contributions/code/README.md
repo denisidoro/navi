@@ -46,5 +46,5 @@ your changes to be accepted.
     Congratulations! Your PR has been reviewed and merged, you should be proud of it,
     and we thank you for your contribution.
 
-    The following release cycle will package your contributions and users throughout the
-    world will be able to use your new feature.
+    The next release cycle will package all contributions into a new release and users
+    throughout the world will be able to use your new feature(s).
