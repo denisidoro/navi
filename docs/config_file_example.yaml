@@ -17,6 +17,7 @@ finder:
   command: fzf # equivalent to the --finder option
   # overrides: --tac # equivalent to the --fzf-overrides option
   # overrides_var: --tac # equivalent to the --fzf-overrides-var option
+  # delimiter_var: \s\s+ # equivalent to the --delimiter option that is used with --column option when you extract a column from the selected result for a variable
 
 # cheats:
 #   paths:
