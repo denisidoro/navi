@@ -99,6 +99,10 @@ impl Config {
             .or_else(|| self.yaml.finder.overrides_var.clone())
     }
 
+    pub fn delimiter_var(&self) -> Option<String> {
+        self.yaml.finder.delimiter_var.clone()
+    }
+
     pub fn tealdeer(&self) -> bool {
         self.yaml.client.tealdeer
     }
