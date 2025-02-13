@@ -104,7 +104,7 @@ You can define it as such:
 
 ```yaml
 finder:
-  delimiter_var: <your-regex-delimiter> ### By default the expression is \s\s
+  delimiter_var: <your-regex-delimiter> ### By default the expression is \s\s+
 ```
 
 > [!CAUTION]
