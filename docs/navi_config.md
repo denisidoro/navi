@@ -6,6 +6,8 @@
   - [Changing colors](#changing-colors)
   - [Resizing columns](#resizing-columns)
   - [Overriding fzf options](#overriding-fzf-options)
+  - [Defining your own delimiter](#defining-your-own-delimiter)
+
 
 # Paths and Environment Variables
 
@@ -92,3 +94,30 @@ FZF_DEFAULT_OPTS="--height 3" navi
 ```
 
 In addition, this can be set by properly configuring _navi_'s `config.yaml`. Please check `navi --help` for more instructions.
+
+## Defining your own delimiter
+
+Navi allows you to define your own delimiter to parse the selected result for a variable in your cheats.\
+It is equivalent to defining `--delimiter` used with `--column`.
+
+You can define it as such:
+
+```yaml
+finder:
+  delimiter_var: <your-regex-delimiter> ### By default the expression is \s\s+
+```
+
+> [!CAUTION]
+> Defining the delimiter via the configuration file means that Navi will use this delimiter by default for
+> every variable using the `--column` instruction.
+
+You can override this configuration with the `--delimiter` instruction in the variable definition of your cheatsheet.
+
+It can be overriden like this:
+
+```yaml
+echo <image_id>
+
+$ image_id: ... --- --column 3 --header-lines 1 --delimiter '\s\s+' # <-- This variable uses \s\s+ as a delimiter
+$ image_tag: ... --- --column 3 --header-lines 1 # <-- This variable uses the default delimiter
+```
