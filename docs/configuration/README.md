@@ -1,17 +1,17 @@
-# Configuration of Navi
-
 - [Paths and Environment Variables](#paths-and-environment-variables)
-    - [Config file path](#config-file-path)
-    - [Cheat sheet paths](#cheat-sheet-paths)
+  - [Config file path](#config-file-path)
+  - [Cheat sheet paths](#cheat-sheet-paths)
 - [Logging](#logging)
 - [Customization](#customization)
-    - [Changing colors](#changing-colors)
-    - [Resizing columns](#resizing-columns)
-    - [Overriding fzf options](#overriding-fzf-options)
+  - [Changing colors](#changing-colors)
+  - [Resizing columns](#resizing-columns)
+  - [Overriding fzf options](#overriding-fzf-options)
+  - [Defining your own delimiter](#defining-your-own-delimiter)
+
 
 # Paths and Environment Variables
 
-Navi uses the [`directories-next`](https://crates.io/crates/directories-next) package, which
+Navi uses the [`directories-next`](https://crates.io/crates/directories-next) package, which 
 defines platform-specific standard locations of directories for config, cache and other data (Mac users, this is why your files are being stored in `~/Library/Application Support/navi`).
 
 ## Config file path
@@ -24,7 +24,7 @@ prints which config file path is being used. You can get a config file example b
 ```sh
 navi info config-example
 ```
-or by clicking [here](examples/config_file_example.yaml). To turn this example your config file, run
+or by clicking [here](./config_file_example.yaml). To turn this example your config file, run
 
 ```sh
 navi info config-example > "$(navi info config-path)"
@@ -39,7 +39,7 @@ If this environment variable is unset or if all directories do not exist, `navi`
 ```sh
 navi info cheats-path
 ```
-prints to you all paths used to search for `.cheat` files.
+prints to you all paths used to search for `.cheat` files. 
 
 You can also add other paths at runtime by running `navi` with the `--path` option and a colon-separated paths list, e.g.,
 ```sh
@@ -49,7 +49,7 @@ It's irrelevant the directory structure within each path. They can even be all i
 
 Despite `$NAVI_PATH` being set, it will not be used when installing cheat sheets directly via navi's own commands.  For example when running `navi add repo <repo>`, the default paths as per the `directories-next` package will still be used. To avoid this, you may simply clone repos via a regular `git clone` command, directly into `$NAVI_PATH`.
 
-Note! `navi info cheats-path` and `navi info config-path` display the *default* path, not
+Note! `navi info cheats-path` and `navi info config-path` display the *default* path, not 
 the path set by the user. [It is known that this is a little misleading!](https://github.com/denisidoro/navi/issues/664#issuecomment-1004721178).
 
 # Logging
@@ -94,3 +94,30 @@ FZF_DEFAULT_OPTS="--height 3" navi
 ```
 
 In addition, this can be set by properly configuring _navi_'s `config.yaml`. Please check `navi --help` for more instructions.
+
+## Defining your own delimiter
+
+Navi allows you to define your own delimiter to parse the selected result for a variable in your cheats.\
+It is equivalent to defining `--delimiter` used with `--column`.
+
+You can define it as such:
+
+```yaml
+finder:
+  delimiter_var: <your-regex-delimiter> ### By default the expression is \s\s+
+```
+
+> [!CAUTION]
+> Defining the delimiter via the configuration file means that Navi will use this delimiter by default for
+> every variable using the `--column` instruction.
+
+You can override this configuration with the `--delimiter` instruction in the variable definition of your cheatsheet.
+
+It can be overriden like this:
+
+```yaml
+echo <image_id>
+
+$ image_id: ... --- --column 3 --header-lines 1 --delimiter '\s\s+' # <-- This variable uses \s\s+ as a delimiter
+$ image_tag: ... --- --column 3 --header-lines 1 # <-- This variable uses the default delimiter
+```

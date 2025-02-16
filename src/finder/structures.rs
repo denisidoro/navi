@@ -66,6 +66,7 @@ impl Opts {
             overrides: CONFIG.fzf_overrides_var(),
             suggestion_type: SuggestionType::SingleRecommendation,
             prevent_select1: false,
+            delimiter: CONFIG.delimiter_var(),
             ..Default::default()
         }
     }
