@@ -29,17 +29,18 @@ It uses [fzf](https://github.com/junegunn/fzf), [skim](https://github.com/lotabo
 
 ## Installation
 
-**navi** can be installed with the following package managers:
-
-[![Packaging status](https://repology.org/badge/vertical-allrepos/navi.svg)](https://repology.org/project/navi/versions)
-
 The recommended way to install **navi** is by running:
 
 ```sh
 brew install navi
 ```
 
-If `brew` isn't available, you can check [alternative install instructions](docs/installation.md).
+> [!NOTE]
+> For more details on how to install Navi, see [docs/installation](docs/installation/README.md)
+
+**navi** can be installed with the following package managers:
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/navi.svg)](https://repology.org/project/navi/versions)
 
 ## Usage
 
@@ -103,17 +104,5 @@ Please run the following command to read more about all possible options:
 navi --help
 ```
 
-In addition, please check the [/docs](docs) folder.
+In addition, please check the [/docs](docs) folder or the website.
 
-## Similar tools
-
-There are many similar projects out there ([beavr](https://github.com/denisidoro/beavr), [bro](https://github.com/hubsmoke/bro), [cheat](https://github.com/cheat/cheat), [cheat.sh](https://github.com/chubin/cheat.sh), [cmdmenu](https://github.com/amacfie/cmdmenu), [eg](https://github.com/srsudar/eg), [how2](https://github.com/santinic/how2), [howdoi](https://github.com/gleitz/howdoi), [Command Line Interface Pages](https://github.com/command-line-interface-pages) and [tldr](https://github.com/tldr-pages/tldr), to name a few).
-
-They are excellent projects, but **navi** remains unique in the following ways:
-
-- it's natural to write cheatsheets tailored to your needs
-- arguments are neither hardcoded nor a simple template
-
-## Etymology
-
-[Navi](https://zelda.gamepedia.com/Navi) is a character from [The Legend of Zelda Ocarina of Time](https://zelda.gamepedia.com/Ocarina_of_Time) that provides [Link](https://zelda.gamepedia.com/Link) with a variety of clues to help him solve puzzles and make progress in his quest.
