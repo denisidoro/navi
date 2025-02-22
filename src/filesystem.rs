@@ -1,5 +1,5 @@
 pub use crate::common::fs::{create_dir, exe_string, read_lines, remove_dir};
-use crate::env_var;
+use crate::{env_var};
 use crate::parser::Parser;
 use crate::prelude::*;
 
@@ -8,8 +8,13 @@ use etcetera::BaseStrategy;
 use regex::Regex;
 
 use std::cell::RefCell;
+use std::fmt::Debug;
 use std::path::MAIN_SEPARATOR;
+use dns_common::component::AsAny;
 use walkdir::WalkDir;
+use crate::common::fs::ToStringExt;
+use crate::config::*;
+
 
 /// Multiple paths are joint by a platform-specific separator.
 /// FIXME: it's actually incorrect to assume a path doesn't containing this separator
@@ -96,18 +101,13 @@ pub fn default_config_pathbuf() -> Result<PathBuf> {
 /// Returns the currently used path for the cheatsheets, pulls from the environment variable `NAVI_PATH`.
 ///
 /// The path is defined at execution time.
-pub fn current_cheat_pathbuf() -> Result<PathBuf> {
+pub fn current_cheat_pathbuf() -> Result<String> {
     let mut pathbuf = get_data_dir_by_platform()?;
+    let cfg: Config = Config::new();
 
-    // We're searching for the current environment variable
-    match env_var::get("NAVI_PATH") {
-        Ok(path) => pathbuf = path.into(),
-        Err(_e) => {
-            pathbuf.push("navi");
-            pathbuf.push("cheats");
-        }
-    }
-    Ok(pathbuf)
+    let cheats = cfg.path();
+
+    Ok(cheats.unwrap_or(pathbuf.to_string()).to_string())
 }
 
 /// Returns the currently used path for the configuration file of navi, pulls from the environment variable `NAVI_CONFIG`.
@@ -135,7 +135,7 @@ pub fn current_config_pathbuf() -> Result<PathBuf> {
 
 /// Returns the data dir computed for each platform.
 ///
-/// We are currently handling two cases: When the platform is `macos` and when the platform isn't (including `Windows` and `Linux/Unix` platforms)
+/// We are currently handling two cases: When the platform is `macOS` and when the platform isn't (including `Windows` and `Linux/Unix` platforms)
 fn get_data_dir_by_platform() -> Result<PathBuf> {
     let pathbuf;
 
@@ -153,7 +153,7 @@ fn get_data_dir_by_platform() -> Result<PathBuf> {
 
 /// Returns the config dir computed for each platform.
 ///
-/// We are currently handling two cases: When the platform is `macos` and when the platform isn't (including `Windows` and `Linux/Unix` platforms)
+/// We are currently handling two cases: When the platform is `macOS` and when the platform isn't (including `Windows` and `Linux/Unix` platforms)
 fn get_config_dir_by_platform() -> Result<PathBuf> {
     let pathbuf;
 

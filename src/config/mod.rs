@@ -61,19 +61,43 @@ impl Config {
     }
 
     pub fn path(&self) -> Option<String> {
+        if self.clap.path.is_some(){
+            println!("Default Clap PATH: {}", self.clap.path.clone().unwrap().to_string());
+        }
+
         self.clap
             .path
             .clone()
-            .or_else(|| self.env.path.clone())
+            .or_else(|| {
+                if self.env.path.is_some(){
+                    println!("ENV PATH: {}", self.env.path.clone().unwrap().to_string());
+                }
+
+                self.env.path.clone()
+            })
             .or_else(|| {
                 let p = self.yaml.cheats.paths.clone();
+                if ! p.is_empty() {
+                    println!("MULTIPLE YAML PATH: {}", p.as_slice().join(" "));
+                }
+
                 if p.is_empty() {
                     None
                 } else {
                     Some(p.join(crate::filesystem::JOIN_SEPARATOR))
                 }
             })
-            .or_else(|| self.yaml.cheats.path.clone())
+            .or_else(|| {
+                if self.yaml.cheats.path.is_some(){
+                    println!("UNIQUE YAML PATH: {}", self.yaml.cheats.path.clone().unwrap().to_string());
+                }
+
+                self.yaml.cheats.path.clone()
+            }).or_else(|| {
+                println!("Couldn't find a path...");
+
+                 None
+        })
     }
 
     pub fn finder(&self) -> FinderChoice {
