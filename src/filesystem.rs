@@ -102,12 +102,19 @@ pub fn default_config_pathbuf() -> Result<PathBuf> {
 ///
 /// The path is defined at execution time.
 pub fn current_cheat_pathbuf() -> Result<String> {
-    let mut pathbuf = get_data_dir_by_platform()?;
     let cfg: Config = Config::new();
-
     let cheats = cfg.path();
 
-    Ok(cheats.unwrap_or(pathbuf.to_string()).to_string())
+    let mut pathbuf = get_data_dir_by_platform()?;
+
+    if cheats.is_some(){
+        Ok(cheats.unwrap().to_string())
+    } else {
+        pathbuf.push("navi");
+        pathbuf.push("config.yaml");
+
+        Ok(pathbuf.to_string())
+    }
 }
 
 /// Returns the currently used path for the configuration file of navi, pulls from the environment variable `NAVI_CONFIG`.
