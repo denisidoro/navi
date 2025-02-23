@@ -66,7 +66,7 @@ fn compiled_default_path(path: Option<&str>) -> Option<PathBuf> {
 ///
 /// The path is defined at compile time.
 pub fn default_cheat_pathbuf() -> Result<PathBuf> {
-    let mut pathbuf = get_config_dir_by_platform()?;
+    let mut pathbuf = get_data_dir_by_platform()?;
     pathbuf.push("navi");
     pathbuf.push("cheats");
     if !pathbuf.exists() {
