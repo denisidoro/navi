@@ -105,11 +105,16 @@ pub fn current_cheat_pathbuf() -> Result<String> {
     let cfg: Config = Config::new();
     let cheats = cfg.path();
 
-    let mut pathbuf = get_data_dir_by_platform()?;
-
+    // We check if `Config.path()` returned a value
     if cheats.is_some(){
+        // A value has been returned => We send it back
         Ok(cheats.unwrap().to_string())
     } else {
+        // No value has been returned => no user-defined path has been found
+        // We use the default idiomatic path for each supported platform with
+        // the addition of the `../navi/cheats/` directory.
+
+        let mut pathbuf = get_data_dir_by_platform()?;
         pathbuf.push("navi");
         pathbuf.push("cheats");
 
