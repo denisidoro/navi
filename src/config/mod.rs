@@ -8,6 +8,7 @@ pub use cli::*;
 use crossterm::style::Color;
 use env::EnvConfig;
 use yaml::YamlConfig;
+use crate::prelude::debug;
 
 lazy_static! {
     pub static ref CONFIG: Config = Config::new();
@@ -62,7 +63,7 @@ impl Config {
 
     pub fn path(&self) -> Option<String> {
         if self.clap.path.is_some(){
-            println!("Default Clap PATH: {}", self.clap.path.clone().unwrap().to_string());
+            debug!("Default Clap PATH: {}", self.clap.path.clone().unwrap().to_string());
         }
 
         self.clap
@@ -70,7 +71,7 @@ impl Config {
             .clone()
             .or_else(|| {
                 if self.env.path.is_some(){
-                    println!("ENV PATH: {}", self.env.path.clone().unwrap().to_string());
+                    debug!("ENV PATH: {}", self.env.path.clone().unwrap().to_string());
                 }
 
                 self.env.path.clone()
@@ -78,7 +79,7 @@ impl Config {
             .or_else(|| {
                 let p = self.yaml.cheats.paths.clone();
                 if ! p.is_empty() {
-                    println!("MULTIPLE YAML PATH: {}", p.as_slice().join(" "));
+                    debug!("MULTIPLE YAML PATH: {}", p.as_slice().join(" "));
                 }
 
                 if p.is_empty() {
@@ -89,12 +90,12 @@ impl Config {
             })
             .or_else(|| {
                 if self.yaml.cheats.path.is_some(){
-                    println!("UNIQUE YAML PATH: {}", self.yaml.cheats.path.clone().unwrap().to_string());
+                    debug!("UNIQUE YAML PATH: {}", self.yaml.cheats.path.clone().unwrap().to_string());
                 }
 
                 self.yaml.cheats.path.clone()
             }).or_else(|| {
-                println!("Couldn't find a path...");
+                debug!("No specific path given");
 
                  None
         })
