@@ -86,7 +86,7 @@ pub struct Client {
     pub tealdeer: bool,
 }
 
-#[derive(Deserialize, Default, Debug)]
+#[derive(Deserialize, Debug)]
 #[serde(default)]
 pub struct YamlConfig {
     pub style: Style,
@@ -124,12 +124,8 @@ impl YamlConfig {
         }
 
         // As no configuration has been found, we set the YAML configuration
-        // to be its default (built-in) value, and we set the `is_default` flag to `true`
-        // for other parts of navi they're using the default value and not the user-defined configuration.
-        let mut default_config = YamlConfig::default();
-        default_config.is_default = true;
-
-        Ok(default_config)
+        // to be its default (built-in) value.
+        Ok(YamlConfig::default())
     }
 }
 
@@ -177,6 +173,20 @@ impl Default for Shell {
         Self {
             command: "bash".to_string(),
             finder_command: None,
+        }
+    }
+}
+
+impl Default for YamlConfig {
+    fn default() -> Self {
+        Self {
+            style: Default::default(),
+            finder: Default::default(),
+            cheats: Default::default(),
+            search: Default::default(),
+            shell: Default::default(),
+            client: Default::default(),
+            is_default: true
         }
     }
 }
