@@ -112,7 +112,7 @@ pub fn current_cheat_pathbuf() -> Result<String> {
     } else {
         // No value has been returned => no user-defined path has been found
         // We use the default idiomatic path for each supported platform with
-        // the addition of the `../navi/cheats/` directory.
+        // the addition of the `navi/cheats/` directory.
 
         let mut pathbuf = get_data_dir_by_platform()?;
         pathbuf.push("navi");
