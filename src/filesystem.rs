@@ -7,7 +7,6 @@ use crate::config::CONFIG;
 use crate::structures::fetcher;
 use etcetera::BaseStrategy;
 use regex::Regex;
-use crate::config::*;
 use std::cell::RefCell;
 use std::fmt::Debug;
 use std::path::MAIN_SEPARATOR;
@@ -100,8 +99,7 @@ pub fn default_config_pathbuf() -> Result<PathBuf> {
 ///
 /// The path is defined at execution time.
 pub fn current_cheat_pathbuf() -> Result<String> {
-    let cfg: Config = Config::new();
-    let cheats = cfg.path();
+    let cheats = CONFIG.path();
 
     // We check if `Config.path()` returned a value
     if cheats.is_some(){
