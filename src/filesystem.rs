@@ -1,19 +1,17 @@
 pub use crate::common::fs::{create_dir, exe_string, read_lines, remove_dir};
-use crate::{env_var};
 use crate::parser::Parser;
 use crate::prelude::*;
+use crate::env_var;
+use crate::config::CONFIG;
 
 use crate::structures::fetcher;
 use etcetera::BaseStrategy;
 use regex::Regex;
-
+use crate::config::*;
 use std::cell::RefCell;
 use std::fmt::Debug;
 use std::path::MAIN_SEPARATOR;
-use dns_common::component::AsAny;
 use walkdir::WalkDir;
-use crate::common::fs::ToStringExt;
-use crate::config::*;
 
 
 /// Multiple paths are joint by a platform-specific separator.
@@ -122,21 +120,11 @@ pub fn current_cheat_pathbuf() -> Result<String> {
     }
 }
 
-/// Returns the currently used path for the configuration file of navi, pulls from the environment variable `NAVI_CONFIG`.
+/// Returns the currently used path for the configuration file of navi.
 ///
 /// The path is defined at execution time.
-pub fn current_config_pathbuf() -> Result<PathBuf> {
-    let mut pathbuf = get_config_dir_by_platform()?;
-
-    // We're searching for the current environment variable
-    match env_var::get("NAVI_CONFIG") {
-        Ok(path) => pathbuf = path.into(),
-        Err(_e) => {
-            pathbuf.push("navi");
-            pathbuf.push("config.yaml");
-        },
-    }
-    Ok(pathbuf)
+pub fn current_config_pathbuf() -> Result<String> {
+    Ok(CONFIG.get_source())
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

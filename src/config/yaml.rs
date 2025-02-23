@@ -95,7 +95,7 @@ pub struct YamlConfig {
     pub search: Search,
     pub shell: Shell,
     pub client: Client,
-    is_default: bool
+    pub source: String, // <= The source of the current configuration
 }
 
 impl YamlConfig {
@@ -109,17 +109,31 @@ impl YamlConfig {
         serde_yaml::from_reader(reader).map_err(|e| e.into())
     }
 
-    pub fn get(env: &EnvConfig) -> Result<Self> {
+    pub fn get(env: &EnvConfig) -> Result<YamlConfig> {
         if let Some(yaml) = env.config_yaml.as_ref() {
-            return Self::from_str(yaml);
+            // We're getting the configuration from the environment variable `NAVI_CONFIG_YAML`
+            let mut cfg = Self::from_str(yaml)?;
+            cfg.source = format!("NAVI_CONFIG_YAML={}", yaml);
+
+            return Ok(cfg);
         }
         if let Some(path_str) = env.config_path.as_ref() {
+            // We're getting the configuration from a file given in the environment variable `NAVI_CONFIG`
+
             let p = PathBuf::from(path_str);
-            return YamlConfig::from_path(&p);
+            let mut cfg = YamlConfig::from_path(&p)?;
+            cfg.source = format!("NAVI_CONFIG={:?}", p).to_string();
+
+            return Ok(cfg);
         }
         if let Ok(p) = default_config_pathbuf() {
+            // We're getting the configuration from the default path
+
             if p.exists() {
-                return YamlConfig::from_path(&p);
+                let mut cfg = YamlConfig::from_path(&p)?;
+                cfg.source = p.to_string();
+
+                return Ok(cfg);
             }
         }
 
@@ -186,7 +200,7 @@ impl Default for YamlConfig {
             search: Default::default(),
             shell: Default::default(),
             client: Default::default(),
-            is_default: true
+            source: "built-in".to_string(),
         }
     }
 }
