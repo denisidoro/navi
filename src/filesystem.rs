@@ -98,7 +98,7 @@ pub fn default_config_pathbuf() -> Result<PathBuf> {
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// Returns the currently used path for the cheatsheets, pulls from the environment variable `NAVI_PATH`.
+/// Returns the currently used path for the cheatsheets.
 ///
 /// The path is defined at execution time.
 pub fn current_cheat_pathbuf() -> Result<String> {
@@ -111,7 +111,7 @@ pub fn current_cheat_pathbuf() -> Result<String> {
         Ok(cheats.unwrap().to_string())
     } else {
         pathbuf.push("navi");
-        pathbuf.push("config.yaml");
+        pathbuf.push("cheats");
 
         Ok(pathbuf.to_string())
     }
@@ -121,7 +121,7 @@ pub fn current_cheat_pathbuf() -> Result<String> {
 ///
 /// The path is defined at execution time.
 pub fn current_config_pathbuf() -> Result<PathBuf> {
-    let mut pathbuf = get_data_dir_by_platform()?;
+    let mut pathbuf = get_config_dir_by_platform()?;
 
     // We're searching for the current environment variable
     match env_var::get("NAVI_CONFIG") {
