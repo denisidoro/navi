@@ -95,6 +95,7 @@ pub struct YamlConfig {
     pub search: Search,
     pub shell: Shell,
     pub client: Client,
+    is_default: bool
 }
 
 impl YamlConfig {
@@ -121,7 +122,14 @@ impl YamlConfig {
                 return YamlConfig::from_path(&p);
             }
         }
-        Ok(YamlConfig::default())
+
+        // As no configuration has been found, we set the YAML configuration
+        // to be its default (built-in) value, and we set the `is_default` flag to `true`
+        // for other parts of navi they're using the default value and not the user-defined configuration.
+        let mut default_config = YamlConfig::default();
+        default_config.is_default = true;
+
+        Ok(default_config)
     }
 }
 
