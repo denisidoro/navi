@@ -11,7 +11,7 @@ use std::cell::RefCell;
 use std::fmt::Debug;
 use std::path::MAIN_SEPARATOR;
 use walkdir::WalkDir;
-
+use crate::common::fs::ToStringExt;
 
 /// Multiple paths are joint by a platform-specific separator.
 /// FIXME: it's actually incorrect to assume a path doesn't containing this separator
@@ -107,14 +107,8 @@ pub fn current_cheat_pathbuf() -> Result<String> {
         Ok(cheats.unwrap().to_string())
     } else {
         // No value has been returned => no user-defined path has been found
-        // We use the default idiomatic path for each supported platform with
-        // the addition of the `navi/cheats/` directory.
-
-        let mut pathbuf = get_data_dir_by_platform()?;
-        pathbuf.push("navi");
-        pathbuf.push("cheats");
-
-        Ok(pathbuf.to_string())
+        // We use the default idiomatic path for each supported platform.
+        Ok(default_cheat_pathbuf()?.to_string())
     }
 }
 
