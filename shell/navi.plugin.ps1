@@ -10,25 +10,23 @@ param (
 
 
 function InstallNaviWidgetModule(){
-    [String]$PwshModulePath = $env:PSModulePath.Split(";")[0];
     [String]$NAVI_PLUGIN = "navi.plugin";
 
     Write-Debug "Are we updating the PowerShell module: $Update"
-    Write-Debug "Current Root Powershell Module path is: $PwshModulePath"
 
     ### If we're updating the module, Copy the newly updated contents to the currently installed module
     ### then quit with a successful exit code.
     ### We're not supposed to update the shortcut binding.
     if ($Update){
         Write-Debug "Updating Navi-Widget PowerShell module"
-        Copy-Item -Path .\navi.plugin\ -Destination $PwshModulePath -Force -Recurse
+         Install-Module -Name navi.plugin
         exit 0
     }
 
     ### If we're not updating, check if we don't have the module already installed
     if (-Not (Test-Path -Path $PwshModulePath\$NAVI_PLUGIN)) {
         Write-Debug "Copying Item to the path"
-        Copy-Item -Path .\navi.plugin\ -Destination $PwshModulePath -Recurse
+         Install-Module -Name navi.plugin
     } else {
         Write-Error "Navi-Widget is already installed for PowerShell!"
         exit 1
