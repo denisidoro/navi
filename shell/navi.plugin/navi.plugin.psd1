@@ -9,6 +9,7 @@ RootModule = './navi.plugin.psm1'
 ModuleVersion = '1.0'
 GUID = '59287935-a9b6-4a7f-a1f5-bd6180d9056f'
 Author = 'Alexis-Opolka'
+Description = 'A powershell module that integrates with navi. It makes you able to access navi with the Ctrl+G keybinding.'
 CompanyName = 'None'
 Copyright = '(c) Alexis Opolka & Navi contributors. All rights reserved.'
 FunctionsToExport = @('Invoke-NaviWidget')
