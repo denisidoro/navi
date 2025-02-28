@@ -32,6 +32,12 @@ function InstallNaviWidgetModule(){
         exit 1
     }
 
+    ### We first need to be sure the profile has been created
+    if (-Not(Test-Path -Path $PROFILE)) {
+        ### The Profile file hasn't been created yet
+        New-Item -ItemType "file" -Path $PROFILE -Force
+    }
+
     Write-Debug "Registering the navi shortcut inside the current shell session"
     Set-PSReadlineKeyHandler -BriefDescription "A keybinding to open Navi Widget" -Chord Ctrl+g -ScriptBlock { Invoke-NaviWidget }
 
