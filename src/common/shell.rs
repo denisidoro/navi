@@ -12,7 +12,7 @@ pub enum Shell {
     Fish,
     Elvish,
     Nushell,
-    PowerShell,
+    Powershell,
 }
 
 #[derive(Error, Debug)]
