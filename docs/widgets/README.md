@@ -15,6 +15,14 @@ Widgets are 3rd-party contributions and integrates Navi with 3rd-party software 
 | NuShell ||
 | PowerShell ||
 
+## PowerShell Widget
+
+- Removal
+
+```powershell
+Remove-Module navi.plugin
+```
+
 ## Other widgets
 
 - Tmux
