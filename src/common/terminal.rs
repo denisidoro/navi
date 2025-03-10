@@ -50,7 +50,7 @@ pub fn parse_ansi(ansi: &str) -> Option<style::Color> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Color(pub style::Color);
+pub struct Color(#[allow(unused)] pub style::Color); // suppress warning: field `0` is never read.
 
 impl FromStr for Color {
     type Err = &'static str;

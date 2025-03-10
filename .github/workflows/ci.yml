@@ -4,7 +4,10 @@
 # for simplicity we are compiling and testing everything on the Ubuntu environment only.
 # For multi-OS testing see the `cross.yml` workflow.
 
-on: [push]
+on:
+  push:
+  pull_request:
+    branches: [master]
 
 name: CI
 
