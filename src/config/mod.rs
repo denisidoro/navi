@@ -222,4 +222,9 @@ impl Config {
             None
         }
     }
+
+    // Returns the current configuration source
+    pub fn get_source(&self) -> String {
+        self.yaml.source.clone()
+    }
 }
