@@ -8,6 +8,6 @@ The rules are defined based on the [Cheatsheet syntax](cheatsheet_syntax.md).
 syntax match Comment "\v^;.*$"
 syntax match Statement "\v^\%.*$"
 syntax match Operator "\v^\#.*$"
-syntax match String "\v\<.*\>"
+syntax match String "\v\<.{-}\>"
 syntax match String "\v^\$.*$"
 ```
