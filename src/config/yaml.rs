@@ -5,7 +5,6 @@ use crate::finder::FinderChoice;
 use crate::prelude::*;
 use crossterm::style::Color as TerminalColor;
 use serde::de;
-use crate::common::fs::ToStringExt;
 
 #[derive(Deserialize, Debug)]
 pub struct Color(#[serde(deserialize_with = "color_deserialize")] TerminalColor);
@@ -191,7 +190,6 @@ impl Default for Shell {
         }
     }
 }
-
 
 impl Default for YamlConfig {
     fn default() -> Self {
