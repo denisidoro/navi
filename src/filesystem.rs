@@ -53,23 +53,12 @@ fn compiled_default_path(path: Option<&str>) -> Option<PathBuf> {
 }
 
 pub fn default_cheat_pathbuf() -> Result<PathBuf> {
-    if cfg!(target_os = "macos") {
-        let base_dirs = etcetera::base_strategy::Apple::new()?;
+    let mut pathbuf = get_data_dir_by_platform()?;
 
-        let mut pathbuf = base_dirs.data_dir();
-        pathbuf.push("navi");
-        pathbuf.push("cheats");
-        if pathbuf.exists() {
-            return Ok(pathbuf);
-        }
-    }
-
-    let base_dirs = etcetera::choose_base_strategy()?;
-
-    let mut pathbuf = base_dirs.data_dir();
     pathbuf.push("navi");
     pathbuf.push("cheats");
-    if !pathbuf.exists() {
+
+    if pathbuf.exists() {
         if let Some(path) = compiled_default_path(option_env!("NAVI_PATH")) {
             pathbuf = path;
         }
@@ -78,22 +67,11 @@ pub fn default_cheat_pathbuf() -> Result<PathBuf> {
 }
 
 pub fn default_config_pathbuf() -> Result<PathBuf> {
-    if cfg!(target_os = "macos") {
-        let base_dirs = etcetera::base_strategy::Apple::new()?;
+    let mut pathbuf = get_config_dir_by_platform()?;
 
-        let mut pathbuf = base_dirs.config_dir();
-        pathbuf.push("navi");
-        pathbuf.push("config.yaml");
-        if pathbuf.exists() {
-            return Ok(pathbuf);
-        }
-    }
-
-    let base_dirs = etcetera::choose_base_strategy()?;
-
-    let mut pathbuf = base_dirs.config_dir();
     pathbuf.push("navi");
     pathbuf.push("config.yaml");
+
     if !pathbuf.exists() {
         if let Some(path) = compiled_default_path(option_env!("NAVI_CONFIG")) {
             pathbuf = path;
@@ -108,6 +86,49 @@ pub fn cheat_paths(path: Option<String>) -> Result<String> {
     } else {
         Ok(default_cheat_pathbuf()?.to_string())
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Here are other functions, unrelated to CLI commands (or at least not directly related)
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/// Returns the data dir computed for each platform.
+///
+/// We are currently handling two cases: When the platform is `macOS` and when the platform isn't (including `Windows` and `Linux/Unix` platforms)
+fn get_data_dir_by_platform() -> Result<PathBuf> {
+    let pathbuf;
+
+    if cfg!(target_os = "macos") {
+        let base_dirs = etcetera::base_strategy::Apple::new()?;
+
+        pathbuf = base_dirs.data_dir();
+    } else {
+        let base_dirs = etcetera::choose_base_strategy()?;
+        pathbuf = base_dirs.data_dir()
+    }
+
+    Ok(pathbuf)
+}
+
+/// Returns the config dir computed for each platform.
+///
+/// We are currently handling two cases: When the platform is `macOS` and when the platform isn't (including `Windows` and `Linux/Unix` platforms)
+fn get_config_dir_by_platform() -> Result<PathBuf> {
+    let pathbuf;
+
+    if cfg!(target_os = "macos") {
+        let base_dirs = etcetera::base_strategy::Apple::new()?;
+
+        pathbuf = base_dirs.config_dir();
+    } else {
+        let base_dirs = etcetera::choose_base_strategy()?;
+
+        pathbuf = base_dirs.config_dir();
+    }
+
+    Ok(pathbuf)
 }
 
 pub fn tmp_pathbuf() -> Result<PathBuf> {
