@@ -12,8 +12,7 @@ pub enum Shell {
     Fish,
     Elvish,
     Nushell,
-    #[allow(clippy::enum_variant_names)]
-    PowerShell,
+    Powershell,
 }
 
 #[derive(Error, Debug)]
