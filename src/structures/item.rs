@@ -18,6 +18,6 @@ impl Item {
     }
 
     pub fn hash(&self) -> u64 {
-        fnv(&format!("{}{}", &self.tags.trim(), &self.comment.trim()))
+        fnv(&format!("{}{}{}", &self.tags.trim(), &self.comment.trim(), &self.snippet.trim()))
     }
 }
