@@ -30,4 +30,6 @@ $null = New-Module {
             [Microsoft.PowerShell.PSConsoleReadLine]::Insert([String]$output)
         }
     }
+
+    Set-PSReadlineKeyHandler -BriefDescription "A keybinding to open Navi Widget" -Chord Ctrl+g -ScriptBlock { Invoke-NaviWidget }
 }
