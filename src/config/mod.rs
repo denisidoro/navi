@@ -4,11 +4,11 @@ mod yaml;
 
 use crate::commands::func::Func;
 use crate::finder::FinderChoice;
+use crate::prelude::debug;
 pub use cli::*;
 use crossterm::style::Color;
 use env::EnvConfig;
 use yaml::YamlConfig;
-use crate::prelude::debug;
 
 lazy_static! {
     pub static ref CONFIG: Config = Config::new();
@@ -79,7 +79,7 @@ impl Config {
             .or_else(|| {
                 let p = self.yaml.cheats.paths.clone();
 
-                if ! p.is_empty() {
+                if !p.is_empty() {
                     debug!("MULTIPLE YAML PATH: {}", p.as_slice().join(","));
                 }
 
@@ -91,16 +91,19 @@ impl Config {
             })
             .or_else(|| {
                 if self.yaml.cheats.path.is_some() {
-                    debug!("DEPRECATED UNIQUE YAML PATH: {}", self.yaml.cheats.path.as_ref().unwrap());
+                    debug!(
+                        "DEPRECATED UNIQUE YAML PATH: {}",
+                        self.yaml.cheats.path.as_ref().unwrap()
+                    );
                 }
 
-
                 self.yaml.cheats.path.clone()
-            }).or_else(|| {
+            })
+            .or_else(|| {
                 debug!("No specific path given!");
 
-            None
-        })
+                None
+            })
     }
 
     pub fn finder(&self) -> FinderChoice {
