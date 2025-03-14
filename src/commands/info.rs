@@ -1,8 +1,8 @@
+use crate::filesystem;
+use crate::prelude::*;
 use clap::Args;
 use clap::ValueEnum;
 use crossterm::style::Stylize;
-use crate::filesystem;
-use crate::prelude::*;
 
 #[derive(Debug, Clone, Args)]
 pub struct Input {
@@ -19,7 +19,7 @@ pub enum Info {
     ConfigPath,
 
     DefaultCheatsPath,
-    DefaultConfigPath
+    DefaultConfigPath,
 }
 
 impl Runnable for Input {
@@ -32,10 +32,18 @@ impl Runnable for Input {
             Info::ConfigExample => println!("{}", include_str!("../../docs/config_file_example.yaml")),
 
             // Here should be the old deprecated default value commands
-            Info::CheatsPath => println!("{} Please use `info default-cheats-path` instead.\n\n\
-                {}","DEPRECATED:".red(), &filesystem::default_cheat_pathbuf()?.to_string()),
-            Info::ConfigPath => println!("{} Please use `info default-config-path` instead.\n\n\
-                {}", "DEPRECATED:".red(), &filesystem::default_config_pathbuf()?.to_string()),
+            Info::CheatsPath => println!(
+                "{} Please use `info default-cheats-path` instead.\n\n\
+                {}",
+                "DEPRECATED:".red(),
+                &filesystem::default_cheat_pathbuf()?.to_string()
+            ),
+            Info::ConfigPath => println!(
+                "{} Please use `info default-config-path` instead.\n\n\
+                {}",
+                "DEPRECATED:".red(),
+                &filesystem::default_config_pathbuf()?.to_string()
+            ),
 
             // Here should be the default values (computed at compile time)
             Info::DefaultCheatsPath => println!("{}", &filesystem::default_cheat_pathbuf()?.to_string()),
