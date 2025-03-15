@@ -54,7 +54,6 @@ There are multiple ways to use **navi**:
   - pros: you can use your cheatsheets in any command-line app even in SSH sessions
 - as [aliases](docs/cheatsheet_syntax.md#aliases)
 - as a [shell scripting tool](docs/shell_scripting.md)
-- as an [Alfred workflow](docs/alfred.md)
 
 In particular, check [these instructions](https://github.com/denisidoro/navi/issues/491) if you want to replicate what's shown in the demo above.
 
