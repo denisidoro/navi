@@ -295,7 +295,7 @@ mod tests {
     #[test]
     #[cfg(target_family = "windows")]
     fn multiple_paths() {
-        let p = r#"C:\Users\Administrator\AppData\Roaming\navi\config.yaml"#;
+        let p = r#"%appdata%\navi\config.yaml"#;
         let paths = &[p; 2].join(JOIN_SEPARATOR);
         assert_eq!(paths_from_path_param(paths).collect::<Vec<_>>(), [p; 2]);
     }
