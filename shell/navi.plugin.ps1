@@ -8,6 +8,7 @@ $null = New-Module {
             Arguments = $args;
             RedirectStandardOutput = $true;
             WorkingDirectory = $PWD;
+            UseShellExecute = $false;
         }
         $p = [System.Diagnostics.Process]@{StartInfo = $startArgs}
 
