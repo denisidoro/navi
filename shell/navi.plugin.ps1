@@ -42,6 +42,7 @@ $null = New-Module {
             }
         }
 
+        [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
         [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 
         ### Handling the case when the user escapes without selecting any entry
