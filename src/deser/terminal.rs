@@ -36,7 +36,7 @@ pub fn write(item: &Item) -> String {
     format!(
             "{tags_short}{delimiter}{comment_short}{delimiter}{snippet_short}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}{file_index}{delimiter}\n",
             tags_short = style(limit_str(&item.tags, tag_width_percentage)).with(CONFIG.tag_color()),
-            comment_short = style(limit_str(&item.comment, comment_width_percentage)).with(CONFIG.comment_color()),
+            comment_short = style(limit_str(&fix_newlines(&item.comment), comment_width_percentage)).with(CONFIG.comment_color()),
             snippet_short = style(limit_str(&fix_newlines(&item.snippet), snippet_width_percentage)).with(CONFIG.snippet_color()),
             tags = item.tags,
             comment = item.comment,
