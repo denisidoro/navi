@@ -32,8 +32,9 @@ Lines starting with:
 
 All the other non-empty lines are considered as executable commands.
 
-Tip: if you are editing cheatsheets in Visual Studio Code, you could enable syntax highlighting
-by installing [this extension](https://marketplace.visualstudio.com/items?itemName=yanivmo.navi-cheatsheet-language).
+> [!TIP]
+> If you are editing cheatsheets in Visual Studio Code, you could enable syntax highlighting
+> by installing [this extension](https://marketplace.visualstudio.com/items?itemName=yanivmo.navi-cheatsheet-language).
 
 If you use `.cheat.md` as an extension of cheat files, you can place commands in code blocks fenced with triple backticks (```` ``` ````).
 
