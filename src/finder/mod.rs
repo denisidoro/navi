@@ -116,10 +116,12 @@ impl FinderChoice {
             "--bind",
             format!("ctrl-j:down,ctrl-k:up{bindings}").as_str(),
             "--exact",
+            "--read0",
+            "--print0",
         ]);
 
         if !opts.show_all_columns {
-            command.args(["--with-nth", "1,2,3"]);
+            command.args(["--with-nth", "1"]);
         }
 
         if !opts.prevent_select1 {
