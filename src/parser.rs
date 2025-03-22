@@ -225,9 +225,13 @@ impl<'a> Parser<'a> {
 
         let write_fn = self.write_fn;
 
-        self.writer
-            .write_all(write_fn(item).as_bytes())
-            .context("Failed to write command to finder's stdin")
+        let string = write_fn(item);
+        //eprintln!("string as written by write_fn:\n{}", string);
+
+        return self
+            .writer
+            .write_all(string.as_bytes())
+            .context("Failed to write command to finder's stdin");
     }
 
     pub fn read_lines(
@@ -257,9 +261,9 @@ impl<'a> Parser<'a> {
 
             // blank
             if line.is_empty() {
-                if !item.snippet.is_empty() {
-                    item.snippet.push_str(deser::LINE_SEPARATOR);
-                }
+                // if !item.snippet.is_empty() {
+                //     item.snippet.push_str(deser::LINE_SEPARATOR);
+                // }
             }
             // tag
             else if line.starts_with('%') {

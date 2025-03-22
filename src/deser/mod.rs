@@ -19,7 +19,7 @@ pub fn with_new_lines(txt: String) -> String {
 pub fn fix_newlines(txt: &str) -> String {
     if txt.contains(NEWLINE_ESCAPE_CHAR) {
         (*NEWLINE_REGEX)
-            .replace_all(txt.replace(LINE_SEPARATOR, "  ").as_str(), "")
+            .replace_all(txt.replace(LINE_SEPARATOR, "\n").as_str(), "")
             .to_string()
     } else {
         txt.to_string()
