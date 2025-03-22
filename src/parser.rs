@@ -258,9 +258,9 @@ impl<'a> Parser<'a> {
 
             // blank
             if line.is_empty() {
-                // if !item.snippet.is_empty() {
-                //     item.snippet.push_str(deser::LINE_SEPARATOR);
-                // }
+                if !item.snippet.is_empty() && inside_snippet {
+                    item.snippet.push_str(deser::LINE_SEPARATOR);
+                }
             }
             // tag
             else if line.starts_with('%') {
