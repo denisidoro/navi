@@ -225,12 +225,9 @@ impl<'a> Parser<'a> {
 
         let write_fn = self.write_fn;
 
-        let string = write_fn(item);
-        //eprintln!("string as written by write_fn:\n{}", string);
-
         return self
             .writer
-            .write_all(string.as_bytes())
+            .write_all(write_fn(item).as_bytes())
             .context("Failed to write command to finder's stdin");
     }
 
