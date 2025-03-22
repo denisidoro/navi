@@ -4,6 +4,7 @@ mod yaml;
 
 use crate::commands::func::Func;
 use crate::finder::FinderChoice;
+use crate::prelude::debug;
 pub use cli::*;
 use crossterm::style::Color;
 use env::EnvConfig;
@@ -61,19 +62,45 @@ impl Config {
     }
 
     pub fn path(&self) -> Option<String> {
+        if self.clap.path.is_some() {
+            debug!("CLAP PATH: {}", self.clap.path.as_ref().unwrap());
+        }
+
         self.clap
             .path
             .clone()
-            .or_else(|| self.env.path.clone())
+            .or_else(|| {
+                if self.env.path.is_some() {
+                    debug!("ENV PATH: {}", self.env.path.as_ref().unwrap());
+                }
+
+                self.env.path.clone()
+            })
             .or_else(|| {
                 let p = self.yaml.cheats.paths.clone();
+
                 if p.is_empty() {
                     None
                 } else {
+                    debug!("MULTIPLE YAML PATH: {}", p.as_slice().join(","));
                     Some(p.join(crate::filesystem::JOIN_SEPARATOR))
                 }
             })
-            .or_else(|| self.yaml.cheats.path.clone())
+            .or_else(|| {
+                if self.yaml.cheats.path.is_some() {
+                    debug!(
+                        "DEPRECATED UNIQUE YAML PATH: {}",
+                        self.yaml.cheats.path.as_ref().unwrap()
+                    );
+                }
+
+                self.yaml.cheats.path.clone()
+            })
+            .or_else(|| {
+                debug!("No specific path given!");
+
+                None
+            })
     }
 
     pub fn finder(&self) -> FinderChoice {
