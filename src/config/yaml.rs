@@ -113,7 +113,7 @@ impl YamlConfig {
         if let Some(yaml) = env.config_yaml.as_ref() {
             // We're getting the configuration from the environment variable `NAVI_CONFIG_YAML`
             let mut cfg = Self::from_str(yaml)?;
-            cfg.source = format!("NAVI_CONFIG_YAML={}", yaml);
+            cfg.source = "ENV_NAVI_CONFIG_YAML".to_string();
 
             return Ok(cfg);
         }
@@ -122,7 +122,7 @@ impl YamlConfig {
 
             let p = PathBuf::from(path_str);
             let mut cfg = YamlConfig::from_path(&p)?;
-            cfg.source = format!("NAVI_CONFIG_YAML={:?}", p).to_string();
+            cfg.source = "ENV_NAVI_CONFIG".to_string();
 
             return Ok(cfg);
         }
@@ -131,13 +131,13 @@ impl YamlConfig {
 
             if p.exists() {
                 let mut cfg = YamlConfig::from_path(&p)?;
-                cfg.source = p.to_string();
+                cfg.source = "DEFAULT_CONFIG_FILE".to_string();
 
                 return Ok(cfg);
             }
         }
 
-        // AS no configuration has been found, we set the YAML configuration
+        // As no configuration has been found, we set the YAML configuration
         // to be its default (built-in) value.
         Ok(YamlConfig::default())
     }
@@ -200,7 +200,7 @@ impl Default for YamlConfig {
             search: Default::default(),
             shell: Default::default(),
             client: Default::default(),
-            source: "built-in".to_string(),
+            source: "BUILT-IN".to_string(),
         }
     }
 }

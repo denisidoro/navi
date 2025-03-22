@@ -79,13 +79,10 @@ impl Config {
             .or_else(|| {
                 let p = self.yaml.cheats.paths.clone();
 
-                if !p.is_empty() {
-                    debug!("MULTIPLE YAML PATH: {}", p.as_slice().join(","));
-                }
-
                 if p.is_empty() {
                     None
                 } else {
+                    debug!("MULTIPLE YAML PATH: {}", p.as_slice().join(","));
                     Some(p.join(crate::filesystem::JOIN_SEPARATOR))
                 }
             })
@@ -224,10 +221,5 @@ impl Config {
         } else {
             None
         }
-    }
-
-    // Returns the current configuration source
-    pub fn get_source(&self) -> String {
-        self.yaml.source.clone()
     }
 }
