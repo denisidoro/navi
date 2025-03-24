@@ -36,7 +36,7 @@ but a quick working command to go there would be:
 
 > [!WARNING]
 > Navi **DOESN'T SUPPORT** as of now importing cheatsheets from other tools
-> but is able to **work with** TLDR and CheatSH.
+> but is able to **work with** TLDR and Cheat.sh.
 
 ![Demo](https://user-images.githubusercontent.com/3226564/91878474-bae27500-ec55-11ea-8b19-17876178e887.gif)
 

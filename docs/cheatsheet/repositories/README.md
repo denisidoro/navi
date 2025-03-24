@@ -78,11 +78,11 @@ However, you can achieve this by using `git` and `crontab`.
 >
 >- In this example, the cron job is triggered every day at 11am.
 >  
->  You might want to check out [crontab guru](https://crontab.guru/) regarding crontab.
+>    You might want to check out [crontab guru](https://crontab.guru/) regarding crontab.
 >
 >- The full paths to `navi` and `git` may differ in your setup.
 >
->  Check their actual values using `which` as `which <program>`.
+>    Check their actual values using `which` as `which <program>`.
 >
 >- Don't forget to replace `<user>__<repo>` with the actual folder name
 
