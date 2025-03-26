@@ -287,8 +287,7 @@ impl<'a> Parser<'a> {
                     should_break = self.write_cmd(&item).is_err();
                     item.snippet = String::from("");
                     item.comment = without_prefix(&line);
-                }
-                else {
+                } else {
                     if !item.comment.is_empty() {
                         item.comment.push_str(deser::LINE_SEPARATOR);
                     }
