@@ -266,6 +266,7 @@ impl<'a> Parser<'a> {
             else if line.starts_with('%') {
                 should_break = self.write_cmd(&item).is_err();
                 item.snippet = String::from("");
+                item.comment = String::from("");
                 item.tags = without_prefix(&line);
             }
             // dependency
