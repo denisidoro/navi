@@ -47,7 +47,7 @@ pub fn write(item: &Item) -> String {
         .map(|i| {
             format!(
                 "{tags_short}{delimiter}{comment_line_i}{delimiter}{snippet_line_i}",
-                tags_short     = style(limit_str(
+                tags_short = style(limit_str(
                     if i == 0 { &item.tags } else { "" },
                     tag_width_percentage
                 ))

@@ -119,11 +119,7 @@ impl FinderChoice {
         ]);
 
         if !opts.show_all_columns {
-            command.args([
-                "--read0",
-                "--print0",
-                "--with-nth", "1",
-            ]);
+            command.args(["--read0", "--print0", "--with-nth", "1"]);
         }
 
         if !opts.prevent_select1 {
