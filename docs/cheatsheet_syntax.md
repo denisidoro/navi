@@ -11,7 +11,7 @@
 
 ### Syntax overview
 
-Cheatsheets are described in `.cheat` files that look like this:
+Cheatsheets are described in `.cheat` (or `.cheat.md`) files that look like this:
 
 ```sh
 % git, code
@@ -32,8 +32,22 @@ Lines starting with:
 
 All the other non-empty lines are considered as executable commands.
 
-Tip: if you are editing cheatsheets in Visual Studio Code, you could enable syntax highlighting
-by installing [this extension](https://marketplace.visualstudio.com/items?itemName=yanivmo.navi-cheatsheet-language).
+> [!TIP]
+> If you are editing cheatsheets in Visual Studio Code, you could enable syntax highlighting
+> by installing this extension: [@yanivmo/navi-cheatsheet-language](https://marketplace.visualstudio.com/items?itemName=yanivmo.navi-cheatsheet-language).
+
+You can place commands in code blocks fenced with triple backticks (```` ``` ````).
+
+````sh
+% git, code
+
+# Change branch
+```sh
+git checkout <branch>
+```
+
+$ branch: git branch | awk '{print $NF}'
+````
 
 ### Variables
 
