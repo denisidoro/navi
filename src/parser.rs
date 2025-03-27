@@ -258,7 +258,7 @@ impl<'a> Parser<'a> {
 
             // blank
             if line.is_empty() {
-                if !item.snippet.is_empty() && inside_snippet {
+                if !item.snippet.is_empty() {
                     item.snippet.push_str(deser::LINE_SEPARATOR);
                 }
             }
