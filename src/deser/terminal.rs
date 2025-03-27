@@ -33,14 +33,15 @@ lazy_static! {
 
 pub fn write(item: &Item) -> String {
     let (tag_width_percentage, comment_width_percentage, snippet_width_percentage) = *COLUMN_WIDTHS;
+    let snippet = &item.snippet.trim_end_matches(LINE_SEPARATOR);
 
     let separator_count = max(
-        item.snippet.matches(LINE_SEPARATOR).count(),
+        snippet.matches(LINE_SEPARATOR).count(),
         item.comment.matches(LINE_SEPARATOR).count(),
     );
 
     let splitted_comment = item.comment.split(LINE_SEPARATOR).collect::<Vec<&str>>();
-    let splitted_snippet = item.snippet.split(LINE_SEPARATOR).collect::<Vec<&str>>();
+    let splitted_snippet = snippet.split(LINE_SEPARATOR).collect::<Vec<&str>>();
 
     let printer_item = (0..=separator_count)
         .map(|i| {
@@ -73,7 +74,7 @@ pub fn write(item: &Item) -> String {
             tags = item.tags,
             comment = item.comment,
             delimiter = DELIMITER,
-            snippet = &item.snippet.trim_end_matches(LINE_SEPARATOR),
+            snippet = snippet,
             file_index = item.file_index.unwrap_or(0),
         )
 }
