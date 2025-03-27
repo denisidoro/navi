@@ -34,7 +34,7 @@ All the other non-empty lines are considered as executable commands.
 
 > [!TIP]
 > If you are editing cheatsheets in Visual Studio Code, you could enable syntax highlighting
-> by installing [this extension](https://marketplace.visualstudio.com/items?itemName=yanivmo.navi-cheatsheet-language).
+> by installing this extension: [@yanivmo/navi-cheatsheet-language](https://marketplace.visualstudio.com/items?itemName=yanivmo.navi-cheatsheet-language).
 
 You can place commands in code blocks fenced with triple backticks (```` ``` ````).
 
