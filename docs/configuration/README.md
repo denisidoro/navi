@@ -11,14 +11,15 @@ Navi allows you to configure it with a YAML configuration.
       * [Defining the cheatsheets path with the environment variable](#defining-the-cheatsheets-path-with-the-environment-variable)
       * [Defining the cheatsheets path in the configuration file](#defining-the-cheatsheets-path-in-the-configuration-file)
         * [[DEPRECATED] - Using the `path` directive](#deprecated---using-the-path-directive)
-      * [Defining the cheatsheets path at runtime](#defining-the-cheatsheets-path-at-runtime)
-  * [Logging](#logging)
   * [Customization](#customization)
     * [Changing colors](#changing-colors)
       * [fzf color scheme](#fzf-color-scheme)
       * [Navi colors](#navi-colors)
     * [Resizing columns](#resizing-columns)
     * [Overriding fzf options](#overriding-fzf-options)
+      * [Overriding during cheats selection](#overriding-during-cheats-selection)
+      * [Overriding during values selection](#overriding-during-values-selection)
+      * [Overriding for all cases](#overriding-for-all-cases)
   * [Defining your own delimiter](#defining-your-own-delimiter)
 <!-- TOC -->
 
@@ -168,7 +169,7 @@ For all cases, navi exposes the `FZF_DEFAULT_OPTS` environment variable.
 
 #### Overriding during cheats selection
 
-If you want to override do the override with `--height 3`,
+If you want to do the override with `--height 3`,
 you can do it with the following syntax in the configuration file:
 
 ```yaml
@@ -185,7 +186,7 @@ export NAVI_FZF_OVERRIDES='--height 3'
 
 #### Overriding during values selection
 
-If you want to override do the override with `--height 3`,
+If you want to do the override with `--height 3`,
 you can do it with the following syntax in the configuration file:
 
 ```yaml
