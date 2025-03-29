@@ -1,7 +1,7 @@
 # See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
 * @denisidoro
-/.github/ @denisidoro
+.github/* @denisidoro
 
 shell/navi.plugin.ps1 @alexis-opolka
 docs/* @alexis-opolka
