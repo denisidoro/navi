@@ -1,12 +1,8 @@
 # Cheatsheet repositories
 
-## Table of contents
-
 <!-- TOC -->
 * [Cheatsheet repositories](#cheatsheet-repositories)
-  * [Table of contents](#table-of-contents)
   * [About](#about)
-  * [Browsing through cheatsheet repositories](#browsing-through-cheatsheet-repositories)
   * [Importing cheatsheet repositories](#importing-cheatsheet-repositories)
   * [Submitting cheatsheets](#submitting-cheatsheets)
   * [Auto-updating repositories](#auto-updating-repositories)
@@ -19,32 +15,10 @@ and mainly consists of `.cheat` files.
 
 This page is dedicated to the information you might need to work with `cheatsheet repositories`.
 
-## Browsing through cheatsheet repositories
-
-Navi lets you browse featured [GitHub](https://github.com) repositories registered in [@denisidoro/cheats/featured_repos.txt](https://github.com/denisidoro/cheats/blob/master/featured_repos.txt).
-
-You can find them within navi with the following command:
-
-```sh
-navi repo browse
-```
-
 ## Importing cheatsheet repositories
 
-You can import `cheatsheet repositories` using a working git-clone format.\
-This includes using an HTTPS URL or an SSH URI.
-
-- Import using HTTPS
-
-    ```sh
-    navi repo add https://github.com/denisidoro/cheats
-    ```
-
-- Import using SSH
-
-    ```shell
-    navi repo add git@github.com:denisidoro/cheats
-    ```
+You can import `cheatsheet repositories` with the `repo add` subcommand.\
+See [/docs/usage/commands/repo](/docs/usage/commands/repo/README.md#importing-cheatsheet-repositories) for more details.
 
 ## Submitting cheatsheets
 
