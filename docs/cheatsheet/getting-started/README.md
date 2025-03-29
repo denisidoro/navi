@@ -1,1 +1,1 @@
-# How to get started with navi
+# Cheatsheets - Getting started
