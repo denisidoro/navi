@@ -1,6 +1,6 @@
 # Installation of navi
 
-Navi can be installed by multiple ways, here is a list of referenced ways to do so.
+This is a reference of all known methods to install navi.
 
 > [!CAUTION]
 > Navi, as of now, has only two official builds, the released binaries on GitHub
@@ -71,7 +71,7 @@ choco install navi
 
 > [!CAUTION]
 > You currently need to create the config file `$env:USERPROFILE\AppData\Roaming\navi\config.yaml`
-> and define the `shell.command` directive as `powershell`.
+> and define the `shell.command` directive as `powershell` for navi to work correctly.
 > 
 > ```yaml
 > shell:
@@ -109,7 +109,7 @@ What you need to do is:
 ## Building from source
 
 You can also build navi from source, it's mainly used by contributors to
-test their modifications can be used by end users who want to build their own version.
+test their modifications but can be used by end users who want to build their own version.
 
 - You need to clone the repository:
 
