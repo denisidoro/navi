@@ -1,40 +1,48 @@
-## Using it for shell scripting
+# Navi and shell scripting
 
-For a real world scenario example, please check this [blog post](https://denisidoro.github.io/posts/cli-templates/).
+You can use Navi with shell scripting.
 
-Let's say you want to write a bash script that, among other things, asks the user to write the name of a git branch that should be checked out.
+The following blog post gives you an example of a real world scenario: [denisidoro.github.io/posts/cli-templates/](https://denisidoro.github.io/posts/cli-templates/)
 
-If you already have the [cheatsheet above](#cheatsheet-syntax), then you could write the following in your script:
+## Simply calling a cheat
+
+Below is an example on how to call a cheat from within navi:
 
 ```sh
 navi --query "change branch" --best-match
 ```
 
-**navi** will ask the user to fill all arguments needed.
+> [!NOTE]
+> Navi will ask the user to fill all arguments/variables needed.
 
-If you want to set the `<branch>` beforehand in your script:
+## Defining variables while calling
+
+If you want to set the `<branch>` beforehand in your script, you can do as follows:
 
 ```sh
 branch="master" navi --query "change branch" --best-match
 ```
 
-- no interactive input will be shown
-- the value for `<branch>` will be exactly the one passed as argument
+Navi will not show any interactive input and `<branch>` will be exactly the one defined while calling.
 
-If you want to filter some results for `<branch>`:
+## Filtering results for a variable
+
+If you want to filter some results for `<branch>`, you can do as follows:
 
 ```sh
 branch__query="master" navi --query "change branch" --best-match
 ```
 
-- an interactive input will be shown, unless a single entry is autoselected
-- the value for `<branch>` will be the one selected
+Navi will show any interactive input, unless a single entry is automatically selected and
+the value for `<branch>` will be the one selected by the user.
 
-If you want to select the best match for `<branch>`:
+## Selecting the best match for a variable
+
+If you want to select the best match for `<branch>`, you can do as follows:
 
 ```sh
 branch__best="master" navi --query "change branch" --best-match
 ```
 
-- no interactive input will be shown
-- the value for `<branch>` will be the one that best matches the one passed as argument
+Navi will not show any interactive input, and the value for `<branch>` will be the one that
+best matches the value passed as argument.
