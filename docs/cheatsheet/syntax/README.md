@@ -1,5 +1,18 @@
 # The syntax of a Navi cheatsheet
 
+<!-- TOC -->
+* [The syntax of a Navi cheatsheet](#the-syntax-of-a-navi-cheatsheet)
+  * [Syntax overview](#syntax-overview)
+  * [Variables](#variables)
+    * [Advanced variable options](#advanced-variable-options)
+    * [Variable dependency](#variable-dependency)
+      * [Implicit dependencies](#implicit-dependencies)
+      * [Explicit dependencies](#explicit-dependencies)
+    * [Variable as multiple arguments](#variable-as-multiple-arguments)
+  * [Extending cheats](#extending-cheats)
+  * [Multiline commands/snippets](#multiline-commandssnippets)
+  * [Aliases](#aliases)
+<!-- TOC -->
 
 ## Syntax overview
 
