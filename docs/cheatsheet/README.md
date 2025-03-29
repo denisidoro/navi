@@ -4,7 +4,7 @@
 * [Navi cheatsheets](#navi-cheatsheets)
   * [Working with `cheatsheet repositories`](#working-with-cheatsheet-repositories)
   * [Manually adding cheatsheets to navi](#manually-adding-cheatsheets-to-navi)
-  * [Submitting cheatsheets](#submitting-cheatsheets)
+  * [Choosing between queries and selection with variables](#choosing-between-queries-and-selection-with-variables)
   * [Using cheatsheets from other tools](#using-cheatsheets-from-other-tools)
 <!-- TOC -->
 
@@ -31,6 +31,17 @@ but a quick working command to go there would be:
     ```bash
     cd $(navi info default-cheats-path)
     ```
+
+## Choosing between queries and selection with variables
+
+Navi lets you use different methods to fill a variable value, when prompted.
+
+|    Keyboard key    |         Preference         |
+|:------------------:|:--------------------------:|
+|  <kbd> tab </kbd>  |   The query is preferred   |
+| <kbd> enter </kbd> | The selection is preferred |
+
+It means if you enter the <kbd> tab </kbd> key, navi will let you enter the value.
 
 ## Using cheatsheets from other tools
 

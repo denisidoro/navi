@@ -1,17 +1,10 @@
 # The syntax of a Navi cheatsheet
 
-- [Syntax overview](#syntax-overview)
-- [Folder structure](#folder-structure)
-- [Variables](#variables)
-- [Advanced variable options](#advanced-variable-options)
-- [Variable dependency](#variable-dependency)
-- [Multiline snippets](#multiline-snippets)
-- [Variable as multiple arguments](#variable-as-multiple-arguments)
-- [Aliases](#aliases)
 
-### Syntax overview
+## Syntax overview
 
-Cheatsheets are described in `.cheat` (or `.cheat.md`) files that look like this:
+Cheats are described in cheatsheet files.\
+A cheatsheet is a file that has a `.cheat` or `.cheat.md` extension and looks like this:
 
 ```sh
 % git, code
@@ -22,80 +15,89 @@ git checkout <branch>
 $ branch: git branch | awk '{print $NF}'
 ```
 
-Lines starting with:
+A cheatsheet can have the following elements:
 
-- `%`: determine the start of a new cheatsheet and should contain tags
-- `#`: should be descriptions of commands
-- `;`: are ignored. You can use them for metacomments
-- `$`: should contain commands that generate a list of possible values for a given argument [:information_source:](#variables)
-- `@`: should contain tags whose associated cheatsheet you want to base on [:information_source:](#extending-cheatsheets)
-
-All the other non-empty lines are considered as executable commands.
+|             Element              | Syntax |                                                                                       Description                                                                                        |
+|:--------------------------------:|:------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|       Tags as cheat titles       |  `%`   |                                       Lines starting with this character are considered the start of a new cheat command and should contain tags.                                        |
+|        Cheat Description         |  `#`   |                                                Lines starting with this character should be the description of the cheat you're writing.                                                 |
+| Cheat Comments (or Metacomments) |  `;`   |                                          Lines starting with this character will be ignored by navi but they can be great as editor's comments.                                          |
+|      Pre-defined variables       |  `$`   |   Lines starting with this character should contain commands that generate a list of possible values, <br/> <br/> :information_source: See [#variables](#variables) for more details.    |
+|         Extended cheatS          |  `@`   | Lines starting with this character should contain tags associated to other defined cheats. <br/> <br/> :information_source: See [#extending-cheats](#extending-cheats) for more details. |
+|       Executable commands        |  N/A   |                                                             All other non-empty lines are considered as executable commands.                                                             |
 
 > [!TIP]
 > If you are editing cheatsheets in Visual Studio Code, you could enable syntax highlighting
 > by installing this extension: [@yanivmo/navi-cheatsheet-language](https://marketplace.visualstudio.com/items?itemName=yanivmo.navi-cheatsheet-language).
 
-You can place commands in code blocks fenced with triple backticks (```` ``` ````).
+## Variables
 
-````sh
-% git, code
-
-# Change branch
-```sh
-git checkout <branch>
-```
-
-$ branch: git branch | awk '{print $NF}'
-````
-
-### Variables
-
-The interface prompts for variable names inside brackets (eg `<branch>`).
-
+Variables are defined with brackets inside executable commands (e.g. `<branch>`).\
 Variable names should only include alphanumeric characters and `_`.
 
-If there's a corresponding line starting with `$` for a variable, suggestions will be displayed. Otherwise, the user will be able to type any value for it.
-
-If you hit `<tab>` the query typed will be preferred. If you hit `<enter>` the selection will be preferred.
+You can show suggestions by using the Pre-defined variables lines (i.e. lines starting with`$`).\
+Otherwise, the user will be able to type any value for it.
 
 ### Advanced variable options
 
-For lines starting with `$` you can use `---` to customize the behavior of `fzf` or how the value is going to be used:
+For Pre-Defined variables lines, you can use `---` to customize the behavior of `fzf`
+or how the value is going to be used.
 
-```sh
-# This will pick the 3rd column and use the first line as header
-docker rmi <image_id>
+Below are examples of such customization:
 
-# Even though "false/true" is displayed, this will print "0/1"
-echo <mapped>
+- We define what column to use, the number of header lines and a delimiter between values.
 
-$ image_id: docker images --- --column 3 --header-lines 1 --delimiter '\s\s+'
-$ mapped: echo 'false true' | tr ' ' '\n' --- --map "grep -q t && echo 1 || echo 0"
-```
+    ```sh
+    # This will pick the 3rd column and use the first line as header
+    docker rmi <image_id>
+    
+    $ image_id: docker images --- --column 3 --header-lines 1 --delimiter '\s\s+'
+    ```
+
+- We modify the output values of a command
+
+    ```shell
+    # Even though "false/true" is displayed, this will print "0/1"
+    echo <mapped>
+
+    $ mapped: echo 'false true' | tr ' ' '\n' --- --map "grep -q t && echo 1 || echo 0"
+    ```
+
 
 The supported parameters are:
 
-- `--column <number>`: extracts a single column from the selected result
-- `--map <bash_code>`: _(experimental)_ applies a map function to the selected variable value
-- `--prevent-extra`: _(experimental)_ limits the user to select one of the suggestions
-- `--fzf-overrides <arg>`: _(experimental)_ applies arbitrary `fzf` overrides
-- `--expand`: _(experimental)_ converts each line into a separate argument
+| Parameter               |                                        Description                                        |
+|:------------------------|:-----------------------------------------------------------------------------------------:|
+| `--column <number>`     |                `<number>` is the column number to extract from the result.                |
+| `--map <bash_code>`     |   **_[EXPERIMENTAL]_** `<bash_code>` is a map function to apply to the variable value.    |
+| `--prevent-extra`       | **_[EXPERIMENTAL]_** This parameter will limit the user to select one of the suggestions. |
+| `--fzf-overrides <arg>` |    **_[EXPERIMENTAL]_** `<arg>` is an arbitrary argument to override `fzf` behaviour.     |
+| `--expand`              |   **_[EXPERIMENTAL]_** This parameter will convert each line into a separate argument.    |
+
 
 In addition, it's possible to forward the following parameters to `fzf`:
 
-- `--multi`
-- `--header-lines <number>`
-- `--delimiter <regex>`
-- `--query <text>`
-- `--filter <text>`
-- `--header <text>`
-- `--preview <bash_code>`
-- `--preview-window <text>`
+| Parameter forwarded to `fzf` |
+|:----------------------------:|
+|          `--multi`           |
+|  `--header-lines <number>`   |
+|    `--delimiter <regex>`     |
+|       `--query <text>`       |
+|      `--filter <text>`       |
+|      `--header <text>`       |
+|   `--preview <bash_code>`    |
+|  `--preview-window <text>`   |
 
 ### Variable dependency
 
-The command for generating possible inputs can implicitly refer other variables by using the `<varname>` syntax:
+Pre-Defined variables can refer other defined variables in two different ways, an implicit and explicit way.
+
+#### Implicit dependencies
+
+An implicit dependency is when you refer another variable with the same syntax used in
+executable commands (i.e. `<variable>`).
+
+The example below shows how we can depend on multiple variables to construct a path:
 
 ```sh
 # Should print /my/pictures/wallpapers
@@ -105,7 +107,11 @@ $ pictures_folder: echo "/my/pictures"
 $ wallpaper_folder: echo "<pictures_folder>/wallpapers"
 ```
 
-If you want to make dependencies explicit, you can use the `$varname` syntax:
+#### Explicit dependencies
+
+An explicit dependency is when you prepend a dollar sign (i.e. `$`) to the variable name.
+
+Below is an example of using explicit dependencies to give multiple choices:
 
 ```sh
 # If you select "hello" for <x>, the possible values of <y> will be "hello foo" and "hello bar"
@@ -118,9 +124,23 @@ $ x: echo "hello hi" | tr ' ' '\n'
 $ y: echo "$x foo;$x bar" | tr ';' '\n'
 ```
 
-### Extending cheatsheets
+### Variable as multiple arguments
 
-With the `@ same tags from other cheatsheet` syntax you can reuse the same variable in multiple cheatsheets.
+Variables can have multiple arguments,
+below is an example of using multiple arguments to cat multiple files at the same time.
+
+```sh
+# This will result into: cat "file1.json" "file2.json"
+cat <jsons>
+
+$ jsons: find . -iname '*.json' -type f -print --- --multi --expand
+```
+
+## Extending cheats
+
+Navi allows you to extend a cheat context with `Extended cheats` lines (i.e. starting with `@`).\
+If you put the same tags from another cheat, you will be able to share the same context and will
+be able to use the same variables, for example.
 
 ```sh
 % dirs, common
@@ -140,31 +160,45 @@ echo "<pictures_folder>/wallpapers"
 echo "<pictures_folder>/screenshots"
 ```
 
-### Multiline snippets
+## Multiline commands/snippets
 
-Commands may be multiline:
+Commands can be multiline, we call them snippets.
 
-```sh
-# This will output "foo\nyes"
-echo foo
-true \
-   && echo yes \
-   || echo no
-```
+- You can write them as follows:
 
-### Variable as multiple arguments
+    ```sh
+    % bash, foo
 
-```sh
-# This will result into: cat "file1.json" "file2.json"
-cat <jsons>
+    # This will output "foo\nyes"
+    echo foo
+    true \
+       && echo yes \
+       || echo no
+    ```
 
-$ jsons: find . -iname '*.json' -type f -print --- --multi --expand
-```
-### Aliases
+- Or, you can place them inside Markdown code blocks, delimited by triple backticks (```` ``` ````):
 
-**navi** doesn't have support for aliases as first-class citizens at the moment.
+    ````sh
+    % git, code
+    
+    # Change branch
+    ```sh
+    git checkout <branch>
+    ```
+    
+    $ branch: git branch | awk '{print $NF}'
+    ````
 
-However, it is trivial to create aliases using **navi** + a few conventions.
+
+## Aliases
+
+**navi** doesn't have support for aliases as first-class citizens at the moment.\
+However, it is easy to create aliases using **navi** + a few conventions.
+
+> [!CAUTION]
+> The examples below will only work if you use **navi** as a shell scripting tool.
+>
+> See [/docs/usage/shell-scripting](/docs/usage/shell-scripting/README.md) for more details.
 
 For example, suppose you decide to end some of your commands with `:: <some_alias>`:
 
@@ -178,7 +212,7 @@ echo lorem ipsum
 echo foo bar
 ```
 
-Then, if you use **navi** as a [shell scripting tool](shell_scripting.md), you could add something similar to this in your `.bashrc`-like file:
+You could add something similar to this in your `.bashrc`-like file:
 
 ```bash
 navialias() {
