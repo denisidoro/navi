@@ -1,3 +1,11 @@
+# Installation of navi
+
+
+---
+
+WIP below
+
+
 ## Installation
 
 - [Installing the main binary](#installing-the-main-binary)
