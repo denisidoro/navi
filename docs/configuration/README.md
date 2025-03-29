@@ -26,7 +26,7 @@ see [/docs/usage/commands/info/](/docs/usage/commands/info/README.md#default-con
 
 ### Cheatsheets paths
 
-Navi checks the paths in the following order until either it finds a value:
+Navi checks the paths in the following order until it finds a value:
 
 1. the `$NAVI_PATH` environment variable
 2. the configuration file
