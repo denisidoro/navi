@@ -44,7 +44,7 @@ jobs:
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       - name: Upload binaries to release
-        uses: alexis-opolka/upload-release-action
+        uses: svenstaro/upload-release-action@v1-release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: target/tar/navi.${{ steps.build.outputs.EXTENSION }}
