@@ -2,6 +2,26 @@
 
 Navi allows you to configure it with a YAML configuration.
 
+<!-- TOC -->
+* [Configuring Navi](#configuring-navi)
+  * [Paths and Environment Variables](#paths-and-environment-variables)
+    * [The default configuration file path](#the-default-configuration-file-path)
+    * [Cheatsheets paths](#cheatsheets-paths)
+      * [The default cheatsheets path](#the-default-cheatsheets-path)
+      * [Defining the cheatsheets path with the environment variable](#defining-the-cheatsheets-path-with-the-environment-variable)
+      * [Defining the cheatsheets path in the configuration file](#defining-the-cheatsheets-path-in-the-configuration-file)
+        * [[DEPRECATED] - Using the `path` directive](#deprecated---using-the-path-directive)
+      * [Defining the cheatsheets path at runtime](#defining-the-cheatsheets-path-at-runtime)
+  * [Logging](#logging)
+  * [Customization](#customization)
+    * [Changing colors](#changing-colors)
+      * [fzf color scheme](#fzf-color-scheme)
+      * [Navi colors](#navi-colors)
+    * [Resizing columns](#resizing-columns)
+    * [Overriding fzf options](#overriding-fzf-options)
+  * [Defining your own delimiter](#defining-your-own-delimiter)
+<!-- TOC -->
+
 ## Paths and Environment Variables
 
 On the technical side, navi uses the `directories-next` crate for rust,
@@ -157,8 +177,24 @@ style:
 
 ### Overriding fzf options
 
-If you want to override `$FZF_DEFAULT_OPTS` with `--height 3`,
-you can do it with the following syntax:
+You can override fzf options for two different cases:
+
+- During the cheats selection
+
+  Navi exposes the `overrides` directive in the configuration file
+  and the `NAVI_FZF_OVERRIDES` environment variable.
+
+- During the pre-defined variable values selection
+
+  Navi exposes the `overrides_var` directive in the configuration file
+  and the `NAVI_FZF_OVERRIDES_VAR` environment variable.
+
+For all cases, navi exposes the `FZF_DEFAULT_OPTS` environment variable.
+
+#### Overriding during cheats selection
+
+If you want to override do the override with `--height 3`,
+you can do it with the following syntax in the configuration file:
 
 ```yaml
 finder:
@@ -166,12 +202,35 @@ finder:
   overrides: --height 3
 ```
 
-or
+But you can also define the environment variable like this:
+
+```bash
+export NAVI_FZF_OVERRIDES='--height 3'
+```
+
+#### Overriding during values selection
+
+If you want to override do the override with `--height 3`,
+you can do it with the following syntax in the configuration file:
 
 ```yaml
 finder:
   command: fzf
   overrides_var: --height 3
+```
+
+But you can also define the environment variable like this:
+
+```bash
+export NAVI_FZF_OVERRIDES_VAR='--height 3'
+```
+
+#### Overriding for all cases
+
+You can define the environment variable like this:
+
+```bash
+export FZF_DEFAULT_OPTS="--height 3"
 ```
 
 > [!NOTE]
