@@ -1,160 +1,147 @@
 # Installation of navi
 
+Navi can be installed by multiple ways, here is a list of referenced ways to do so.
 
----
+> [!CAUTION]
+> Navi, as of now, has only two official builds, the released binaries on GitHub
+> and the published package on brew.
+> 
+> All the other packages are community-maintained.
 
-WIP below
+## Using package managers
 
-
-## Installation
-
-- [Installing the main binary](#installing-the-main-binary)
-  - [Using Homebrew](#using-homebrew)
-  - [Using Gentoo](#using-gentoo)
-  - [Using nix](#using-nix)
-  - [Using cargo](#using-cargo)
-  - [Using install script](#using-install-script)
-  - [Downloading pre-compiled binaries](#downloading-pre-compiled-binaries)
-  - [Building from source](#building-from-source)
-  - [Other package managers](#other-package-managers)
-- [Installing the shell widget](#installing-the-shell-widget)
-
-### Installing the main binary
-
-#### Using [Homebrew](http://brew.sh/)
+### Homebrew
 
 ```sh
 brew install navi
 ```
 
-#### Using [Gentoo](https://gentoo.org/)
+> [!NOTE]
+> See [brew.sh](https://brew.sh/) for more details.
 
-Be sure to [enable](https://wiki.gentoo.org/wiki/Ebuild_repository) the [GURU overlay](https://gpo.zugaina.org/Overlays/guru/app-misc/navi).
+### Using Gentoo
+
+> [!WARNING]
+> You need to enable the GURU overlay for the instructions below to work correctly.
+> 
+> For more details see:
+> 
+> - [wiki.gentoo.org/wiki/Ebuild_repository](https://wiki.gentoo.org/wiki/Ebuild_repository)
+> - [gpo.zugaina.org/Overlays/guru/app-misc/navi](https://gpo.zugaina.org/Overlays/guru/app-misc/navi).
 
 ```sh
 emerge -a app-misc/navi
 ```
 
-#### Using [pacman](https://wiki.archlinux.org/title/Pacman)
+> [!NOTE]
+> See [Gentoo.org](https://gentoo.org/) for more details.
+
+### Using Pacman
 
 ```sh
 pacman -S navi
 ```
 
-#### Using [nix](https://nixos.org/)
+> [!NOTE]
+> See [wiki.archlinux.org/title/Pacman](https://wiki.archlinux.org/title/Pacman) for more details.
+
+### Using nix
 
 ```sh
 nix-env -iA nixpkgs.navi
 ```
 
-#### Using [cargo](https://github.com/rust-lang/cargo)
+> [!NOTE]
+> See [nixos.org](https://nixos.org/) for more details
+
+### Using Cargo
 
 ```bash
 cargo install --locked navi
 ```
 
-#### Using [choco](https://community.chocolatey.org/packages/navi)
+> [!NOTE]
+> See [@rust-lang/cargo](https://github.com/rust-lang/cargo) for more details.
 
-For Windows user, using powershell
+### Using Chocolatey
 
-1. Install package via choco
-   ```bash
-   choco install navi
-   ```
-2. Create `$env:USERPROFILE\AppData\Roaming\navi\config.yaml` and override `shell.command` as per [config_file_example.yaml](./config_file_example.yaml)
+```bash
+choco install navi
+```
 
-   ```
-   style:
-     tag:
-       color: cyan
-     comment:
-       color: grey
-     snippet:
-       color: white
+> [!CAUTION]
+> You currently need to create the config file `$env:USERPROFILE\AppData\Roaming\navi\config.yaml`
+> and define the `shell.command` directive as `powershell`.
+> 
+> ```yaml
+> shell:
+>   command: powershell
+> ```
 
-   shell:
-     command: powershell
-   ```
+> [!NOTE]
+> See [community.chocolatey.org](https://community.chocolatey.org) for more details.
 
-   Remark: Above example also adds custom colors for better readability in case you use standard blue for your Powershell
+## Using the installation script
 
-#### Using install script
+Navi has an installation script ready for you to use, you can call it like this:
 
 ```bash
 bash <(curl -sL https://raw.githubusercontent.com/denisidoro/navi/master/scripts/install)
-
-# (optional) to set directories:
-# BIN_DIR=/usr/local/bin bash <(curl -sL https://raw.githubusercontent.com/denisidoro/navi/master/scripts/install)
 ```
 
-#### Downloading pre-compiled binaries
-
-- download the correct binary [here](https://github.com/denisidoro/navi/releases/latest)
-- extract the content to your `$PATH`
-
-#### Building from source
+If you need to define the directory for the binary, you can call it like this:
 
 ```bash
-git clone https://github.com/denisidoro/navi ~/.navi
-cd ~/.navi
-make install
-
-# (optional) to set the install directory:
-# make BIN_DIR=/usr/local/bin install
+BIN_DIR=/usr/local/bin bash <(curl -sL https://raw.githubusercontent.com/denisidoro/navi/master/scripts/install)
 ```
 
-##### Compile time environment variables
+## Downloading pre-compiled binaries
 
-**navi** supports environment variables at compile time that modify the behavior of the binary at runtime:
+With each release, we try our best to build and publish a binary for each
+supported platform, you can find them here:
+[@denisidoro/navi/releases/latest](https://github.com/denisidoro/navi/releases/latest)
 
-- `NAVI_PATH` (directory path value): If the `cheats` directory in the user's directory does not exist, **navi** uses this path (if it exists), as a fallback location to look for cheat files. Use case: system-wide installed, shared used cheatsheets folder.
-- `NAVI_CONFIG` (file path value): If the `config.yaml` file in the user's directory does not exist, **navi** uses this path (if it exists), as a fallback location to look for a configuration file. Use case: system-wide installed, shared used configuration file.
+What you need to do is:
 
-#### Other package managers
+- to download the binary corresponding to the version you want to install
+- to extract the content of the archive to your `$PATH`
+
+## Building from source
+
+You can also build navi from source, it's mainly used by contributors to
+test their modifications can be used by end users who want to build their own version.
+
+- You need to clone the repository:
+
+    ```bash
+    git clone https://github.com/denisidoro/navi && cd navi
+    ```
+
+- Call `make`
+
+    ```bash
+    make install
+    ```
+
+You can specify the binary directory with:
+
+```bash
+make BIN_DIR=/usr/local/bin install
+```
+
+## Compile time environment variables
+
+**navi** supports environment variables at compile time that will modify the behavior of navi at runtime, they are:
+
+| Environment variable | Description                                                 |
+|----------------------|-------------------------------------------------------------|
+| `NAVI_PATH`          | This defines the default path used by navi for cheatsheets. |
+| `NAVI_CONFIG`        | This defines the default configuration file used by navi.   |
+
+## Other package managers
 
 You can find **navi** for more package managers by clicking on the image below:
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/navi.svg)](https://repology.org/project/navi/versions)
 
 Feel free to be the maintainer of **navi** for any package manager you'd like!
-
-### Installing the shell widget
-
-If you want to install it, add this line to your `.bashrc`-like file:
-
-```sh
-# bash
-eval "$(navi widget bash)"
-
-# zsh
-eval "$(navi widget zsh)"
-
-# fish
-navi widget fish | source
-
-# elvish
-eval (navi widget elvish | slurp)
-
-# xonsh
-# xpip install xontrib-navi # ← run in your xonsh session to install xontrib
-xontrib load navi # ← add to your xonsh run control file
-```
-
-#### Nushell
-
-Due to Nushell's [unique design](https://www.nushell.sh/book/thinking_in_nu.html#think-of-nushell-as-a-compiled-language), it is not possible to `eval` a piece of code dynamically like in other shells therefore the integration process is a bit more involved. Here is an example: 
-1. run `^navi widget nushell | save ($nu.default-config-dir | path join "navi-integration.nu")`
-2. add the following lines to `config.nu`:
-    ```nushell
-    source ($nu.default-config-dir | path join "navi-integration.nu")
-    ```
-
-
-By default, `Ctrl+G` is assigned to launching **navi** (in xonsh can be customized with `$X_NAVI_KEY`, see [xontrib-navi](https://github.com/eugenesvk/xontrib-navi) for details).
-
-There's currently no way to customize the widget behavior out-of-the-box. If you want to change the keybinding or the **navi** flags used by the widget, please:
-
-1. run, e.g., `navi widget bash` in your terminal
-2. copy the output
-3. paste the output in your `.bashrc`-like file
-4. edit the contents accordingly
