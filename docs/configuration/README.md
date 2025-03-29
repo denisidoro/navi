@@ -28,7 +28,7 @@ On the technical side, navi uses the `directories-next` crate for rust,
 which defines platform-specific locations to store the configuration files,
 the cache and other types of files an application might need.
 
-> [!TIPS]
+> [!TIP]
 > For example, this is why cheatsheets are being stored in `~/Library/Application Support/navi` on macOS.
 
 > [!NOTE]
@@ -46,7 +46,7 @@ see [/docs/usage/commands/info/](/docs/usage/commands/info/README.md#default-con
 
 ### Cheatsheets paths
 
-Navi checks the paths in the following order until either it finds a value:
+Navi checks the paths in the following order until it finds a value:
 
 1. the `$NAVI_PATH` environment variable
 2. the configuration file
