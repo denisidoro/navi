@@ -35,8 +35,8 @@ A cheatsheet can have the following elements:
 |       Tags as cheat titles       |  `%`   |                                       Lines starting with this character are considered the start of a new cheat command and should contain tags.                                        |
 |        Cheat Description         |  `#`   |                                                Lines starting with this character should be the description of the cheat you're writing.                                                 |
 | Cheat Comments (or Metacomments) |  `;`   |                                          Lines starting with this character will be ignored by navi but they can be great as editor's comments.                                          |
-|      Pre-defined variables       |  `$`   |   Lines starting with this character should contain commands that generate a list of possible values, <br/> <br/> :information_source: See [#variables](#variables) for more details.    |
-|         Extended cheatS          |  `@`   | Lines starting with this character should contain tags associated to other defined cheats. <br/> <br/> :information_source: See [#extending-cheats](#extending-cheats) for more details. |
+|      Pre-defined variables       |  `$`   |   Lines starting with this character should contain commands that generate a list of possible values. <br/> <br/> :information_source: See [#variables](#variables) for more details.    |
+|         Extended cheats          |  `@`   | Lines starting with this character should contain tags associated to other defined cheats. <br/> <br/> :information_source: See [#extending-cheats](#extending-cheats) for more details. |
 |       Executable commands        |  N/A   |                                                             All other non-empty lines are considered as executable commands.                                                             |
 
 > [!TIP]
@@ -48,12 +48,12 @@ A cheatsheet can have the following elements:
 Variables are defined with brackets inside executable commands (e.g. `<branch>`).\
 Variable names should only include alphanumeric characters and `_`.
 
-You can show suggestions by using the Pre-defined variables lines (i.e. lines starting with`$`).\
+You can show suggestions by using the Pre-defined variable lines (i.e. lines starting with`$`).\
 Otherwise, the user will be able to type any value for it.
 
 ### Advanced variable options
 
-For Pre-Defined variables lines, you can use `---` to customize the behavior of `fzf`
+For Pre-Defined variable lines, you can use `---` to customize the behavior of `fzf`
 or how the value is going to be used.
 
 Below are examples of such customization:
@@ -79,38 +79,38 @@ Below are examples of such customization:
 
 The supported parameters are:
 
-| Parameter               |                                        Description                                        |
-|:------------------------|:-----------------------------------------------------------------------------------------:|
-| `--column <number>`     |                `<number>` is the column number to extract from the result.                |
-| `--map <bash_code>`     |   **_[EXPERIMENTAL]_** `<bash_code>` is a map function to apply to the variable value.    |
+| Parameter               | Description                                                                               |
+|:------------------------|:------------------------------------------------------------------------------------------|
+| `--column <number>`     | `<number>` is the column number to extract from the result.                               |
+| `--map <bash_code>`     | **_[EXPERIMENTAL]_** `<bash_code>` is a map function to apply to the variable value.      |
 | `--prevent-extra`       | **_[EXPERIMENTAL]_** This parameter will limit the user to select one of the suggestions. |
-| `--fzf-overrides <arg>` |    **_[EXPERIMENTAL]_** `<arg>` is an arbitrary argument to override `fzf` behaviour.     |
-| `--expand`              |   **_[EXPERIMENTAL]_** This parameter will convert each line into a separate argument.    |
+| `--fzf-overrides <arg>` | **_[EXPERIMENTAL]_** `<arg>` is an arbitrary argument to override `fzf` behaviour.        |
+| `--expand`              | **_[EXPERIMENTAL]_** This parameter will convert each line into a separate argument.      |
 
 
 In addition, it's possible to forward the following parameters to `fzf`:
 
 | Parameter forwarded to `fzf` |
-|:----------------------------:|
-|          `--multi`           |
-|  `--header-lines <number>`   |
-|    `--delimiter <regex>`     |
-|       `--query <text>`       |
-|      `--filter <text>`       |
-|      `--header <text>`       |
-|   `--preview <bash_code>`    |
-|  `--preview-window <text>`   |
+|:-----------------------------|
+| `--multi`                    |
+| `--header-lines <number>`    |
+| `--delimiter <regex>`        |
+| `--query <text>`             |
+| `--filter <text>`            |
+| `--header <text>`            |
+| `--preview <bash_code>`      |
+| `--preview-window <text>`    |
 
 ### Variable dependency
 
-Pre-Defined variables can refer other defined variables in two different ways, an implicit and explicit way.
+Pre-Defined variables can refer other pre-defined variables in two different ways, an implicit and explicit way.
 
 #### Implicit dependencies
 
 An implicit dependency is when you refer another variable with the same syntax used in
 executable commands (i.e. `<variable>`).
 
-The example below shows how we can depend on multiple variables to construct a path:
+Below is an example of using implicit dependencies to construct a path:
 
 ```sh
 # Should print /my/pictures/wallpapers
