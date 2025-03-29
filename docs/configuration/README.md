@@ -1,99 +1,181 @@
-- [Paths and Environment Variables](#paths-and-environment-variables)
-  - [Config file path](#config-file-path)
-  - [Cheat sheet paths](#cheat-sheet-paths)
-- [Logging](#logging)
-- [Customization](#customization)
-  - [Changing colors](#changing-colors)
-  - [Resizing columns](#resizing-columns)
-  - [Overriding fzf options](#overriding-fzf-options)
-  - [Defining your own delimiter](#defining-your-own-delimiter)
+# Configuring Navi
+
+Navi allows you to configure it with a YAML configuration.
+
+## Paths and Environment Variables
+
+On the technical side, navi uses the `directories-next` crate for rust,
+which defines platform-specific locations to store the configuration files,
+the cache and other types of files an application might need.
+
+> [!TIPS]
+> For example, this is why cheatsheets are being stored in `~/Library/Application Support/navi` on macOS.
+
+> [!NOTE]
+> Interested on how `directories-next` works?\
+> Go see their `crates.io` page: [crates.io/crates/directories-next](https://crates.io/crates/directories-next)
 
 
-# Paths and Environment Variables
+### The default configuration file path
 
-Navi uses the [`directories-next`](https://crates.io/crates/directories-next) package, which 
-defines platform-specific standard locations of directories for config, cache and other data (Mac users, this is why your files are being stored in `~/Library/Application Support/navi`).
+During the compilation of navi, the default configuration file path is set by the `$NAVI_CONFIG` environment variable.\
+If it is not set, it fallbacks to `~/.config/navi/config.yaml`.
 
-## Config file path
+You can check your default configuration file path with the info subcommand,
+see [/docs/usage/commands/info/](/docs/usage/commands/info/README.md#default-configuration-path) for more details.
 
-The default config file path is set by the `$NAVI_CONFIG` environment variable. If it is not set, it fallbacks to `~/.config/navi/config.yaml`. The command
-```sh
-navi info config-path
-```
-prints which config file path is being used. You can get a config file example by running
-```sh
-navi info config-example
-```
-or by clicking [here](./config_file_example.yaml). To turn this example your config file, run
+### Cheatsheets paths
 
-```sh
-navi info config-example > "$(navi info config-path)"
-```
-## Cheat sheet paths
+Navi checks the paths in the following order until either it finds a value:
 
-The default `.cheat` files paths are defined in the `$NAVI_PATH` environment variable in a colon-separated list, e.g.,
+1. the `$NAVI_PATH` environment variable
+2. the configuration file
+3. The default value of navi
+
+#### The default cheatsheets path
+
+By default, navi stores the cheatsheets in the `~/.local/share/navi/cheats/` directory.
+
+You can check your default cheatsheets path with the info subcommand,
+see [/docs/usage/commands/info/](/docs/usage/commands/info/README.md#default-cheatsheets-path) for more details.
+
+#### Defining the cheatsheets path with the environment variable
+
+The cheatsheets path can be defined using the `$NAVI_PATH` environment variable in a colon-separated list, for example:
+
 ```sh
 export NAVI_PATH='/path/to/a/dir:/path/to/another/dir:/yet/another/dir'
 ```
-If this environment variable is unset or if all directories do not exist, `navi` uses the [paths defined in the config file](https://github.com/denisidoro/navi/blob/master/docs/config_file_example.yaml#L21-L24). Finally, if there is no config file or if the `.cheat` file paths was not set, the default `.cheat` file paths fallbacks to `~/.local/share/navi/cheats/`. The command
-```sh
-navi info cheats-path
-```
-prints to you all paths used to search for `.cheat` files. 
 
-You can also add other paths at runtime by running `navi` with the `--path` option and a colon-separated paths list, e.g.,
+#### Defining the cheatsheets path in the configuration file
+
+You can define the cheatsheets path in the configuration file with the following syntax:
+
+```yaml
+cheats:
+  paths:
+    - /path/to/some/dir # on unix-like os
+    - F:\\path\\to\\dir # on Windows
+```
+
+##### [DEPRECATED] - Using the `path` directive
+
+Until `2.17.0`, you could define your cheatsheets path with the `path` directive with the following syntax:
+
+```yaml
+cheats:
+  path: /path/to/some/dir
+```
+
+The directive is now deprecated and will be removed in `2.27.0`.
+
+#### Defining the cheatsheets path at runtime
+
+You can define the paths to use for cheatsheets at runtime using the `--path` parameter and a colon-separated paths list
+
+For example, if we want to search for cheatsheets in `/some/dir` and in `/other/dir`:
+
 ```sh
 navi --path '/some/dir:/other/dir'
 ```
-It's irrelevant the directory structure within each path. They can even be all in a single file if you wish, as long as you split them accordingly with lines starting with `%`.
 
-Despite `$NAVI_PATH` being set, it will not be used when installing cheat sheets directly via navi's own commands.  For example when running `navi add repo <repo>`, the default paths as per the `directories-next` package will still be used. To avoid this, you may simply clone repos via a regular `git clone` command, directly into `$NAVI_PATH`.
+## Logging
 
-Note! `navi info cheats-path` and `navi info config-path` display the *default* path, not 
-the path set by the user. [It is known that this is a little misleading!](https://github.com/denisidoro/navi/issues/664#issuecomment-1004721178).
+The log file will be created under the same directory where the configuration file is located.\
+You can use the `RUST_LOG` environment variable to set the log level.
 
-# Logging
+For example, to have the logging in debug mode when running navi:
 
-The log file will be created under the same directory where the config locates.
-
-And you can use the `RUST_LOG` env to set the log level, e.g. `RUST_LOG=debug navi`.
-
-# Customization
-
-## Changing colors
-
-You can change the [color scheme](https://github.com/junegunn/fzf/wiki/Color-schemes) by [overriding fzf options](#overriding-fzf-options).
-
-In addition, you can change the text color for each column by properly configuring _navi_'s `config.yaml`. Please check `navi --help` for more instructions.
-
-## Resizing columns
-
-You can change the column widths by properly configuring _navi_'s `config.yaml`. Please check `navi --help` for more instructions.
-
-## Overriding fzf options
-
-Let's say you want to override [$FZF_DEFAULT_OPTS](https://github.com/junegunn/fzf#layout) with `--height 3`.
-
-This can be overridden in the following ways:
-
-```sh
-# if you want to override only when selecting snippets
-navi --fzf-overrides '--height 3'
-
-# alternatively, using an environment variable in your .bashrc-like file:
-export NAVI_FZF_OVERRIDES='--height 3'
-
-# if you want to override only when selecting argument values
-navi --fzf-overrides-var '--height 3'
-
-# alternatively, using an environment variable in your .bashrc-like file:
-export NAVI_FZF_OVERRIDES_VAR='--height 3'
-
-# if you want to override for all cases
-FZF_DEFAULT_OPTS="--height 3" navi
+```bash
+RUST_LOG=debug navi
 ```
 
-In addition, this can be set by properly configuring _navi_'s `config.yaml`. Please check `navi --help` for more instructions.
+> [!NOTE]
+> If the directory of the configuration file doesn't exist, no log file
+> is going to be created.
+
+## Customization
+
+### Changing colors
+
+#### fzf color scheme
+
+You can change the color scheme of `fzf` by overriding fzf options.
+
+> [!NOTE]
+> See [@junegunn/fzf/wiki/Color-schemes](https://github.com/junegunn/fzf/wiki/Color-schemes) and
+> [#overriding-fzf-options](#overriding-fzf-options) for more details.
+
+#### Navi colors
+
+You can change the text color for each column of navi in the configuration file with the following syntax:
+
+```yaml
+style:
+  tag:
+    color: <your color for tags>
+  comment:
+    color: <your color for comments>
+  snippet:
+    color: <you color for snippets>
+```
+
+Below is an example of what to do if you'd like navi to look like the French flag:
+
+- `config.yaml`:
+
+  ```yaml
+  style:
+    tag:
+      color: blue
+    comment:
+      color: white
+    snippet:
+      color: red
+  ```
+
+- The result:
+
+  ![img.png](/docs/src/configuration/navi-custom-colors.png)
+
+### Resizing columns
+
+You can change the column width of each column of navi in the configuration file with the following syntax:
+
+```yaml
+style:
+  tag:
+    width_percentage: <width relative to the terminal window>
+    min_width: <width as number of characters>
+  comment:
+    width_percentage: <width relative to the terminal window>
+    min_width: <width as number of characters>
+  snippet:
+    width_percentage: <width relative to the terminal window>
+    min_width: <width as number of characters>
+```
+
+### Overriding fzf options
+
+If you want to override `$FZF_DEFAULT_OPTS` with `--height 3`,
+you can do it with the following syntax:
+
+```yaml
+finder:
+  command: fzf
+  overrides: --height 3
+```
+
+or
+
+```yaml
+finder:
+  command: fzf
+  overrides_var: --height 3
+```
+
+> [!NOTE]
+> See [@junegunn/fzf](https://github.com/junegunn/fzf#layout) for more details on `$FZF_DEFAULT_OPTS`.
 
 ## Defining your own delimiter
 
@@ -111,13 +193,6 @@ finder:
 > Defining the delimiter via the configuration file means that Navi will use this delimiter by default for
 > every variable using the `--column` instruction.
 
-You can override this configuration with the `--delimiter` instruction in the variable definition of your cheatsheet.
+You can override this configuration with the `--delimiter` instruction in the variable definition of your cheat.\
+See [/docs/cheatsheet/syntax/](/docs/cheatsheet/syntax/README.md#advanced-variable-options) for more details.
 
-It can be overriden like this:
-
-```yaml
-echo <image_id>
-
-$ image_id: ... --- --column 3 --header-lines 1 --delimiter '\s\s+' # <-- This variable uses \s\s+ as a delimiter
-$ image_tag: ... --- --column 3 --header-lines 1 # <-- This variable uses the default delimiter
-```
