@@ -1,4 +1,6 @@
+# The usage of Navi
 
+Navi can be used in multiple ways
 
 #### Defining the cheatsheets path at runtime
 
