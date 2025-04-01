@@ -3,7 +3,7 @@ use crate::prelude::*;
 use crate::structures::fetcher;
 
 pub fn populate_cheatsheet(parser: &mut Parser) -> Result<()> {
-    let cheatsheet = include_str!("../docs/navi.cheat");
+    let cheatsheet = include_str!("../docs/examples/cheatsheet/navi.cheat");
     let lines = cheatsheet.split('\n').map(|s| Ok(s.to_string()));
 
     parser.read_lines(lines, "welcome", None)?;
