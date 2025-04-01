@@ -23,10 +23,15 @@ impl Runnable for Input {
         let info = &self.info;
 
         match info {
-            Info::CheatsExample => println!("{}", include_str!("../../docs/examples/cheatsheet/example.cheat")),
+            Info::CheatsExample => {
+                println!("{}", include_str!("../../docs/examples/cheatsheet/example.cheat"))
+            }
             Info::CheatsPath => println!("{}", &filesystem::default_cheat_pathbuf()?.to_string()),
             Info::ConfigPath => println!("{}", &filesystem::default_config_pathbuf()?.to_string()),
-            Info::ConfigExample => println!("{}", include_str!("../../docs/examples/configuration/config-example.yaml")),
+            Info::ConfigExample => println!(
+                "{}",
+                include_str!("../../docs/examples/configuration/config-example.yaml")
+            ),
         }
         Ok(())
     }
