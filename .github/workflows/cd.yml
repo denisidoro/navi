@@ -39,7 +39,7 @@ jobs:
         run: rustup target add ${{ matrix.target }}
       - name: Build
         id: build
-        run: scripts/dot rust release ${{ matrix.target }}
+        run: scripts/release ${{ matrix.target }}
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
