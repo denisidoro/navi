@@ -28,7 +28,6 @@ pub enum Info {
     DefaultConfigPath,
 }
 
-
 impl Runnable for Input {
     fn run(&self) -> Result<()> {
         let info = &self.info;
