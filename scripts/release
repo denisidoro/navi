@@ -1,9 +1,31 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-##? release
+### --------------------------------------------------------------------------------------------------------------------
+###     Logging functions
+### --------------------------------------------------------------------------------------------------------------------
 
-source "${DOTFILES}/scripts/rust/aux/core.bash"
+log::info() {
+  ### Will print `[INFO]` in black foreground colour and magenta background colour
+  ### then will print the given text in a magenta foreground colour and default background colour.
+  printf "\033[35m\033[7m[INFO]\033[27;39m \033[35m$*\033[39m\n"
+}
+
+log::error() {
+  ### Will print `[ERROR]` in black foreground colour and red background colour
+  ### then will print the given text in a red foreground colour and default background colour.
+  printf "\033[31m\033[7m[ERROR]\033[27;39m \033[31m$*\033[39m\n"
+}
+
+log::warn() {
+  ### Will print `[WARNING]` in black foreground colour and yellow background colour
+  ### then will print the given text in a yellow foreground colour and default background colour.
+  printf "\033[33m\033[7m[WARNING]\033[27;39m \033[33m$*\033[39m\n"
+}
+
+### --------------------------------------------------------------------------------------------------------------------
+###     Utils functions
+### --------------------------------------------------------------------------------------------------------------------
 
 is_windows() {
    local -r target="$1"
@@ -25,6 +47,10 @@ _tap() {
    log::info "$@"
    "$@"
 }
+
+### --------------------------------------------------------------------------------------------------------------------
+###     Release-Related functions
+### --------------------------------------------------------------------------------------------------------------------
 
 release() {
    local -r env_target="$(get_env_target)"
@@ -72,10 +98,10 @@ release() {
 
    if $use_zip; then
       zip -r "${PROJ_BIN_NAME}.zip" ./*
-      echo ::set-output name=EXTENSION::zip
+      echo "EXTENSION=zip" >> GITHUB_OUTPUT
    else
       tar -czf "${PROJ_BIN_NAME}.tar.gz" ./*
-      echo ::set-output name=EXTENSION::tar.gz
+      echo "EXTENSION=tar.gz" >> GITHUB_OUTPUT
    fi
 
    _ls "${bin_path}"
@@ -86,5 +112,9 @@ _ls() {
    log::info "contents from $*:"
    ls -la "$@" || true
 }
+
+### --------------------------------------------------------------------------------------------------------------------
+###     Main script
+### --------------------------------------------------------------------------------------------------------------------
 
 release "$@"
