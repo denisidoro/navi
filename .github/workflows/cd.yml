@@ -30,19 +30,35 @@ jobs:
           - os: macos-latest
             target: aarch64-apple-darwin
     steps:
-      - uses: hecrj/setup-rust-action@v1.3.4
-        with:
-          rust-version: stable
-      - uses: actions/checkout@v1
-      - name: Install target
-        id: installtarget
-        run: rustup target add ${{ matrix.target }}
+      ### We're checking out the repository at the triggered ref
+      - uses: actions/checkout@v4
+
       - name: Build
         id: build
-        run: scripts/release ${{ matrix.target }}
+        run: |
+          is_windows() {
+             local -r target="$1"
+             echo "$target" | grep -q "windows"
+          }
+
+          cargo install cross
+
+          cross build --release --target "${{ matrix.target }}"
+
+          cd target/${{ matrix.target }}/release/
+
+          if is_windows "${{ matrix.target }}"; then
+            zip -r "navi.zip" "navi.exe"
+            echo "EXTENSION=zip" >> $GITHUB_OUTPUT
+          else
+            tar -czf "navi.tar.gz" "navi"
+            echo "EXTENSION=tar.gz" >> $GITHUB_OUTPUT
+          fi
+
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v1-release
         with:
