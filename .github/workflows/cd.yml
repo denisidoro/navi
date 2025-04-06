@@ -43,9 +43,7 @@ jobs:
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
       - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v1-release
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: navi/target/${{ matrix.target }}/release/navi.${{ steps.build.outputs.EXTENSION }}
-          tag: ${{ github.ref }}
-          asset_name: navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
+        run: |
+          echo "PWD: $(pwd), LS: $(ls)"
+          cp navi.${{ steps.build.outputs.EXTENSION }} navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
+          gh upload ${{ steps.get_version.outputs.VERSION }} navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
