@@ -34,6 +34,10 @@ jobs:
       ### We're checking out the repository at the triggered ref
       - uses: actions/checkout@v4
 
+      - name: Get the version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
       - name: Check if release exists
         id: check_release
         run: |
@@ -58,10 +62,6 @@ jobs:
       - name: Build
         id: build
         run: scripts/release ${{ matrix.target }}
-
-      - name: Get the version
-        id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
       - name: Upload binaries to release
         run: |
