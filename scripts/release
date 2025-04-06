@@ -35,7 +35,7 @@ is_windows() {
 get_env_target() {
    eval "$(rustc --print cfg | grep target)"
    local -rr raw="${target_arch:-}-${target_vendor:-}-${target_os:-}-${target_env:-}"
-   log::info "env target raw: $raw"
+
    if echo "$raw" | grep -q "x86_64-apple-macos"; then
       echo "x86_64-apple-darwin"
    else
@@ -53,59 +53,30 @@ _tap() {
 ### --------------------------------------------------------------------------------------------------------------------
 
 release() {
-   local -r env_target="$(get_env_target)"
-   log::info "env target: $env_target"
+  local -r env_target="$(get_env_target)"
+  log::info "env target: $env_target"
 
-   local -r cross_target="${1:-"$env_target"}"
-   log::info "desired target: $cross_target"
+  local -r cross_target="${1:-"$env_target"}"
+  log::info "desired target: $cross_target"
 
-   TAR_DIR="${PROJ_HOME}/target/tar"
-   local use_zip=false
-   local cross=true
+  TAR_DIR="$(pwd)/target/tar"
+  local use_zip=false
+  local cross=true
 
-   if [[ "$cross_target" == "$env_target" ]]; then
-      cross=false
-   fi
+  rm -rf "$(pwd)/target" 2> /dev/null || true
 
-   cd "$PROJ_HOME"
+  cargo install cross
 
-   rm -rf "${PROJ_HOME}/target" 2> /dev/null || true
+  cross build --release --target "$env_target"
+  cd target/"$env_target"/release/
 
-   if $cross; then
-      cargo install cross 2> /dev/null || true
-      _tap cross build --release --target "$cross_target" # --locked
-      local -r bin_folder="${cross_target}/release"
-   else
-      _tap cargo build --release # --locked
-      local -r bin_folder="release"
-   fi
-
-   _ls "${bin_folder}"
-
-   if is_windows "$cross_target"; then
-      local -r exe_ext=".exe"
-      use_zip=true
-   else
-      local -r exe_ext=""
-   fi
-
-   bin_path="${PROJ_HOME}/target/${bin_folder}/${PROJ_BIN_NAME}${exe_ext}"
-
-   chmod +x "$bin_path"
-   mkdir -p "$TAR_DIR" 2> /dev/null || true
-   cp "$bin_path" "$TAR_DIR"
-   cd "$TAR_DIR"
-
-   if $use_zip; then
-      zip -r "${PROJ_BIN_NAME}.zip" ./*
-      echo "EXTENSION=zip" >> GITHUB_OUTPUT
-   else
-      tar -czf "${PROJ_BIN_NAME}.tar.gz" ./*
-      echo "EXTENSION=tar.gz" >> GITHUB_OUTPUT
-   fi
-
-   _ls "${bin_path}"
-   _ls "${TAR_DIR}"
+  if is_windows "$env_target"; then
+    zip -r "navi.zip" "navi.exe"
+    echo "EXTENSION=zip" >> $GITHUB_OUTPUT
+  else
+    tar -czf "navi.tar.gz" "navi"
+    echo "EXTENSION=tar.gz" >> $GITHUB_OUTPUT
+  fi
 }
 
 _ls() {
