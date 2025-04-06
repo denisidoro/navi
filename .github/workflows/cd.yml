@@ -46,6 +46,6 @@ jobs:
         uses: svenstaro/upload-release-action@v1-release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: navi.${{ steps.build.outputs.EXTENSION }}
+          file: target/${{ matrix.target }}/navi.${{ steps.build.outputs.EXTENSION }}
           tag: ${{ github.ref }}
           asset_name: navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
