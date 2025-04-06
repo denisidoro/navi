@@ -53,7 +53,7 @@ _tap() {
 ### --------------------------------------------------------------------------------------------------------------------
 
 release() {
-  local -r env_target="$(get_env_target)"
+  local -r env_target="$1"
   log::info "env target: $env_target"
 
   local -r cross_target="${1:-"$env_target"}"
