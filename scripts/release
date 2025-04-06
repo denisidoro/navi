@@ -77,6 +77,8 @@ release() {
     tar -czf "navi.tar.gz" "navi"
     echo "EXTENSION=tar.gz" >> $GITHUB_OUTPUT
   fi
+
+  log::info "PWD: $(pwd), LS: $(ls ./)"
 }
 
 _ls() {
