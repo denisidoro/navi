@@ -47,4 +47,4 @@ jobs:
           echo "PWD: $(pwd), LS: $(ls)"
           cd ./target/${{ matrix.target }}/release/
           cp navi.${{ steps.build.outputs.EXTENSION }} navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
-          gh upload ${{ steps.get_version.outputs.VERSION }} navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
+          gh release upload ${{ steps.get_version.outputs.VERSION }} navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
