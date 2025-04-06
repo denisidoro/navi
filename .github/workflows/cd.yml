@@ -36,7 +36,7 @@ jobs:
 
       - name: Build
         id: build
-        run: scripts/release
+        run: scripts/release ${{ matrix.target }}
 
       - name: Get the version
         id: get_version
