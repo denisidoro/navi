@@ -63,6 +63,7 @@ release() {
   rm -rf "$(pwd)/target" 2> /dev/null || true
 
   rustup target add $env_target
+  cargo install cross
   cross build --release --target "$env_target"
 
   cd target/"$env_target"/release/
