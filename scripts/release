@@ -27,11 +27,17 @@ log::warn() {
 ###     Utils functions
 ### --------------------------------------------------------------------------------------------------------------------
 
+### Permits us to know if the current target environment
+### is a windows platform or not.
 is_windows() {
    local -r target="$1"
    echo "$target" | grep -q "windows"
 }
 
+### NOTE: This function is currently not in use but kept as
+###       a backup function in case something breaks
+###
+### Returns the target environment, with a fix for the x86_64 target.
 get_env_target() {
    eval "$(rustc --print cfg | grep target)"
    local -rr raw="${target_arch:-}-${target_vendor:-}-${target_os:-}-${target_env:-}"
@@ -43,9 +49,22 @@ get_env_target() {
    fi
 }
 
+### NOTE: This function is currently not in use but kept as
+###       a backup function in case something breaks
+###
+### Logs the given arguments then execute it
 _tap() {
    log::info "$@"
    "$@"
+}
+
+### NOTE: This function is currently not in use but kept as
+###       a backup function in case something breaks
+###
+### Lists the content of a path, given as parameter.
+_ls() {
+   log::info "contents from $*:"
+   ls -la "$@" || true
 }
 
 ### --------------------------------------------------------------------------------------------------------------------
@@ -60,26 +79,36 @@ release() {
   log::info "desired target: $cross_target"
 
   TAR_DIR="$(pwd)/target/tar"
+
+  ### We clean up the target folder, just in case
   rm -rf "$(pwd)/target" 2> /dev/null || true
 
+  ### We add the target for rustup in case cross doesn't find it.
+  ### Since the default behaviour of cross is to compile from
+  ### a rustup target if it doesn't find one for itself.
   rustup target add $env_target
   cargo install cross
+
+  ### We're building the release via cross for the target environment
   cross build --release --target "$env_target"
 
   cd target/"$env_target"/release/
 
   if is_windows "$env_target"; then
+    ### If our target is windows, we can simply zip our executable
+    ### since having tar is not the norm and neither the default
     zip -r "navi.zip" "navi.exe"
+
+    ### We export a CI/CD variable to be used later in the pipeline
     echo "EXTENSION=zip" >> $GITHUB_OUTPUT
   else
+    ### For all other targets, they have tar as the norm
+    ### or have it installed by default.
     tar -czf "navi.tar.gz" "navi"
+
+    ### We export a CI/CD variable to be used later in the pipeline
     echo "EXTENSION=tar.gz" >> $GITHUB_OUTPUT
   fi
-}
-
-_ls() {
-   log::info "contents from $*:"
-   ls -la "$@" || true
 }
 
 ### --------------------------------------------------------------------------------------------------------------------
