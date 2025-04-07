@@ -225,10 +225,10 @@ impl<'a> Parser<'a> {
 
         let write_fn = self.write_fn;
 
-        return self
+        self
             .writer
             .write_all(write_fn(item).as_bytes())
-            .context("Failed to write command to finder's stdin");
+            .context("Failed to write command to finder's stdin")
     }
 
     pub fn read_lines(
@@ -345,7 +345,7 @@ mod tests {
         let opts = command_options.unwrap();
         assert_eq!(opts.header_lines, 0);
         assert_eq!(opts.column, None);
-        assert_eq!(opts.delimiter, None);
+        assert_eq!(opts.delimiter, Some("\\s\\s".to_string()));
         assert_eq!(opts.suggestion_type, SuggestionType::SingleSelection);
     }
 }
