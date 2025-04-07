@@ -1,7 +1,7 @@
 [package]
 name = "navi"
 version = "2.25.0-beta1"
-authors = ["Denis Isidoro <denis_isidoro@live.com>"]
+authors = ["Denis Isidoro <denis_isidoro@live.com>", "Alexis Opolka <alexis.opolka@protonmail.com>"]
 edition = "2021"
 description = "An interactive cheatsheet tool for the command-line"
 homepage = "https://github.com/denisidoro/navi"
