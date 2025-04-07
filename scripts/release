@@ -60,14 +60,11 @@ release() {
   log::info "desired target: $cross_target"
 
   TAR_DIR="$(pwd)/target/tar"
-  local use_zip=false
-  local cross=true
-
   rm -rf "$(pwd)/target" 2> /dev/null || true
 
-  cargo install cross
-
+  rustup target add $env_target
   cross build --release --target "$env_target"
+
   cd target/"$env_target"/release/
 
   if is_windows "$env_target"; then
