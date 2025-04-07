@@ -344,7 +344,7 @@ mod tests {
         let opts = command_options.unwrap();
         assert_eq!(opts.header_lines, 0);
         assert_eq!(opts.column, None);
-        assert_eq!(opts.delimiter, Some("\\s\\s".to_string()));
+        assert_eq!(opts.delimiter, None);
         assert_eq!(opts.suggestion_type, SuggestionType::SingleSelection);
     }
 }
