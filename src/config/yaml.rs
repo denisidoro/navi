@@ -86,7 +86,7 @@ pub struct Client {
     pub tealdeer: bool,
 }
 
-#[derive(Deserialize, Default, Debug)]
+#[derive(Deserialize, Debug)]
 #[serde(default)]
 pub struct YamlConfig {
     pub style: Style,
@@ -95,6 +95,7 @@ pub struct YamlConfig {
     pub search: Search,
     pub shell: Shell,
     pub client: Client,
+    pub source: String, // <= The source of the current configuration
 }
 
 impl YamlConfig {
@@ -108,19 +109,36 @@ impl YamlConfig {
         serde_yaml::from_reader(reader).map_err(|e| e.into())
     }
 
-    pub fn get(env: &EnvConfig) -> Result<Self> {
+    pub fn get(env: &EnvConfig) -> Result<YamlConfig> {
         if let Some(yaml) = env.config_yaml.as_ref() {
-            return Self::from_str(yaml);
+            // We're getting the configuration from the environment variable `NAVI_CONFIG_YAML`
+            let mut cfg = Self::from_str(yaml)?;
+            cfg.source = "ENV_NAVI_CONFIG_YAML".to_string();
+
+            return Ok(cfg);
         }
         if let Some(path_str) = env.config_path.as_ref() {
+            // We're getting the configuration from a file given in the environment variable 'NAVI_CONFIG'
+
             let p = PathBuf::from(path_str);
-            return YamlConfig::from_path(&p);
+            let mut cfg = YamlConfig::from_path(&p)?;
+            cfg.source = "ENV_NAVI_CONFIG".to_string();
+
+            return Ok(cfg);
         }
         if let Ok(p) = default_config_pathbuf() {
+            // We're getting the configuration from the default path
+
             if p.exists() {
-                return YamlConfig::from_path(&p);
+                let mut cfg = YamlConfig::from_path(&p)?;
+                cfg.source = "DEFAULT_CONFIG_FILE".to_string();
+
+                return Ok(cfg);
             }
         }
+
+        // As no configuration has been found, we set the YAML configuration
+        // to be its default (built-in) value.
         Ok(YamlConfig::default())
     }
 }
@@ -169,6 +187,20 @@ impl Default for Shell {
         Self {
             command: "bash".to_string(),
             finder_command: None,
+        }
+    }
+}
+
+impl Default for YamlConfig {
+    fn default() -> Self {
+        Self {
+            style: Default::default(),
+            finder: Default::default(),
+            cheats: Default::default(),
+            search: Default::default(),
+            shell: Default::default(),
+            client: Default::default(),
+            source: "BUILT-IN".to_string(),
         }
     }
 }

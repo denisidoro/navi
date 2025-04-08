@@ -16,19 +16,52 @@ defines platform-specific standard locations of directories for config, cache an
 
 ## Config file path
 
-The default config file path is set by the `$NAVI_CONFIG` environment variable. If it is not set, it fallbacks to `~/.config/navi/config.yaml`. The command
-```sh
-navi info config-path
-```
-prints which config file path is being used. You can get a config file example by running
+The default config file path is set by the `$NAVI_CONFIG` environment variable.\
+If it is not set, it fallbacks to `~/.config/navi/config.yaml` in most cases.
+
+There are available commands for you to see which path is used or its default value.
+
+### Default config path
+
+There are two `info` commands available for the users to know and understand
+what is the default path for the configuration of navi.
+
+> [!NOTE]
+> The `info` commands DO NOT return the current value used by navi but exist
+> as informative commands, they do not represent navi's running configuration.
+
+- For navi `2.25.0` and later:
+
+  ```sh
+  navi info default-config-path
+  ```
+
+- For navi versions earlier than `2.25.0`:
+
+  ```sh
+  navi info config-path
+  ```
+
+> [!CAUTION]
+> Since navi `2.25.0`, the `info config-path` command is deprecated.
+> We recommend you to use `info default-config-path` instead.
+
+### Example config file
+
+You can get an example of a config file by running:
+
 ```sh
 navi info config-example
 ```
-or by clicking [here](./config_file_example.yaml). To turn this example your config file, run
+
+> [!NOTE]
+> You can also get the example file [here](./config_file_example.yaml).
+To turn this example into your config file, you just need to run:
 
 ```sh
 navi info config-example > "$(navi info config-path)"
 ```
+
 ## Cheat sheet paths
 
 The default `.cheat` files paths are defined in the `$NAVI_PATH` environment variable in a colon-separated list, e.g.,
@@ -49,8 +82,9 @@ It's irrelevant the directory structure within each path. They can even be all i
 
 Despite `$NAVI_PATH` being set, it will not be used when installing cheat sheets directly via navi's own commands.  For example when running `navi add repo <repo>`, the default paths as per the `directories-next` package will still be used. To avoid this, you may simply clone repos via a regular `git clone` command, directly into `$NAVI_PATH`.
 
-Note! `navi info cheats-path` and `navi info config-path` display the *default* path, not 
-the path set by the user. [It is known that this is a little misleading!](https://github.com/denisidoro/navi/issues/664#issuecomment-1004721178).
+> [!NOTE]
+> `navi info cheats-path` and `navi info config-path` display the *default* path, not 
+> the path set by the user. [It is known that this is a little misleading!](https://github.com/denisidoro/navi/issues/664#issuecomment-1004721178).
 
 # Logging
 
