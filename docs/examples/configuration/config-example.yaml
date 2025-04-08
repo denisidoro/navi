@@ -23,7 +23,6 @@ finder:
 #   paths:
 #     - /path/to/some/dir # on unix-like os
 #     - F:\\path\\to\\dir # on Windows
-# path: /path/to/some/dir # (DEPRECATED) equivalent to the --path option
 
 # search:
 #   tags: git,!checkout # equivalent to the --tag-rules option
