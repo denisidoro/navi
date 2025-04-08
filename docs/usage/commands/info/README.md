@@ -2,6 +2,26 @@
 
 Navi exposes information about its default values or examples for you to use.
 
+<!-- TOC -->
+* [The info subcommands of navi](#the-info-subcommands-of-navi)
+  * [Commands Reference](#commands-reference)
+  * [Default configuration information](#default-configuration-information)
+    * [Default configuration path](#default-configuration-path)
+    * [Example configuration file](#example-configuration-file)
+  * [Default cheatsheets path](#default-cheatsheets-path)
+<!-- TOC -->
+
+## Commands Reference
+
+| Command             | Description |
+|---------------------|-------------|
+| config-path         |             |
+| cheats-path         |             |
+| default-config-path |             |
+| default-cheats-path |             |
+| config-example      |             |
+| cheats-example      |             |
+
 ## Default configuration information
 
 ### Default configuration path
