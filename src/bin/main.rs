@@ -1,6 +1,6 @@
 extern crate navi;
 
-use dns_common::prelude::*;
+use crate::navi::prelude::*;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
