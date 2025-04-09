@@ -103,7 +103,7 @@ release() {
     echo "EXTENSION=zip" >> $GITHUB_OUTPUT
   else
 
-       if upx --best --lzma "$bin_path"; then
+       if upx --best --lzma "navi"; then
         log::info "upx succeeded"
        else
           log::info "upx failed"
