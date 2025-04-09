@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "*"
+  release:
 
 jobs:
   binary:
@@ -30,23 +31,42 @@ jobs:
           - os: macos-latest
             target: aarch64-apple-darwin
     steps:
-      - uses: hecrj/setup-rust-action@v1.3.4
-        with:
-          rust-version: stable
-      - uses: actions/checkout@v1
-      - name: Install target
-        id: installtarget
-        run: rustup target add ${{ matrix.target }}
-      - name: Build
-        id: build
-        run: scripts/dot rust release ${{ matrix.target }}
+      ### We're checking out the repository at the triggered ref
+      - uses: actions/checkout@v4
+
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Check if release exists
+        id: check_release
+        run: |
+          if gh release view ${{ steps.get_version.outputs.VERSION }} > /dev/null 2>&1; then
+            echo "RELEASE_EXISTS=true" >> $GITHUB_OUTPUT
+          else
+            echo "RELEASE_EXISTS=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create release
+        continue-on-error: true
+        if: steps.check_release.outputs.RELEASE_EXISTS == 'false'
+        run: |
+          gh release create ${{ steps.get_version.outputs.VERSION }} \
+            --title "Release ${{ steps.get_version.outputs.VERSION }}" \
+            --notes "Release notes for ${{ steps.get_version.outputs.VERSION }}" \
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build
+        id: build
+        run: scripts/release ${{ matrix.target }}
+
       - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v1-release
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/tar/navi.${{ steps.build.outputs.EXTENSION }}
-          tag: ${{ github.ref }}
-          asset_name: navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
+        run: |
+          cd ./target/${{ matrix.target }}/release/
+          cp navi.${{ steps.build.outputs.EXTENSION }} navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
+          gh release upload ${{ steps.get_version.outputs.VERSION }} navi-${{ steps.get_version.outputs.VERSION }}-${{ matrix.target }}.${{ steps.build.outputs.EXTENSION }}
+        env:
+          GH_TOKEN: ${{ github.token }}
