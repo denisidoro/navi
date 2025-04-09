@@ -102,6 +102,14 @@ release() {
     ### We export a CI/CD variable to be used later in the pipeline
     echo "EXTENSION=zip" >> $GITHUB_OUTPUT
   else
+
+       if upx --best --lzma "$bin_path"; then
+        log::info "upx succeeded"
+       else
+          log::info "upx failed"
+       fi
+
+
     ### For all other targets, they have tar as the norm
     ### or have it installed by default.
     tar -czf "navi.tar.gz" "navi"
