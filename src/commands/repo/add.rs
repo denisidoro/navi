@@ -5,6 +5,8 @@ use crate::finder::FinderChoice;
 use crate::prelude::*;
 use std::fs;
 use std::path;
+use std::path::{MAIN_SEPARATOR, MAIN_SEPARATOR_STR};
+
 
 fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
     let opts = FinderOpts {
@@ -44,6 +46,7 @@ pub fn main(uri: String) -> Result<()> {
         .with_context(|| format!("Failed to clone `{actual_uri}`"))?;
 
     let all_files = filesystem::all_cheat_files(&tmp_pathbuf).join("\n");
+    let git_files = filesystem::all_git_files(&tmp_pathbuf).join("\n");
 
     let opts = FinderOpts {
         suggestion_type: SuggestionType::MultipleSelections,
@@ -89,6 +92,30 @@ pub fn main(uri: String) -> Result<()> {
         };
         fs::create_dir_all(&to_folder).unwrap_or(());
         fs::copy(&from, &to)
+            .with_context(|| format!("Failed to copy `{}` to `{}`", &from.to_string(), &to.to_string()))?;
+    }
+
+    // We are copying the .git folder along with the cheat files
+    // For more details, see: (https://github.com/denisidoro/navi/issues/733)
+    for file in git_files.split('\n') {
+        let filename = format!("{}{}", &tmp_path_str, &file);
+        let from = {
+            let mut p = tmp_pathbuf.clone();
+            p.push(&filename);
+            p
+        };
+        let to = {
+            let mut p = to_folder.clone();
+            p.push(&file);
+            p
+        };
+
+        let path_str = &PathBuf::clone(&to).to_string();
+        let local_collection = &path_str.split(MAIN_SEPARATOR).collect::<Vec<&str>>();
+        let local_to_folder = format!("{}{}", &to_folder.to_string(), local_collection[0..&local_collection.len()-1].join(MAIN_SEPARATOR_STR));
+
+        fs::create_dir_all(&local_to_folder).unwrap_or(());
+        fs::copy(&from, format!("{}{}", &to_folder.clone().to_str().unwrap(), &to.clone().to_str().unwrap()))
             .with_context(|| format!("Failed to copy `{}` to `{}`", &from.to_string(), &to.to_string()))?;
     }
 

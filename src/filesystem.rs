@@ -29,6 +29,26 @@ pub fn all_cheat_files(path: &Path) -> Vec<String> {
         .collect::<Vec<String>>()
 }
 
+pub fn all_git_files(path: &Path) -> Vec<String> {
+    let mut path_str = path.to_str().unwrap().to_owned();
+    if path_str.ends_with("/") {
+        // We're removing the trailing '/' at the end, if it exists
+        path_str.push_str("/");
+    }
+
+    WalkDir::new(path)
+        .follow_links(true)
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .map(|e| {
+            return if e.path().is_file() {
+                e.path().to_str().unwrap().replace(path_str.as_str(), "").to_string()
+            } else { "".to_string() };
+        })
+        .filter(|e| e.contains("/.git/"))
+        .collect::<Vec<String>>()
+}
+
 fn paths_from_path_param(env_var: &str) -> impl Iterator<Item = &str> {
     env_var.split(JOIN_SEPARATOR).filter(|folder| folder != &"")
 }
