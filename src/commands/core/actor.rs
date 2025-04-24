@@ -62,6 +62,7 @@ fn prompt_finder(
     } else {
         variable_history = filesystem::get_variable_history(variable_name);
         if !variable_history.is_empty() {
+            variable_history.insert(0, "".to_string());
             (variable_history.join("\n"), &None)
         } else {
             ('\n'.to_string(), &None)
