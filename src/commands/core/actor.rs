@@ -154,10 +154,8 @@ fn prompt_finder(
         })
         .context("finder was unable to prompt with suggestions")?;
 
-    if suggestion.is_none() {
-        if !variable_history.contains(&output) {
-            filesystem::save_variable_history(variable_name, &output);
-        }
+    if suggestion.is_none() && !variable_history.contains(&output) {
+        filesystem::save_variable_history(variable_name, &output);
     }
 
     Ok(output)

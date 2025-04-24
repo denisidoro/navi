@@ -111,7 +111,7 @@ pub fn get_variable_history(variable: &str) -> Vec<String> {
 
         reader
             .lines()
-            .filter_map(|line| line.ok())
+            .map_while(|line| line.ok())
             .filter_map(|line| {
                 let parts: Vec<&str> = line.splitn(2, ':').collect();
                 if parts.len() == 2 && parts[0] == variable {
