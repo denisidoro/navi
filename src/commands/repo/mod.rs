@@ -15,10 +15,10 @@ pub enum RepoCommand {
         /// A URI to a git repository containing .cheat files ("user/repo" will download cheats from github.com/user/repo)
         uri: String,
     },
-    // Synchronize either all cheatsheet repositories or a given one.
+    /// Synchronize either all cheatsheet repositories or a given one.
     Sync {
-        /// The name of the cheatsheet repository to sync. It needs to already have been added to navi.
-        name: String
+        /// The name of the cheatsheet repository to sync.
+        name: Option<String>
     },
     /// List all downloaded repositories
     List
@@ -47,8 +47,9 @@ impl Runnable for Input {
                 commands::core::main()
             }
             RepoCommand::Sync { name } => {
-                add::main(name.clone())
-                    .with_context(|| format!("Failed to synchronize cheatsheets from `{name}`"))?;
+                sync::main(name.clone())
+                    // TODO: Remove the debug extension later on
+                    .with_context(|| format!("Failed to synchronize cheatsheets from `{:?}`", name))?;
 
                 commands::core::main()
             }
