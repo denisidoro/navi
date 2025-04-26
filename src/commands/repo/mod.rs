@@ -4,16 +4,24 @@ use clap::{Args, Subcommand};
 
 pub mod add;
 pub mod browse;
+mod sync;
 
 #[derive(Debug, Clone, Subcommand)]
 pub enum RepoCommand {
+    /// Browses for featured cheatsheet repos
+    Browse,
     /// Imports cheatsheets from a repo
     Add {
         /// A URI to a git repository containing .cheat files ("user/repo" will download cheats from github.com/user/repo)
         uri: String,
     },
-    /// Browses for featured cheatsheet repos
-    Browse,
+    // Synchronize either all cheatsheet repositories or a given one.
+    Sync {
+        /// The name of the cheatsheet repository to sync. It needs to already have been added to navi.
+        name: String
+    },
+    /// List all downloaded repositories
+    List
 }
 
 #[derive(Debug, Clone, Args)]
@@ -28,12 +36,23 @@ impl Runnable for Input {
             RepoCommand::Add { uri } => {
                 add::main(uri.clone())
                     .with_context(|| format!("Failed to import cheatsheets from `{uri}`"))?;
+
                 commands::core::main()
             }
             RepoCommand::Browse => {
                 let repo = browse::main().context("Failed to browse featured cheatsheets")?;
                 add::main(repo.clone())
                     .with_context(|| format!("Failed to import cheatsheets from `{repo}`"))?;
+
+                commands::core::main()
+            }
+            RepoCommand::Sync { name } => {
+                add::main(name.clone())
+                    .with_context(|| format!("Failed to synchronize cheatsheets from `{name}`"))?;
+
+                commands::core::main()
+            }
+            RepoCommand::List => {
                 commands::core::main()
             }
         }
