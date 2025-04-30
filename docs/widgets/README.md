@@ -12,8 +12,8 @@ Widgets are 3rd-party contributions and integrates Navi with 3rd-party software 
 | Bash       | :white_check_mark: |
 | Fish       |                    |
 | Zsh        |                    |
-| NuShell    |                    |
-| PowerShell |                    |
+| NuShell    | :white_check_mark: |
+| PowerShell | :white_check_mark: |
 
 ## PowerShell Widget
 
