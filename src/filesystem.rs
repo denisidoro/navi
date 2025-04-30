@@ -91,7 +91,7 @@ pub fn cheat_paths(path: Option<String>) -> Result<String> {
 }
 
 pub fn variables_history_pathbuf() -> Option<PathBuf> {
-    if let Ok(v) = env::var(env_var::VARIABLES_HISTORY_FILE) {
+    if let Ok(v) = env::var(env_var::VAR_HISTORY) {
         let pathbuf = PathBuf::from(v);
 
         if !pathbuf.exists() {
