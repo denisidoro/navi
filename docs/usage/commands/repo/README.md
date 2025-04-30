@@ -4,7 +4,7 @@
 * [The repo subcommands of navi](#the-repo-subcommands-of-navi)
   * [Commands Reference](#commands-reference)
   * [Browsing through cheatsheet repositories](#browsing-through-cheatsheet-repositories)
-* [Importing cheatsheet repositories](#importing-cheatsheet-repositories)
+  * [Importing cheatsheet repositories](#importing-cheatsheet-repositories)
 <!-- TOC -->
 
 ## Commands Reference

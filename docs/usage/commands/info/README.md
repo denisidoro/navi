@@ -13,14 +13,14 @@ Navi exposes information about its default values or examples for you to use.
 
 ## Commands Reference
 
-| Command             | Description |
-|---------------------|-------------|
-| config-path         |             |
-| cheats-path         |             |
-| default-config-path |             |
-| default-cheats-path |             |
-| config-example      |             |
-| cheats-example      |             |
+| Command             | Description                                        |
+|---------------------|----------------------------------------------------|
+| config-path         | [DEPRECATED] Lets you see the default config path  |
+| cheats-path         | [DEPRECATED] Lets you see the default cheats path  |
+| default-config-path | Lets you see the default config path               |
+| default-cheats-path | Lets you see the default cheats path               |
+| config-example      | Lets you see an example for the configuration file |
+| cheats-example      | Lets you see an example for a cheat file           |
 
 ## Default configuration information
 

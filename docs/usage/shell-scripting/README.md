@@ -2,7 +2,17 @@
 
 You can use Navi with shell scripting.
 
-The following blog post gives you an example of a real world scenario: [denisidoro.github.io/posts/cli-templates/](https://denisidoro.github.io/posts/cli-templates/)
+<!-- TOC -->
+* [Navi and shell scripting](#navi-and-shell-scripting)
+  * [Simply calling a cheat](#simply-calling-a-cheat)
+  * [Defining variables while calling](#defining-variables-while-calling)
+  * [Filtering results for a variable](#filtering-results-for-a-variable)
+  * [Selecting the best match for a variable](#selecting-the-best-match-for-a-variable)
+<!-- TOC -->
+
+> [NOTE!]
+> The following blog post gives you an example of a real world scenario: [denisidoro.github.io/posts/cli-templates/](https://denisidoro.github.io/posts/cli-templates/)
+
 
 ## Simply calling a cheat
 
