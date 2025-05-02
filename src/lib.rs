@@ -16,6 +16,7 @@ mod welcome;
 
 mod libs {
     pub mod dns_common;
+    pub mod terminal;
 }
 
 pub use {commands::handle, filesystem::default_config_pathbuf};
