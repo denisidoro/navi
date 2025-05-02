@@ -33,7 +33,7 @@ pub fn all_git_files(path: &Path) -> Vec<String> {
     let mut path_str = path.to_str().unwrap().to_owned();
     if path_str.ends_with("/") {
         // We're removing the trailing '/' at the end, if it exists
-        path_str.push_str("/");
+        path_str.push('/');
     }
 
     WalkDir::new(path)
@@ -42,8 +42,14 @@ pub fn all_git_files(path: &Path) -> Vec<String> {
         .filter_map(|e| e.ok())
         .map(|e| {
             return if e.path().is_file() {
-                e.path().to_str().unwrap().replace(path_str.as_str(), "").to_string()
-            } else { "".to_string() };
+                e.path()
+                    .to_str()
+                    .unwrap()
+                    .replace(path_str.as_str(), "")
+                    .to_string()
+            } else {
+                "".to_string()
+            };
         })
         .filter(|e| e.contains("/.git/"))
         .collect::<Vec<String>>()

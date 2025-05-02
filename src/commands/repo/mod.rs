@@ -4,8 +4,8 @@ use clap::{Args, Subcommand};
 
 pub mod add;
 pub mod browse;
-mod sync;
 mod list;
+mod sync;
 
 #[derive(Debug, Clone, Subcommand)]
 pub enum RepoCommand {
@@ -19,10 +19,10 @@ pub enum RepoCommand {
     /// Synchronize either all cheatsheet repositories or a given one.
     Sync {
         /// The name of the cheatsheet repository to sync.
-        name: Option<String>
+        name: Option<String>,
     },
     /// List all downloaded repositories
-    List
+    List,
 }
 
 #[derive(Debug, Clone, Args)]
@@ -53,7 +53,9 @@ impl Runnable for Input {
                     .with_context(|| format!("Failed to synchronize cheatsheets from `{:?}`", name))
             }
             RepoCommand::List => {
-                Ok(list::main())
+                list::main();
+
+                Ok(())
             }
         }
     }

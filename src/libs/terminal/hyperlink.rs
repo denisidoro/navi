@@ -1,4 +1,3 @@
-
 /// Takes a URI and a label, returns a UNIX-compliant hyperlink
 /// See the definition of this function for more details.
 pub fn new(uri: &String, label: &String) -> String {

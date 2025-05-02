@@ -49,7 +49,10 @@ pub fn get_remote(uri: &str) -> Result<String> {
             .current_dir(&git_path)
             .args(["config", format!("remote.{}.url", current_remote).as_str()])
             .output()
-            .context(format!("Unable to git config remote <remote>.url for {}", &current_remote))?;
+            .context(format!(
+                "Unable to git config remote <remote>.url for {}",
+                &current_remote
+            ))?;
 
         // This is the URI of the remote
         let current_remote_uri = String::from_utf8_lossy(&remote_uri.stdout).trim().to_string();

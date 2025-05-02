@@ -1,12 +1,13 @@
 use crate::common::git;
-use crate::filesystem::{all_git_files, all_cheat_files, remove_dir, default_cheat_pathbuf, create_dir, tmp_pathbuf};
+use crate::filesystem::{
+    all_cheat_files, all_git_files, create_dir, default_cheat_pathbuf, remove_dir, tmp_pathbuf,
+};
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::FinderChoice;
 use crate::prelude::*;
 use std::fs;
 use std::path;
 use std::path::{MAIN_SEPARATOR, MAIN_SEPARATOR_STR};
-
 
 fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
     let opts = FinderOpts {
@@ -33,7 +34,6 @@ pub fn main(uri: String) -> Result<()> {
     let should_import_all = ask_if_should_import_all(&finder).unwrap_or(false);
     let (actual_uri, user, repo) = git::meta(uri.as_str());
 
-    
     // TODO: Using the default cheat pathbuf will send the downloaded cheatsheets
     // into the path without taking into account the user-defined paths.
     let cheat_pathbuf = default_cheat_pathbuf()?;
@@ -109,17 +109,28 @@ pub fn main(uri: String) -> Result<()> {
         };
         let to = {
             let mut p = to_folder.clone();
-            p.push(&file);
+            p.push(file);
             p
         };
 
         let path_str = &PathBuf::clone(&to).to_string();
         let local_collection = &path_str.split(MAIN_SEPARATOR).collect::<Vec<&str>>();
-        let local_to_folder = format!("{}{}", &to_folder.to_string(), local_collection[0..&local_collection.len()-1].join(MAIN_SEPARATOR_STR));
+        let local_to_folder = format!(
+            "{}{}",
+            &to_folder.to_string(),
+            local_collection[0..&local_collection.len() - 1].join(MAIN_SEPARATOR_STR)
+        );
 
         fs::create_dir_all(&local_to_folder).unwrap_or(());
-        fs::copy(&from, format!("{}{}", &to_folder.clone().to_str().unwrap(), &to.clone().to_str().unwrap()))
-            .with_context(|| format!("Failed to copy `{}` to `{}`", &from.to_string(), &to.to_string()))?;
+        fs::copy(
+            &from,
+            format!(
+                "{}{}",
+                &to_folder.clone().to_str().unwrap(),
+                &to.clone().to_str().unwrap()
+            ),
+        )
+        .with_context(|| format!("Failed to copy `{}` to `{}`", &from.to_string(), &to.to_string()))?;
     }
 
     remove_dir(&tmp_pathbuf)?;

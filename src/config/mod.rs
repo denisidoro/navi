@@ -106,7 +106,7 @@ impl Config {
     pub fn yaml(&self) -> &YamlConfig {
         &self.yaml
     }
-    
+
     pub fn finder(&self) -> FinderChoice {
         self.clap
             .finder

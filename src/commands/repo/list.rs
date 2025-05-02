@@ -1,8 +1,8 @@
 use crate::common::git;
 use crate::config::CONFIG;
 use crate::filesystem::{all_cheat_files, default_cheat_pathbuf};
+use crate::libs::terminal::hyperlink;
 use crate::prelude::*;
-use crate::libs::terminal::{hyperlink};
 
 pub fn main() {
     let mut cheats_repos: Vec<String> = Vec::new();
@@ -18,7 +18,7 @@ pub fn main() {
     // We're checking each given paths possible
     for cheat_path in cheats.split(':') {
         // If the path doesn't exist, continue to the next one
-        if ! std::fs::exists(cheat_path).unwrap() {
+        if !std::fs::exists(cheat_path).unwrap() {
             continue;
         }
 
@@ -31,14 +31,13 @@ pub fn main() {
             if entry.file_type().unwrap().is_dir() {
                 // If the directory doesn't have at least one cheat file -> ignore it and continue
                 if all_cheat_files(&entry.path()).is_empty() {
-                    continue
+                    continue;
                 };
 
                 // If the directory have at least one cheat file -> add it to the list
                 // Note: for the list, we are registering the git remote name and not the
                 //      folder name since we modify it internally.
                 let git_path = format!("{}/{}", &entry.path().display(), ".git");
-
 
                 if std::fs::exists(&git_path).unwrap() {
                     let remote_uri = git::get_remote(&entry.path().to_string()).unwrap();
@@ -51,14 +50,13 @@ pub fn main() {
         }
     }
 
-
     // Now that we have our list of cheatsheet repositories, we loop through them
     // Two behaviours:
     // We do have entries -> We show them
     // We do not have entries -> We put a message for the user to add one
     if cheats_repos.is_empty() {
         eprintln!("Uh Oh! It seems you haven't downloaded a cheatsheet repository yet.");
-        eprintln!("Maybe try to do `navi repo add` to add one or `navi repo browse` to browse recommended cheatsheet repositories.");
+        eprintln!("What you can do: \n\n- `navi repo add` to add a cheatsheet repository\n- `navi repo browse` to browse recommended cheatsheet repositories");
 
         // We quit this function
         return;
@@ -68,7 +66,6 @@ pub fn main() {
     eprintln!("You have locally available the following cheatsheet repositories: \n");
 
     for cheat_repo in cheats_repos {
-
         let content = if cheat_repo.starts_with("https://") {
             // If the URL is using the HTTPS scheme, we use a hyperlink
             // instead of printing its raw value.
@@ -78,6 +75,6 @@ pub fn main() {
             cheat_repo.to_owned()
         };
 
-        eprintln!("{}", format!("- {}", content));
+        eprintln!("- {}", content);
     }
 }
