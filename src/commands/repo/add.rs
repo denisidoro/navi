@@ -1,5 +1,5 @@
 use crate::common::git;
-use crate::filesystem;
+use crate::filesystem::{all_git_files, all_cheat_files, remove_dir, default_cheat_pathbuf, create_dir, tmp_pathbuf};
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::FinderChoice;
 use crate::prelude::*;
@@ -33,20 +33,23 @@ pub fn main(uri: String) -> Result<()> {
     let should_import_all = ask_if_should_import_all(&finder).unwrap_or(false);
     let (actual_uri, user, repo) = git::meta(uri.as_str());
 
-    let cheat_pathbuf = filesystem::default_cheat_pathbuf()?;
-    let tmp_pathbuf = filesystem::tmp_pathbuf()?;
+    
+    // TODO: Using the default cheat pathbuf will send the downloaded cheatsheets
+    // into the path without taking into account the user-defined paths.
+    let cheat_pathbuf = default_cheat_pathbuf()?;
+    let tmp_pathbuf = tmp_pathbuf()?;
     let tmp_path_str = &tmp_pathbuf.to_string();
 
-    let _ = filesystem::remove_dir(&tmp_pathbuf);
-    filesystem::create_dir(&tmp_pathbuf)?;
+    let _ = remove_dir(&tmp_pathbuf);
+    create_dir(&tmp_pathbuf)?;
 
     eprintln!("Cloning {} into {}...\n", &actual_uri, &tmp_path_str);
 
     git::shallow_clone(actual_uri.as_str(), tmp_path_str)
         .with_context(|| format!("Failed to clone `{actual_uri}`"))?;
 
-    let all_files = filesystem::all_cheat_files(&tmp_pathbuf).join("\n");
-    let git_files = filesystem::all_git_files(&tmp_pathbuf).join("\n");
+    let all_files = all_cheat_files(&tmp_pathbuf).join("\n");
+    let git_files = all_git_files(&tmp_pathbuf).join("\n");
 
     let opts = FinderOpts {
         suggestion_type: SuggestionType::MultipleSelections,
@@ -119,7 +122,7 @@ pub fn main(uri: String) -> Result<()> {
             .with_context(|| format!("Failed to copy `{}` to `{}`", &from.to_string(), &to.to_string()))?;
     }
 
-    filesystem::remove_dir(&tmp_pathbuf)?;
+    remove_dir(&tmp_pathbuf)?;
 
     eprintln!(
         "The following .cheat files were imported successfully:\n{}\n\nThey are now located at {}",
