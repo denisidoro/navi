@@ -27,6 +27,8 @@ pub fn meta(uri: &str) -> (String, String, String) {
     (actual_uri, user.to_string(), repo)
 }
 
+/// Retrieves the remote URI of a git repository
+/// Works best with a repository containing only one remote.
 pub fn get_remote(uri: &str) -> Result<String> {
     // We consider the repository having only one remote
     // In case of multiple occurrences, we return the first one and discard the others
@@ -61,6 +63,17 @@ pub fn get_remote(uri: &str) -> Result<String> {
     }
 
     Ok(remotes_uri[0].clone())
+}
+
+/// Pulls the latest version of a git repository
+pub fn pull(uri: &str) -> Result<()> {
+    Command::new("git")
+        .current_dir(uri)
+        .args(["pull", "origin"])
+        .spawn()?
+        .wait()
+        .expect("Unable to git pull");
+    Ok(())
 }
 
 #[cfg(test)]
