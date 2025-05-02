@@ -27,6 +27,39 @@ pub fn meta(uri: &str) -> (String, String, String) {
     (actual_uri, user.to_string(), repo)
 }
 
+pub fn get_remote(uri: &str) -> Result<String> {
+    // We consider the repository having only one remote
+    // In case of multiple occurrences, we return the first one and discard the others
+
+    let git_path = format!("{}/.git/", &uri);
+    let mut remotes_uri: Vec<String> = Vec::new();
+
+    if std::fs::exists(&git_path)? {
+        // If the path exists, retrieve the remotes
+        let remotes = Command::new("git")
+            .current_dir(&git_path)
+            .args(["remote"])
+            .output()
+            .context("Unable to git remote")?;
+
+        // This is the name of the remote, not its URI
+        let current_remote = String::from_utf8_lossy(&remotes.stdout).trim().to_string();
+
+        let remote_uri = Command::new("git")
+            .current_dir(&git_path)
+            .args(["config", format!("remote.{}.url", current_remote).as_str()])
+            .output()
+            .context(format!("Unable to git config remote <remote>.url for {}", &current_remote))?;
+
+        // This is the URI of the remote
+        let current_remote_uri = String::from_utf8_lossy(&remote_uri.stdout).trim().to_string();
+
+        remotes_uri.push(current_remote_uri);
+    }
+
+    Ok(remotes_uri[0].clone())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

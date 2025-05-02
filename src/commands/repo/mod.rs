@@ -5,6 +5,7 @@ use clap::{Args, Subcommand};
 pub mod add;
 pub mod browse;
 mod sync;
+mod list;
 
 #[derive(Debug, Clone, Subcommand)]
 pub enum RepoCommand {
@@ -49,12 +50,10 @@ impl Runnable for Input {
             RepoCommand::Sync { name } => {
                 sync::main(name.clone())
                     // TODO: Remove the debug extension later on
-                    .with_context(|| format!("Failed to synchronize cheatsheets from `{:?}`", name))?;
-
-                commands::core::main()
+                    .with_context(|| format!("Failed to synchronize cheatsheets from `{:?}`", name))
             }
             RepoCommand::List => {
-                commands::core::main()
+                Ok(list::main())
             }
         }
     }
