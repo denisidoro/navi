@@ -16,8 +16,8 @@ pub enum RepoCommand {
         /// A URI to a git repository containing .cheat files ("user/repo" will download cheats from github.com/user/repo)
         uri: String,
         /// Assumes yes for all confirmations
-        #[clap(short='y', long="yes")]
-        yes_flag: bool
+        #[clap(short = 'y', long = "yes")]
+        yes_flag: bool,
     },
     /// Synchronize either all cheatsheet repositories or a given one.
     Sync {
@@ -38,7 +38,7 @@ impl Runnable for Input {
     fn run(&self) -> Result<()> {
         match &self.cmd {
             RepoCommand::Add { uri, yes_flag } => {
-                add::main(uri.clone(), yes_flag.clone())
+                add::main(uri.clone(), *yes_flag)
                     .with_context(|| format!("Failed to import cheatsheets from `{uri}`"))?;
 
                 commands::core::main()

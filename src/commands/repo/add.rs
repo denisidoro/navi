@@ -2,6 +2,7 @@ use crate::common::git;
 use crate::filesystem::{
     all_cheat_files, all_git_files, create_dir, default_cheat_pathbuf, remove_dir, tmp_pathbuf,
 };
+use crate::finder::questions::finder_yes_no_question;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::FinderChoice;
 use crate::prelude::*;
@@ -16,28 +17,30 @@ fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
         ..Default::default()
     };
 
-    let (response, _) = finder
-        .call(opts, |stdin| {
-            stdin
-                .write_all(b"Yes\nNo")
-                .context("Unable to writer alternatives")?;
-            Ok(())
-        })
-        .context("Unable to get response")?;
+    finder_yes_no_question(finder, opts)
+}
+fn ask_folder_present_question(finder: &FinderChoice) -> Result<bool> {
+    let opts = FinderOpts {
+        column: Some(1),
+        header: Some(
+            "It seems this cheatsheet repository has been previously added, do you still want to continue?"
+                .to_string(),
+        ),
+        ..Default::default()
+    };
 
-    Ok(response.to_lowercase().starts_with('y'))
+    finder_yes_no_question(finder, opts)
 }
 
 pub fn main(uri: String, yes_flag: bool) -> Result<()> {
     let finder = CONFIG.finder();
-    let should_import_all;
 
-    // If the user hasn't set the yes flag, we ask a confirmation
-    if ! yes_flag {
-        should_import_all = ask_if_should_import_all(&finder).unwrap_or(false);
+    // If the user has set the yes flag, we don't ask a confirmation
+    let should_import_all = if yes_flag {
+        true
     } else {
-        should_import_all = true;
-    }
+        ask_if_should_import_all(&finder).unwrap_or(false)
+    };
 
     let (actual_uri, user, repo) = git::meta(uri.as_str());
 
@@ -46,6 +49,23 @@ pub fn main(uri: String, yes_flag: bool) -> Result<()> {
     let cheat_pathbuf = default_cheat_pathbuf()?;
     let tmp_pathbuf = tmp_pathbuf()?;
     let tmp_path_str = &tmp_pathbuf.to_string();
+    let to_folder = {
+        let mut p = cheat_pathbuf;
+        p.push(format!("{user}__{repo}"));
+        p
+    };
+
+    // Before anything else, we check to see if the folder exists
+    // if it exists -> ask confirmation if we continue
+    if fs::exists(&to_folder)? {
+        // When the yes_flag has been raised => follow through and removes the existing directory
+        // When the yes_flag has not been raised => ask for confirmation
+        if yes_flag || ask_folder_present_question(&finder).unwrap_or(false) {
+            fs::remove_dir_all(&to_folder)?;
+        } else {
+            return Ok(());
+        }
+    }
 
     let _ = remove_dir(&tmp_pathbuf);
     create_dir(&tmp_pathbuf)?;
@@ -78,12 +98,6 @@ pub fn main(uri: String, yes_flag: bool) -> Result<()> {
             })
             .context("Failed to get cheatsheet files from finder")?;
         files
-    };
-
-    let to_folder = {
-        let mut p = cheat_pathbuf;
-        p.push(format!("{user}__{repo}"));
-        p
     };
 
     for file in files.split('\n') {
@@ -128,16 +142,22 @@ pub fn main(uri: String, yes_flag: bool) -> Result<()> {
             local_collection[0..&local_collection.len() - 1].join(MAIN_SEPARATOR_STR)
         );
 
+        let complete_local_path = format!(
+            "{}{}",
+            &to_folder.clone().to_str().unwrap(),
+            &to.clone().to_str().unwrap()
+        );
+
+        eprintln!("=> {}", &complete_local_path);
+
         fs::create_dir_all(&local_to_folder).unwrap_or(());
-        fs::copy(
-            &from,
+        fs::copy(&from, &complete_local_path).with_context(|| {
             format!(
-                "{}{}",
-                &to_folder.clone().to_str().unwrap(),
-                &to.clone().to_str().unwrap()
-            ),
-        )
-        .with_context(|| format!("Failed to copy `{}` to `{}`", &from.to_string(), &to.to_string()))?;
+                "Failed to copy `{}` to `{}`",
+                &from.to_string(),
+                &complete_local_path
+            )
+        })?;
     }
 
     remove_dir(&tmp_pathbuf)?;
