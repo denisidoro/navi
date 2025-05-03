@@ -28,10 +28,17 @@ fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
     Ok(response.to_lowercase().starts_with('y'))
 }
 
-pub fn main(uri: String) -> Result<()> {
+pub fn main(uri: String, yes_flag: bool) -> Result<()> {
     let finder = CONFIG.finder();
+    let should_import_all;
 
-    let should_import_all = ask_if_should_import_all(&finder).unwrap_or(false);
+    // If the user hasn't set the yes flag, we ask a confirmation
+    if ! yes_flag {
+        should_import_all = ask_if_should_import_all(&finder).unwrap_or(false);
+    } else {
+        should_import_all = true;
+    }
+
     let (actual_uri, user, repo) = git::meta(uri.as_str());
 
     // TODO: Using the default cheat pathbuf will send the downloaded cheatsheets
