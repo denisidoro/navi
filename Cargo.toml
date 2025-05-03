@@ -1,6 +1,6 @@
 [package]
 name = "navi"
-version = "2.25.0-beta1"
+version = "2.25.0-beta2"
 authors = ["Denis Isidoro <denis_isidoro@live.com>", "Alexis Opolka <alexis.opolka@protonmail.com>"]
 edition = "2021"
 description = "An interactive cheatsheet tool for the command-line"
@@ -24,7 +24,7 @@ regex = { version = "1.7.3", default-features = false, features = [
    "unicode-perl",
 ] }
 clap = { version = "4.2.1", features = ["derive", "cargo"] }
-crossterm = "0.28.0"
+crossterm = "0.29.0"
 lazy_static = "1.4.0"
 etcetera = "0.10.0"
 walkdir = "2.3.3"
