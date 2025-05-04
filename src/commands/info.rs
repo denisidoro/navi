@@ -34,8 +34,13 @@ impl Runnable for Input {
 
         match info {
             // Here should be the example commands
-            Info::CheatsExample => println!("{}", include_str!("../../docs/cheat_example.cheat")),
-            Info::ConfigExample => println!("{}", include_str!("../../docs/config_file_example.yaml")),
+            Info::CheatsExample => {
+                println!("{}", include_str!("../../docs/examples/cheatsheet/example.cheat"))
+            }
+            Info::ConfigExample => println!(
+                "{}",
+                include_str!("../../docs/examples/configuration/config-example.yaml")
+            ),
 
             // Here should be the old deprecated default value commands
             Info::CheatsPath => println!("{}", &filesystem::default_cheat_pathbuf()?.to_string()),
