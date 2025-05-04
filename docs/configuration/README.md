@@ -132,7 +132,7 @@ Below is an example of what to do if you'd like navi to look like the French fla
 
 - The result:
 
-  ![img.png](/docs/src/configuration/navi-custom-colors.png)
+  ![navi-custom-colors](https://github.com/user-attachments/assets/d80352c5-d888-43e6-927d-805a8de1a7e2)
 
 ### Resizing columns
 
