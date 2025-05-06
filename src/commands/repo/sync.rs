@@ -31,5 +31,9 @@ pub fn main(name: Option<String>) -> Result<()> {
     // TODO: Sanitize the cheatsheet folder of any file that is not a cheat file
     // Ref: https://github.com/denisidoro/navi/issues/733
 
+    // Note for later, git considers the files as deleted
+    // maybe we should sanitize the repo before doing the actual pull and then
+    // reintegrate the logic found in repo/add.rs ?
+
     Ok(())
 }
