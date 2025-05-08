@@ -48,12 +48,12 @@ There are multiple ways to use **navi**:
 
 - by typing `navi` in the terminal
   - pros: you have access to all possible subcommands and flags
-- as a [shell widget](docs/installation.md#installing-the-shell-widget) for the terminal
+- as a [shell widget](docs/installation/README.md#installing-the-shell-widget) for the terminal
   - pros: the shell history is correctly populated (i.e. with the actual command you ran instead of `navi`) and you can edit the command as you wish before executing it
-- as a [Tmux widget](docs/tmux.md)
+- as a [Tmux widget](docs/widgets/howto/TMUX.md)
   - pros: you can use your cheatsheets in any command-line app even in SSH sessions
-- as [aliases](docs/cheatsheet_syntax.md#aliases)
-- as a [shell scripting tool](docs/shell_scripting.md)
+- as [aliases](docs/cheatsheet/syntax/README.md#aliases)
+- as a [shell scripting tool](docs/usage/shell-scripting/README.md)
 
 In particular, check [these instructions](https://github.com/denisidoro/navi/issues/491) if you want to replicate what's shown in the demo above.
 
@@ -63,11 +63,11 @@ Running **navi** for the first time will help you download and manage cheatsheet
 
 You can also:
 
-- [browse through featured cheatsheets](docs/cheatsheet_repositories.md#browsing-through-cheatsheet-repositories)
-- [import cheatsheets from git repositories](docs/cheatsheet_repositories.md#importing-cheatsheets)
-- [write your own cheatsheets](#cheatsheet-syntax) (and [share them](docs/cheatsheet_repositories.md#submitting-cheatsheets), if you want)
-- [use cheatsheets from other tools](docs/cheatsheet_repositories.md#using-cheatsheets-from-other-tools), such as [tldr](https://github.com/tldr-pages/tldr) and [cheat.sh](https://github.com/chubin/cheat.sh)
-- [auto-update repositories](docs/cheatsheet_repositories.md#auto-updating-repositories)
+- [browse through featured cheatsheets](docs/usage/commands/repo/README.md#browsing-through-cheatsheet-repositorieea)
+- [import cheatsheets from git repositories](docs/cheatsheet/repositories/README.md#importing-cheatsheet-repositories)
+- [write your own cheatsheets](#cheatsheet-syntax) (and [share them](docs/cheatsheet/repositories/README.md#submitting-cheatsheets), if you want)
+- [use cheatsheets from other tools](docs/cheatsheet/README.md#using-cheatsheets-from-other-tools), such as [tldr](https://github.com/tldr-pages/tldr) and [cheat.sh](https://github.com/chubin/cheat.sh)
+- [auto-update repositories](docs/cheatsheet/repositories/README.md#auto-updating-repositories)
 - auto-export cheatsheets from your [TiddlyWiki](https://tiddlywiki.com/) notes using a [TiddlyWiki plugin](https://bimlas.github.io/tw5-navi-cheatsheet/)
 
 ## Cheatsheet syntax
@@ -83,17 +83,17 @@ git checkout <branch>
 $ branch: git branch | awk '{print $NF}'
 ```
 
-The full syntax and examples can be found [here](docs/cheatsheet_syntax.md).
+The full syntax and examples can be found [here](docs/cheatsheet/syntax/README.md).
 
 ## Customization
 
 You can:
 
-- [setup your own config file](docs/navi_config.md)
-- [set custom paths for your config file and cheat sheets](docs/navi_config.md#paths-and-environment-variables)
-- [change colors](docs/navi_config.md#changing-colors)
-- [resize columns](docs/navi_config.md#resizing-columns)
-- [change how search is performed](docs/navi_config.md#overriding-fzf-options)
+- [setup your own config file](docs/configuration/README.md)
+- [set custom paths for your config file and cheat sheets](docs/configuration/README.md#paths-and-environment-variables)
+- [change colors](docs/configuration/README.md#changing-colors)
+- [resize columns](docs/configuration/README.md#resizing-columns)
+- [change how search is performed](docs/configuration/README.md#overriding-fzf-options)
 
 ## More info
 
@@ -104,4 +104,3 @@ navi --help
 ```
 
 In addition, please check the [/docs](docs) folder or the website.
-
