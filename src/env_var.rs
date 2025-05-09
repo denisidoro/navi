@@ -19,6 +19,8 @@ pub const FINDER: &str = "NAVI_FINDER";
 pub const CONFIG: &str = "NAVI_CONFIG";
 pub const CONFIG_YAML: &str = "NAVI_CONFIG_YAML";
 
+pub const VAR_HISTORY: &str = "NAVI_VAR_HISTORY";
+
 pub fn parse<T: FromStr>(varname: &str) -> Option<T> {
     if let Ok(x) = env::var(varname) {
         x.parse::<T>().ok()

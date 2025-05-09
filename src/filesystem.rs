@@ -2,12 +2,14 @@ pub use crate::common::fs::{create_dir, exe_string, read_lines, remove_dir};
 use crate::env_var;
 use crate::parser::Parser;
 use crate::prelude::*;
+use std::io::Write;
 
 use crate::structures::fetcher;
 use etcetera::BaseStrategy;
 use regex::Regex;
 
 use std::cell::RefCell;
+use std::env;
 use std::path::MAIN_SEPARATOR;
 
 use walkdir::WalkDir;
@@ -85,6 +87,53 @@ pub fn cheat_paths(path: Option<String>) -> Result<String> {
         Ok(p)
     } else {
         Ok(default_cheat_pathbuf()?.to_string())
+    }
+}
+
+pub fn variables_history_pathbuf() -> Option<PathBuf> {
+    if let Ok(v) = env::var(env_var::VAR_HISTORY) {
+        let pathbuf = PathBuf::from(v);
+
+        if !pathbuf.exists() {
+            File::create(&pathbuf).unwrap_or_else(|_| panic!("Unable to create file: {}", pathbuf.display()));
+        }
+
+        Some(pathbuf)
+    } else {
+        None
+    }
+}
+
+pub fn get_variable_history(variable: &str) -> Vec<String> {
+    if let Some(pathbuf) = variables_history_pathbuf() {
+        let file = std::fs::File::open(pathbuf).expect("Unable to open history file");
+        let reader = std::io::BufReader::new(file);
+
+        reader
+            .lines()
+            .map_while(|line| line.ok())
+            .filter_map(|line| {
+                let parts: Vec<&str> = line.splitn(2, ':').collect();
+                if parts.len() == 2 && parts[0] == variable {
+                    Some(parts[1].to_string())
+                } else {
+                    None
+                }
+            })
+            .collect()
+    } else {
+        vec![]
+    }
+}
+
+pub fn save_variable_history(variable: &str, value: &str) {
+    if let Some(pathbuf) = variables_history_pathbuf() {
+        let mut file = std::fs::OpenOptions::new()
+            .append(true)
+            .create(true)
+            .open(pathbuf)
+            .expect("Unable to open history file");
+        writeln!(file, "{}:{}", variable, value).expect("Unable to write to history file");
     }
 }
 
