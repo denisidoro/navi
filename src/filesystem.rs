@@ -162,7 +162,36 @@ fn get_config_dir_by_platform() -> Result<PathBuf> {
 }
 
 /// Goes through the cheats path(s) defined within the configuration
-/// and sends back any cheatsheet repository remote URI it finds.
+/// and sends back any cheatsheet repository remote URI it finds along its local URI.
+///
+/// # Returns
+///
+/// It returns a Tuple containing two `Vec<String>`, one for the remote URI and one for the local URI.\
+/// In a way, you could simplify this function by the following definition:
+///
+/// ```
+/// pub fn local_cheatsheet_repositories() -> (Vec<String>, Vec<String>) {
+///     let cheats_repos_remote_uris: Vec<String> = Vec::new();
+///     let cheats_repos_local_path: Vec<String> = Vec::new();
+///
+///     ..
+///     return (cheats_repos_remote_uris, cheats_repos_local_path)
+/// }
+/// ```
+///
+/// # Examples
+///
+/// - If there is at least one cheatsheet repository on the filesystem added to navi:
+///
+///     ```
+///     use crate::filesystem::local_cheatsheet_repositories;
+///
+///     let (cheats_uri, cheats_path): (Vec<String>, Vec<String>) = local_cheatsheet_repositories();
+///
+///     assert_ne!([], cheats_uri);
+///     assert_ne!([], cheats_path);
+///     ```
+///
 pub fn local_cheatsheet_repositories() -> (Vec<String>, Vec<String>) {
     let mut cheats_repos_uri: Vec<String> = Vec::new();
     let mut cheats_repos_paths: Vec<String> = Vec::new();
