@@ -45,7 +45,7 @@ dunce = "1"
 
 [lib]
 name = "navi"
-path = "src/lib.rs"
+path = "src/main.rs"
 
 [[bin]]
 name = "navi"

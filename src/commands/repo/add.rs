@@ -45,7 +45,7 @@ pub fn main(uri: String, yes_flag: bool) -> Result<()> {
     let (actual_uri, user, repo) = git::meta(uri.as_str());
 
     // TODO: Using the default cheat pathbuf will send the downloaded cheatsheets
-    // into the path without taking into account the user-defined paths.
+    //  into the path without taking into account the user-defined paths.
     let cheat_pathbuf = default_cheat_pathbuf()?;
     let tmp_pathbuf = tmp_pathbuf()?;
     let tmp_path_str = &tmp_pathbuf.to_string();

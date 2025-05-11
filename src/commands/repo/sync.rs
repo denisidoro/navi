@@ -1,5 +1,7 @@
+use std::fs;
+use walkdir::WalkDir;
 use crate::common::git;
-use crate::filesystem::local_cheatsheet_repositories;
+use crate::filesystem::{all_cheat_files, all_git_files, local_cheatsheet_repositories};
 use crate::prelude::*;
 
 pub fn main(name: Option<String>) -> Result<()> {
@@ -23,17 +25,54 @@ pub fn main(name: Option<String>) -> Result<()> {
 
     // We haven't been given a name -> We synchronize every cheatsheet repository we've found
     for cheat_repo in cheats_repo_paths {
-        eprintln!("Pulling the latest version of {}", cheat_repo);
+        // TODO: Sanitize the cheatsheet folder of any file that is not a cheat file
+        // Ref: https://github.com/denisidoro/navi/issues/733
 
+        // Note for later, git considers the files as deleted
+        // maybe we should sanitize the repo before doing the actual pull and then
+        // reintegrate the logic found in repo/add.rs ?
+        let cheat_path = Path::new(&cheat_repo);
+        eprintln!("Checking repo {:?}", &cheat_path);
+
+        // We retrieve all existing cheat files
+        let cheat_files = all_cheat_files(&cheat_path);
+        let git_files = all_git_files(&cheat_path);
+
+        // We delete them since they are now out of tree
+        for file in cheat_files.iter() {
+            fs::remove_file(&file)?;
+        }
+
+        // Now that the folder has been cleaned, we need to fetch the latest HEAD available.
+        git::fetch_origin(&cheat_repo)?;
         git::pull(&cheat_repo)?;
+
+        // Now that we've checkout the repository to the latest commit,
+        // we might have a surplus of "illegal" files (i.e. files that should not be present in a cheatsheet repository).
+        //
+        // They need to be removed and the cheat files renamed.
+
+        let files_to_discard = WalkDir::new(&cheat_repo)
+            .follow_links(true)
+            .into_iter()
+            .filter_map(|e| e.ok())
+            .map(|e| {
+                let path_str = e.path().to_str().unwrap_or("").to_string();
+
+                if ! cheat_files.contains(&path_str) {
+                    return e.path().to_str().unwrap_or("").to_string()
+                }
+
+                return "".to_string()
+            })
+            .filter(|e| e.ends_with(".cheat") || e.ends_with(".cheat.md"))
+            .collect::<Vec<String>>();
+
+        for file_to_discard in files_to_discard.iter() {
+            eprintln!("=> file to discard: {:?}", file_to_discard);
+        }
     }
 
-    // TODO: Sanitize the cheatsheet folder of any file that is not a cheat file
-    // Ref: https://github.com/denisidoro/navi/issues/733
-
-    // Note for later, git considers the files as deleted
-    // maybe we should sanitize the repo before doing the actual pull and then
-    // reintegrate the logic found in repo/add.rs ?
 
     Ok(())
 }

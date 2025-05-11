@@ -65,8 +65,25 @@ pub fn get_remote(uri: &str) -> Result<String> {
     Ok(remotes_uri[0].clone())
 }
 
-/// Pulls the latest version of a git repository
+pub fn fetch_origin(uri: &str) -> Result<()> {
+    Command::new("git")
+        .current_dir(&uri)
+        .args(["fetch", "origin"])
+        .spawn()?
+        .wait()
+        .context("Unable to git fetch origin")?;
+
+    Ok(())
+}
+
+/// Restores/Discards any local changes then pulls from the origin. 
 pub fn pull(uri: &str) -> Result<()> {
+    Command::new("git")
+        .current_dir(&uri)
+        .args(["restore", "./"])
+        .spawn()?
+        .wait()?;
+
     Command::new("git")
         .current_dir(uri)
         .args(["pull", "origin"])

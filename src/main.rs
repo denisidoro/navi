@@ -20,3 +20,11 @@ mod libs {
 }
 
 pub use {commands::handle, filesystem::default_config_pathbuf};
+
+
+// Documentation exports
+
+#[cfg(doc)]
+pub mod docs {
+    pub use crate::filesystem::*;
+}
