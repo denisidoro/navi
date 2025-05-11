@@ -20,16 +20,48 @@ pub const JOIN_SEPARATOR: &str = ";";
 #[cfg(not(target_family = "windows"))]
 pub const JOIN_SEPARATOR: &str = ":";
 
+/// Takes a Path and returns a collection of Strings representing the cheat files contained in a directory.\
+/// A cheat file is defined with the `.cheat` or `.cheat.md` extension.
+///
+/// # Returns
+///
+/// A `Vec<String>` which contains all the cheat files under the given directory.\
+/// Each cheat file entry inside the `Vec` container is a `String` representation of the path of the file
+/// and is written in its absolute format, it is not a relative path, like so:
+///
+/// ```
+/// "/home/user/folder/cheat_file.cheat"
+/// ```
+///
 pub fn all_cheat_files(path: &Path) -> Vec<String> {
     WalkDir::new(path)
         .follow_links(true)
         .into_iter()
         .filter_map(|e| e.ok())
-        .map(|e| e.path().to_str().unwrap_or("").to_string())
+        // We make sure it is indeed a file and not a directory
+        // There is nothing that forbids a directory to end with a `.cheat` or `.cheat.md` name.
+        .map(|e| if e.path().is_file() {
+            e.path().to_str().unwrap_or("").to_string()
+        } else {
+            "".to_string()
+        })
         .filter(|e| e.ends_with(".cheat") || e.ends_with(".cheat.md"))
         .collect::<Vec<String>>()
 }
 
+/// Takes a Path and returns a collection of Strings representing the git files contained in a directory.\
+/// A git file is defined by being under the `.git` folder.
+///
+/// # Returns
+///
+/// A `Vec<String>` which contains all the git files under the given directory.\
+/// Each git file entry inside the `Vec` container is a `String` representation of the path of the file
+/// and is written in its absolute format, it is not a relative path, like so:
+///
+/// ```
+/// "/home/user/folder/.git/<git-file>"
+/// ```
+///
 pub fn all_git_files(path: &Path) -> Vec<String> {
     let mut path_str = path.to_str().unwrap().to_owned();
     if path_str.ends_with("/") {
