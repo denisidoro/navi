@@ -34,6 +34,8 @@ pub struct Input {
     pub cmd: RepoCommand,
 }
 
+pub const HELP_NO_REPOSITORIES_FOUND: &str = "Uh Oh! It seems you haven't downloaded a cheatsheet repository yet.\nWhat you can do: \n\n- `navi repo add` to add a cheatsheet repository\n- `navi repo browse` to browse recommended cheatsheet repositories";
+
 impl Runnable for Input {
     fn run(&self) -> Result<()> {
         match &self.cmd {

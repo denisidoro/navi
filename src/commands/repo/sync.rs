@@ -4,8 +4,16 @@ use crate::common::git;
 use crate::filesystem::{all_cheat_files, all_git_files, local_cheatsheet_repositories};
 use crate::prelude::*;
 
+use crate::commands::repo::HELP_NO_REPOSITORIES_FOUND;
+
 pub fn main(name: Option<String>) -> Result<()> {
     let (cheats_repo_uris, cheats_repo_paths) = local_cheatsheet_repositories();
+
+    if cheats_repo_paths.is_empty() {
+        eprintln!("{}", HELP_NO_REPOSITORIES_FOUND);
+
+        return Ok(());
+    }
 
     if name.clone().is_some() {
         let name = name.clone().unwrap();
@@ -51,6 +59,9 @@ pub fn main(name: Option<String>) -> Result<()> {
         // we might have a surplus of "illegal" files (i.e. files that should not be present in a cheatsheet repository).
         //
         // They need to be removed and the cheat files renamed.
+
+        // TODO: A note to be remembered, the filter needs to be adjusted to take everything we do not want
+        //  want to keep (i.e. anything that is not a git file nor a cheat file)
 
         let files_to_discard = WalkDir::new(&cheat_repo)
             .follow_links(true)
