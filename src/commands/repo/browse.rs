@@ -20,7 +20,7 @@ pub fn main() -> Result<String> {
     filesystem::create_dir(&repo_pathbuf)?;
 
     let (repo_url, _, _) = git::meta("denisidoro/cheats");
-    git::shallow_clone(repo_url.as_str(), repo_path_str)
+    git::shallow_clone(repo_url.as_str(), repo_path_str, None)
         .with_context(|| format!("Failed to clone `{repo_url}`"))?;
 
     let feature_repos_file = {

@@ -32,7 +32,7 @@ fn ask_folder_present_question(finder: &FinderChoice) -> Result<bool> {
     finder_yes_no_question(finder, opts)
 }
 
-pub fn main(uri: String, yes_flag: bool) -> Result<()> {
+pub fn main(uri: String, yes_flag: bool, &branch: Option<String>) -> Result<()> {
     let finder = CONFIG.finder();
 
     // If the user has set the yes flag, we don't ask a confirmation
@@ -72,7 +72,7 @@ pub fn main(uri: String, yes_flag: bool) -> Result<()> {
 
     eprintln!("Cloning {} into {}...\n", &actual_uri, &tmp_path_str);
 
-    git::shallow_clone(actual_uri.as_str(), tmp_path_str)
+    git::shallow_clone(actual_uri.as_str(), tmp_path_str, &branch)
         .with_context(|| format!("Failed to clone `{actual_uri}`"))?;
 
     let all_files = all_cheat_files(&tmp_pathbuf).join("\n");

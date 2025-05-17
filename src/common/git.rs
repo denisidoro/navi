@@ -2,9 +2,18 @@ use crate::common::shell::ShellSpawnError;
 use crate::prelude::*;
 use std::process::Command;
 
-pub fn shallow_clone(uri: &str, target: &str) -> Result<()> {
+pub fn shallow_clone(uri: &str, target: &str, branch: &Option<String>) -> Result<()> {
+    // If we target a specific ref, we add the parameter inside the arguments to call
+    // git with.
+
+    let git_clone_args = if branch.is_some() {
+        ["clone", uri, target, "--depth", "1", "--branch", branch.unwrap().as_str()]
+    } else {
+        ["clone", uri, target, "--depth", "1", "", ""]
+    };
+
     Command::new("git")
-        .args(["clone", uri, target, "--depth", "1"])
+        .args(git_clone_args)
         .spawn()
         .map_err(|e| ShellSpawnError::new("git clone", e))?
         .wait()

@@ -18,6 +18,10 @@ pub enum RepoCommand {
         /// Assumes yes for all confirmations
         #[clap(short = 'y', long = "yes")]
         yes_flag: bool,
+
+        /// Lets you target a specific git ref (e.g. a commit or a branch), anything accepted by the `--branch` parameter of `git-clone`
+        #[clap(short = 'b', long = "branch")]
+        branch: Option<String>,
     },
     /// Synchronize either all cheatsheet repositories or a given one.
     Sync {
@@ -39,15 +43,15 @@ pub const HELP_NO_REPOSITORIES_FOUND: &str = "Uh Oh! It seems you haven't downlo
 impl Runnable for Input {
     fn run(&self) -> Result<()> {
         match &self.cmd {
-            RepoCommand::Add { uri, yes_flag } => {
-                add::main(uri.clone(), *yes_flag)
+            RepoCommand::Add { uri, yes_flag, branch } => {
+                add::main(uri.clone(), *yes_flag, &branch)
                     .with_context(|| format!("Failed to import cheatsheets from `{uri}`"))?;
 
                 commands::core::main()
             }
             RepoCommand::Browse => {
                 let repo = browse::main().context("Failed to browse featured cheatsheets")?;
-                add::main(repo.clone(), false)
+                add::main(repo.clone(), false, None)
                     .with_context(|| format!("Failed to import cheatsheets from `{repo}`"))?;
 
                 commands::core::main()

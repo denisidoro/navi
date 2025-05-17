@@ -70,11 +70,13 @@ pub fn main(name: Option<String>) -> Result<()> {
             .map(|e| {
                 let path_str = e.path().to_str().unwrap_or("").to_string();
 
-                if ! cheat_files.contains(&path_str) {
-                    return e.path().to_str().unwrap_or("").to_string()
+                if cheat_files.contains(&path_str) {
+                    eprintln!("CHEAT: {}", &path_str);
+
+                    return "".to_string()
                 }
 
-                return "".to_string()
+                return e.path().to_str().unwrap_or("").to_string()
             })
             .filter(|e| e.ends_with(".cheat") || e.ends_with(".cheat.md"))
             .collect::<Vec<String>>();
