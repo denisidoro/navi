@@ -428,7 +428,7 @@ dependencies = [
 
 [[package]]
 name = "navi"
-version = "2.25.0-beta2"
+version = "2.25.0-beta3"
 dependencies = [
  "anyhow",
  "clap",

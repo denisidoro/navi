@@ -11,7 +11,7 @@ mod sync;
 pub enum RepoCommand {
     /// Browses for featured cheatsheet repos
     Browse,
-    /// Imports cheatsheets from a repo
+    /// Imports cheatsheets from a git repository
     Add {
         /// A URI to a git repository containing .cheat files ("user/repo" will download cheats from github.com/user/repo)
         uri: String,
@@ -19,7 +19,7 @@ pub enum RepoCommand {
         #[clap(short = 'y', long = "yes")]
         yes_flag: bool,
 
-        /// Lets you target a specific git ref (e.g. a commit or a branch), anything accepted by the `--branch` parameter of `git-clone`
+        /// Lets you target a specific git ref (e.g. a branch), anything accepted by the `--branch` parameter of `git-clone`
         #[clap(short = 'b', long = "branch")]
         branch: Option<String>,
     },
@@ -44,14 +44,14 @@ impl Runnable for Input {
     fn run(&self) -> Result<()> {
         match &self.cmd {
             RepoCommand::Add { uri, yes_flag, branch } => {
-                add::main(uri.clone(), *yes_flag, &branch)
+                add::main(uri.clone(), *yes_flag, branch)
                     .with_context(|| format!("Failed to import cheatsheets from `{uri}`"))?;
 
                 commands::core::main()
             }
             RepoCommand::Browse => {
                 let repo = browse::main().context("Failed to browse featured cheatsheets")?;
-                add::main(repo.clone(), false, None)
+                add::main(repo.clone(), false, &None)
                     .with_context(|| format!("Failed to import cheatsheets from `{repo}`"))?;
 
                 commands::core::main()

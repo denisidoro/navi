@@ -32,7 +32,7 @@ fn ask_folder_present_question(finder: &FinderChoice) -> Result<bool> {
     finder_yes_no_question(finder, opts)
 }
 
-pub fn main(uri: String, yes_flag: bool, &branch: Option<String>) -> Result<()> {
+pub fn main(uri: String, yes_flag: bool, branch: &Option<String>) -> Result<()> {
     let finder = CONFIG.finder();
 
     // If the user has set the yes flag, we don't ask a confirmation

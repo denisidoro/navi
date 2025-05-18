@@ -6,10 +6,10 @@ pub fn shallow_clone(uri: &str, target: &str, branch: &Option<String>) -> Result
     // If we target a specific ref, we add the parameter inside the arguments to call
     // git with.
 
-    let git_clone_args = if branch.is_some() {
-        ["clone", uri, target, "--depth", "1", "--branch", branch.unwrap().as_str()]
+    let git_clone_args: Vec<&str> = if branch.is_some() {
+        Vec::from(["clone", uri, target, "--depth", "1", "--branch", branch.as_ref().unwrap().as_str()])
     } else {
-        ["clone", uri, target, "--depth", "1", "", ""]
+        Vec::from(["clone", uri, target, "--depth", "1"])
     };
 
     Command::new("git")
@@ -18,6 +18,7 @@ pub fn shallow_clone(uri: &str, target: &str, branch: &Option<String>) -> Result
         .map_err(|e| ShellSpawnError::new("git clone", e))?
         .wait()
         .context("Unable to git clone")?;
+
     Ok(())
 }
 
