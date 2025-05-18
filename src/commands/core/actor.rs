@@ -5,6 +5,7 @@ use crate::common::shell::ShellSpawnError;
 use crate::config::Action;
 use crate::deser;
 use crate::env_var;
+use crate::filesystem;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::prelude::*;
 use crate::structures::cheat::{Suggestion, VariableMap};
@@ -22,6 +23,7 @@ fn prompt_finder(
     env_var::remove(env_var::PREVIEW_MAP);
 
     let mut extra_preview: Option<String> = None;
+    let mut variable_history = vec![];
 
     let (suggestions, initial_opts) = if let Some(s) = suggestion {
         let (suggestion_command, suggestion_opts) = s;
@@ -58,7 +60,13 @@ fn prompt_finder(
 
         (text, suggestion_opts)
     } else {
-        ('\n'.to_string(), &None)
+        variable_history = filesystem::get_variable_history(variable_name);
+        if !variable_history.is_empty() {
+            variable_history.insert(0, "".to_string());
+            (variable_history.join("\n"), &None)
+        } else {
+            ('\n'.to_string(), &None)
+        }
     };
 
     let exe = fs::exe_string();
@@ -131,7 +139,9 @@ fn prompt_finder(
         });
     }
 
-    if suggestion.is_none() {
+    if !variable_history.is_empty() {
+        opts.suggestion_type = SuggestionType::SingleRecommendation;
+    } else if suggestion.is_none() {
         opts.suggestion_type = SuggestionType::Disabled;
     };
 
@@ -144,6 +154,10 @@ fn prompt_finder(
             Ok(())
         })
         .context("finder was unable to prompt with suggestions")?;
+
+    if suggestion.is_none() && !variable_history.contains(&output) {
+        filesystem::save_variable_history(variable_name, &output);
+    }
 
     Ok(output)
 }
