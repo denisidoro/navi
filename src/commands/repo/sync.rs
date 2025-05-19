@@ -1,5 +1,5 @@
-use std::fs;
-use walkdir::WalkDir;
+use std::{fs, path};
+use walkdir::{WalkDir};
 use crate::common::git;
 use crate::filesystem::{all_cheat_files, all_git_files, local_cheatsheet_repositories};
 use crate::prelude::*;
@@ -47,6 +47,7 @@ fn synchronize(cheat_repo: String) -> Result<()> {
     // We retrieve all existing cheat files
     let cheat_files = all_cheat_files(&cheat_path);
     let git_files = all_git_files(&cheat_path);
+    let mut cheat_dirs: Vec<String> = Vec::new();
 
     // We delete them since they are now out of tree
     for file in cheat_files.iter() {
@@ -61,20 +62,26 @@ fn synchronize(cheat_repo: String) -> Result<()> {
     // we might have a surplus of "illegal" files (i.e. files that should not be present in a cheatsheet repository).
     //
     // They need to be removed and the cheat files renamed.
-
     let files_to_discard = WalkDir::new(&cheat_repo)
         .follow_links(true)
         .max_depth(4)
         .into_iter()
         .filter_map(|e| e.ok())
         .map(|e| {
-            if e.path().is_dir() {
+            let e = e.path();
+            let path_str = e.to_str().unwrap_or("");
+            let path_string = path_str.to_string();
+
+            if e.is_dir() {
+                if path_str != cheat_repo && (! path_str.contains(".git")) {
+                    cheat_dirs.push(path_str.to_owned());
+                }
+
                 return "".to_string();
             }
 
-            let path_str = e.path().to_str().unwrap_or("").to_string();
 
-            if cheat_files.contains(&path_str) {
+            if cheat_files.contains(&path_string) {
 
                 return "".to_string()
             }
@@ -83,7 +90,7 @@ fn synchronize(cheat_repo: String) -> Result<()> {
             // a matching path for the git_file's condition.
             let cheat_str = cheat_path.display().to_string();
             let cheat_str = cheat_str.as_str();
-            let cheat_str = &path_str.clone().replace(cheat_str, "");
+            let cheat_str = &path_str.replace(cheat_str, "");
 
 
             if git_files.contains(&cheat_str) {
@@ -91,7 +98,7 @@ fn synchronize(cheat_repo: String) -> Result<()> {
                 return "".to_string();
             }
 
-            return e.path().display().to_string();
+            return e.display().to_string();
         })
         .filter(|e| e != "")
         .collect::<Vec<String>>();
@@ -104,6 +111,27 @@ fn synchronize(cheat_repo: String) -> Result<()> {
     }
 
     // TODO: We should flatten the folder just like the behaviour of `navi repo add`
+    for cheat_file in cheat_files {
+        let filename = cheat_file
+            .replace(&format!("{}{}", &cheat_repo, path::MAIN_SEPARATOR), "")
+            .replace(path::MAIN_SEPARATOR, "__");
+
+        fs::copy(cheat_file, format!("{}/{}", cheat_repo, filename))?;
+    }
+
+    for _dir in cheat_dirs {
+        eprintln!("DIR: {}", &_dir);
+
+        // TODO: Fix this loop trying to delete an already deleted path (i.e. the parent has been deleted)
+        match fs::exists(&_dir) {
+            Ok(_) => {
+                fs::remove_dir_all(&_dir)?;
+            }
+            Err(_) => {
+
+            }
+        }
+    }
 
     Ok(())
 }
