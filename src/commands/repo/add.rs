@@ -148,7 +148,7 @@ pub fn main(uri: String, yes_flag: bool, branch: &Option<String>) -> Result<()> 
             &to.clone().to_str().unwrap()
         );
 
-        eprintln!("=> {}", &complete_local_path);
+        debug!("=> {}", &complete_local_path);
 
         fs::create_dir_all(&local_to_folder).unwrap_or(());
         fs::copy(&from, &complete_local_path).with_context(|| {

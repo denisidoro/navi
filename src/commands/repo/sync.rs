@@ -49,14 +49,18 @@ fn synchronize(cheat_repo: String) -> Result<()> {
     let git_files = all_git_files(&cheat_path);
     let mut cheat_dirs: Vec<String> = Vec::new();
 
+    // Now that the folder has been cleaned, we need to fetch the latest HEAD available.
+    git::fetch_origin(&cheat_repo)?;
+    // git::pull(&cheat_repo)?;
+    let status = git::diff(&cheat_repo)?;
+
+    eprintln!("Status: {:?}", status.code());
+    return Ok(());
+
     // We delete them since they are now out of tree
     for file in cheat_files.iter() {
         fs::remove_file(&file)?;
     }
-
-    // Now that the folder has been cleaned, we need to fetch the latest HEAD available.
-    git::fetch_origin(&cheat_repo)?;
-    git::pull(&cheat_repo)?;
 
     // Now that we've checkout the repository to the latest commit,
     // we might have a surplus of "illegal" files (i.e. files that should not be present in a cheatsheet repository).
@@ -119,16 +123,26 @@ fn synchronize(cheat_repo: String) -> Result<()> {
         fs::copy(cheat_file, format!("{}/{}", cheat_repo, filename))?;
     }
 
+    let mut last_path: String = "".to_string();
+
     for _dir in cheat_dirs {
-        eprintln!("DIR: {}", &_dir);
+        eprintln!("DIR: {}, {}", &_dir, &_dir.contains(&last_path));
 
-        // TODO: Fix this loop trying to delete an already deleted path (i.e. the parent has been deleted)
-        match fs::exists(&_dir) {
-            Ok(_) => {
-                fs::remove_dir_all(&_dir)?;
-            }
-            Err(_) => {
+        if _dir.contains(&last_path) {
+            eprintln!("Found: {}", &_dir);
 
+            continue
+        } else {
+            // TODO: Fix this loop trying to delete an already deleted path (i.e. the parent has been deleted)
+            match fs::exists(&_dir) {
+                Ok(_) => {
+                    fs::remove_dir_all(&_dir)?;
+    
+                    last_path = _dir.to_owned();
+                }
+                Err(_) => {
+    
+                }
             }
         }
     }

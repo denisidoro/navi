@@ -1,6 +1,6 @@
 use crate::common::shell::ShellSpawnError;
 use crate::prelude::*;
-use std::process::Command;
+use std::process::{Command, ExitStatus};
 
 pub fn shallow_clone(uri: &str, target: &str, branch: &Option<String>) -> Result<()> {
     // If we target a specific ref, we add the parameter inside the arguments to call
@@ -87,21 +87,31 @@ pub fn fetch_origin(uri: &str) -> Result<()> {
 }
 
 /// Restores/Discards any local changes then pulls from the origin. 
-pub fn pull(uri: &str) -> Result<()> {
+pub fn pull(uri: &str) -> Result<ExitStatus> {
     Command::new("git")
         .current_dir(&uri)
         .args(["restore", "./"])
         .spawn()?
         .wait()?;
 
-    Command::new("git")
+    Ok(Command::new("git")
         .current_dir(uri)
         .args(["pull", "origin"])
         .spawn()?
         .wait()
-        .expect("Unable to git pull");
-    Ok(())
+        .expect("Unable to git pull"))
 }
+
+pub fn diff(uri: &str) -> Result<ExitStatus> {
+    eprintln!("git --git-dir=\"{}\" diff --quiet", &uri);
+
+    Ok(Command::new("git")
+    .current_dir(&uri)
+    .args(["diff", "--quiet"])
+    .spawn()?
+    .wait()?)
+}
+
 
 #[cfg(test)]
 mod tests {
