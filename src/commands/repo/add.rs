@@ -116,7 +116,7 @@ pub fn main(uri: String, yes_flag: bool, branch: &Option<String>) -> Result<()> 
         };
         fs::create_dir_all(&to_folder).unwrap_or(());
         fs::copy(&from, &to)
-            .with_context(|| format!("Failed to copy `{}` to `{}`", &from.to_string(), &to.to_string()))?;
+            .with_context(|| format!("Failed to copy cheat file `{}` to `{}`", &from.to_string(), &to.to_string()))?;
     }
 
     // We are copying the .git folder along with the cheat files
@@ -136,28 +136,38 @@ pub fn main(uri: String, yes_flag: bool, branch: &Option<String>) -> Result<()> 
 
         let path_str = &PathBuf::clone(&to).to_string();
         let local_collection = &path_str.split(MAIN_SEPARATOR).collect::<Vec<&str>>();
-        let local_to_folder = format!(
-            "{}{}",
-            &to_folder.to_string(),
-            local_collection[0..&local_collection.len() - 1].join(MAIN_SEPARATOR_STR)
-        );
+        let collection_str = local_collection[0..&local_collection.len() - 1].join(MAIN_SEPARATOR_STR);
 
-        let complete_local_path = format!(
-            "{}{}",
-            &to_folder.clone().to_str().unwrap(),
-            &to.clone().to_str().unwrap()
-        );
+        // This should be able to fix an issue with the clone on windows where both
+        // to_folder and collection_str are equal
+        let local_to_folder = if &to_folder.to_string() != &collection_str {
+            format!(
+                "{}{}",
+                &to_folder.to_string(),
+                &collection_str
+            )
+        } else {
+            to_folder.to_string()
+        };
 
-        eprintln!("=> Collection: {}", local_collection[0..&local_collection.len() - 1].join(MAIN_SEPARATOR_STR));
-        eprintln!("=> local_to_folder: {}", &local_to_folder);
-        eprintln!("=> complete_local_path: {}", &complete_local_path);
+        // This should be able to fix an issue with the clone on windows where both
+        // to_folder and collection_str are equal
+        let complete_local_path = if &to_folder.to_string() != &collection_str {
+            format!(
+                "{}{}",
+                &to_folder.to_string(),
+                &to.to_string()
+            )
+        } else {
+            to_folder.to_string()
+        };
 
         debug!("=> {}", &complete_local_path);
 
         fs::create_dir_all(&local_to_folder).unwrap_or(());
         fs::copy(&from, &complete_local_path).with_context(|| {
             format!(
-                "Failed to copy `{}` to `{}`",
+                "Failed to copy git file `{}` to `{}`",
                 &from.to_string(),
                 &complete_local_path
             )
