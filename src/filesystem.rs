@@ -8,6 +8,7 @@ use etcetera::BaseStrategy;
 use regex::Regex;
 
 use std::cell::RefCell;
+use std::path;
 use std::path::MAIN_SEPARATOR;
 
 use crate::common::git;
@@ -64,10 +65,13 @@ pub fn all_cheat_files(path: &Path) -> Vec<String> {
 ///
 pub fn all_git_files(path: &Path) -> Vec<String> {
     let mut path_str = path.to_str().unwrap().to_owned();
-    if path_str.ends_with("/") {
+
+    if path_str.ends_with(path::MAIN_SEPARATOR_STR) {
         // We're removing the trailing '/' at the end, if it exists
-        path_str.push('/');
+        path_str.push(path::MAIN_SEPARATOR);
     }
+
+    let git_filter = format!("{}.git{}", path::MAIN_SEPARATOR_STR, path::MAIN_SEPARATOR_STR);
 
     WalkDir::new(path)
         .follow_links(true)
@@ -84,7 +88,7 @@ pub fn all_git_files(path: &Path) -> Vec<String> {
                 "".to_string()
             };
         })
-        .filter(|e| e.contains("/.git/"))
+        .filter(|e| e.contains(git_filter.as_str()))
         .collect::<Vec<String>>()
 }
 
