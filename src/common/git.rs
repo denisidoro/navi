@@ -112,6 +112,54 @@ pub fn diff(uri: &str) -> Result<ExitStatus> {
     .wait()?)
 }
 
+pub fn remote_update(uri: &str) -> Result<ExitStatus> {
+    Ok(Command::new("git")
+        .current_dir(&uri)
+        .args(["remote", "update"])
+        .spawn()?
+        .wait()?
+    )
+}
+
+/// Gets the local state of a git repository against its remote
+///
+/// Return: an i8 integer with the following values:
+///     - "-2" => There has been an error within this function
+///     - "-1" => This repository is behind the remote
+///     - "0" => This repository is the same as the remote
+///     - "1" => This repository is ahead the remote
+pub fn get_local_state(uri: &str) -> i8 {
+
+    // We're updating the remote
+    let remote_update = Command::new("git")
+        .current_dir(&uri)
+        .args(["remote", "update"])
+        .spawn().unwrap()
+        .wait().unwrap();
+
+    // If we couldn't update the remotes, we can't continue and compare them,
+    // we need to send an error and quit.
+    if ! remote_update.success() {
+        error!("Unable to update the remote (i.e. git remote update)");
+
+        return -2;
+    }
+
+    let local_hash = Command::new("git")
+        .current_dir(&uri)
+        .args(["rev-parse", "@"])
+        .spawn().unwrap().stdout.take().unwrap();
+
+    let remote_hash = Command::new("git")
+        .current_dir(&uri)
+        .args(["rev-parse", "\"@{u}\""])
+        .spawn().unwrap().stdout.take().unwrap();
+    
+    eprintln!("{:?} => {:?}", local_hash, remote_hash);
+
+    -1
+}
+
 
 #[cfg(test)]
 mod tests {

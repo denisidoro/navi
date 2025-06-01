@@ -52,9 +52,9 @@ fn synchronize(cheat_repo: String) -> Result<()> {
     // Now that the folder has been cleaned, we need to fetch the latest HEAD available.
     git::fetch_origin(&cheat_repo)?;
     // git::pull(&cheat_repo)?;
-    let status = git::diff(&cheat_repo)?;
+    let r = git::remote_update(&cheat_repo)?;
 
-    eprintln!("Status: {:?}", status.code());
+    eprintln!("Status: {:?}", r.code());
     return Ok(());
 
     // We delete them since they are now out of tree

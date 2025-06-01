@@ -9,6 +9,7 @@ use crate::prelude::*;
 use std::fs;
 use std::path;
 use std::path::{MAIN_SEPARATOR, MAIN_SEPARATOR_STR};
+use tracing_subscriber::fmt::format;
 
 fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
     let opts = FinderOpts {
@@ -122,21 +123,25 @@ pub fn main(uri: String, yes_flag: bool, branch: &Option<String>) -> Result<()> 
     // We are copying the .git folder along with the cheat files
     // For more details, see: (https://github.com/denisidoro/navi/issues/733)
     for file in git_files.split('\n') {
-        let filename = format!("{}{}", &tmp_path_str, &file);
+        let file_path = format!("{}{}", &tmp_path_str, &file);
         let from = {
             let mut p = tmp_pathbuf.clone();
-            p.push(&filename);
+            p.push(&file_path);
             p
         };
-        let to = {
-            let mut p = to_folder.clone();
-            p.push(file);
-            p
-        };
+        
+        eprintln!("{file_path}");
 
-        let path_str = &PathBuf::clone(&to).to_string();
+
+        let path_str = format!("{}{}{}", to_folder.to_string(), path::MAIN_SEPARATOR, &file_path);
         let local_collection = &path_str.split(MAIN_SEPARATOR).collect::<Vec<&str>>();
-        let collection_str = local_collection[0..&local_collection.len() - 1].join(MAIN_SEPARATOR_STR);
+        let collection_str = if cfg!(windows) {
+            eprintln!("{:?}", local_collection);
+
+            local_collection[1..&local_collection.len() - 1].join(MAIN_SEPARATOR_STR)
+        } else {
+            local_collection[0..&local_collection.len() - 1].join(MAIN_SEPARATOR_STR)
+        };
 
         // This should be able to fix an issue with the clone on windows where both
         // to_folder and collection_str are equal
@@ -156,11 +161,18 @@ pub fn main(uri: String, yes_flag: bool, branch: &Option<String>) -> Result<()> 
             format!(
                 "{}{}",
                 &to_folder.to_string(),
-                &to.to_string()
+                &collection_str
             )
         } else {
             to_folder.to_string()
         };
+
+
+        eprintln!("=> (&to_folder.to_string() == &collection_str) = {}", &to_folder.to_string() == &collection_str);
+        eprintln!("=> To_folder: {}", &to_folder.to_string());
+        eprintln!("=> Collection: {}", &collection_str);
+        eprintln!("=> local_to_folder: {}", &local_to_folder);
+        eprintln!("=> complete_local_path: {}", &complete_local_path);
 
         debug!("=> {}", &complete_local_path);
 
