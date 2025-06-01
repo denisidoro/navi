@@ -148,6 +148,10 @@ pub fn main(uri: String, yes_flag: bool, branch: &Option<String>) -> Result<()> 
             &to.clone().to_str().unwrap()
         );
 
+        eprintln!("=> Collection: {}", local_collection[0..&local_collection.len() - 1].join(MAIN_SEPARATOR_STR));
+        eprintln!("=> local_to_folder: {}", &local_to_folder);
+        eprintln!("=> complete_local_path: {}", &complete_local_path);
+
         debug!("=> {}", &complete_local_path);
 
         fs::create_dir_all(&local_to_folder).unwrap_or(());
