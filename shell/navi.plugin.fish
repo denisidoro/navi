@@ -17,7 +17,7 @@ function _navi_smart_replace
         if test -n "$best_match"
             commandline --current-process $best_match
             if test "$force_repaint" = true
-                commandline -f repaint
+                commandline --function repaint
             end
             return
         end
@@ -27,7 +27,7 @@ function _navi_smart_replace
     if test -n "$candidate"
         commandline --current-process $candidate
         if test "$force_repaint" = true
-            commandline -f repaint
+            commandline --function repaint
         end
     end
 end
