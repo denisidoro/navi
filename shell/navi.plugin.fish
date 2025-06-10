@@ -15,6 +15,8 @@ function _navi_smart_replace
     #  - https://github.com/fish-shell/fish-shell/issues/5033
     #  - https://github.com/fish-shell/fish-shell/issues/5860
     #  - https://github.com/fish-shell/fish-shell/blob/d663f553dffba460d6d0bcdf93df21bda9ec6f3f/src/screen.rs#L531
+    #
+    # Introduced with: https://github.com/denisidoro/navi/pull/982
     if test $version_parts[1] -ge 4
         set force_repaint true
     end
