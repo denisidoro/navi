@@ -87,7 +87,7 @@ release() {
   ### Since the default behaviour of cross is to compile from
   ### a rustup target if it doesn't find one for itself.
   rustup target add $env_target
-  cargo install cross
+  cargo install cross --locked
 
   ### We're building the release via cross for the target environment
   cross build --release --target "$env_target"
