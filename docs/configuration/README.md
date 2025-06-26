@@ -113,7 +113,7 @@ style:
   comment:
     color: <your color for comments>
   snippet:
-    color: <you color for snippets>
+    color: <your color for snippets>
 ```
 
 Below is an example of what to do if you'd like navi to look like the French flag:
