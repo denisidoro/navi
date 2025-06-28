@@ -23,9 +23,6 @@ It uses [fzf](https://github.com/junegunn/fzf) or [skim](https://github.com/lota
 - [Cheatsheet syntax](#cheatsheet-syntax)
 - [Customization](#customization)
 - [More info](#more-info)
-- [Trying out online](#trying-out-online)
-- [Similar tools](#similar-tools)
-- [Etymology](#etymology)
 
 ## Installation
 
