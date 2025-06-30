@@ -16,7 +16,7 @@ to your Tmux configuration file.
 
 ```sh
 bind-key -N "Open Navi (cheat sheets)" -T prefix C-g split-window \
-  "$SHELL --login -i -c 'navi --print | head -n 1 | tmux load-buffer -b tmp - ; tmux paste-buffer -p -t {last} -b tmp -d'"
+  "$SHELL --login -i -c 'navi --print | tmux load-buffer -b tmp - ; tmux paste-buffer -p -t {last} -b tmp -d'"
 ```
 
 ## Example cheatsheet
