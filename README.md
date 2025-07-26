@@ -13,7 +13,7 @@ An interactive cheatsheet tool for the command-line.
 - it will make you type less
 - it will teach you new one-liners
 
-It uses [fzf](https://github.com/junegunn/fzf), [skim](https://github.com/lotabout/skim), or [Alfred](https://www.alfredapp.com/) under the hood and it can be either used as a command or as a shell widget (_à la_ Ctrl-R).
+It uses [fzf](https://github.com/junegunn/fzf) or [skim](https://github.com/lotabout/skim) under the hood and it can be either used as a command or as a shell widget (_à la_ Ctrl-R).
 
 ## Table of contents
 
@@ -23,15 +23,8 @@ It uses [fzf](https://github.com/junegunn/fzf), [skim](https://github.com/lotabo
 - [Cheatsheet syntax](#cheatsheet-syntax)
 - [Customization](#customization)
 - [More info](#more-info)
-- [Trying out online](#trying-out-online)
-- [Similar tools](#similar-tools)
-- [Etymology](#etymology)
 
 ## Installation
-
-**navi** can be installed with the following package managers:
-
-[![Packaging status](https://repology.org/badge/vertical-allrepos/navi.svg)](https://repology.org/project/navi/versions)
 
 The recommended way to install **navi** is by running:
 
@@ -39,7 +32,12 @@ The recommended way to install **navi** is by running:
 brew install navi
 ```
 
-If `brew` isn't available, you can check [alternative install instructions](docs/installation.md).
+> [!NOTE]
+> For more details on how to install Navi, see [docs/installation](docs/installation/README.md)
+
+**navi** can be installed with the following package managers:
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/navi.svg)](https://repology.org/project/navi/versions)
 
 ## Usage
 
@@ -47,13 +45,12 @@ There are multiple ways to use **navi**:
 
 - by typing `navi` in the terminal
   - pros: you have access to all possible subcommands and flags
-- as a [shell widget](docs/installation.md#installing-the-shell-widget) for the terminal
+- as a [shell widget](docs/installation/README.md#installing-the-shell-widget) for the terminal
   - pros: the shell history is correctly populated (i.e. with the actual command you ran instead of `navi`) and you can edit the command as you wish before executing it
-- as a [Tmux widget](docs/tmux.md)
+- as a [Tmux widget](docs/widgets/howto/TMUX.md)
   - pros: you can use your cheatsheets in any command-line app even in SSH sessions
-- as [aliases](docs/cheatsheet_syntax.md#aliases)
-- as a [shell scripting tool](docs/shell_scripting.md)
-- as an [Alfred workflow](docs/alfred.md)
+- as [aliases](docs/cheatsheet/syntax/README.md#aliases)
+- as a [shell scripting tool](docs/usage/shell-scripting/README.md)
 
 In particular, check [these instructions](https://github.com/denisidoro/navi/issues/491) if you want to replicate what's shown in the demo above.
 
@@ -63,11 +60,11 @@ Running **navi** for the first time will help you download and manage cheatsheet
 
 You can also:
 
-- [browse through featured cheatsheets](docs/cheatsheet_repositories.md#browsing-through-cheatsheet-repositories)
-- [import cheatsheets from git repositories](docs/cheatsheet_repositories.md#importing-cheatsheets)
-- [write your own cheatsheets](#cheatsheet-syntax) (and [share them](docs/cheatsheet_repositories.md#submitting-cheatsheets), if you want)
-- [use cheatsheets from other tools](docs/cheatsheet_repositories.md#using-cheatsheets-from-other-tools), such as [tldr](https://github.com/tldr-pages/tldr) and [cheat.sh](https://github.com/chubin/cheat.sh)
-- [auto-update repositories](docs/cheatsheet_repositories.md#auto-updating-repositories)
+- [browse through featured cheatsheets](docs/usage/commands/repo/README.md#browsing-through-cheatsheet-repositorieea)
+- [import cheatsheets from git repositories](docs/cheatsheet/repositories/README.md#importing-cheatsheet-repositories)
+- [write your own cheatsheets](#cheatsheet-syntax) (and [share them](docs/cheatsheet/repositories/README.md#submitting-cheatsheets), if you want)
+- [use cheatsheets from other tools](docs/cheatsheet/README.md#using-cheatsheets-from-other-tools), such as [tldr](https://github.com/tldr-pages/tldr) and [cheat.sh](https://github.com/chubin/cheat.sh)
+- [auto-update repositories](docs/cheatsheet/repositories/README.md#auto-updating-repositories)
 - auto-export cheatsheets from your [TiddlyWiki](https://tiddlywiki.com/) notes using a [TiddlyWiki plugin](https://bimlas.github.io/tw5-navi-cheatsheet/)
 
 ## Cheatsheet syntax
@@ -83,17 +80,17 @@ git checkout <branch>
 $ branch: git branch | awk '{print $NF}'
 ```
 
-The full syntax and examples can be found [here](docs/cheatsheet_syntax.md).
+The full syntax and examples can be found [here](docs/cheatsheet/syntax/README.md).
 
 ## Customization
 
 You can:
 
-- [setup your own config file](docs/navi_config.md)
-- [set custom paths for your config file and cheat sheets](docs/navi_config.md#paths-and-environment-variables)
-- [change colors](docs/navi_config.md#changing-colors)
-- [resize columns](docs/navi_config.md#resizing-columns)
-- [change how search is performed](docs/navi_config.md#overriding-fzf-options)
+- [setup your own config file](docs/configuration/README.md)
+- [set custom paths for your config file and cheat sheets](docs/configuration/README.md#paths-and-environment-variables)
+- [change colors](docs/configuration/README.md#changing-colors)
+- [resize columns](docs/configuration/README.md#resizing-columns)
+- [change how search is performed](docs/configuration/README.md#overriding-fzf-options)
 
 ## More info
 
@@ -103,17 +100,4 @@ Please run the following command to read more about all possible options:
 navi --help
 ```
 
-In addition, please check the [/docs](docs) folder.
-
-## Similar tools
-
-There are many similar projects out there ([beavr](https://github.com/denisidoro/beavr), [bro](https://github.com/hubsmoke/bro), [cheat](https://github.com/cheat/cheat), [cheat.sh](https://github.com/chubin/cheat.sh), [cmdmenu](https://github.com/amacfie/cmdmenu), [eg](https://github.com/srsudar/eg), [how2](https://github.com/santinic/how2), [howdoi](https://github.com/gleitz/howdoi), [Command Line Interface Pages](https://github.com/command-line-interface-pages) and [tldr](https://github.com/tldr-pages/tldr), to name a few).
-
-They are excellent projects, but **navi** remains unique in the following ways:
-
-- it's natural to write cheatsheets tailored to your needs
-- arguments are neither hardcoded nor a simple template
-
-## Etymology
-
-[Navi](https://zelda.gamepedia.com/Navi) is a character from [The Legend of Zelda Ocarina of Time](https://zelda.gamepedia.com/Ocarina_of_Time) that provides [Link](https://zelda.gamepedia.com/Link) with a variety of clues to help him solve puzzles and make progress in his quest.
+In addition, please check the [/docs](docs) folder or the website.
