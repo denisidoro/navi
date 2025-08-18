@@ -45,7 +45,7 @@ There are multiple ways to use **navi**:
 
 - by typing `navi` in the terminal
   - pros: you have access to all possible subcommands and flags
-- as a [shell widget](docs/installation/README.md#installing-the-shell-widget) for the terminal
+- as a [shell widget](docs/widgets/README.md#installing-the-shell-widget) for the terminal
   - pros: the shell history is correctly populated (i.e. with the actual command you ran instead of `navi`) and you can edit the command as you wish before executing it
 - as a [Tmux widget](docs/widgets/howto/TMUX.md)
   - pros: you can use your cheatsheets in any command-line app even in SSH sessions
@@ -60,7 +60,7 @@ Running **navi** for the first time will help you download and manage cheatsheet
 
 You can also:
 
-- [browse through featured cheatsheets](docs/usage/commands/repo/README.md#browsing-through-cheatsheet-repositorieea)
+- [browse through featured cheatsheets](docs/usage/commands/repo/README.md#browsing-through-cheatsheet-repositories)
 - [import cheatsheets from git repositories](docs/cheatsheet/repositories/README.md#importing-cheatsheet-repositories)
 - [write your own cheatsheets](#cheatsheet-syntax) (and [share them](docs/cheatsheet/repositories/README.md#submitting-cheatsheets), if you want)
 - [use cheatsheets from other tools](docs/cheatsheet/README.md#using-cheatsheets-from-other-tools), such as [tldr](https://github.com/tldr-pages/tldr) and [cheat.sh](https://github.com/chubin/cheat.sh)
