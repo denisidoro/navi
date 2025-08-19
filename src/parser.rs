@@ -265,6 +265,7 @@ impl<'a> Parser<'a> {
             else if line.starts_with('%') {
                 should_break = self.write_cmd(&item).is_err();
                 item.snippet = String::from("");
+                item.comment = String::from("");
                 item.tags = without_prefix(&line);
             }
             // dependency
@@ -281,9 +282,17 @@ impl<'a> Parser<'a> {
             }
             // comment
             else if line.starts_with('#') {
-                should_break = self.write_cmd(&item).is_err();
-                item.snippet = String::from("");
-                item.comment = without_prefix(&line);
+                // if current item has a snippet, write it to the finder and start a new item
+                if !item.snippet.is_empty() {
+                    should_break = self.write_cmd(&item).is_err();
+                    item.snippet = String::from("");
+                    item.comment = without_prefix(&line);
+                } else {
+                    if !item.comment.is_empty() {
+                        item.comment.push_str(deser::LINE_SEPARATOR);
+                    }
+                    item.comment.push_str(&without_prefix(&line));
+                }
             }
             // variable
             else if !variable_cmd.is_empty()

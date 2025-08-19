@@ -14,7 +14,7 @@ pub struct Input {
 }
 
 fn extract_elements(argstr: &str) -> Result<(&str, &str, &str)> {
-    let mut parts = argstr.split(deser::terminal::DELIMITER).skip(3);
+    let mut parts = argstr.split(deser::terminal::DELIMITER).skip(1);
     let tags = parts.next().context("No `tags` element provided.")?;
     let comment = parts.next().context("No `comment` element provided.")?;
     let snippet = parts.next().context("No `snippet` element provided.")?;
