@@ -45,35 +45,37 @@ pub fn write(item: &Item) -> String {
         let splitted_snippet = snippet.split(LINE_SEPARATOR).collect::<Vec<&str>>();
 
         (0..=separator_count)
-        .map(|i| {
-            format!(
-            "{tags_short}{delimiter}{comment_line_i}{delimiter}{snippet_line_i}",
-            tags_short = style(limit_str(
-                if i == 0 { &item.tags } else { "" },
-                tag_width_percentage
-            ))
-            .with(CONFIG.tag_color()),
-            comment_line_i = style(limit_str(
-                splitted_comment.get(i).unwrap_or(&""),
-                comment_width_percentage
-            ))
-            .with(CONFIG.comment_color()),
-            snippet_line_i = style(limit_str(
-                splitted_snippet.get(i).unwrap_or(&""),
-                snippet_width_percentage
-            ))
-            .with(CONFIG.snippet_color()),
-            delimiter = " ",
-            )
-        })
-        .collect::<Vec<String>>()
-        .join("\n")
+            .map(|i| {
+                format!(
+                    "{tags_short}{delimiter}{comment_line_i}{delimiter}{snippet_line_i}",
+                    tags_short = style(limit_str(
+                        if i == 0 { &item.tags } else { "" },
+                        tag_width_percentage
+                    ))
+                    .with(CONFIG.tag_color()),
+                    comment_line_i = style(limit_str(
+                        splitted_comment.get(i).unwrap_or(&""),
+                        comment_width_percentage
+                    ))
+                    .with(CONFIG.comment_color()),
+                    snippet_line_i = style(limit_str(
+                        splitted_snippet.get(i).unwrap_or(&""),
+                        snippet_width_percentage
+                    ))
+                    .with(CONFIG.snippet_color()),
+                    delimiter = " ",
+                )
+            })
+            .collect::<Vec<String>>()
+            .join("\n")
     } else {
         format!(
             "{tags_short}{delimiter}{comment_short}{delimiter}{snippet_short}",
-            tags_short    = style(limit_str(&item.tags, tag_width_percentage)).with(CONFIG.tag_color()),
-            comment_short = style(limit_str(&fix_newlines(&item.comment), comment_width_percentage)).with(CONFIG.comment_color()),
-            snippet_short = style(limit_str(&fix_newlines(&item.snippet), snippet_width_percentage)).with(CONFIG.snippet_color()),
+            tags_short = style(limit_str(&item.tags, tag_width_percentage)).with(CONFIG.tag_color()),
+            comment_short = style(limit_str(&fix_newlines(&item.comment), comment_width_percentage))
+                .with(CONFIG.comment_color()),
+            snippet_short = style(limit_str(&fix_newlines(&item.snippet), snippet_width_percentage))
+                .with(CONFIG.snippet_color()),
             delimiter = DELIMITER,
         )
     };

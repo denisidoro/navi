@@ -37,8 +37,7 @@ use clap::{crate_version, Parser, Subcommand};
     navi --fzf-overrides '--nth 1,2'             # only consider the first two columns for search
     navi --fzf-overrides '--no-exact'            # use looser search algorithm
     navi --tag-rules='git,!checkout'             # show non-checkout git snippets only
-    navi --multiline                             # show multiline snippets (adds support for newlines in snippet/comment)"
-)]
+    navi --multiline                             # show multiline snippets (adds support for newlines in snippet/comment)")]
 #[clap(version = crate_version!())]
 pub(super) struct ClapConfig {
     /// Colon-separated list of paths containing .cheat files
