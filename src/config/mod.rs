@@ -170,7 +170,7 @@ impl Config {
     }
 
     pub fn multiline(&self) -> bool {
-        self.clap.multiline
+        self.clap.multiline || self.yaml.style.multiline
     }
 
     pub fn comment_width_percentage(&self) -> u16 {
