@@ -77,6 +77,8 @@ pub struct Search {
 pub struct Shell {
     pub command: String,
     pub finder_command: Option<String>,
+    pub show_command: Option<bool>,
+    pub command_print_color: Option<Color>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -184,9 +186,23 @@ impl Default for Finder {
 
 impl Default for Shell {
     fn default() -> Self {
-        Self {
-            command: "bash".to_string(),
-            finder_command: None,
+        #[cfg(target_family = "windows")]
+        {
+            Self {
+                command: "powershell".to_string(),
+                finder_command: None,
+                show_command: Some(false),
+                command_print_color: None,
+            }
+        }
+        #[cfg(not(target_family = "windows"))]
+        {
+            Self {
+                command: "bash".to_string(),
+                finder_command: None,
+                show_command: Some(false),
+                command_print_color: None,
+            }
         }
     }
 }

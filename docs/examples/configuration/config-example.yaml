@@ -32,7 +32,9 @@ finder:
 
 shell:
   # Shell used for shell out. Possible values: bash, zsh, dash, ...
-  # For Windows, use `cmd.exe` instead.
+  # For Windows, use `cmd.exe` or `powershell.exe` instead.
   command: bash
-
+  show_command: true # whether to print the command before executing it
+  command_print_color: green # color for the printed command. possible values: https://bit.ly/3gloNNI
+  
   # finder_command: bash # similar, but for fzf's internals
