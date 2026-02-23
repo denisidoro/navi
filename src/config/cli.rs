@@ -36,7 +36,8 @@ use clap::{crate_version, Parser, Subcommand};
     navi --fzf-overrides-var '--no-select-1'     # same, but for variable selection
     navi --fzf-overrides '--nth 1,2'             # only consider the first two columns for search
     navi --fzf-overrides '--no-exact'            # use looser search algorithm
-    navi --tag-rules='git,!checkout'             # show non-checkout git snippets only")]
+    navi --tag-rules='git,!checkout'             # show non-checkout git snippets only
+    navi --multiline                             # show multiline snippets (adds support for newlines in snippet/comment)")]
 #[clap(version = crate_version!())]
 pub(super) struct ClapConfig {
     /// Colon-separated list of paths containing .cheat files
@@ -79,6 +80,10 @@ pub(super) struct ClapConfig {
     /// Finder overrides for variable selection
     #[arg(long, allow_hyphen_values = true)]
     pub fzf_overrides_var: Option<String>,
+
+    /// When set, show multiline snippets in the terminal listing (split snippet/comment across lines)
+    #[arg(long)]
+    pub multiline: bool,
 
     /// Finder application to use
     #[arg(long, ignore_case = true)]

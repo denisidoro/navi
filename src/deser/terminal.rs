@@ -33,21 +33,66 @@ lazy_static! {
 
 pub fn write(item: &Item) -> String {
     let (tag_width_percentage, comment_width_percentage, snippet_width_percentage) = *COLUMN_WIDTHS;
-    format!(
-            "{tags_short}{delimiter}{comment_short}{delimiter}{snippet_short}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}{file_index}{delimiter}\n",
+    let snippet = &item.snippet.trim_end_matches(LINE_SEPARATOR);
+
+    let printer_item = if CONFIG.multiline() {
+        let separator_count = max(
+            snippet.matches(LINE_SEPARATOR).count(),
+            item.comment.matches(LINE_SEPARATOR).count(),
+        );
+
+        let splitted_comment = item.comment.split(LINE_SEPARATOR).collect::<Vec<&str>>();
+        let splitted_snippet = snippet.split(LINE_SEPARATOR).collect::<Vec<&str>>();
+
+        (0..=separator_count)
+            .map(|i| {
+                format!(
+                    "{tags_short}{delimiter}{comment_line_i}{delimiter}{snippet_line_i}",
+                    tags_short = style(limit_str(
+                        if i == 0 { &item.tags } else { "" },
+                        tag_width_percentage
+                    ))
+                    .with(CONFIG.tag_color()),
+                    comment_line_i = style(limit_str(
+                        splitted_comment.get(i).unwrap_or(&""),
+                        comment_width_percentage
+                    ))
+                    .with(CONFIG.comment_color()),
+                    snippet_line_i = style(limit_str(
+                        splitted_snippet.get(i).unwrap_or(&""),
+                        snippet_width_percentage
+                    ))
+                    .with(CONFIG.snippet_color()),
+                    delimiter = " ",
+                )
+            })
+            .collect::<Vec<String>>()
+            .join("\n")
+    } else {
+        format!(
+            "{tags_short}{delimiter}{comment_short}{delimiter}{snippet_short}",
             tags_short = style(limit_str(&item.tags, tag_width_percentage)).with(CONFIG.tag_color()),
-            comment_short = style(limit_str(&item.comment, comment_width_percentage)).with(CONFIG.comment_color()),
-            snippet_short = style(limit_str(&fix_newlines(&item.snippet), snippet_width_percentage)).with(CONFIG.snippet_color()),
+            comment_short = style(limit_str(&fix_newlines(&item.comment), comment_width_percentage))
+                .with(CONFIG.comment_color()),
+            snippet_short = style(limit_str(&fix_newlines(&item.snippet), snippet_width_percentage))
+                .with(CONFIG.snippet_color()),
+            delimiter = DELIMITER,
+        )
+    };
+
+    format!(
+            "{printer_item}{delimiter}{tags}{delimiter}{comment}{delimiter}{snippet}{delimiter}{file_index}{delimiter}\0",
+            printer_item = printer_item,
             tags = item.tags,
             comment = item.comment,
             delimiter = DELIMITER,
-            snippet = &item.snippet.trim_end_matches(LINE_SEPARATOR),
+            snippet = snippet,
             file_index = item.file_index.unwrap_or(0),
         )
 }
 
 pub fn read(raw_snippet: &str, is_single: bool) -> Result<(&str, Item)> {
-    let mut lines = raw_snippet.split('\n');
+    let mut lines = raw_snippet.split('\0');
     let key = if is_single {
         "enter"
     } else {
@@ -56,11 +101,12 @@ pub fn read(raw_snippet: &str, is_single: bool) -> Result<(&str, Item)> {
             .context("Key was promised but not present in `selections`")?
     };
 
+    let skip_columns = if CONFIG.multiline() { 1 } else { 3 };
     let mut parts = lines
         .next()
         .context("No more parts in `selections`")?
         .split(DELIMITER)
-        .skip(3);
+        .skip(skip_columns);
 
     let tags = parts.next().unwrap_or("").into();
     let comment = parts.next().unwrap_or("").into();

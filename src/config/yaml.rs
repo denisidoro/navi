@@ -38,6 +38,7 @@ pub struct Style {
     pub tag: ColorWidth,
     pub comment: ColorWidth,
     pub snippet: ColorWidth,
+    pub multiline: bool,
 }
 
 #[derive(Deserialize, Debug)]
@@ -167,6 +168,7 @@ impl Default for Style {
                 min_width: 45,
             },
             snippet: Default::default(),
+            multiline: false,
         }
     }
 }

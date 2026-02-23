@@ -169,6 +169,10 @@ impl Config {
         self.yaml.style.tag.width_percentage
     }
 
+    pub fn multiline(&self) -> bool {
+        self.clap.multiline || self.yaml.style.multiline
+    }
+
     pub fn comment_width_percentage(&self) -> u16 {
         self.yaml.style.comment.width_percentage
     }
