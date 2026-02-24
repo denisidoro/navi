@@ -76,9 +76,7 @@ pub struct Search {
 #[serde(default)]
 pub struct Shell {
     pub command: String,
-    pub finder_command: Option<String>,
-    pub show_command: Option<bool>,
-    pub command_print_color: Option<Color>,
+    pub finder_command: Option<String>
 }
 
 #[derive(Deserialize, Debug)]
@@ -184,15 +182,31 @@ impl Default for Finder {
     }
 }
 
+#[cfg(target_family = "windows")]
+fn command_exists(cmd: &str) -> bool {
+    std::process::Command::new("where")
+        .arg(cmd)
+        .output()
+        .map(|output| output.status.success())
+        .unwrap_or(false)
+}
+
 impl Default for Shell {
     fn default() -> Self {
         #[cfg(target_family = "windows")]
         {
+            // Check for pwsh.exe first, then powershell.exe, then fallback to cmd.exe
+            let command = if command_exists("pwsh.exe") {
+                "pwsh.exe"
+            } else if command_exists("powershell.exe") {
+                "powershell.exe"
+            } else {
+                "cmd.exe"
+            };
+            
             Self {
-                command: "powershell".to_string(),
+                command: command.to_string(),
                 finder_command: None,
-                show_command: Some(false),
-                command_print_color: None,
             }
         }
         #[cfg(not(target_family = "windows"))]
@@ -200,8 +214,6 @@ impl Default for Shell {
             Self {
                 command: "bash".to_string(),
                 finder_command: None,
-                show_command: Some(false),
-                command_print_color: None,
             }
         }
     }

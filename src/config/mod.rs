@@ -21,9 +21,6 @@ pub struct Config {
 }
 
 impl Config {
-        pub fn show_command(&self) -> bool {
-            self.yaml.shell.show_command.unwrap_or(false)
-        }
     pub fn new() -> Self {
         let env = EnvConfig::new();
         let yaml = YamlConfig::get(&env).unwrap_or_else(|e| {
@@ -166,13 +163,6 @@ impl Config {
 
     pub fn snippet_color(&self) -> Color {
         self.yaml.style.snippet.color.get()
-    }
-
-    pub fn command_print_color(&self) -> Color {
-        self.yaml.shell.command_print_color
-            .as_ref()
-            .map(|c| c.get())
-            .unwrap_or(Color::Green)
     }
 
     pub fn tag_width_percentage(&self) -> u16 {

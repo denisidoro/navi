@@ -247,13 +247,6 @@ pub fn act(
                 clipboard::copy(interpolated_snippet)?;
             }
             _ => {
-                if CONFIG.show_command() {
-                    use crossterm::style::{Color, Stylize, style};
-                    let label = style("Executing:").with(Color::Black).on(Color::Cyan);
-                    let snippet = style(&interpolated_snippet).with(CONFIG.command_print_color());
-                    println!("{} :  {}", label, snippet);
-                    println!();
-                }
                 let mut cmd = shell::out();
                 cmd.arg(&interpolated_snippet[..]);
                 debug!(cmd = ?cmd);

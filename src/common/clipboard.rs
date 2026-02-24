@@ -17,20 +17,22 @@ pub fn copy(text: String) -> Result<()> {
       Ok(())
    } else {
       // Use bash/zsh/fish/etc logic
-      let mut script = String::new();
-      script.push_str("exst() { type \"$1\" &>/dev/null; }\n");
-      script.push_str("_copy() {\n");
-      script.push_str("  if exst pbcopy; then pbcopy\n");
-      script.push_str("  elif exst xclip; then xclip -selection clipboard\n");
-      script.push_str("  elif exst clip.exe; then clip.exe\n");  // # Could be used on WSL or GitBash
-      script.push_str("  else exit 55; fi\n");
-      script.push_str("}\n");
-      script.push_str(&format!(
-         "read -r -d '' x <<\"{EOF}\"\n{text}\n{EOF}\n",
+      let script = format!(
+         r#"exst() {{ type "$1" &>/dev/null; }}
+_copy() {{
+  if exst pbcopy; then pbcopy
+  elif exst xclip; then xclip -selection clipboard
+  elif exst clip.exe; then clip.exe
+  else exit 55; fi
+}}
+read -r -d '' x <<"{EOF}"
+{text}
+{EOF}
+echo -n "$x" | _copy
+"#,
          EOF = EOF,
          text = text
-      ));
-      script.push_str("echo -n \"$x\" | _copy\n");
+      );
       shell::out()
          .arg(script.as_str())
          .spawn()

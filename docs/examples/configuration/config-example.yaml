@@ -32,7 +32,8 @@ finder:
 
 shell:
   # Shell used for shell out. Possible values: bash, zsh, dash, ...
-  # For Windows, use `cmd.exe` or `powershell.exe` instead.
+  # For Windows, use `pwsh.exe`, `powershell.exe` or `cmd.exe` instead.  
+  # Default behavior is to check if pwsh.exe exists and use it, otherwise fallback to powershell.exe and then cmd.exe.
   command: bash
   show_command: true # whether to print the command before executing it
   command_print_color: green # color for the printed command. possible values: https://bit.ly/3gloNNI
