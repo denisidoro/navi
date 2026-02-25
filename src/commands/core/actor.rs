@@ -253,7 +253,7 @@ pub fn act(
                 cmd.spawn()
                     .map_err(|e| ShellSpawnError::new(&interpolated_snippet[..], e))?
                     .wait()
-                    .context("bash was not running")?;
+                    .context("Shell was not running")?;
             }
         },
     };

@@ -16,3 +16,5 @@ finder:
 shell:
   finder_command: bash
   command: env BASH_ENV="${NAVI_HOME}/tests/helpers.sh" bash --norc --noprofile
+  show_command: true
+  command_print_color: green

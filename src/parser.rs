@@ -106,11 +106,9 @@ fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FinderOpts>)> {
 }
 
 fn without_prefix(line: &str) -> String {
-    if line.len() > 2 {
-        String::from(line[2..].trim())
-    } else {
-        String::from("")
-    }
+    let trimmed = line.trim_start();
+    let without_prefix: String = trimmed.chars().skip(2).collect();
+    without_prefix.trim().to_string()
 }
 
 #[derive(Clone, Default)]

@@ -261,17 +261,13 @@ mod tests {
 
     #[test]
     fn splitting_of_dirs_param_may_not_contain_empty_items() {
-        // Trailing colon indicates potential extra path. Split returns an empty item for it. This empty item should be filtered away, which is what this test checks.
-        let given_path_config = "SOME_PATH:ANOTHER_PATH:";
+        // Trailing separator indicates potential extra path. Split returns an empty item for it. This empty item should be filtered away, which is what this test checks.
+        let given_path_config = format!("SOME_PATH{sep}ANOTHER_PATH{sep}", sep = JOIN_SEPARATOR);
 
-        let found_paths = paths_from_path_param(given_path_config);
+        let found_paths: Vec<&str> = paths_from_path_param(&given_path_config).collect();
+        let expected_paths = vec!["SOME_PATH", "ANOTHER_PATH"];
 
-        let mut expected_paths = vec!["SOME_PATH", "ANOTHER_PATH"].into_iter();
-
-        for found in found_paths {
-            let expected = expected_paths.next().unwrap();
-            assert_eq!(found, expected)
-        }
+        assert_eq!(found_paths, expected_paths);
     }
 
     #[test]
