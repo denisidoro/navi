@@ -72,7 +72,7 @@ jobs:
       - name: Install fzf
         run: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; yes | ~/.fzf/install;
 
-      - name: Install tealdeer
+      - name: Install the official tldr client
         run: sudo npm install -g tldr
 
       - name: Run bash tests

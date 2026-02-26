@@ -162,8 +162,11 @@ test::run "elvish" _navi_widget "elvish"
 test::run "nu" _navi_widget "nushell"
 
 test::set_suite "3rd party"
-test::run "tldr" _navi_tldr
 test::run "cheatsh" _navi_cheatsh
+
+## Disabled test under further work is done to re-establish a correct integration with the tdlr-pages
+## project.
+# test::run "tldr" _navi_tldr
 
 test::set_suite "integration"
 test::run "welcome->pwd" _integration

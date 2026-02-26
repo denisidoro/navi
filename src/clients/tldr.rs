@@ -68,7 +68,7 @@ pub fn call(query: &str) -> Result<Vec<String>> {
         Ok(x) => x,
         Err(_) => {
             let msg = format!(
-                "navi was unable to call tldr.
+                "navi was unable to call the tldr client.
 Make sure tldr is correctly installed.
 
 Note:
