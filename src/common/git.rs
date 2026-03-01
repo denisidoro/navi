@@ -1,13 +1,55 @@
 use crate::common::shell::ShellSpawnError;
 use crate::prelude::*;
-use std::process::{Command, ExitStatus};
+use git2::Repository;
+use std::process::Command;
+
+pub struct CheatRepositoryRecord {
+    path: String,
+    uri: String,
+    name: String,
+}
+
+impl CheatRepositoryRecord {
+    pub fn new(path: String, uri: String, name: String) -> Self {
+        Self { name, path, uri }
+    }
+
+    /// Returns if the URI of the repository seems to be remote or not
+    pub fn is_remote(&self) -> bool {
+        if self.uri.contains("://") || self.uri.contains('@') {
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn path(&self) -> String {
+        self.path.clone()
+    }
+
+    pub fn name(&self) -> String {
+        self.name.clone()
+    }
+
+    pub fn uri(&self) -> String {
+        self.uri.clone()
+    }
+}
 
 pub fn shallow_clone(uri: &str, target: &str, branch: &Option<String>) -> Result<()> {
     // If we target a specific ref, we add the parameter inside the arguments to call
     // git with.
 
     let git_clone_args: Vec<&str> = if branch.is_some() {
-        Vec::from(["clone", uri, target, "--depth", "1", "--branch", branch.as_ref().unwrap().as_str()])
+        Vec::from([
+            "clone",
+            uri,
+            target,
+            "--depth",
+            "1",
+            "--branch",
+            branch.as_ref().unwrap().as_str(),
+        ])
     } else {
         Vec::from(["clone", uri, target, "--depth", "1"])
     };
@@ -41,150 +83,20 @@ pub fn meta(uri: &str) -> (String, String, String) {
 
 /// Retrieves the remote URI of a git repository
 /// Works best with a repository containing only one remote.
-pub fn get_remote(uri: &str) -> Result<String> {
-    // We consider the repository having only one remote
-    // In case of multiple occurrences, we return the first one and discard the others
+pub fn get_remote(repository: Repository) -> String {
+    let remotes = repository.remotes().unwrap();
+    let mut returned_remotes: Vec<String> = Vec::new();
 
-    let git_path = format!("{}/.git/", &uri);
-    let mut remotes_uri: Vec<String> = Vec::new();
+    // Retrieve the remote URI
+    remotes.iter().for_each(|remote| {
+        let remote = repository.find_remote(remote.unwrap()).unwrap();
+        let remote_url = remote.url().unwrap();
+        returned_remotes.push(String::from(remote_url));
+        println!("Remote: {:#}", remote_url);
+    });
 
-    if std::fs::exists(&git_path)? {
-        // If the path exists, retrieve the remotes
-        let remotes = Command::new("git")
-            .current_dir(&git_path)
-            .args(["remote"])
-            .output()
-            .context("Unable to git remote")?;
-
-        // This is the name of the remote, not its URI
-        let current_remote = String::from_utf8_lossy(&remotes.stdout).trim().to_string();
-
-        let remote_uri = Command::new("git")
-            .current_dir(&git_path)
-            .args(["config", format!("remote.{}.url", current_remote).as_str()])
-            .output()
-            .context(format!(
-                "Unable to git config remote <remote>.url for {}",
-                &current_remote
-            ))?;
-
-        // This is the URI of the remote
-        let current_remote_uri = String::from_utf8_lossy(&remote_uri.stdout).trim().to_string();
-
-        remotes_uri.push(current_remote_uri);
-    }
-
-    Ok(remotes_uri[0].clone())
+    returned_remotes.get(0).unwrap().to_string()
 }
-
-pub fn fetch_origin(uri: &str) -> Result<()> {
-    Command::new("git")
-        .current_dir(&uri)
-        .args(["fetch", "origin"])
-        .spawn()?
-        .wait()
-        .context("Unable to git fetch origin")?;
-
-    Ok(())
-}
-
-/// Restores/Discards any local changes then pulls from the origin. 
-pub fn pull(uri: &str) -> Result<ExitStatus> {
-    Command::new("git")
-        .current_dir(&uri)
-        .args(["restore", "./"])
-        .spawn()?
-        .wait()?;
-
-    Ok(Command::new("git")
-        .current_dir(uri)
-        .args(["pull", "origin"])
-        .spawn()?
-        .wait()
-        .expect("Unable to git pull"))
-}
-
-pub fn diff(uri: &str) -> Result<ExitStatus> {
-    eprintln!("git --git-dir=\"{}\" diff --quiet", &uri);
-
-    Ok(Command::new("git")
-    .current_dir(&uri)
-    .args(["diff", "--quiet"])
-    .spawn()?
-    .wait()?)
-}
-
-/// Updates the remote
-pub fn remote_update(uri: &str) -> Result<bool> {
-    // Apparently, using the std::process::Command with git registers the output as an StdErr.
-    // (Is that really an error ???), we then read the stderr instead of the stdout.
-
-    let git_remote_update_output = Command::new("git")
-        .current_dir(&uri)
-        .args(["remote", "--verbose", "update"])
-        // Even if we don't use the stdout, as a matter of principle, we still pipe it
-        .stdout(Stdio::piped())
-        // The output of the git command is stored within the stderr...
-        .stderr(Stdio::piped())
-        .output()?;
-    let current_git_branch = Command::new("git")
-        .current_dir(&uri)
-        .args(["branch"])
-        .stdout(Stdio::piped())
-        .output()?;
-    let current_git_branch_str = String::from_utf8_lossy(&current_git_branch.stdout).to_string();
-
-    // if in our output, we have a "[up to date] <branch> -> origin/<branch>"
-    // we should return true, otherwise we should return false
-    println!("Git Branch: {:?}", current_git_branch_str);
-
-    // TODO: trim then RegExp match the position of the branch to extract its name and then compare the previous result
-    //      of the remote update to check our current status.
-
-
-
-    Ok(true)
-}
-
-/// Gets the local state of a git repository against its remote
-///
-/// Return: an i8 integer with the following values:
-///     - "-2" => There has been an error within this function
-///     - "-1" => This repository is behind the remote
-///     - "0" => This repository is the same as the remote
-///     - "1" => This repository is ahead the remote
-pub fn get_local_state(uri: &str) -> i8 {
-
-    // We're updating the remote
-    let remote_update = Command::new("git")
-        .current_dir(&uri)
-        .args(["remote", "update"])
-        .spawn().unwrap()
-        .wait().unwrap();
-
-    // If we couldn't update the remotes, we can't continue and compare them,
-    // we need to send an error and quit.
-    if ! remote_update.success() {
-        error!("Unable to update the remote (i.e. git remote update)");
-
-        return -2;
-    }
-
-    let local_hash = Command::new("git")
-        .current_dir(&uri)
-        .args(["rev-parse", "@"])
-        .spawn().unwrap().stdout.take().unwrap();
-
-    let remote_hash = Command::new("git")
-        .current_dir(&uri)
-        .args(["rev-parse", "\"@{u}\""])
-        .spawn().unwrap().stdout.take().unwrap();
-    
-    eprintln!("{:?} => {:?}", local_hash, remote_hash);
-
-    -1
-}
-
 
 #[cfg(test)]
 mod tests {
