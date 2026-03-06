@@ -28,20 +28,20 @@ function _navi_smart_replace
             # boundaries and flattens multi-line snippets into a single line
             commandline --replace -- "$best_match"
             commandline --function end-of-line
-            if test "$force_repaint" = true
-                commandline --function repaint
-            end
-            return
         end
     end
 
-    set --local candidate (navi --print --query "$query")
-    if test -n "$candidate"
-        commandline --replace -- "$candidate"
-        commandline --function end-of-line
-        if test "$force_repaint" = true
-            commandline --function repaint
+    if test -z "$best_match"
+        set --local candidate (navi --print --query "$query")
+        if test -n "$candidate"
+            commandline --replace -- "$candidate"
+            commandline --function end-of-line
         end
+    end
+
+    # always repaint to restore the prompt after fzf clobbers the terminal
+    if test "$force_repaint" = true
+        commandline --function repaint
     end
 end
 
