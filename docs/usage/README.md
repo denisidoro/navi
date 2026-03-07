@@ -22,6 +22,27 @@ navi --print-command
 
 This is useful to keep a visible record of what was run, e.g. in a terminal session log.
 
+## Printing the full cheat before executing
+
+You can print a formatted block showing the comment and resolved command before execution using `--print-cheat` (or `-C`):
+
+```sh
+navi --print-cheat
+```
+
+Example output:
+
+```
+──────────────────────────────────────
+# Check updates for installed packages
+apt list --upgradeable
+──────────────────────────────────────
+Listing... Done
+...
+```
+
+The separator adapts to the longest line (capped at 80 characters).
+
 ## Logging
 
 The log file will be created under the same directory where the configuration file is located.\

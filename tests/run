@@ -79,6 +79,11 @@ _navi_print_command() {
       | test::contains "navi> echo"
 }
 
+_navi_print_cheat() {
+   _navi --print-cheat --query "trivial" --best-match \
+      | test::contains "# trivial case"
+}
+
 _kill_tmux() {
    pkill -f tmux 2>/dev/null || true
 }
@@ -161,6 +166,7 @@ test::run "cheats_path" _navi_cheatspath
 
 test::set_suite "print"
 test::run "print_command" _navi_print_command
+test::run "print_cheat" _navi_print_cheat
 
 test::set_suite "widget"
 test::run "bash" _navi_widget "bash"

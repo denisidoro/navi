@@ -9,7 +9,9 @@ use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::prelude::*;
 use crate::structures::cheat::{Suggestion, VariableMap};
 use crate::structures::item::Item;
+use crossterm::style::{Attribute, Color, ResetColor, SetAttribute, SetForegroundColor};
 use shell::EOF;
+use std::io::Write;
 use std::process::Stdio;
 
 fn prompt_finder(
@@ -224,7 +226,7 @@ pub fn act(
 
     env_var::set(env_var::PREVIEW_INITIAL_SNIPPET, &snippet);
     env_var::set(env_var::PREVIEW_TAGS, &tags);
-    env_var::set(env_var::PREVIEW_COMMENT, comment);
+    env_var::set(env_var::PREVIEW_COMMENT, &comment);
 
     let interpolated_snippet = {
         let mut s = replace_variables_from_snippet(
@@ -247,7 +249,24 @@ pub fn act(
                 clipboard::copy(interpolated_snippet)?;
             }
             _ => {
-                if CONFIG.print_command() {
+                if CONFIG.print_cheat() {
+                    let comment_line = format!("# {comment}");
+                    let width = comment_line.len().max(interpolated_snippet.len()).min(80);
+                    let sep = "─".repeat(width);
+                    let mut out = std::io::stdout();
+                    let _ = write!(out, "{}", SetAttribute(Attribute::Dim));
+                    let _ = writeln!(out, "{sep}");
+                    let _ = write!(out, "{}", SetAttribute(Attribute::Reset));
+                    let _ = write!(out, "{}", SetForegroundColor(Color::DarkGrey));
+                    let _ = writeln!(out, "{comment_line}");
+                    let _ = write!(out, "{}", SetForegroundColor(Color::Cyan));
+                    let _ = writeln!(out, "{interpolated_snippet}");
+                    let _ = write!(out, "{}", ResetColor);
+                    let _ = write!(out, "{}", SetAttribute(Attribute::Dim));
+                    let _ = writeln!(out, "{sep}");
+                    let _ = write!(out, "{}", SetAttribute(Attribute::Reset));
+                    let _ = out.flush();
+                } else if CONFIG.print_command() {
                     println!("navi> {interpolated_snippet}");
                     let _ = std::io::Write::flush(&mut std::io::stdout());
                 }

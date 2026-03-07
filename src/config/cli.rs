@@ -53,6 +53,10 @@ pub(super) struct ClapConfig {
     #[arg(short = 'P', long)]
     pub print_command: bool,
 
+    /// Prints the full cheat (comment + command) before executing it
+    #[arg(short = 'C', long)]
+    pub print_cheat: bool,
+
     /// Returns the best match
     #[arg(long)]
     pub best_match: bool,
