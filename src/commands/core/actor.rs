@@ -247,6 +247,10 @@ pub fn act(
                 clipboard::copy(interpolated_snippet)?;
             }
             _ => {
+                if CONFIG.print_command() {
+                    println!("navi> {interpolated_snippet}");
+                    let _ = std::io::Write::flush(&mut std::io::stdout());
+                }
                 let mut cmd = shell::out();
                 cmd.arg(&interpolated_snippet[..]);
                 debug!(cmd = ?cmd);

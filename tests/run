@@ -74,6 +74,11 @@ _navi_cheatspath() {
       | grep -q "/cheats"
 }
 
+_navi_print_command() {
+   _navi --print-command --query "trivial" --best-match \
+      | test::contains "navi> echo"
+}
+
 _kill_tmux() {
    pkill -f tmux 2>/dev/null || true
 }
@@ -153,6 +158,9 @@ done
 
 test::set_suite "info"
 test::run "cheats_path" _navi_cheatspath
+
+test::set_suite "print"
+test::run "print_command" _navi_print_command
 
 test::set_suite "widget"
 test::run "bash" _navi_widget "bash"
