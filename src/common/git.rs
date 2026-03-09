@@ -1,9 +1,9 @@
-use std::fmt::Error;
 use crate::common::shell::ShellSpawnError;
+use crate::filesystem::remove_dir;
 use crate::prelude::*;
 use git2::Repository;
+use std::fmt::Error;
 use std::process::Command;
-use crate::filesystem::remove_dir;
 
 pub struct CheatRepositoryRecord {
     path: String,
@@ -41,19 +41,29 @@ pub fn shallow_clone(remote_uri: &str, target: &str, branch: &Option<String>, ov
         if !overwrite {
             println!("{} already exists, skipping", target);
 
-            return Ok(())
+            return Ok(());
         }
 
         // We remove the folder before cloning it back
-        remove_dir(target_path.as_path()).expect(format!("Failed to clean {} before cloning the {} cheatsheet repository.", target, remote_uri).as_str());
+        remove_dir(target_path.as_path()).expect(
+            format!(
+                "Failed to clean {} before cloning the {} cheatsheet repository.",
+                target, remote_uri
+            )
+            .as_str(),
+        );
     }
 
     println!("Cloning {} to {}", remote_uri, target);
-    let repository = Repository::clone(remote_uri, target).expect(format!("Failed to clone {}", remote_uri).as_str());
+    let repository =
+        Repository::clone(remote_uri, target).expect(format!("Failed to clone {}", remote_uri).as_str());
 
     if branch.is_some() {
         let branch = branch.as_ref().unwrap();
-        repository.set_head(branch).context("Failed to set the HEAD to the given branch").expect("Failed to set the HEAD to the given branch");
+        repository
+            .set_head(branch)
+            .context("Failed to set the HEAD to the given branch")
+            .expect("Failed to set the HEAD to the given branch");
     }
 
     Ok(())

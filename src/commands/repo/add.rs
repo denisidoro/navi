@@ -1,11 +1,13 @@
 use crate::common::git;
-use crate::filesystem::{all_cheat_files, all_git_files, default_cheat_pathbuf, running_cheats_path, tmp_pathbuf, JOIN_SEPARATOR};
+use crate::filesystem::{
+    all_cheat_files, all_git_files, default_cheat_pathbuf, running_cheats_path, tmp_pathbuf, JOIN_SEPARATOR,
+};
 use crate::finder::questions::finder_yes_no_question;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::FinderChoice;
 use crate::prelude::*;
-use std::{fs};
-use std::path::{MAIN_SEPARATOR};
+use std::fs;
+use std::path::MAIN_SEPARATOR;
 
 fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
     let opts = FinderOpts {
@@ -35,13 +37,13 @@ pub fn main(uri: String, yes_flag: bool, branch: &Option<String>) -> Result<()> 
 
     for cheat_path in cheat_paths {
         let local_path = PathBuf::from(cheat_path);
-        if ! local_path.exists() {
+        if !local_path.exists() {
             continue;
         }
 
         cheat_pathbuf = local_path;
-        break
-    };
+        break;
+    }
 
     // We need to be sure we've had at least one path to store the cheatsheet repository
     if cheat_pathbuf.eq(&PathBuf::from("")) {
@@ -65,7 +67,8 @@ pub fn main(uri: String, yes_flag: bool, branch: &Option<String>) -> Result<()> 
     };
     let tmp_repository_path_str = tmp_repository_pathbuf.to_str().unwrap();
 
-    git::shallow_clone(&*uri, tmp_repository_path_str, branch, true).expect(format!("Failed to clone {uri} into {}", tmp_repository_path_str).as_str());
+    git::shallow_clone(&*uri, tmp_repository_path_str, branch, true)
+        .expect(format!("Failed to clone {uri} into {}", tmp_repository_path_str).as_str());
 
     // At this step, we're already registering the files of the repository
     let mut cheat_files = all_cheat_files(tmp_repository_pathbuf.as_ref());
@@ -133,8 +136,7 @@ pub fn main(uri: String, yes_flag: bool, branch: &Option<String>) -> Result<()> 
                 .replace(&format!("{}{}", &tmp_repository_path_str, MAIN_SEPARATOR), "")
                 .replace(MAIN_SEPARATOR, "__")
         } else {
-            current_file
-                .replace(&format!("{}{}", &tmp_repository_path_str, MAIN_SEPARATOR), "")
+            current_file.replace(&format!("{}{}", &tmp_repository_path_str, MAIN_SEPARATOR), "")
         };
         let final_file = {
             let mut p = cheat_pathbuf.clone();
@@ -147,16 +149,18 @@ pub fn main(uri: String, yes_flag: bool, branch: &Option<String>) -> Result<()> 
         let parent = final_file.parent().unwrap().to_str().unwrap();
 
         // We're now moving the files into their final folders
-        fs::create_dir_all(parent).with_context(|| format!("Unable to create {}", final_file.display())).unwrap_or(());
+        fs::create_dir_all(parent)
+            .with_context(|| format!("Unable to create {}", final_file.display()))
+            .unwrap_or(());
 
-        fs::copy(&tmp_cheat_file, &final_file)
-            .with_context(|| format!(
+        fs::copy(&tmp_cheat_file, &final_file).with_context(|| {
+            format!(
                 "Failed to copy `{}` to `{}`!",
                 tmp_cheat_file.to_str().unwrap(),
-                &final_file.to_str().unwrap())
-            )?;
+                &final_file.to_str().unwrap()
+            )
+        })?;
     }
-
 
     println!("Temp cheats folder: {:?}", &tmp_repository_path_str);
     println!("Final cheats folder: {:?}", cheat_pathbuf.to_string());

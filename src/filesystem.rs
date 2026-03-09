@@ -76,10 +76,7 @@ pub fn all_git_files(path: &Path) -> Vec<String> {
             println!("[GIT](DEBUG) - {}", e.path().display());
 
             return if e.path().is_file() {
-                e.path()
-                    .to_str()
-                    .unwrap_or("")
-                    .to_string()
+                e.path().to_str().unwrap_or("").to_string()
             } else {
                 "".to_string()
             };
