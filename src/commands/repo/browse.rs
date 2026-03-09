@@ -19,8 +19,8 @@ pub fn main() -> Result<String> {
     let _ = filesystem::remove_dir(&repo_pathbuf);
     filesystem::create_dir(&repo_pathbuf)?;
 
-    let (repo_url, _, _) = git::meta("denisidoro/cheats");
-    git::shallow_clone(repo_url.as_str(), repo_path_str, &None)
+    let (repo_url, _, _) = git::meta_from_uri("denisidoro/cheats");
+    git::shallow_clone(repo_url.as_str(), repo_path_str, &None, false)
         .with_context(|| format!("Failed to clone `{repo_url}`"))?;
 
     let feature_repos_file = {

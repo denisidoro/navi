@@ -25,7 +25,7 @@ impl Config {
         let env = EnvConfig::new();
         let yaml = YamlConfig::get(&env).unwrap_or_else(|e| {
             eprintln!("Error parsing config file: {e}");
-            eprintln!("Fallbacking to default one...");
+            eprintln!("Fallback to default one...");
             eprintln!();
             YamlConfig::default()
         });

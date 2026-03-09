@@ -23,7 +23,6 @@ pub fn main() {
     // The list shouldn't be empty
     println!("The following cheatsheets are installed on your device: \n");
 
-    let mut i: usize = 0;
     for cheat_repo in cheat_repos {
         let cheat_path = cheat_repo.path();
         let cheat_uri = cheat_repo.uri();

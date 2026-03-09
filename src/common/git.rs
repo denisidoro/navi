@@ -1,17 +1,18 @@
+use std::fmt::Error;
 use crate::common::shell::ShellSpawnError;
 use crate::prelude::*;
 use git2::Repository;
 use std::process::Command;
+use crate::filesystem::remove_dir;
 
 pub struct CheatRepositoryRecord {
     path: String,
     uri: String,
-    name: String,
 }
 
 impl CheatRepositoryRecord {
-    pub fn new(path: String, uri: String, name: String) -> Self {
-        Self { name, path, uri }
+    pub fn new(path: String, uri: String) -> Self {
+        Self { path, uri }
     }
 
     /// Returns if the URI of the repository seems to be remote or not
@@ -27,46 +28,42 @@ impl CheatRepositoryRecord {
         self.path.clone()
     }
 
-    pub fn name(&self) -> String {
-        self.name.clone()
-    }
-
     pub fn uri(&self) -> String {
         self.uri.clone()
     }
 }
 
-pub fn shallow_clone(uri: &str, target: &str, branch: &Option<String>) -> Result<()> {
-    // If we target a specific ref, we add the parameter inside the arguments to call
-    // git with.
+pub fn shallow_clone(remote_uri: &str, target: &str, branch: &Option<String>, overwrite: bool) -> Result<()> {
+    let target_path = PathBuf::from(target);
 
-    let git_clone_args: Vec<&str> = if branch.is_some() {
-        Vec::from([
-            "clone",
-            uri,
-            target,
-            "--depth",
-            "1",
-            "--branch",
-            branch.as_ref().unwrap().as_str(),
-        ])
-    } else {
-        Vec::from(["clone", uri, target, "--depth", "1"])
-    };
+    // Check if the folder exists and the target is not empty
+    if target_path.exists() && !target.is_empty() {
+        if !overwrite {
+            println!("{} already exists, skipping", target);
 
-    debug!("{}", format!("Launching 'git {git_clone_args:?}'"));
+            return Ok(())
+        }
 
-    Command::new("git")
-        .args(git_clone_args)
-        .spawn()
-        .map_err(|e| ShellSpawnError::new("git clone", e))?
-        .wait()
-        .context("Unable to git clone")?;
+        // We remove the folder before cloning it back
+        remove_dir(target_path.as_path()).expect(format!("Failed to clean {} before cloning the {} cheatsheet repository.", target, remote_uri).as_str());
+    }
+
+    println!("Cloning {} to {}", remote_uri, target);
+    let repository = Repository::clone(remote_uri, target).expect(format!("Failed to clone {}", remote_uri).as_str());
+
+    if branch.is_some() {
+        let branch = branch.as_ref().unwrap();
+        repository.set_head(branch).context("Failed to set the HEAD to the given branch").expect("Failed to set the HEAD to the given branch");
+    }
 
     Ok(())
 }
 
-pub fn meta(uri: &str) -> (String, String, String) {
+/// Gets a URI from a string and returns a set of three Strings representing:
+/// - the expected URI (prefixed by `https://github.com/` if no signs of a remote are detected)
+/// - the expected user behind the repository
+/// - the name of the repository
+pub fn meta_from_uri(uri: &str) -> (String, String, String) {
     let actual_uri = if uri.contains("://") || uri.contains('@') {
         uri.to_string()
     } else {
@@ -83,7 +80,13 @@ pub fn meta(uri: &str) -> (String, String, String) {
 
 /// Retrieves the remote URI of a git repository
 /// Works best with a repository containing only one remote.
-pub fn get_remote(repository: Repository) -> String {
+///
+/// # Examples
+///
+/// ```
+/// get_remote_uri()
+/// ```
+pub fn get_remote_uri(repository: Repository) -> String {
     let remotes = repository.remotes().unwrap();
     let mut returned_remotes: Vec<String> = Vec::new();
 
@@ -104,7 +107,7 @@ mod tests {
 
     #[test]
     fn test_meta_github_https() {
-        let (actual_uri, user, repo) = meta("https://github.com/denisidoro/navi");
+        let (actual_uri, user, repo) = meta_from_uri("https://github.com/denisidoro/navi");
         assert_eq!(actual_uri, "https://github.com/denisidoro/navi".to_string());
         assert_eq!(user, "denisidoro".to_string());
         assert_eq!(repo, "navi".to_string());
@@ -112,7 +115,7 @@ mod tests {
 
     #[test]
     fn test_meta_github_ssh() {
-        let (actual_uri, user, repo) = meta("git@github.com:denisidoro/navi.git");
+        let (actual_uri, user, repo) = meta_from_uri("git@github.com:denisidoro/navi.git");
         assert_eq!(actual_uri, "git@github.com:denisidoro/navi.git".to_string());
         assert_eq!(user, "denisidoro".to_string());
         assert_eq!(repo, "navi".to_string());
@@ -120,7 +123,7 @@ mod tests {
 
     #[test]
     fn test_meta_gitlab_https() {
-        let (actual_uri, user, repo) = meta("https://gitlab.com/user/repo.git");
+        let (actual_uri, user, repo) = meta_from_uri("https://gitlab.com/user/repo.git");
         assert_eq!(actual_uri, "https://gitlab.com/user/repo.git".to_string());
         assert_eq!(user, "user".to_string());
         assert_eq!(repo, "repo".to_string());

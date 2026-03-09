@@ -38,12 +38,32 @@ pub struct Input {
     pub cmd: RepoCommand,
 }
 
-pub const HELP_NO_REPOSITORIES_FOUND: &str = "Uh Oh! It seems you haven't downloaded a cheatsheet repository yet.\nWhat you can do: \n\n- `navi repo add` to add a cheatsheet repository\n- `navi repo browse` to browse recommended cheatsheet repositories";
+pub const HELP_NO_REPOSITORIES_FOUND: &str = r#"
+Uh Oh! It seems you haven't downloaded a cheatsheet repository yet.
+What you can do:
+
+- `navi repo add` to add a cheatsheet repository
+- `navi repo browse` to browse recommended cheatsheet repositories
+"#;
+
+pub const HELP_NO_GIVEN_REPOSITORIES_FOUND: &str = r#"
+Uh Oh! It seems I can't find the repository...
+Are you sure you downloaded it?
+
+What you can do:
+
+- `navi repo list` to list the current cheatsheets installed locally
+- `navi repo add` to add a cheatsheet repository
+"#;
 
 impl Runnable for Input {
     fn run(&self) -> Result<()> {
         match &self.cmd {
-            RepoCommand::Add { uri, yes_flag, branch } => {
+            RepoCommand::Add {
+                uri,
+                yes_flag,
+                branch,
+            } => {
                 add::main(uri.clone(), *yes_flag, branch)
                     .with_context(|| format!("Failed to import cheatsheets from `{uri}`"))?;
 

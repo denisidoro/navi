@@ -7,15 +7,15 @@ use crate::structures::fetcher;
 use etcetera::BaseStrategy;
 use regex::Regex;
 
-use std::cell::RefCell;
-use std::path;
-use std::path::MAIN_SEPARATOR;
-
 use crate::common::git;
+use crate::common::git::CheatRepositoryRecord;
+use git2::Repository;
+use std::cell::RefCell;
+use std::path::{MAIN_SEPARATOR, MAIN_SEPARATOR_STR};
 use walkdir::WalkDir;
 
-/// Multiple paths are joint by a platform-specific separator.
-/// FIXME: it's actually incorrect to assume a path doesn't containing this separator
+/// Multiple paths are joined by a platform-specific separator.
+/// FIXME: it's actually incorrect to assume a path doesn't contain this separator
 #[cfg(target_family = "windows")]
 pub const JOIN_SEPARATOR: &str = ";";
 #[cfg(not(target_family = "windows"))]
@@ -41,10 +41,12 @@ pub fn all_cheat_files(path: &Path) -> Vec<String> {
         .filter_map(|e| e.ok())
         // We make sure it is indeed a file and not a directory
         // There is nothing that forbids a directory to end with a `.cheat` or `.cheat.md` name.
-        .map(|e| if e.path().is_file() {
-            e.path().to_str().unwrap_or("").to_string()
-        } else {
-            "".to_string()
+        .map(|e| {
+            if e.path().is_file() {
+                e.path().to_str().unwrap_or("").to_string()
+            } else {
+                "".to_string()
+            }
         })
         .filter(|e| e.ends_with(".cheat") || e.ends_with(".cheat.md"))
         .collect::<Vec<String>>()
@@ -64,25 +66,19 @@ pub fn all_cheat_files(path: &Path) -> Vec<String> {
 /// ```
 ///
 pub fn all_git_files(path: &Path) -> Vec<String> {
-    let mut path_str = path.to_str().unwrap().to_owned();
-
-    if path_str.ends_with(path::MAIN_SEPARATOR_STR) {
-        // We're removing the trailing '/' at the end, if it exists
-        path_str.push(path::MAIN_SEPARATOR);
-    }
-
-    let git_filter = format!("{}.git{}", path::MAIN_SEPARATOR_STR, path::MAIN_SEPARATOR_STR);
+    let git_filter = format!("{}.git{}", MAIN_SEPARATOR_STR, MAIN_SEPARATOR_STR);
 
     WalkDir::new(path)
         .follow_links(true)
         .into_iter()
         .filter_map(|e| e.ok())
         .map(|e| {
+            println!("[GIT](DEBUG) - {}", e.path().display());
+
             return if e.path().is_file() {
                 e.path()
                     .to_str()
-                    .unwrap()
-                    .replace(path_str.as_str(), "")
+                    .unwrap_or("")
                     .to_string()
             } else {
                 "".to_string()
@@ -228,25 +224,24 @@ fn get_config_dir_by_platform() -> Result<PathBuf> {
 ///     assert_ne!([], cheats_path);
 ///     ```
 ///
-pub fn local_cheatsheet_repositories() -> (Vec<String>, Vec<String>) {
-    let mut cheats_repos_uri: Vec<String> = Vec::new();
-    let mut cheats_repos_paths: Vec<String> = Vec::new();
-    let cheats = running_cheats_path();
+pub fn local_cheatsheet_repositories() -> Result<Vec<CheatRepositoryRecord>> {
+    let mut cheats_repos: Vec<CheatRepositoryRecord> = Vec::new();
+    let cheats_path = running_cheats_path();
 
     // We're checking each given paths possible
-    for cheat_path in cheats.split(':') {
+    for cheat_path in cheats_path.split(JOIN_SEPARATOR) {
         // If the path doesn't exist, continue to the next one
-        if !std::fs::exists(cheat_path).unwrap() {
+        if !std::fs::exists(cheat_path)? {
             continue;
         }
 
-        let curr_dir = std::fs::read_dir(cheat_path).unwrap();
+        let curr_dir = std::fs::read_dir(cheat_path)?;
 
         // We're checking subfolders -> they should contain at least one .cheat files
         for entry in curr_dir {
-            let entry = entry.unwrap();
+            let entry = entry?;
 
-            if entry.file_type().unwrap().is_dir() {
+            if entry.file_type()?.is_dir() {
                 // If the directory doesn't have at least one cheat file -> ignore it and continue
                 if all_cheat_files(&entry.path()).is_empty() {
                     continue;
@@ -258,20 +253,18 @@ pub fn local_cheatsheet_repositories() -> (Vec<String>, Vec<String>) {
                 let git_path = format!("{}/{}", &entry.path().display(), ".git");
                 let folder_path = entry.path().display().to_string();
 
-                if std::fs::exists(&git_path).unwrap() {
-                    let remote_uri = git::get_remote(&entry.path().to_string()).unwrap();
+                if std::fs::exists(&git_path)? {
+                    let git_repo = Repository::discover(entry.path())?;
+                    let remote_uri = git::get_remote_uri(git_repo);
+                    let new_cheat_entry = CheatRepositoryRecord::new(folder_path, remote_uri);
 
-                    cheats_repos_uri.push(remote_uri);
-                } else {
-                    cheats_repos_uri.push(folder_path.clone());
+                    cheats_repos.push(new_cheat_entry);
                 }
-
-                cheats_repos_paths.push(folder_path);
             }
         }
     }
 
-    (cheats_repos_uri, cheats_repos_paths)
+    Ok(cheats_repos)
 }
 
 pub fn tmp_pathbuf() -> Result<PathBuf> {
@@ -326,7 +319,7 @@ impl fetcher::Fetcher for Fetcher {
         let interpolated_paths = interpolate_paths(paths);
         let folders = paths_from_path_param(&interpolated_paths);
 
-        let home_regex = Regex::new(r"^~").unwrap();
+        let home_regex = Regex::new(r"^~")?;
         let home = etcetera::home_dir().ok();
 
         // parser.filter = self.tag_rules.as_ref().map(|r| gen_lists(r.as_str()));

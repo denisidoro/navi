@@ -8,5 +8,5 @@ pub fn new(uri: &String, label: &String) -> String {
     //  - Terminal hyperlink -> https://askubuntu.com/questions/1391071/creating-a-hyperlink-from-command-line-output-on-a-terminal
     //  - Rust Hexadecimal escape characters -> https://stackoverflow.com/a/33139393/13025136
 
-    format!("\x1b]8;;{}\x1b\\{}\x1b]8;;\x1b\\\n", uri, label)
+    format!("\x1b]8;;{}\x1b\\{}\x1b]8;;\x1b\\", uri, label)
 }

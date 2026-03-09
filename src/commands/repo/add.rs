@@ -1,14 +1,11 @@
 use crate::common::git;
-use crate::filesystem::{
-    all_cheat_files, all_git_files, create_dir, default_cheat_pathbuf, remove_dir, tmp_pathbuf,
-};
+use crate::filesystem::{all_cheat_files, all_git_files, default_cheat_pathbuf, running_cheats_path, tmp_pathbuf, JOIN_SEPARATOR};
 use crate::finder::questions::finder_yes_no_question;
 use crate::finder::structures::{Opts as FinderOpts, SuggestionType};
 use crate::finder::FinderChoice;
 use crate::prelude::*;
-use std::fs;
-use std::path;
-use std::path::{MAIN_SEPARATOR, MAIN_SEPARATOR_STR};
+use std::{fs};
+use std::path::{MAIN_SEPARATOR};
 
 fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
     let opts = FinderOpts {
@@ -19,191 +16,150 @@ fn ask_if_should_import_all(finder: &FinderChoice) -> Result<bool> {
 
     finder_yes_no_question(finder, opts)
 }
-fn ask_folder_present_question(finder: &FinderChoice) -> Result<bool> {
-    let opts = FinderOpts {
-        column: Some(1),
-        header: Some(
-            "It seems this cheatsheet repository has been previously added, do you still want to continue?"
-                .to_string(),
-        ),
-        ..Default::default()
-    };
-
-    finder_yes_no_question(finder, opts)
-}
 
 pub fn main(uri: String, yes_flag: bool, branch: &Option<String>) -> Result<()> {
-    let finder = CONFIG.finder();
+    /////////////////////////////////////////////////////////////////////////////
+    // 0 - Setup/Fetch/Compute any necessary values/variables to use afterwards
+    /////////////////////////////////////////////////////////////////////////////
 
-    // If the user has set the yes flag, we don't ask a confirmation
+    let finder = CONFIG.finder();
+    // We're getting the values from the URI
+    let (_, user, repo_name) = git::meta_from_uri(&*uri);
+    let local_cheatsheet_repository_name = format!("{user}__{repo_name}");
+
+    // We're grabbing the first path that actually exists on the filesystem
+    // where we can store the cheatsheet repository
+    let cheat_paths_string = running_cheats_path();
+    let cheat_paths = cheat_paths_string.split(JOIN_SEPARATOR);
+    let mut cheat_pathbuf: PathBuf = PathBuf::from(cheat_paths.clone().last().unwrap());
+
+    for cheat_path in cheat_paths {
+        let local_path = PathBuf::from(cheat_path);
+        if ! local_path.exists() {
+            continue;
+        }
+
+        cheat_pathbuf = local_path;
+        break
+    };
+
+    // We need to be sure we've had at least one path to store the cheatsheet repository
+    if cheat_pathbuf.eq(&PathBuf::from("")) {
+        eprintln!("Unable to find a path from the registered cheats paths, we fall back to the default one.");
+
+        cheat_pathbuf = default_cheat_pathbuf().expect("Unable to get a default cheat path!")
+    }
+
+    // We add the interpolated cheatsheet repository name at the end of the path
+    cheat_pathbuf.push(&local_cheatsheet_repository_name);
+
+    /////////////////////////////////////////////////////////////////////////////
+    // 1 - Create / Clean the temporary directory and clone the repository there
+    /////////////////////////////////////////////////////////////////////////////
+
+    let tmp_base_pathbuf = tmp_pathbuf()?;
+    let tmp_repository_pathbuf = {
+        let mut p = tmp_base_pathbuf;
+        p.push(&local_cheatsheet_repository_name);
+        p
+    };
+    let tmp_repository_path_str = tmp_repository_pathbuf.to_str().unwrap();
+
+    git::shallow_clone(&*uri, tmp_repository_path_str, branch, true).expect(format!("Failed to clone {uri} into {}", tmp_repository_path_str).as_str());
+
+    // At this step, we're already registering the files of the repository
+    let mut cheat_files = all_cheat_files(tmp_repository_pathbuf.as_ref());
+    let git_files = all_git_files(&tmp_repository_pathbuf.as_ref());
+
+    /////////////////////////////////////////////////////////////////////////////
+    // 2 - Secure / Validate user input and preferences
+    // (First and last user interaction in the workflow)
+    /////////////////////////////////////////////////////////////////////////////
+
+    // The yes flag makes us have an unattended installation of the repository
     let should_import_all = if yes_flag {
         true
     } else {
         ask_if_should_import_all(&finder).unwrap_or(false)
     };
 
-    let (actual_uri, user, repo) = git::meta(uri.as_str());
-
-    // TODO: Using the default cheat pathbuf will send the downloaded cheatsheets
-    //  into the path without taking into account the user-defined paths.
-    let cheat_pathbuf = default_cheat_pathbuf()?;
-    let tmp_pathbuf = tmp_pathbuf()?;
-    let tmp_path_str = &tmp_pathbuf.to_string();
-    let to_folder = {
-        let mut p = cheat_pathbuf;
-        p.push(format!("{user}__{repo}"));
-        p
-    };
-
-    // Before anything else, we check to see if the folder exists
-    // if it exists -> ask confirmation if we continue
-    if fs::exists(&to_folder)? {
-        // When the yes_flag has been raised => follow through and removes the existing directory
-        // When the yes_flag has not been raised => ask for confirmation
-        if yes_flag || ask_folder_present_question(&finder).unwrap_or(false) {
-            fs::remove_dir_all(&to_folder)?;
-        } else {
-            return Ok(());
-        }
-    }
-
-    let _ = remove_dir(&tmp_pathbuf);
-    create_dir(&tmp_pathbuf)?;
-
-    eprintln!("Cloning remote \"{}\" into local \"{}\"...\n", &actual_uri, &tmp_path_str);
-
-    git::shallow_clone(actual_uri.as_str(), tmp_path_str, &branch)
-        .with_context(|| format!("Failed to clone `{actual_uri}`"))?;
-
-    let all_files = all_cheat_files(&tmp_pathbuf).join("\n");
-    let git_files = all_git_files(&tmp_pathbuf).join("\n");
-
-    let opts = FinderOpts {
+    let finder_opts = FinderOpts {
         suggestion_type: SuggestionType::MultipleSelections,
-        preview: Some(format!("cat '{tmp_path_str}/{{}}'")),
+        preview: Some(format!("cat '{}/{{}}'", tmp_repository_path_str)),
         header: Some("Select the cheatsheets you want to import with <TAB> then hit <Enter>\nUse Ctrl-R for (de)selecting all".to_string()),
         preview_window: Some("right:30%".to_string()),
         ..Default::default()
     };
 
-    let files = if should_import_all {
-        all_files
-    } else {
+    // Now, we have to ask the user that doesn't want to import all cheatsheets
+    // which one he wants, we then update the actual list of files we want to import
+    if !should_import_all {
         let (files, _) = finder
-            .call(opts, |stdin| {
+            .call(finder_opts, |stdin| {
                 stdin
-                    .write_all(all_files.as_bytes())
+                    .write_all(cheat_files.join("\n").as_bytes())
                     .context("Unable to prompt cheats to import")?;
                 Ok(())
             })
-            .context("Failed to get cheatsheet files from finder")?;
-        files
-    };
+            .context("Failed to get cheat files from finder")?;
 
-    for file in files.split('\n') {
-        let from = {
-            let mut p = tmp_pathbuf.clone();
-            p.push(file);
+        // We reattribute
+        cheat_files = files.split("\n").map(|s| s.to_string()).collect::<Vec<String>>();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////
+    // 3 - Resolve the final destination of the cheatsheet repository and move
+    // the sanitized repository there
+    /////////////////////////////////////////////////////////////////////////////
+
+    let all_files = [cheat_files, git_files.clone()].concat();
+
+    for current_file in all_files {
+        let current_file_extension = Path::new(current_file.as_str()).extension();
+        let current_file_extension_str = if current_file_extension.is_some() {
+            current_file_extension.unwrap().to_str().unwrap().to_string()
+        } else {
+            "".to_string()
+        };
+
+        let tmp_cheat_file = {
+            let mut p = tmp_repository_pathbuf.clone();
+            p.push(&current_file);
             p
         };
-        let filename = file
-            .replace(&format!("{}{}", &tmp_path_str, path::MAIN_SEPARATOR), "")
-            .replace(path::MAIN_SEPARATOR, "__");
-        let to = {
-            let mut p = to_folder.clone();
+        // Filename
+        let filename = if current_file_extension_str.contains("cheat") {
+            current_file
+                .replace(&format!("{}{}", &tmp_repository_path_str, MAIN_SEPARATOR), "")
+                .replace(MAIN_SEPARATOR, "__")
+        } else {
+            current_file
+                .replace(&format!("{}{}", &tmp_repository_path_str, MAIN_SEPARATOR), "")
+        };
+        let final_file = {
+            let mut p = cheat_pathbuf.clone();
             p.push(filename);
             p
         };
-        fs::create_dir_all(&to_folder).unwrap_or(());
-        fs::copy(&from, &to)
-            .with_context(|| format!("Failed to copy cheat file \"{}\" to \"{}\"", &from.to_string(), &to.to_string()))?;
+
+        println!("[Repo::add](DEBUG) - {}", final_file.display());
+
+        let parent = final_file.parent().unwrap().to_str().unwrap();
+
+        // We're now moving the files into their final folders
+        fs::create_dir_all(parent).with_context(|| format!("Unable to create {}", final_file.display())).unwrap_or(());
+
+        fs::copy(&tmp_cheat_file, &final_file)
+            .with_context(|| format!(
+                "Failed to copy `{}` to `{}`!",
+                tmp_cheat_file.to_str().unwrap(),
+                &final_file.to_str().unwrap())
+            )?;
     }
 
-    // We are copying the .git folder along with the cheat files
-    // For more details, see: (https://github.com/denisidoro/navi/issues/733)
-    for file in git_files.split('\n') {
-        let file_path = format!("{}{}", &tmp_path_str, &file);
-        let from = {
-            let mut p = tmp_pathbuf.clone();
-            p.push(&file_path);
-            p
-        };
 
-        // Code block that should be able to handle correctly the way paths are added since they are different
-        // between platforms.
-        let path_str = if cfg!(windows) {
-            // On windows, the file and the folder are both in absolute paths
-            // One of them needs to be subtracted for us to only have the path that interests us.
-
-            // file_path should be on the temp folder during the transaction, we can use that to
-            // extract the end of the chain with ease
-            let temp_file_path = if (file_path.contains(tmp_path_str.as_str())) {
-                debug!("[Windows] temp_path_str ({:?}) is in file_path ({:?})", &tmp_path_str, &file_path);
-
-                let intermediary_temp_value = file_path.replace(tmp_path_str, "");
-
-                // We try to handle the case where we need to manually remove the separator at the start
-                // of the chain.
-                if intermediary_temp_value.starts_with(path::MAIN_SEPARATOR) {
-                    let size_sep = path::MAIN_SEPARATOR_STR.chars().count();
-                    intermediary_temp_value[size_sep..].to_string()
-                } else {
-                    intermediary_temp_value
-                }
-            } else {
-                String::from(&file_path)
-            };
-
-            format!("{}{}{}", to_folder.to_string(), path::MAIN_SEPARATOR, temp_file_path).to_string()
-        } else {
-            format!("{}{}{}", to_folder.to_string(), path::MAIN_SEPARATOR, &file_path).to_string()
-        };
-
-        // To remove if the snippet above solves the issue of duplicated paths
-        //let path_str = format!("{}{}{}", to_folder.to_string(), path::MAIN_SEPARATOR, &file_path);
-        let local_collection = &path_str.split(MAIN_SEPARATOR).collect::<Vec<&str>>();
-        let collection_str = if cfg!(windows) {
-            local_collection[1..&local_collection.len() - 1].join(MAIN_SEPARATOR_STR)
-        } else {
-            local_collection[0..&local_collection.len() - 1].join(MAIN_SEPARATOR_STR)
-        };
-
-        // We create a PathBuf variable to check if the path we handle is a folder or a file
-        let current_temp_path_elem = Path::new(&file_path); // File_path for the path already created by git when cloning
-        let final_path_elem = Path::new(&path_str);
-
-        // If our current path is a folder, we create its brother for the final path
-        if current_temp_path_elem.is_dir() {
-            eprintln!("{:?} is a folder!", &file_path);
-            fs::create_dir_all(&path_str).unwrap_or(());
-        } else {
-            // If the current path is a file, we make sure to have its parent created
-            if (! final_path_elem.parent().unwrap().exists()) {
-                fs::create_dir_all(&final_path_elem.parent().unwrap()).unwrap_or(());
-            }
-        }
-
-        if current_temp_path_elem.is_file() {
-            eprintln!("{:?} is a file!", &file_path);
-            eprintln!("{:?} is its parent folder!", &current_temp_path_elem.parent());
-
-            fs::copy(&from, &path_str).with_context(|| {
-                format!(
-                    "Failed to copy git file \"{}\" to \"{}\"",
-                    &from.to_string(),
-                    &path_str
-                )
-            })?;
-        }
-    }
-
-    remove_dir(&tmp_pathbuf)?;
-
-    eprintln!(
-        "The following .cheat files were imported successfully:\n{}\n\nThey are now located at {}",
-        files,
-        to_folder.to_string()
-    );
+    println!("Temp cheats folder: {:?}", &tmp_repository_path_str);
+    println!("Final cheats folder: {:?}", cheat_pathbuf.to_string());
 
     Ok(())
 }
