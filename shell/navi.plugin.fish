@@ -24,20 +24,24 @@ function _navi_smart_replace
     if test -n "$query"
         set --local best_match (navi --print --query "$query" --best-match)
         if test -n "$best_match"
-            commandline --current-process $best_match
-            if test "$force_repaint" = true
-                commandline --function repaint
-            end
-            return
+            # --replace without --current-process: --current-process treats newlines as process
+            # boundaries and flattens multi-line snippets into a single line
+            commandline --replace -- "$best_match"
+            commandline --function end-of-line
         end
     end
 
-    set --local candidate (navi --print --query "$query")
-    if test -n "$candidate"
-        commandline --current-process $candidate
-        if test "$force_repaint" = true
-            commandline --function repaint
+    if test -z "$best_match"
+        set --local candidate (navi --print --query "$query")
+        if test -n "$candidate"
+            commandline --replace -- "$candidate"
+            commandline --function end-of-line
         end
+    end
+
+    # always repaint to restore the prompt after fzf clobbers the terminal
+    if test "$force_repaint" = true
+        commandline --function repaint
     end
 end
 
