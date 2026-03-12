@@ -1,8 +1,8 @@
 use crate::common::shell::ShellSpawnError;
 use crate::filesystem::remove_dir;
 use crate::prelude::*;
-use git2::Repository;
-use std::fmt::Error;
+use git2::{BranchType, Repository, ResetType};
+use std::fmt::{Display, Error, Formatter};
 use std::process::Command;
 
 pub struct CheatRepositoryRecord {
@@ -33,6 +33,12 @@ impl CheatRepositoryRecord {
     }
 }
 
+impl Display for CheatRepositoryRecord {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} -> {}", self.uri, self.path)
+    }
+}
+
 pub fn shallow_clone(remote_uri: &str, target: &str, branch: &Option<String>, overwrite: bool) -> Result<()> {
     let target_path = PathBuf::from(target);
 
@@ -54,17 +60,14 @@ pub fn shallow_clone(remote_uri: &str, target: &str, branch: &Option<String>, ov
         );
     }
 
-    println!("Cloning {} to {}", remote_uri, target);
-    let repository =
-        Repository::clone(remote_uri, target).expect(format!("Failed to clone {}", remote_uri).as_str());
-
+    // Prepare fetch options.
+    let mut builder = git2::build::RepoBuilder::new();
     if branch.is_some() {
-        let branch = branch.as_ref().unwrap();
-        repository
-            .set_head(branch)
-            .context("Failed to set the HEAD to the given branch")
-            .expect("Failed to set the HEAD to the given branch");
+        builder.branch(branch.as_ref().unwrap());
     }
+
+    println!("Cloning {} to {}", remote_uri, target);
+    builder.clone(remote_uri, target.as_ref()).expect(format!("Failed to clone {}", remote_uri).as_str());
 
     Ok(())
 }
@@ -109,6 +112,24 @@ pub fn get_remote_uri(repository: Repository) -> String {
     });
 
     returned_remotes.get(0).unwrap().to_string()
+}
+
+/// Takes a repository instance and updates it to its remote equivalent with a hard reset.
+///
+/// 3 steps function:
+/// - Fetch latest tree state
+/// - Grabs the latest commit ID
+/// - hard reset to the latest commit
+pub fn reset_to_remote_state(repository: &Repository) -> Result<()> {
+    repository.find_remote("origin")?.fetch(&["main"], None, None)?;
+
+    // Get the latest commit ID from the remote branch (origin/main)
+    let latest_commit_id = repository.find_branch("origin/main", BranchType::Remote)?.into_reference().peel_to_commit()?;
+
+    // Hard reset onto this commit
+    repository.reset(latest_commit_id.as_object(), ResetType::Hard, None)?;
+
+    Ok(())
 }
 
 #[cfg(test)]

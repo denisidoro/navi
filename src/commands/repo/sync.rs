@@ -1,10 +1,10 @@
-use crate::common::git;
+use std::fs;
+use std::path::MAIN_SEPARATOR;
 use crate::filesystem::{all_cheat_files, all_git_files, local_cheatsheet_repositories};
 use crate::prelude::*;
 use git2::Repository;
-use std::{fs, path};
-use walkdir::WalkDir;
 
+use crate::common::git::reset_to_remote_state;
 use crate::commands::repo::{HELP_NO_GIVEN_REPOSITORIES_FOUND, HELP_NO_REPOSITORIES_FOUND};
 
 pub fn main(uri: Option<String>) -> Result<()> {
@@ -21,19 +21,13 @@ pub fn main(uri: Option<String>) -> Result<()> {
     if uri.is_some() {
         let given_uri = uri.as_ref().unwrap();
 
-        // let repository = cheat_repos.iter()
-        //     .filter(|repository| repository == &given_uri)
-        //     .next();
+        let repository = cheat_repos.iter()
+            .filter(|repository| repository.uri().eq(given_uri))
+            .next().unwrap();
 
-        println!("Repo: {given_uri:#}");
+        let repository_object = Repository::open(repository.path())?;
 
-        // repository.map(|_| {
-        //     let cheat_repo_index = cheats_repo_uris.iter().position(|repository| repository == given_uri);
-        //     let given_repository = Repository::open(Path::new(cheats_repo_paths.get(cheat_repo_index.unwrap()).unwrap()));
-        //     let repo_object = given_repository.as_ref().unwrap();
-        //
-        //     synchronize(repo_object).expect("Unable to sync repository");
-        // }).expect(format!("{}", HELP_NO_GIVEN_REPOSITORIES_FOUND).as_str());
+        synchronize(&repository_object).expect("Unable to sync repository");
 
         return Ok(());
     }
@@ -50,13 +44,36 @@ pub fn main(uri: Option<String>) -> Result<()> {
 }
 
 fn synchronize(cheat_repo: &Repository) -> Result<()> {
-    let cheat_path = cheat_repo.path();
-    eprintln!("Checking repo {:?}", &cheat_path);
+    let repo_path = cheat_repo.path().parent().unwrap();
 
-    // We retrieve all existing cheat files
-    let cheat_files = all_cheat_files(&cheat_path);
-    let git_files = all_git_files(cheat_path);
-    let mut cheat_dirs: Vec<String> = Vec::new();
+    // 1 - Before doing an actual reset, we remove the current cheatsheets
+    let mut cheat_files = all_cheat_files(repo_path);
+
+    for cheat_file in cheat_files {
+
+        fs::remove_file(Path::new(cheat_file.as_str()))
+            .with_context(|| format!("Unable to remove {}", cheat_file))?;
+    }
+
+    // 2 - We reset the repository to its remote equivalent
+    reset_to_remote_state(cheat_repo)?;
+
+    // 3 - We reshuffle the files
+    cheat_files = all_cheat_files(repo_path);
+
+    for cheat_file in cheat_files {
+        let source = Path::new(cheat_file.as_str());
+
+        let filename = cheat_file.replace(&format!("{}", &repo_path.to_str().unwrap()), "")
+                .replace(MAIN_SEPARATOR, "__");
+
+        let destination = repo_path.join(filename);
+        println!("[Repo::sync](DEBUG) - {} => {:?}", cheat_file, destination);
+
+        fs::copy(source, &destination).with_context(|| format!("Unable to copy {} to {}", cheat_file, destination.display()))?;
+
+        fs::remove_file(source).with_context(|| format!("Unable to remove {}", cheat_file))?;
+    }
 
     Ok(())
 }

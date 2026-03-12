@@ -162,8 +162,7 @@ pub fn main(uri: String, yes_flag: bool, branch: &Option<String>) -> Result<()> 
         })?;
     }
 
-    println!("Temp cheats folder: {:?}", &tmp_repository_path_str);
-    println!("Final cheats folder: {:?}", cheat_pathbuf.to_string());
+    fs::remove_dir_all(&tmp_repository_pathbuf).with_context(|| format!("Unable to delete {}", &tmp_repository_path_str))?;
 
     Ok(())
 }
