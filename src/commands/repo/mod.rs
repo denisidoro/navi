@@ -22,6 +22,9 @@ pub enum RepoCommand {
         /// Lets you target a specific git ref (e.g. a branch), anything accepted by the `--branch` parameter of `git-clone`
         #[clap(short = 'b', long = "branch")]
         branch: Option<String>,
+        /// Import all cheatsheets from repo without prompting
+        #[clap(short = 'a', long, visible_short_alias = 'y', visible_alias = "yes")]
+        all: bool,
     },
     /// Synchronize either all cheatsheet repositories or a given one.
     Sync {
@@ -30,6 +33,12 @@ pub enum RepoCommand {
     },
     /// List all downloaded repositories
     List,
+    /// Browses for featured cheatsheet repos
+    Browse {
+        /// Import all cheatsheets from selected repo without prompting
+        #[clap(short = 'a', long, visible_short_alias = 'y', visible_alias = "yes")]
+        all: bool,
+    },
 }
 
 #[derive(Debug, Clone, Args)]
@@ -61,17 +70,18 @@ impl Runnable for Input {
         match &self.cmd {
             RepoCommand::Add {
                 uri,
-                yes_flag,
                 branch,
+                all,
+                yes_flag,
             } => {
-                add::main(uri.clone(), *yes_flag, branch)
+                add::main(uri.clone(), branch, *all, *yes_flag)
                     .with_context(|| format!("Failed to import cheatsheets from `{uri}`"))?;
 
                 commands::core::main()
             }
-            RepoCommand::Browse => {
+            RepoCommand::Browse { all } => {
                 let repo = browse::main().context("Failed to browse featured cheatsheets")?;
-                add::main(repo.clone(), false, &None)
+                add::main(repo.clone(), *all, false, &None)
                     .with_context(|| format!("Failed to import cheatsheets from `{repo}`"))?;
 
                 commands::core::main()
