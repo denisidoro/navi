@@ -90,6 +90,20 @@ fn exe_abs_string() -> Result<String> {
     pathbuf_to_string(&exe_pathbuf()?)
 }
 
+#[cfg(target_family = "windows")]
+pub fn exe_string() -> String {
+    exe_abs_string()
+        .map(|exe| {
+            if CONFIG.forward_slash_path() {
+                exe.replace("\\", "/")
+            } else {
+                exe
+            }
+        })
+        .unwrap_or_else(|_| "navi".to_string())
+}
+
+#[cfg(not(target_family = "windows"))]
 pub fn exe_string() -> String {
     exe_abs_string().unwrap_or_else(|_| "navi".to_string())
 }

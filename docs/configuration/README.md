@@ -231,3 +231,45 @@ finder:
 You can override this configuration with the `--delimiter` instruction in the variable definition of your cheat.\
 See [/docs/cheatsheet/syntax/](/docs/cheatsheet/syntax/README.md#advanced-variable-options) for more details.
 
+## Changing shell
+
+You can change the shell that is used inside navi.
+
+```yaml
+shell:
+  command: bash
+  finder_command: bash
+```
+
+`shell.command` is used to execute commands that generate possible values for variables.
+`shell.finder_command` is used inside fzf.
+
+For example, suppose you have the following cheat sheet.
+
+```
+# ISO 8061
+date -I<iso_unit>
+
+$ iso_unit: echo -e 'date\nhours\nminutes\nseconds\nns'
+```
+
+The command `echo -e 'date\nhours\nminutes\nseconds\nns'` is executed in the shell specified by `shell.command`.
+
+### Use bash on Windows
+
+On Windows, there are several bash environments available, including MSYS2's bash, Git Bash, and [w64devkit](https://github.com/skeeto/w64devkit)'s bash.
+The w64devkit's bash isn't actually bash, but it can be used just like bash.
+Here is an example of using Git Bash.
+
+```yaml
+shell:
+  command: "\"C:/Program Files/Git/bin/bash.exe\""
+  finder_command: "C:/Program Files/Git/bin/bash.exe"
+  forward_slash_path: true
+```
+
+If the path to the executable contains spaces, it must be quoted in the `shell.command`.
+Unlike `shell.command`, `shell.finder_command` does not require the path to be quoted even if it contains spaces.
+Additionaly, `shell.forward_slash_path` must be set to `true`.
+`shell.forward_slash_path: true` can be used with bash environments that interpret paths with forward slashes (e.g., `C:/path/to/bash.exe`).
+Other than Windows, setting `shell.forward_slash_path` has no effect.
