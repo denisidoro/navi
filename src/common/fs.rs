@@ -4,6 +4,7 @@ use std::ffi::OsStr;
 use std::fs::{self, create_dir_all, File};
 use std::io;
 use thiserror::Error;
+use std::env::current_exe;
 
 pub trait ToStringExt {
     fn to_string(&self) -> String;
@@ -77,7 +78,7 @@ fn follow_symlink(pathbuf: PathBuf) -> Result<PathBuf> {
 }
 
 fn exe_pathbuf() -> Result<PathBuf> {
-    let pathbuf = std::env::current_exe().context("Unable to acquire executable's path")?;
+    let pathbuf = current_exe().context("Unable to acquire executable's path")?;
 
     #[cfg(target_family = "windows")]
     let pathbuf = dunce::canonicalize(pathbuf)?;
