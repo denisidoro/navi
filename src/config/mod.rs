@@ -25,7 +25,7 @@ impl Config {
         let env = EnvConfig::new();
         let yaml = YamlConfig::get(&env).unwrap_or_else(|e| {
             eprintln!("Error parsing config file: {e}");
-            eprintln!("Fallbacking to default one...");
+            eprintln!("Fallback to default one...");
             eprintln!();
             YamlConfig::default()
         });
@@ -101,6 +101,10 @@ impl Config {
 
                 None
             })
+    }
+
+    pub fn yaml(&self) -> &YamlConfig {
+        &self.yaml
     }
 
     pub fn finder(&self) -> FinderChoice {

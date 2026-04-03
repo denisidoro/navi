@@ -26,3 +26,11 @@ impl EnvConfig {
         }
     }
 }
+
+/// A default implementation for EnvConfig
+/// to satisfy cargo clippy.
+impl Default for EnvConfig {
+    fn default() -> Self {
+        Self::new()
+    }
+}

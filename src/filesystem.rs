@@ -7,25 +7,81 @@ use crate::structures::fetcher;
 use etcetera::BaseStrategy;
 use regex::Regex;
 
+use crate::common::git;
+use crate::common::git::CheatRepositoryRecord;
+use git2::Repository;
 use std::cell::RefCell;
-use std::path::MAIN_SEPARATOR;
-
+use std::path::{MAIN_SEPARATOR, MAIN_SEPARATOR_STR};
 use walkdir::WalkDir;
 
-/// Multiple paths are joint by a platform-specific separator.
-/// FIXME: it's actually incorrect to assume a path doesn't containing this separator
+/// Multiple paths are joined by a platform-specific separator.
+/// FIXME: it's actually incorrect to assume a path doesn't contain this separator
 #[cfg(target_family = "windows")]
 pub const JOIN_SEPARATOR: &str = ";";
 #[cfg(not(target_family = "windows"))]
 pub const JOIN_SEPARATOR: &str = ":";
 
+/// Takes a Path and returns a collection of Strings representing the cheat files contained in a directory.\
+/// A cheat file is defined with the `.cheat` or `.cheat.md` extension.
+///
+/// # Returns
+///
+/// A `Vec<String>` which contains all the cheat files under the given directory.\
+/// Each cheat file entry inside the `Vec` container is a `String` representation of the path of the file
+/// and is written in its absolute format, it is not a relative path, like so:
+///
+/// ```
+/// "/home/user/folder/cheat_file.cheat"
+/// ```
+///
 pub fn all_cheat_files(path: &Path) -> Vec<String> {
     WalkDir::new(path)
         .follow_links(true)
         .into_iter()
         .filter_map(|e| e.ok())
-        .map(|e| e.path().to_str().unwrap_or("").to_string())
+        // We make sure it is indeed a file and not a directory
+        // There is nothing that forbids a directory to end with a `.cheat` or `.cheat.md` name.
+        .map(|e| {
+            if e.path().is_file() {
+                e.path().to_str().unwrap_or("").to_string()
+            } else {
+                "".to_string()
+            }
+        })
         .filter(|e| e.ends_with(".cheat") || e.ends_with(".cheat.md"))
+        .collect::<Vec<String>>()
+}
+
+/// Takes a Path and returns a collection of Strings representing the git files contained in a directory.\
+/// A git file is defined by being under the `.git` folder.
+///
+/// # Returns
+///
+/// A `Vec<String>` which contains all the git files under the given directory.\
+/// Each git file entry inside the `Vec` container is a `String` representation of the path of the file
+/// and is written in its absolute format, it is not a relative path, like so:
+///
+/// ```
+/// "/home/user/folder/.git/<git-file>"
+/// ```
+///
+pub fn all_git_files(path: &Path) -> Vec<String> {
+    let git_filter = format!("{}.git{}", MAIN_SEPARATOR_STR, MAIN_SEPARATOR_STR);
+
+    WalkDir::new(path)
+        .follow_links(true)
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .map(|e| {
+            println!("[GIT](DEBUG) - {}", e.path().display());
+
+            return if e.path().is_file() {
+                e.path().to_str().unwrap_or("").to_string()
+            } else {
+                "".to_string()
+            };
+        })
+        .filter(|e| e.contains(git_filter.as_str()))
         .collect::<Vec<String>>()
 }
 
@@ -88,6 +144,16 @@ pub fn cheat_paths(path: Option<String>) -> Result<String> {
     }
 }
 
+/// Returns the cheats path defined at run time
+pub fn running_cheats_path() -> String {
+    CONFIG.path().unwrap_or_else(|| {
+        // if we don't have a path, use the default value
+        let _cheats = default_cheat_pathbuf().unwrap();
+
+        _cheats.to_string()
+    })
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Here are other functions, unrelated to CLI commands (or at least not directly related)
@@ -122,6 +188,80 @@ fn get_config_dir_by_platform() -> Result<PathBuf> {
 
         Ok(base_dirs.config_dir())
     }
+}
+
+/// Goes through the cheats path(s) defined within the configuration
+/// and sends back any cheatsheet repository remote URI it finds along its local URI.
+///
+/// # Returns
+///
+/// It returns a Tuple containing two `Vec<String>`, one for the remote URI and one for the local URI.\
+/// In a way, you could simplify this function by the following definition:
+///
+/// ```
+/// pub fn local_cheatsheet_repositories() -> (Vec<String>, Vec<String>) {
+///     let cheats_repos_remote_uris: Vec<String> = Vec::new();
+///     let cheats_repos_local_path: Vec<String> = Vec::new();
+///
+///     ..
+///     return (cheats_repos_remote_uris, cheats_repos_local_path)
+/// }
+/// ```
+///
+/// # Examples
+///
+/// - If there is at least one cheatsheet repository on the filesystem added to navi:
+///
+///     ```
+///     use crate::filesystem::local_cheatsheet_repositories;
+///
+///     let (cheats_uri, cheats_path): (Vec<String>, Vec<String>) = local_cheatsheet_repositories();
+///
+///     assert_ne!([], cheats_uri);
+///     assert_ne!([], cheats_path);
+///     ```
+///
+pub fn local_cheatsheet_repositories() -> Result<Vec<CheatRepositoryRecord>> {
+    let mut cheats_repos: Vec<CheatRepositoryRecord> = Vec::new();
+    let cheats_path = running_cheats_path();
+
+    // We're checking each given paths possible
+    for cheat_path in cheats_path.split(JOIN_SEPARATOR) {
+        // If the path doesn't exist, continue to the next one
+        if !std::fs::exists(cheat_path)? {
+            continue;
+        }
+
+        let curr_dir = std::fs::read_dir(cheat_path)?;
+
+        // We're checking subfolders -> they should contain at least one .cheat files
+        for entry in curr_dir {
+            let entry = entry?;
+
+            if entry.file_type()?.is_dir() {
+                // If the directory doesn't have at least one cheat file -> ignore it and continue
+                if all_cheat_files(&entry.path()).is_empty() {
+                    continue;
+                };
+
+                // If the directory have at least one cheat file -> add it to the list
+                // Note: for the list, we are registering the git remote name and not the
+                //      folder name since we modify it internally.
+                let git_path = format!("{}/{}", &entry.path().display(), ".git");
+                let folder_path = entry.path().display().to_string();
+
+                if std::fs::exists(&git_path)? {
+                    let git_repo = Repository::discover(entry.path())?;
+                    let remote_uri = git::get_remote_uri(git_repo);
+                    let new_cheat_entry = CheatRepositoryRecord::new(folder_path, remote_uri);
+
+                    cheats_repos.push(new_cheat_entry);
+                }
+            }
+        }
+    }
+
+    Ok(cheats_repos)
 }
 
 pub fn tmp_pathbuf() -> Result<PathBuf> {
@@ -176,7 +316,7 @@ impl fetcher::Fetcher for Fetcher {
         let interpolated_paths = interpolate_paths(paths);
         let folders = paths_from_path_param(&interpolated_paths);
 
-        let home_regex = Regex::new(r"^~").unwrap();
+        let home_regex = Regex::new(r"^~")?;
         let home = etcetera::home_dir().ok();
 
         // parser.filter = self.tag_rules.as_ref().map(|r| gen_lists(r.as_str()));

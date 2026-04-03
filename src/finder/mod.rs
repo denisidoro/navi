@@ -1,19 +1,21 @@
 use crate::deser;
 use crate::prelude::*;
+use clap::ValueEnum;
+pub use post::process;
 use std::io::Write;
 use std::process::{self, Output};
 use std::process::{Command, Stdio};
-pub mod structures;
-use clap::ValueEnum;
-pub use post::process;
 use structures::Opts;
 use structures::SuggestionType;
+
+pub mod questions;
+pub mod structures;
+
+mod post;
 
 const MIN_FZF_VERSION_MAJOR: u32 = 0;
 const MIN_FZF_VERSION_MINOR: u32 = 23;
 const MIN_FZF_VERSION_PATCH: u32 = 1;
-
-mod post;
 
 #[derive(Debug, Clone, Copy, Deserialize, ValueEnum)]
 pub enum FinderChoice {
