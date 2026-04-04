@@ -2,7 +2,7 @@ use crate::prelude::*;
 use remove_dir_all::remove_dir_all;
 use std::ffi::OsStr;
 use std::fs::{self, create_dir_all, File};
-use std::io;
+use std::io::BufReader;
 use thiserror::Error;
 use std::env::current_exe;
 
@@ -43,12 +43,12 @@ pub fn open<P: AsRef<Path>>(filename: P) -> Result<File> {
 
 pub fn read_lines<P: AsRef<Path>>(filename: P) -> Result<impl Iterator<Item = Result<String>>> {
     let file = open(filename.as_ref())?;
-    Ok(io::BufReader::new(file)
+    Ok(BufReader::new(file)
         .lines()
         .map(|line| line.map_err(Error::from)))
 }
 
-pub fn pathbuf_to_string<P: AsRef<Path>>(pathbuf: P) -> Result<String> {
+fn pathbuf_to_string<P: AsRef<Path>>(pathbuf: P) -> Result<String> {
     Ok(pathbuf.as_ref()
         .as_os_str()
         .to_str()
