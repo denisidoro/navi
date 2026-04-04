@@ -34,25 +34,25 @@ pub struct UnreadableDir {
     source: anyhow::Error,
 }
 
-pub fn open(filename: &Path) -> Result<File> {
-    File::open(filename).with_context(|| {
-        let x = filename.to_string();
+pub fn open<P: AsRef<Path>>(filename: P) -> Result<File> {
+    File::open(filename.as_ref()).with_context(|| {
+        let x = filename.as_ref().to_string();
         format!("Failed to open file {}", &x)
     })
 }
 
-pub fn read_lines(filename: &Path) -> Result<impl Iterator<Item = Result<String>>> {
-    let file = open(filename)?;
+pub fn read_lines<P: AsRef<Path>>(filename: P) -> Result<impl Iterator<Item = Result<String>>> {
+    let file = open(filename.as_ref())?;
     Ok(io::BufReader::new(file)
         .lines()
         .map(|line| line.map_err(Error::from)))
 }
 
-pub fn pathbuf_to_string(pathbuf: &Path) -> Result<String> {
-    Ok(pathbuf
+pub fn pathbuf_to_string<P: AsRef<Path>>(pathbuf: P) -> Result<String> {
+    Ok(pathbuf.as_ref()
         .as_os_str()
         .to_str()
-        .ok_or_else(|| InvalidPath(pathbuf.to_path_buf()))
+        .ok_or_else(|| InvalidPath(pathbuf.as_ref().to_path_buf()))
         .map(str::to_string)?)
 }
 
@@ -95,8 +95,8 @@ pub fn exe_string() -> String {
     exe_abs_string().unwrap_or_else(|_| "navi".to_string())
 }
 
-pub fn create_dir(path: &Path) -> Result<()> {
-    create_dir_all(path).with_context(|| {
+pub fn create_dir<P: AsRef<Path>>(path: P) -> Result<()> {
+    create_dir_all(path.as_ref()).with_context(|| {
         format!(
             "Failed to create directory `{}`",
             pathbuf_to_string(path).expect("Unable to parse {path}")
@@ -104,8 +104,8 @@ pub fn create_dir(path: &Path) -> Result<()> {
     })
 }
 
-pub fn remove_dir(path: &Path) -> Result<()> {
-    remove_dir_all(path).with_context(|| {
+pub fn remove_dir<P: AsRef<Path>>(path: P) -> Result<()> {
+    remove_dir_all(path.as_ref()).with_context(|| {
         format!(
             "Failed to remove directory `{}`",
             pathbuf_to_string(path).expect("Unable to parse {path}")
