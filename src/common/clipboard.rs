@@ -1,4 +1,4 @@
-use crate::common::shell::{self, ShellSpawnError, EOF};
+use crate::common::shell::{out, ShellSpawnError, EOF};
 use crate::prelude::*;
 
 pub fn copy(text: String) -> Result<()> {
@@ -19,7 +19,7 @@ _copy() {
    fi
 }"#;
 
-    shell::out()
+    out()
         .arg(
             format!(
                 r#"{cmd} 

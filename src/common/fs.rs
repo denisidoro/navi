@@ -1,7 +1,7 @@
 use crate::prelude::*;
 use remove_dir_all::remove_dir_all;
 use std::ffi::OsStr;
-use std::fs::{self, create_dir_all, File};
+use std::fs::{create_dir_all, File, read_link};
 use std::io::BufReader;
 use thiserror::Error;
 use std::env::current_exe;
@@ -57,7 +57,7 @@ fn pathbuf_to_string<P: AsRef<Path>>(pathbuf: P) -> Result<String> {
 }
 
 fn follow_symlink(pathbuf: PathBuf) -> Result<PathBuf> {
-    fs::read_link(pathbuf.clone())
+    read_link(pathbuf.clone())
         .map(|o| {
             let o_str = o
                 .as_os_str()
