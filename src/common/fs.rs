@@ -1,10 +1,10 @@
 use crate::prelude::*;
 use remove_dir_all::remove_dir_all;
+use std::env::current_exe;
 use std::ffi::OsStr;
-use std::fs::{create_dir_all, File, read_link};
+use std::fs::{create_dir_all, read_link, File};
 use std::io::BufReader;
 use thiserror::Error;
-use std::env::current_exe;
 
 pub trait ToStringExt {
     fn to_string(&self) -> String;
@@ -43,13 +43,12 @@ pub fn open<P: AsRef<Path>>(filename: P) -> Result<File> {
 
 pub fn read_lines<P: AsRef<Path>>(filename: P) -> Result<impl Iterator<Item = Result<String>>> {
     let file = open(filename.as_ref())?;
-    Ok(BufReader::new(file)
-        .lines()
-        .map(|line| line.map_err(Error::from)))
+    Ok(BufReader::new(file).lines().map(|line| line.map_err(Error::from)))
 }
 
 fn pathbuf_to_string<P: AsRef<Path>>(pathbuf: P) -> Result<String> {
-    Ok(pathbuf.as_ref()
+    Ok(pathbuf
+        .as_ref()
         .as_os_str()
         .to_str()
         .ok_or_else(|| InvalidPath(pathbuf.as_ref().to_path_buf()))

@@ -22,11 +22,10 @@ pub fn meta(uri: &str) -> (String, String, String) {
             } else {
                 // Users can pass name starting wirh a slash
                 let first_char = uri.chars().next();
-                
+
                 if first_char == Some('/') {
                     format!("https://github.com{uri}")
-                }
-                else {
+                } else {
                     format!("https://github.com/{uri}")
                 }
             }
@@ -70,7 +69,7 @@ mod tests {
         assert_eq!(user, "user".to_string());
         assert_eq!(repo, "repo".to_string());
     }
-    
+
     #[test]
     fn test_meta_github_repo_name() {
         let (actual_uri, user, repo) = meta("user/repo");
@@ -78,7 +77,7 @@ mod tests {
         assert_eq!(user, "user".to_string());
         assert_eq!(repo, "repo".to_string());
     }
-    
+
     #[test]
     fn test_meta_github_repo_name_with_slash() {
         let (actual_uri, user, repo) = meta("/user/repo");
@@ -86,7 +85,7 @@ mod tests {
         assert_eq!(user, "user".to_string());
         assert_eq!(repo, "repo".to_string());
     }
-    
+
     #[test]
     fn test_meta_github_clean_link() {
         let (actual_uri, user, repo) = meta("github.com/user/repo");
@@ -94,7 +93,7 @@ mod tests {
         assert_eq!(user, "user".to_string());
         assert_eq!(repo, "repo".to_string());
     }
-    
+
     #[test]
     fn test_meta_random_git_provider_http() {
         let (actual_uri, user, repo) = meta("https://sr.ht/user/repo");
