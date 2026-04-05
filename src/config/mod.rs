@@ -146,6 +146,10 @@ impl Config {
             .unwrap_or_else(|| self.yaml.shell.command.clone())
     }
 
+    pub fn forward_slash_path(&self) -> bool {
+        self.yaml.shell.forward_slash_path
+    }
+
     pub fn tag_rules(&self) -> Option<String> {
         self.clap
             .tag_rules
