@@ -15,23 +15,21 @@ pub fn shallow_clone(uri: &str, target: &str) -> Result<()> {
 pub fn meta(uri: &str) -> (String, String, String) {
     let actual_uri = if uri.contains("://") || uri.contains('@') {
         uri.to_string()
-    } else {
-        if let Some((domain, route)) = uri.split_once('/') {
-            if domain.contains(".") {
-                format!("https://{domain}/{route}")
-            } else {
-                // Users can pass name starting wirh a slash
-                let first_char = uri.chars().next();
-
-                if first_char == Some('/') {
-                    format!("https://github.com{uri}")
-                } else {
-                    format!("https://github.com/{uri}")
-                }
-            }
+    } else if let Some((domain, route)) = uri.split_once('/') {
+        if domain.contains(".") {
+            format!("https://{domain}/{route}")
         } else {
-            panic!("Invalid link")
+            // Users can pass name starting wirh a slash
+            let first_char = uri.chars().next();
+
+            if first_char == Some('/') {
+                format!("https://github.com{uri}")
+            } else {
+                format!("https://github.com/{uri}")
+            }
         }
+    } else {
+        panic!("Invalid link")
     };
 
     let uri_to_split = actual_uri.replace(':', "/");
