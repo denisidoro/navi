@@ -77,6 +77,7 @@ pub struct Search {
 pub struct Shell {
     pub command: String,
     pub finder_command: Option<String>,
+    pub forward_slash_path: bool,
 }
 
 #[derive(Deserialize, Debug)]
@@ -187,6 +188,7 @@ impl Default for Shell {
         Self {
             command: "bash".to_string(),
             finder_command: None,
+            forward_slash_path: false,
         }
     }
 }
