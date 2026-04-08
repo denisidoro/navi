@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use crate::config::CONFIG;
 use clap::ValueEnum;
 use std::process::Command;
 use thiserror::Error;
@@ -24,9 +24,10 @@ pub struct ShellSpawnError {
 }
 
 impl ShellSpawnError {
-    pub fn new<SourceError>(command: impl Into<String>, source: SourceError) -> Self
+    pub fn new<SourceError, T>(command: T, source: SourceError) -> Self
     where
         SourceError: std::error::Error + Sync + Send + 'static,
+        T: Into<String>,
     {
         ShellSpawnError {
             command: command.into(),
