@@ -1,24 +1,18 @@
 use crate::prelude::*;
-use crossterm::style;
 use crossterm::terminal;
-
 use std::process::Command;
 
 const FALLBACK_WIDTH: u16 = 80;
 
 fn width_with_shell_out() -> Result<u16> {
-    let output = if cfg!(target_os = "macos") {
+    let output = if cfg!(target_os = "windows") {
         Command::new("stty")
-            .arg("-f")
-            .arg("/dev/stderr")
-            .arg("size")
+            .args(["size", "-F", "/dev/stderr"])
             .stderr(Stdio::inherit())
             .output()?
     } else {
         Command::new("stty")
-            .arg("size")
-            .arg("-F")
-            .arg("/dev/stderr")
+            .args(["-f", "/dev/stderr", "size"])
             .stderr(Stdio::inherit())
             .output()?
     };
@@ -45,21 +39,15 @@ pub fn width() -> u16 {
     }
 }
 
-pub fn parse_ansi(ansi: &str) -> Option<style::Color> {
-    style::Color::parse_ansi(&format!("5;{ansi}"))
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[derive(Debug, Clone)]
-pub struct Color(#[allow(unused)] pub style::Color); // suppress warning: field `0` is never read.
+    #[test]
+    fn test_width_with_shell_out() {
+        let result = width_with_shell_out().unwrap_or_default();
+        let is_ok = if result == 0 { false } else { true };
 
-impl FromStr for Color {
-    type Err = &'static str;
-
-    fn from_str(ansi: &str) -> Result<Self, Self::Err> {
-        if let Some(c) = parse_ansi(ansi) {
-            Ok(Color(c))
-        } else {
-            Err("Invalid color")
-        }
+        assert!(is_ok);
     }
 }
