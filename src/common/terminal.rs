@@ -12,7 +12,9 @@ fn width_with_shell_out() -> Result<u16> {
             .output()?
     } else {
         Command::new("stty")
-            .args(["-f", "/dev/stderr", "size"])
+            .arg("-f")
+            .arg("/dev/stderr")
+            .arg("size")
             .stderr(Stdio::inherit())
             .output()?
     };
