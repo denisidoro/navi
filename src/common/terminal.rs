@@ -45,7 +45,7 @@ mod tests {
 
     #[test]
     fn test_width_with_shell_out() {
-        let result = width_with_shell_out().unwrap_or_default();
+        let result = width_with_shell_out().expect("Shell error");
         let is_ok = if result == 0 { false } else { true };
 
         assert!(is_ok);
