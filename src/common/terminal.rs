@@ -49,8 +49,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_width_with_shell_out() {
-        let result = width_with_shell_out().expect("Shell error");
+    fn test_width() {
+        let result = width();
         let is_ok = if result == 0 { false } else { true };
 
         assert!(is_ok);
