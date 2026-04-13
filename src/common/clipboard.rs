@@ -1,5 +1,5 @@
-use crate::common::shell::{self, ShellSpawnError, EOF};
-use crate::prelude::*;
+use crate::common::shell::{out, ShellSpawnError, EOF};
+use anyhow::Result;
 
 pub fn copy(text: String) -> Result<()> {
     let cmd = r#"
@@ -19,15 +19,16 @@ _copy() {
    fi
 }"#;
 
-    shell::out()
+    out()
         .arg(
             format!(
-                r#"{cmd} 
-        read -r -d '' x <<'{EOF}'
+                r#"
+{cmd} 
+read -r -d '' x <<'{EOF}'
 {text}
 {EOF}
 
-echo -n "$x" | _copy"#,
+echo -n "$x" | _copy"#
             )
             .as_str(),
         )

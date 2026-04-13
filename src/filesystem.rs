@@ -98,12 +98,12 @@ pub fn cheat_paths(path: Option<String>) -> Result<String> {
 ///
 /// We are currently handling two cases: When the platform is `macOS` and when the platform isn't (including `Windows` and `Linux/Unix` platforms)
 fn get_data_dir_by_platform() -> Result<PathBuf> {
-    if cfg!(target_os = "macos") {
-        let base_dirs = etcetera::base_strategy::Apple::new()?;
+    if cfg!(target_os = "windows") {
+        let base_dirs = etcetera::choose_base_strategy()?;
 
         Ok(base_dirs.data_dir())
     } else {
-        let base_dirs = etcetera::choose_base_strategy()?;
+        let base_dirs = etcetera::base_strategy::Xdg::new()?;
 
         Ok(base_dirs.data_dir())
     }
@@ -113,12 +113,12 @@ fn get_data_dir_by_platform() -> Result<PathBuf> {
 ///
 /// We are currently handling two cases: When the platform is `macOS` and when the platform isn't (including `Windows` and `Linux/Unix` platforms)
 fn get_config_dir_by_platform() -> Result<PathBuf> {
-    if cfg!(target_os = "macos") {
-        let base_dirs = etcetera::base_strategy::Apple::new()?;
+    if cfg!(target_os = "windows") {
+        let base_dirs = etcetera::choose_base_strategy()?;
 
         Ok(base_dirs.config_dir())
     } else {
-        let base_dirs = etcetera::choose_base_strategy()?;
+        let base_dirs = etcetera::base_strategy::Xdg::new()?;
 
         Ok(base_dirs.config_dir())
     }

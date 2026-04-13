@@ -1,5 +1,4 @@
 use crate::prelude::*;
-use crossterm::style;
 use crossterm::terminal;
 
 use std::process::Command;
@@ -45,21 +44,15 @@ pub fn width() -> u16 {
     }
 }
 
-pub fn parse_ansi(ansi: &str) -> Option<style::Color> {
-    style::Color::parse_ansi(&format!("5;{ansi}"))
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[derive(Debug, Clone)]
-pub struct Color(#[allow(unused)] pub style::Color); // suppress warning: field `0` is never read.
+    #[test]
+    fn test_width() {
+        let result = width();
+        let is_ok = if result == 0 { false } else { true };
 
-impl FromStr for Color {
-    type Err = &'static str;
-
-    fn from_str(ansi: &str) -> Result<Self, Self::Err> {
-        if let Some(c) = parse_ansi(ansi) {
-            Ok(Color(c))
-        } else {
-            Err("Invalid color")
-        }
+        assert!(is_ok);
     }
 }
