@@ -26,4 +26,4 @@ fn call-navi {
   }
 }
 
-set edit:insert:binding[Alt-h] = { call-navi >/dev/tty 2>&1 }
+set edit:insert:binding[__NAVI_KEY__] = { call-navi >/dev/tty 2>&1 }
