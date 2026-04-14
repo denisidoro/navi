@@ -193,6 +193,14 @@ impl Config {
         self.yaml.style.snippet.min_width
     }
 
+    pub fn print_command(&self) -> bool {
+        self.clap.print_command
+    }
+
+    pub fn print_cheat(&self) -> bool {
+        self.clap.print_cheat
+    }
+
     #[cfg(feature = "disable-command-execution")]
     fn print(&self) -> bool {
         true

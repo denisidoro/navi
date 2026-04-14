@@ -22,6 +22,7 @@ use clap::{crate_version, Parser, Subcommand};
     navi                                         # default behavior
     navi fn welcome                              # show cheatsheets for navi itself
     navi --print                                 # doesn't execute the snippet
+    navi --print-command                         # prints the command before executing it
     navi --tldr docker                           # search for docker cheatsheets using tldr
     navi --cheatsh docker                        # search for docker cheatsheets using cheatsh
     navi --path '/some/dir:/other/dir'           # use .cheat files from custom paths
@@ -47,6 +48,14 @@ pub(super) struct ClapConfig {
     #[arg(long)]
     #[cfg(not(feature = "disable-command-execution"))]
     pub print: bool,
+
+    /// Prints the command to stdout before executing it
+    #[arg(short = 'P', long)]
+    pub print_command: bool,
+
+    /// Prints the full cheat (comment + command) before executing it
+    #[arg(short = 'C', long)]
+    pub print_cheat: bool,
 
     /// Returns the best match
     #[arg(long)]
