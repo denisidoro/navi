@@ -63,7 +63,20 @@ Due to Nushell's [unique design](https://www.nushell.sh/book/thinking_in_nu.html
 
 By default, `Ctrl+G` is assigned to launching **navi** (in xonsh can be customized with `$X_NAVI_KEY`, see [xontrib-navi](https://github.com/eugenesvk/xontrib-navi) for details).
 
-There's currently no way to customize the widget behavior out-of-the-box. If you want to change the keybinding or the **navi** flags used by the widget, please:
+To customize the keybinding, use the `--key` flag with your shell's native keybinding syntax:
+
+```sh
+# zsh — bind to Ctrl+Space
+eval "$(navi widget zsh --key '^ ')"
+
+# bash — bind to Ctrl+Space
+eval "$(navi widget bash --key '\C- ')"
+
+# fish — bind to Ctrl+Space
+navi widget fish --key '\c ' | source
+```
+
+If you want to further customize the widget behavior (e.g., change the **navi** flags), you can:
 
 1. run, e.g., `navi widget bash` in your terminal
 2. copy the output

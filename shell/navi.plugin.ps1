@@ -51,6 +51,6 @@ $null = New-Module {
         }
     }
 
-    Set-PSReadlineKeyHandler -BriefDescription "A keybinding to open Navi Widget" -Chord Ctrl+g -ScriptBlock { Invoke-NaviWidget }
+    Set-PSReadlineKeyHandler -BriefDescription "A keybinding to open Navi Widget" -Chord __NAVI_KEY__ -ScriptBlock { Invoke-NaviWidget }
     Export-ModuleMember -Function @()
 }

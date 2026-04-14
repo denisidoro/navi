@@ -45,5 +45,5 @@ function _navi_smart_replace
     end
 end
 
-bind \cg _navi_smart_replace
-bind --mode insert \cg _navi_smart_replace
+bind __NAVI_KEY__ _navi_smart_replace
+bind --mode insert __NAVI_KEY__ _navi_smart_replace

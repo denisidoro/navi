@@ -22,8 +22,8 @@ export def navi_widget [] {
 
 let nav_keybinding = {
     name: "navi",
-    modifier: control,
-    keycode: char_g,
+    modifier: __NAVI_KEY_MODIFIER__,
+    keycode: __NAVI_KEY_CODE__,
     mode: [emacs, vi_normal, vi_insert],
     event: {
         send: executehostcommand,
