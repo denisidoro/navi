@@ -18,8 +18,7 @@ impl EnvConfig {
             config_yaml: env_var::parse(env_var::CONFIG_YAML),
             config_path: env_var::parse(env_var::CONFIG),
             path: env_var::parse(env_var::PATH),
-            finder: env_var::parse(env_var::FINDER)
-                .and_then(|x: String| FinderChoice::from_str(&x).ok()),
+            finder: env_var::parse(env_var::FINDER).and_then(|x: String| FinderChoice::from_str(&x).ok()),
             fzf_overrides: env_var::parse(env_var::FZF_OVERRIDES),
             fzf_overrides_var: env_var::parse(env_var::FZF_OVERRIDES_VAR),
         }
