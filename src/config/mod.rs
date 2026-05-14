@@ -149,10 +149,7 @@ impl Config {
     }
 
     pub fn tag_rules(&self) -> Option<String> {
-        self.clap
-            .tag_rules
-            .clone()
-            .or(self.yaml.search.tags.clone())
+        self.clap.tag_rules.clone().or(self.yaml.search.tags.clone())
     }
 
     pub fn tag_color(&self) -> Color {

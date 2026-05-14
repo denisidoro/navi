@@ -7,11 +7,10 @@ pub mod shell;
 pub mod temp;
 
 use crate::commands;
+use crate::config::Command::*;
 use crate::prelude::*;
 
 pub fn handle() -> Result<()> {
-    use crate::config::Command::*;
-
     debug!("CONFIG = {:#?}", &*CONFIG);
     match CONFIG.cmd() {
         None => commands::core::main(),
