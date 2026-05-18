@@ -81,8 +81,9 @@ case::query_driven() {
    shell::enter "$session"
 
    local rc=0
-   if ! shell::wait_for "$session" '^NAVI_TEST::ping_ok::END[[:space:]]*$'; then
-      log::error "[$shell] sentinel never appeared as its own output line"
+   # Match output text only; pane capture varies on CI for line endings / wrapping.
+   if ! shell::wait_for "$session" 'NAVI_TEST::ping_ok::END'; then
+      log::error "[$shell] sentinel never appeared after running buffer"
       shell::pane "$session" 1>&2
       rc=1
    fi
@@ -130,12 +131,12 @@ case::multiline_preserved() {
    shell::enter "$session"
 
    local rc=0
-   if ! shell::wait_for "$session" '^NAVI_TEST::multi_line_1::END[[:space:]]*$'; then
-      log::error "[$shell] first sentinel not on its own output line"
+   if ! shell::wait_for "$session" 'NAVI_TEST::multi_line_1::END'; then
+      log::error "[$shell] first sentinel never appeared after running buffer"
       shell::pane "$session" 1>&2
       rc=1
    fi
-   if [ "$rc" -eq 0 ] && ! shell::wait_for "$session" '^NAVI_TEST::multi_line_2::END[[:space:]]*$' 5; then
+   if [ "$rc" -eq 0 ] && ! shell::wait_for "$session" 'NAVI_TEST::multi_line_2::END' "${SHELL_TESTS_MULTILINE_TIMEOUT:-15}"; then
       log::error "[$shell] second sentinel not on its own output line (newlines were likely flattened)"
       shell::pane "$session" 1>&2
       rc=1

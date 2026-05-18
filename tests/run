@@ -15,7 +15,7 @@ if ! command_exists navi; then
 fi
 
 _navi() {
-   stty sane || true
+   stty sane </dev/tty 2>/dev/null || true
    local path="${NAVI_TEST_PATH:-$TEST_CHEAT_PATH}"
    path="${path//$HOME/~}"
    export NAVI_ENV_VAR_PATH="$path"

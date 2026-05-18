@@ -57,7 +57,8 @@ shell::_env_prefix() {
       "TERM='${TERM:-xterm-256color}' " \
       "NAVI_CONFIG='${NAVI_HOME}/tests/config.yaml' " \
       "NAVI_PATH='${SHELL_TESTS_CHEATS_PATH}' " \
-      "SHELL_TESTS_PLUGIN='${plugin}' "
+      "SHELL_TESTS_PLUGIN='${plugin}' " \
+      "SHELL_TESTS_PROMPT_TEXT='${SHELL_TESTS_PROMPT_MARKER}' "
 }
 
 shell::_launch_cmd() {
@@ -75,9 +76,9 @@ shell::_launch_cmd() {
             "zsh --no-globalrcs -i"
          ;;
       fish)
-         local -r plugin="$(shell::_plugin_path "$shell")"
-         local -r init_cmd="function fish_prompt; echo -n \"${SHELL_TESTS_PROMPT_MARKER}\"; end; source \"${plugin}\""
-         printf "%sfish --no-config -i -C '%s'" "$prefix" "$init_cmd"
+         # Pass a single quoted argument to `-C`; spaces in NAVI_HOME paths are uncommon.
+         printf '%sfish --no-config -i -C '\''source %s/fish_init.fish'\''' \
+            "$prefix" "${SHELL_TESTS_RC_DIR}"
          ;;
    esac
 }
