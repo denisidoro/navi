@@ -78,7 +78,9 @@ jobs:
         run: cargo install tealdeer --locked
 
       - name: Prime tldr cache
-        run: tldr docker >/dev/null
+        run: |
+          tldr --update
+          tldr docker >/dev/null
 
       - name: Run bash tests
         run: ./tests/run

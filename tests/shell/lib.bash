@@ -23,9 +23,11 @@ readonly SHELL_TESTS_RC_DIR="${SHELL_TESTS_HOME}/rc"
 # need a beat to start, especially on cold CI runners.
 readonly SHELL_TESTS_WAIT_TIMEOUT="${SHELL_TESTS_WAIT_TIMEOUT:-15}"
 
-# A prompt marker injected by tests/shell/rc/* so shell::wait_for_prompt
-# is deterministic regardless of the runner's $PS1 / $PROMPT defaults.
+# Display marker for bash/zsh PS1/PROMPT and fish "$SHELL_TESTS_PROMPT_TEXT".
 readonly SHELL_TESTS_PROMPT_MARKER='NAVIPROMPT> '
+# Pane detection: tmux capture-pane often strips trailing spaces, so match
+# the prefix without requiring the space after '>' (CI had TERM=dumb + trim).
+readonly SHELL_TESTS_PROMPT_REGEX='NAVIPROMPT>[[:space:]]*'
 
 shell::_session_name() {
    local -r shell="$1"
@@ -51,10 +53,13 @@ shell::_env_prefix() {
    local -r plugin="$(shell::_plugin_path "$shell")"
    local -r navi_dir="$(dirname "$NAVI_EXE")"
 
+   # GitHub Actions sets TERM=dumb; interactive shells / fzf need a real tty type.
+   local -r tmux_term="${SHELL_TESTS_TERM:-screen}"
+
    printf '%s' \
       "env " \
       "PATH='${navi_dir}:${PATH}' " \
-      "TERM='${TERM:-xterm-256color}' " \
+      "TERM='${tmux_term}' " \
       "NAVI_CONFIG='${NAVI_HOME}/tests/config.yaml' " \
       "NAVI_PATH='${SHELL_TESTS_CHEATS_PATH}' " \
       "SHELL_TESTS_PLUGIN='${plugin}' " \
@@ -108,7 +113,7 @@ shell::wait_for() {
 }
 
 shell::wait_for_prompt() {
-   shell::wait_for "$1" "$SHELL_TESTS_PROMPT_MARKER" "${2:-}"
+   shell::wait_for "$1" "$SHELL_TESTS_PROMPT_REGEX" "${2:-}"
 }
 
 # Start a fresh tmux session for the given shell. Returns the session

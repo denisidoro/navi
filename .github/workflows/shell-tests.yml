@@ -46,5 +46,8 @@ jobs:
       - name: Install fzf
         run: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; yes | ~/.fzf/install;
 
+      # Match a reasonable TERM inside tmux; GHA defaults to TERM=dumb.
       - name: Run shell plugin tests
+        env:
+          SHELL_TESTS_TERM: screen
         run: ./tests/shell/run
