@@ -26,6 +26,7 @@ impl ToStringExt for OsStr {
 #[error("Invalid path `{0}`")]
 pub struct InvalidPath(pub PathBuf);
 
+#[allow(unused)]
 #[derive(Error, Debug)]
 #[error("Unable to read directory `{dir}`")]
 pub struct UnreadableDir {

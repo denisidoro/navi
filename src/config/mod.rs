@@ -3,6 +3,7 @@ mod env;
 mod yaml;
 
 use crate::commands::func::Func;
+use crate::filesystem::JOIN_SEPARATOR;
 use crate::finder::FinderChoice;
 use crate::prelude::debug;
 pub use cli::*;
@@ -62,16 +63,16 @@ impl Config {
     }
 
     pub fn path(&self) -> Option<String> {
-        if self.clap.path.is_some() {
-            debug!("CLAP PATH: {}", self.clap.path.as_ref().unwrap());
+        if let Some(path) = self.clap.path.as_ref() {
+            debug!("CLAP PATH: {}", path)
         }
 
         self.clap
             .path
             .clone()
             .or_else(|| {
-                if self.env.path.is_some() {
-                    debug!("ENV PATH: {}", self.env.path.as_ref().unwrap());
+                if let Some(path) = self.env.path.as_ref() {
+                    debug!("ENV PATH: {}", path);
                 }
 
                 self.env.path.clone()
@@ -82,16 +83,13 @@ impl Config {
                 if p.is_empty() {
                     None
                 } else {
-                    debug!("MULTIPLE YAML PATH: {}", p.as_slice().join(","));
-                    Some(p.join(crate::filesystem::JOIN_SEPARATOR))
+                    debug!("MULTIPLE YAML PATH: {}", p.as_slice().join(", "));
+                    Some(p.join(JOIN_SEPARATOR))
                 }
             })
             .or_else(|| {
-                if self.yaml.cheats.path.is_some() {
-                    debug!(
-                        "DEPRECATED UNIQUE YAML PATH: {}",
-                        self.yaml.cheats.path.as_ref().unwrap()
-                    );
+                if let Some(path) = self.yaml.cheats.path.as_ref() {
+                    debug!("DEPRECATED UNIQUE YAML PATH: {}", path);
                 }
 
                 self.yaml.cheats.path.clone()
@@ -114,16 +112,16 @@ impl Config {
         self.clap
             .fzf_overrides
             .clone()
-            .or_else(|| self.env.fzf_overrides.clone())
-            .or_else(|| self.yaml.finder.overrides.clone())
+            .or(self.env.fzf_overrides.clone())
+            .or(self.yaml.finder.overrides.clone())
     }
 
     pub fn fzf_overrides_var(&self) -> Option<String> {
         self.clap
             .fzf_overrides_var
             .clone()
-            .or_else(|| self.env.fzf_overrides_var.clone())
-            .or_else(|| self.yaml.finder.overrides_var.clone())
+            .or(self.env.fzf_overrides_var.clone())
+            .or(self.yaml.finder.overrides_var.clone())
     }
 
     pub fn delimiter_var(&self) -> Option<String> {
@@ -143,7 +141,7 @@ impl Config {
             .shell
             .finder_command
             .clone()
-            .unwrap_or_else(|| self.yaml.shell.command.clone())
+            .unwrap_or(self.yaml.shell.command.clone())
     }
 
     pub fn forward_slash_path(&self) -> bool {
@@ -151,10 +149,7 @@ impl Config {
     }
 
     pub fn tag_rules(&self) -> Option<String> {
-        self.clap
-            .tag_rules
-            .clone()
-            .or_else(|| self.yaml.search.tags.clone())
+        self.clap.tag_rules.clone().or(self.yaml.search.tags.clone())
     }
 
     pub fn tag_color(&self) -> Color {
@@ -212,15 +207,14 @@ impl Config {
     }
 
     pub fn get_query(&self) -> Option<String> {
-        let q = self.clap.query.clone();
-        if q.is_some() {
-            return q;
-        }
-        if self.best_match() {
+        let query = self.clap.query.clone();
+        if let Some(q) = query {
+            Some(q)
+        } else if self.best_match() {
             match self.source() {
                 Source::Tldr(q) => Some(q),
                 Source::Cheats(q) => Some(q),
-                _ => Some(String::from("")),
+                _ => Some(String::new()),
             }
         } else {
             None
