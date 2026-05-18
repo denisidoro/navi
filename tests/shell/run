@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+# vim: filetype=sh
+#
+# Entry point for the shell-plugin test suite (issue #1014).
+#
+# Spawns each target shell inside tmux, sources the matching
+# `shell/navi.plugin.*` file, and exercises Ctrl-G against a
+# deterministic cheat fixture in tests/shell/cheats/.
+#
+# Reuses the existing `test::` framework from tests/core.bash so
+# results render the same way as the main test runner.
+
+set -euo pipefail
+
+export NAVI_HOME="$(cd "$(dirname "$0")/../.." && pwd)"
+source "${NAVI_HOME}/tests/core.bash"
+source "${NAVI_HOME}/tests/shell/lib.bash"
+
+export NAVI_EXE="${NAVI_EXE:-${NAVI_HOME}/target/debug/navi}"
+
+# Make navi resolvable from PATH inside the spawned tmux sessions.
+if ! command_exists fzf; then
+   export PATH="$PATH:$HOME/.fzf/bin"
+fi
+
+if [ ! -x "$NAVI_EXE" ]; then
+   log::error "navi debug binary not found at $NAVI_EXE"
+   log::note  "Run 'cargo build' first."
+   exit 1
+fi
+
+for cmd in tmux fzf; do
+   if ! command_exists "$cmd"; then
+      log::error "required dependency '$cmd' is not installed"
+      exit 1
+   fi
+done
+
+trap 'shell::kill_all' EXIT INT TERM
+
+# ----- per-case implementations ---------------------------------------
+
+# Shell loads the plugin without error and reaches a fresh prompt.
+case::loads() {
+   local -r shell="$1"
+   local session
+   session="$(shell::start "$shell" "loads")" || return 1
+   shell::stop "$session"
+}
+
+# Type a query, trigger the widget, accept fzf if it shows up, then
+# execute the spliced snippet and assert the sentinel reached stdout.
+case::query_driven() {
+   local -r shell="$1"
+   local session
+   session="$(shell::start "$shell" "query")" || return 1
+
+   shell::type "$session" "ping"
+   shell::trigger "$session"
+
+   local -r snippet_marker='echo "NAVI_TEST::ping_ok::END"'
+   local -r fzf_marker='[0-9]+/[0-9]+'
+
+   if ! shell::wait_for "$session" "(${snippet_marker}|${fzf_marker})"; then
+      log::error "[$shell] neither snippet nor fzf appeared after C-g"
+      shell::pane "$session" 1>&2
+      shell::stop "$session"
+      return 1
+   fi
+
+   if ! shell::pane "$session" | grep -Fq "$snippet_marker"; then
+      shell::enter "$session"
+      if ! shell::wait_for "$session" "$snippet_marker"; then
+         log::error "[$shell] snippet never reached the buffer after fzf accept"
+         shell::pane "$session" 1>&2
+         shell::stop "$session"
+         return 1
+      fi
+   fi
+
+   shell::enter "$session"
+
+   local rc=0
+   if ! shell::wait_for "$session" '^NAVI_TEST::ping_ok::END[[:space:]]*$'; then
+      log::error "[$shell] sentinel never appeared as its own output line"
+      shell::pane "$session" 1>&2
+      rc=1
+   fi
+
+   shell::stop "$session"
+   return "$rc"
+}
+
+# Regression test for https://github.com/denisidoro/navi/pull/1010.
+#
+# The fixture's `multiline_snippet` has two `echo`s on two physical
+# lines (no `\` continuation). If the plugin preserves newlines, each
+# echo runs as its own command and both sentinels appear anchored to
+# their own output lines. If the plugin flattens (the old fish bug),
+# the second echo collapses into arguments of the first and the second
+# sentinel never appears alone on a line.
+case::multiline_preserved() {
+   local -r shell="$1"
+   local session
+   session="$(shell::start "$shell" "multiline")" || return 1
+
+   shell::type "$session" "multiline_snippet"
+   shell::trigger "$session"
+
+   local -r snippet_marker='NAVI_TEST::multi_line_1::END'
+   local -r fzf_marker='[0-9]+/[0-9]+'
+
+   if ! shell::wait_for "$session" "(${snippet_marker}|${fzf_marker})"; then
+      log::error "[$shell] multi-line snippet did not appear after C-g"
+      shell::pane "$session" 1>&2
+      shell::stop "$session"
+      return 1
+   fi
+
+   if ! shell::pane "$session" | grep -Fq 'echo "NAVI_TEST::multi_line_1::END"'; then
+      shell::enter "$session"
+      if ! shell::wait_for "$session" 'echo "NAVI_TEST::multi_line_1::END"'; then
+         log::error "[$shell] multi-line snippet never reached the buffer"
+         shell::pane "$session" 1>&2
+         shell::stop "$session"
+         return 1
+      fi
+   fi
+
+   shell::enter "$session"
+
+   local rc=0
+   if ! shell::wait_for "$session" '^NAVI_TEST::multi_line_1::END[[:space:]]*$'; then
+      log::error "[$shell] first sentinel not on its own output line"
+      shell::pane "$session" 1>&2
+      rc=1
+   fi
+   if [ "$rc" -eq 0 ] && ! shell::wait_for "$session" '^NAVI_TEST::multi_line_2::END[[:space:]]*$' 5; then
+      log::error "[$shell] second sentinel not on its own output line (newlines were likely flattened)"
+      shell::pane "$session" 1>&2
+      rc=1
+   fi
+
+   shell::stop "$session"
+   return "$rc"
+}
+
+# ----- runner ---------------------------------------------------------
+
+cd "$NAVI_HOME"
+shell::kill_all
+
+for shell in bash zsh fish; do
+   if ! command_exists "$shell"; then
+      test::set_suite "$shell"
+      test::skip "shell '$shell' is not installed"
+      continue
+   fi
+
+   test::set_suite "$shell"
+   test::run "loads"        case::loads        "$shell"
+   test::run "query_driven" case::query_driven "$shell"
+done
+
+# Multi-line snippet preservation is the regression that motivated
+# this entire suite (#1010). It's fish-specific in origin but cheap
+# to assert against bash/zsh too, so any future shell-side flattening
+# in either of those would also be caught.
+for shell in bash zsh fish; do
+   if ! command_exists "$shell"; then
+      continue
+   fi
+   test::set_suite "${shell} regressions"
+   test::run "multiline_snippet (#1010)" case::multiline_preserved "$shell"
+done
+
+test::finish
