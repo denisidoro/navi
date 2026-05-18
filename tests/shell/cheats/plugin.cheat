@@ -1,0 +1,23 @@
+; author: navi shell-plugin tests
+;
+; Deterministic fixture for tests/shell/run.
+;
+;   - `ping`              -> single-line snippet, used by the
+;                            `<shell>::query_driven` cases for bash/zsh/fish.
+;   - `multiline_snippet` -> two distinct commands on two physical
+;                            lines, with no `\` continuation. If a
+;                            shell plugin flattens newlines (the bug
+;                            fixed in #1010), the second `echo`
+;                            collapses into args of the first, so the
+;                            second sentinel never appears on a line
+;                            of its own. The fish regression case
+;                            asserts that exact post-condition.
+
+% navi-shell-tests, plugin
+
+# ping
+echo "NAVI_TEST::ping_ok::END"
+
+# multiline_snippet
+echo "NAVI_TEST::multi_line_1::END"
+echo "NAVI_TEST::multi_line_2::END"

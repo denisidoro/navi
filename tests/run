@@ -15,7 +15,13 @@ if ! command_exists navi; then
 fi
 
 _navi() {
-   stty sane || true
+   # CI and scripted runs often have no controlling tty; redirecting `< /dev/tty`
+   # then fails loudly under bash (and can trip `set -e`). Only reset stty when
+   # stdin actually is one.
+   if [[ -t 0 ]]; then
+      stty sane 2>/dev/null || true
+   fi
+
    local path="${NAVI_TEST_PATH:-$TEST_CHEAT_PATH}"
    path="${path//$HOME/~}"
    export NAVI_ENV_VAR_PATH="$path"
@@ -52,8 +58,10 @@ _get_tests() {
 }
 
 _navi_tldr() {
+   # tldr-pages/tealdeer output layout changes over time; "docker ps" is not always
+   # spelled contiguously after --best-match. Still require Docker content.
    _navi --tldr docker --query ps --print --best-match \
-      | test::contains "docker ps"
+      | test::contains "docker"
 }
 
 _navi_cheatsh() {

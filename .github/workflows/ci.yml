@@ -72,8 +72,15 @@ jobs:
       - name: Install fzf
         run: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; yes | ~/.fzf/install;
 
-      - name: Install tealdeer
-        run: sudo npm install -g tldr
+      # npm `tldr` is flaky in CI (--markdown / cache); navi integrates with tealdeer.
+      # https://github.com/denisidoro/navi/blob/master/src/clients/tldr.rs
+      - name: Install tealdeer (Rust tldr client)
+        run: cargo install tealdeer --locked
+
+      - name: Prime tldr cache
+        run: |
+          tldr --update
+          tldr docker >/dev/null
 
       - name: Run bash tests
         run: ./tests/run
