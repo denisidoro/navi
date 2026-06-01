@@ -12,8 +12,8 @@ use std::path::MAIN_SEPARATOR;
 
 use walkdir::WalkDir;
 
-/// Multiple paths are joint by a platform-specific separator.
-/// FIXME: it's actually incorrect to assume a path doesn't containing this separator
+/// Multiple paths are joined by a platform-specific separator.
+/// FIXME: it's actually incorrect to assume a path doesn't contain this separator
 #[cfg(target_family = "windows")]
 pub const JOIN_SEPARATOR: &str = ";";
 #[cfg(not(target_family = "windows"))]
