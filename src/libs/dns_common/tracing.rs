@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+#[allow(unused)]
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct TracingConfig {

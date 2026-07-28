@@ -1,7 +1,6 @@
 use crate::common::clipboard;
 use crate::common::fs;
-use crate::common::shell;
-use crate::common::shell::ShellSpawnError;
+use crate::common::shell::{self, ShellSpawnError};
 use crate::config::Action;
 use crate::deser;
 use crate::env_var;
@@ -43,7 +42,7 @@ fn prompt_finder(
 
         let mut cmd = shell::out();
         cmd.stdout(Stdio::piped()).arg(suggestion_command);
-        debug!(cmd = ?cmd);
+        debug!(?cmd);
         let child = cmd
             .spawn()
             .map_err(|e| ShellSpawnError::new(suggestion_command, e))?;
@@ -69,7 +68,7 @@ fn prompt_finder(
             exe = exe,
             name = variable_name,
             extra = extra_preview
-                .clone()
+                .as_ref()
                 .map(|e| format!(" echo; {e}"))
                 .unwrap_or_default(),
         )
@@ -78,7 +77,7 @@ fn prompt_finder(
             r#"(@echo.{{+}}{eof}{{q}}{eof}{name}{eof}{extra}) | {exe} preview-var-stdin"#,
             exe = exe,
             name = variable_name,
-            extra = extra_preview.clone().unwrap_or_default(),
+            extra = extra_preview.as_deref().unwrap_or(""),
             eof = EOF,
         )
     } else if CONFIG.shell().contains("fish") {
@@ -87,7 +86,7 @@ fn prompt_finder(
             exe = exe,
             name = variable_name,
             extra = extra_preview
-                .clone()
+                .as_ref()
                 .map(|e| format!(" echo; {e}"))
                 .unwrap_or_default(),
         )
@@ -103,7 +102,7 @@ fn prompt_finder(
             exe = exe,
             name = variable_name,
             extra = extra_preview
-                .clone()
+                .as_ref()
                 .map(|e| format!(" echo; {e}"))
                 .unwrap_or_default(),
             eof = EOF,
@@ -113,7 +112,7 @@ fn prompt_finder(
     let mut opts = FinderOpts {
         preview: Some(preview),
         show_all_columns: true,
-        ..initial_opts.clone().unwrap_or_else(FinderOpts::var_default)
+        ..initial_opts.to_owned().unwrap_or(FinderOpts::var_default())
     };
 
     opts.query = env_var::get(format!("{variable_name}__query")).ok();
@@ -125,7 +124,7 @@ fn prompt_finder(
 
     if opts.preview_window.is_none() {
         opts.preview_window = Some(if extra_preview.is_none() {
-            format!("up:{}", variable_count + 3)
+            format!("up:{c}", c = variable_count + 3)
         } else {
             "right:50%".to_string()
         });
