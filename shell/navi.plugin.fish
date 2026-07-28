@@ -1,6 +1,7 @@
 function _navi_smart_replace
     set --local query (commandline --current-process | string trim)
     set --local version_parts ""
+    set --local IFS
     if test -n "$version"
         set version_parts (string split '.' $version)
     else
