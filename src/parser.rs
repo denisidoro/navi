@@ -106,11 +106,10 @@ fn parse_variable_line(line: &str) -> Result<(&str, &str, Option<FinderOpts>)> {
 }
 
 fn without_prefix(line: &str) -> String {
-    if line.len() > 2 {
-        String::from(line[2..].trim())
-    } else {
-        String::from("")
-    }
+    // The prefix character (#, %, @) is always 1-byte ASCII.
+    // Skip it and let trim() handle any whitespace separator, including
+    // multi-byte whitespace like non-breaking space (\u{a0}).
+    line.get(1..).unwrap_or("").trim().to_string()
 }
 
 #[derive(Clone, Default)]
@@ -129,12 +128,9 @@ pub struct Parser<'a> {
 }
 
 fn without_first(string: &str) -> String {
-    string
-        .char_indices()
-        .next()
-        .and_then(|(i, _)| string.get(i + 1..))
-        .expect("Should have at least one char")
-        .to_string()
+    let mut chars = string.chars();
+    chars.next();
+    chars.as_str().to_string()
 }
 
 fn gen_lists(tag_rules: &str) -> FilterOpts {
@@ -334,6 +330,32 @@ impl<'a> Parser<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_without_prefix_multibyte() {
+        // Non-breaking space (\u{a0}) after '#' is 2 bytes in UTF-8.
+        // Byte-indexing with [2..] would panic on this input.
+        let line = "#\u{a0}do not fragment off";
+        assert_eq!(without_prefix(line), "do not fragment off");
+    }
+
+    #[test]
+    fn test_without_prefix_ascii() {
+        assert_eq!(without_prefix("# hello"), "hello");
+        assert_eq!(without_prefix("% tags"), "tags");
+        assert_eq!(without_prefix("@ dep"), "dep");
+        // No space after prefix: skip only the prefix char
+        assert_eq!(without_prefix("#comment"), "comment");
+    }
+
+    #[test]
+    fn test_without_prefix_short() {
+        assert_eq!(without_prefix("#"), "");
+        assert_eq!(without_prefix("# "), "");
+        assert_eq!(without_prefix(""), "");
+        // Old panic case: len() is 3 (> 2) but byte 2 is inside a multibyte char
+        assert_eq!(without_prefix("#\u{a0}"), "");
+    }
 
     #[test]
     fn test_parse_variable_line() {
