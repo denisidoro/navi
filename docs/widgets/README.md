@@ -3,7 +3,7 @@
 You want to launch Navi with a shortcut?\
 Widgets are here for you!
 
-Widgets are 3rd-party contributions and integrates Navi with 3rd-party software such as shells.
+Widgets are 3rd-party contributions and integrate Navi with 3rd-party software such as shells.
 
 ## List of shell widgets
 
