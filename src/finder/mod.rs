@@ -77,7 +77,11 @@ impl FinderChoice {
         if let Self::Fzf = self {
             if let Some((major, minor, patch)) = Self::check_fzf_version() {
                 if (major, minor, patch)
-                    < (MIN_FZF_VERSION_MAJOR, MIN_FZF_VERSION_MINOR, MIN_FZF_VERSION_PATCH)
+                    < (
+                        MIN_FZF_VERSION_MAJOR,
+                        MIN_FZF_VERSION_MINOR,
+                        MIN_FZF_VERSION_PATCH,
+                    )
                 {
                     eprintln!(
                         "Warning: Fzf version {major}.{minor} does not support the preview window layout used by navi.",
