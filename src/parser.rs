@@ -369,4 +369,11 @@ mod tests {
         assert_eq!(opts.delimiter, None);
         assert_eq!(opts.suggestion_type, SuggestionType::SingleSelection);
     }
+
+    #[test]
+    fn parses_variable_query() {
+        let (_, _, command_options) = parse_variable_line("$ title: echo titles --- --query test").unwrap();
+
+        assert_eq!(command_options.unwrap().query.as_deref(), Some("test"));
+    }
 }

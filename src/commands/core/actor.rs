@@ -11,6 +11,10 @@ use crate::structures::item::Item;
 use shell::EOF;
 use std::process::Stdio;
 
+fn query_with_override(query: Option<String>, query_override: Option<String>) -> Option<String> {
+    query_override.or(query)
+}
+
 fn prompt_finder(
     variable_name: &str,
     suggestion: Option<&Suggestion>,
@@ -115,7 +119,7 @@ fn prompt_finder(
         ..initial_opts.to_owned().unwrap_or(FinderOpts::var_default())
     };
 
-    opts.query = env_var::get(format!("{variable_name}__query")).ok();
+    opts.query = query_with_override(opts.query, env_var::get(format!("{variable_name}__query")).ok());
 
     if let Ok(f) = env_var::get(format!("{variable_name}__best")) {
         opts.filter = Some(f);
@@ -258,4 +262,25 @@ pub fn act(
     };
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::query_with_override;
+
+    #[test]
+    fn preserves_query_without_override() {
+        assert_eq!(
+            query_with_override(Some("cheatsheet query".into()), None),
+            Some("cheatsheet query".into())
+        );
+    }
+
+    #[test]
+    fn query_override_wins() {
+        assert_eq!(
+            query_with_override(Some("cheatsheet query".into()), Some("environment query".into())),
+            Some("environment query".into())
+        );
+    }
 }
