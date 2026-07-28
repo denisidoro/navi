@@ -13,6 +13,10 @@ style:
 finder:
   command: fzf
 
+# Use tealdeer-compatible flags when invoking `tldr` (see tests/run 3rd party case).
+client:
+  tealdeer: true
+
 shell:
   finder_command: bash
   command: env BASH_ENV="${NAVI_HOME}/tests/helpers.sh" bash --norc --noprofile

@@ -1,0 +1,14 @@
+# Minimal interactive bash startup used by tests/shell/run.
+# Loaded via `bash --rcfile <this-file> -i`.
+
+PS1='NAVIPROMPT> '
+PS2='> '
+
+# Disable history expansion so test queries containing `!` don't blow
+# up, and disable command-not-found hooks for cleaner pane output.
+set +H
+unset PROMPT_COMMAND
+
+if [ -n "${SHELL_TESTS_PLUGIN:-}" ] && [ -f "$SHELL_TESTS_PLUGIN" ]; then
+   source "$SHELL_TESTS_PLUGIN"
+fi

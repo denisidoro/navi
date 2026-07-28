@@ -1,0 +1,53 @@
+# Dedicated CI for the shell plugins under `shell/`.
+#
+# Lives in its own workflow with path filters so the extra zsh/fish/tmux
+# install never slows down PRs that don't touch shell plugin code.
+#
+# Tracks issue: https://github.com/denisidoro/navi/issues/1014
+
+on:
+  push:
+    paths:
+      - 'shell/**'
+      - 'tests/shell/**'
+      - '.github/workflows/shell-tests.yml'
+  pull_request:
+    branches: [master]
+    paths:
+      - 'shell/**'
+      - 'tests/shell/**'
+      - '.github/workflows/shell-tests.yml'
+
+name: Shell plugin tests
+
+jobs:
+  shell-tests:
+    name: Shell plugin tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Build navi (debug)
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+
+      - name: Install shell plugin deps (zsh, fish, tmux)
+        run: sudo apt-get update && sudo apt-get install -y zsh fish tmux
+
+      - name: Install fzf
+        run: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; yes | ~/.fzf/install;
+
+      # Match a reasonable TERM inside tmux; GHA defaults to TERM=dumb.
+      - name: Run shell plugin tests
+        env:
+          SHELL_TESTS_TERM: screen
+        run: ./tests/shell/run
