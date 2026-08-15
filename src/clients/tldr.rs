@@ -9,7 +9,8 @@ lazy_static! {
 
 static VERSION_DISCLAIMER: &str =
     "tldr-c-client (the default one in Homebrew) doesn't support markdown files, so navi can't use it.
-The recommended client is tealdeer(https://github.com/dbrgn/tealdeer).";
+The recommended client is tealdeer(https://github.com/tealdeer-rs/tealdeer),
+which also needs client.tealdeer: true in your config.yaml.";
 
 fn convert_tldr_vars(line: &str) -> String {
     let caps = VAR_TLDR_REGEX.find_iter(line);
