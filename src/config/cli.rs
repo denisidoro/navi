@@ -90,7 +90,11 @@ pub(super) struct ClapConfig {
 
 impl ClapConfig {
     pub fn new() -> Self {
-        Self::parse()
+        if cfg!(test) {
+            Self::parse_from(vec!["navi"])
+        } else {
+            Self::parse()
+        }
     }
 }
 
