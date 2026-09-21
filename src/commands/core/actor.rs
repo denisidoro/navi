@@ -189,7 +189,14 @@ fn replace_variables_from_snippet(snippet: &str, tags: &str, variables: Variable
         interpolated_snippet = if value.as_str() == "\n" {
             interpolated_snippet.replacen(bracketed_variable_name, "", 1)
         } else {
-            interpolated_snippet.replacen(bracketed_variable_name, value.as_str(), 1)
+            // The value may originate from a suggestion command's output
+            // (e.g. a file, process, or branch name), which is not
+            // controlled by the cheatsheet author and can contain shell
+            // metacharacters. Escape it before splicing it into the
+            // snippet, since the interpolated snippet is executed via a
+            // shell.
+            let escaped_value = shellwords::escape(value.as_str());
+            interpolated_snippet.replacen(bracketed_variable_name, &escaped_value, 1)
         };
     }
 
@@ -282,5 +289,37 @@ mod tests {
             query_with_override(Some("cheatsheet query".into()), Some("environment query".into())),
             Some("environment query".into())
         );
+    }
+
+    /// Regression test for shell command injection via an unescaped
+    /// variable value. A variable's value can come from a suggestion
+    /// command's output (e.g. a file name), which is not controlled by
+    /// the cheatsheet author and can contain shell metacharacters. The
+    /// interpolated snippet is executed via a shell, so the value must
+    /// be escaped before substitution, not spliced in as raw text.
+    ///
+    /// This drives replace_variables_from_snippet through the
+    /// environment-variable-override path (the same code path prompt_finder
+    /// would otherwise populate interactively), since that's the most
+    /// direct way to supply a specific value without mocking the finder.
+    #[test]
+    fn escapes_shell_metacharacters_in_variable_values() {
+        use crate::structures::cheat::VariableMap;
+
+        let malicious_value = "x; touch injected; echo x";
+        std::env::set_var("file", malicious_value);
+
+        let result = super::replace_variables_from_snippet(
+            "echo selected: <file>",
+            "",
+            VariableMap::default(),
+        )
+        .unwrap();
+
+        std::env::remove_var("file");
+
+        // The malicious value must appear escaped, not as raw shell
+        // syntax that a shell would split into multiple commands.
+        assert_eq!(result, "echo selected: x\\;\\ touch\\ injected\\;\\ echo\\ x");
     }
 }
