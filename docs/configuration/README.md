@@ -62,10 +62,17 @@ see [/docs/usage/commands/info/](/docs/usage/commands/info/README.md#default-che
 
 #### Defining the cheatsheets path with the environment variable
 
-The cheatsheets path can be defined using the `$NAVI_PATH` environment variable in a colon-separated list, for example:
+The cheatsheets path can be defined using the `$NAVI_PATH` environment variable.
+Separate paths with `:` on Unix or `;` on Windows. For example, on Unix:
 
 ```sh
 export NAVI_PATH='/path/to/a/dir:/path/to/another/dir:/yet/another/dir'
+```
+
+On Windows, using PowerShell:
+
+```powershell
+$env:NAVI_PATH = 'C:\cheats;D:\cheats'
 ```
 
 #### Defining the cheatsheets path in the configuration file
