@@ -203,11 +203,7 @@ pub fn with_absolute_path(snippet: String) -> String {
     snippet
 }
 
-pub fn act(
-    extractions: Result<(&str, Item)>,
-    files: Vec<String>,
-    variables: Option<VariableMap>,
-) -> Result<()> {
+pub fn act(extractions: (&str, Item), files: Vec<String>, variables: Option<VariableMap>) -> Result<()> {
     let (
         key,
         Item {
@@ -217,7 +213,7 @@ pub fn act(
             file_index,
             ..
         },
-    ) = extractions.unwrap();
+    ) = extractions;
 
     if key == "ctrl-o" {
         edit::edit_file(Path::new(&files[file_index.expect("No files found")]))

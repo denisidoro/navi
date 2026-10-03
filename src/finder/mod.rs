@@ -35,14 +35,15 @@ impl FromStr for FinderChoice {
 
 fn parse(out: Output, opts: Opts) -> Result<String> {
     let text = match out.status.code() {
-        Some(0) | Some(1) | Some(2) => {
-            String::from_utf8(out.stdout).context("Invalid utf8 received from finder")?
-        }
+        // A missing snippet is a normal no-match result. Variable prompts may
+        // still return a custom query with status 1, so preserve their output.
+        Some(1) if opts.suggestion_type == SuggestionType::SnippetSelection => process::exit(1),
+        Some(0) | Some(1) => String::from_utf8(out.stdout).context("Invalid utf8 received from finder")?,
         Some(130) => process::exit(130),
         _ => {
             let err = String::from_utf8(out.stderr)
                 .unwrap_or_else(|_| "<stderr contains invalid UTF-8>".to_owned());
-            panic!("External command failed:\n {err}")
+            return Err(anyhow!("Finder failed with {}: {err}", out.status));
         }
     };
 
