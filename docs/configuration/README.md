@@ -25,7 +25,7 @@ Navi allows you to configure it with a YAML configuration.
 
 ## Paths and Environment Variables
 
-On the technical side, navi uses the `directories-next` crate for rust,
+On the technical side, navi uses the `etcetera` crate for rust,
 which defines platform-specific locations to store the configuration files,
 the cache and other types of files an application might need.
 
@@ -33,8 +33,8 @@ the cache and other types of files an application might need.
 > For example, this is why cheatsheets are being stored in `~/Library/Application Support/navi` on macOS.
 
 > [!NOTE]
-> Interested on how `directories-next` works?\
-> Go see their `crates.io` page: [crates.io/crates/directories-next](https://crates.io/crates/directories-next)
+> Interested on how `etcetera` works?\
+> Go see their `crates.io` page: [crates.io/crates/etcetera](https://crates.io/crates/etcetera)
 
 
 ### The default configuration file path
