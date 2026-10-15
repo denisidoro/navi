@@ -30,7 +30,8 @@ which defines platform-specific locations to store the configuration files,
 the cache and other types of files an application might need.
 
 > [!TIP]
-> For example, this is why cheatsheets are being stored in `~/Library/Application Support/navi` on macOS.
+> For example, this is why cheatsheets are being stored in `~/.local/share/navi/cheats` on Linux and macOS
+> (or `$XDG_DATA_HOME/navi/cheats`, when `XDG_DATA_HOME` is set).
 
 > [!NOTE]
 > Interested on how `etcetera` works?\
