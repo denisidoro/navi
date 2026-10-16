@@ -1,26 +1,17 @@
-# Navi <img src="https://raw.githubusercontent.com/denisidoro/navi/master/assets/icon.png" alt="icon" height="28px"/> [![Actions Status](https://github.com/denisidoro/navi/workflows/CI/badge.svg)](https://github.com/denisidoro/navi/actions) ![GitHub release](https://img.shields.io/github/v/release/denisidoro/navi?include_prereleases)
+# Navi <img src="https://raw.githubusercontent.com/denisidoro/navi/master/assets/icon.png" alt="icon" height="28px"/> ![GitHub release](https://img.shields.io/github/v/release/denisidoro/navi?include_prereleases)
 
-## Table of Contents
+Navi is an interactive cheatsheet tool for the command-line.
 
-<!-- TOC -->
-* [Navi <img src="https://raw.githubusercontent.com/denisidoro/navi/master/assets/icon.png" alt="icon" height="28px"/> ![Actions Status](https://github.com/denisidoro/navi/workflows/CI/badge.svg) ![GitHub release](https://img.shields.io/github/v/release/denisidoro/navi?include_prereleases)](#navi-img-srchttpsrawgithubusercontentcomdenisidoronavimasterassetsiconpng-alticon-height28px--)
-  * [Table of Contents](#table-of-contents)
-  * [About](#about)
-  * [Navi Pros](#navi-pros)
-  * [Similar tools](#similar-tools)
-  * [Etymology](#etymology)
-<!-- TOC -->
-
-## About
-
-Navi is an interactive cheatsheet tool for the command-line.\
 It allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands.
 
-[![Demo](https://asciinema.org/a/406461.svg)](https://asciinema.org/a/406461)
+> [!NOTE]
+> **Maintenance mode.** navi still gets bug fixes, but no new features are planned. For a more modern alternative, check out [ezlo](https://github.com/denisidoro/ezlo).
+
+[![Demo](examples/demo.svg)](https://asciinema.org/a/406461)
 
 It uses [fzf](https://github.com/junegunn/fzf), [skim](https://github.com/lotabout/skim), or [Alfred](https://www.alfredapp.com/) under the hood and it can be either used as a command or as a shell widget (_à la_ Ctrl-R).
 
-## Navi Pros
+## Pros
 
 - it will spare you from knowing CLIs by heart
 - it will spare you from copy-pasting output from intermediate commands
