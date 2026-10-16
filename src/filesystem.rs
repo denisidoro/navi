@@ -96,7 +96,7 @@ pub fn cheat_paths(path: Option<String>) -> Result<String> {
 
 /// Returns the data dir computed for each platform.
 ///
-/// We are currently handling two cases: When the platform is `macOS` and when the platform isn't (including `Windows` and `Linux/Unix` platforms)
+/// We are currently handling two cases: When the platform is `Windows` and when the platform isn't (including `macOS` and `Linux/Unix` platforms)
 fn get_data_dir_by_platform() -> Result<PathBuf> {
     if cfg!(target_os = "windows") {
         let base_dirs = etcetera::choose_base_strategy()?;
@@ -111,7 +111,7 @@ fn get_data_dir_by_platform() -> Result<PathBuf> {
 
 /// Returns the config dir computed for each platform.
 ///
-/// We are currently handling two cases: When the platform is `macOS` and when the platform isn't (including `Windows` and `Linux/Unix` platforms)
+/// We are currently handling two cases: When the platform is `Windows` and when the platform isn't (including `macOS` and `Linux/Unix` platforms)
 fn get_config_dir_by_platform() -> Result<PathBuf> {
     if cfg!(target_os = "windows") {
         let base_dirs = etcetera::choose_base_strategy()?;
