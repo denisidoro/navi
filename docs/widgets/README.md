@@ -10,6 +10,7 @@ Widgets are 3rd-party contributions and integrate Navi with 3rd-party software s
 | Shell      | Navi support       |
 |------------|--------------------|
 | Bash       | :white_check_mark: |
+| Elvish     | :white_check_mark: |
 | Fish       | :white_check_mark: |
 | Zsh        | :white_check_mark: |
 | NuShell    | :white_check_mark: |
