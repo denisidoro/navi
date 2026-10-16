@@ -1,8 +1,11 @@
-# navi <img src="https://raw.githubusercontent.com/denisidoro/navi/master/assets/icon.png" alt="icon" height="28px"/> [![Actions Status](https://github.com/denisidoro/navi/workflows/CI/badge.svg)](https://github.com/denisidoro/navi/actions) ![GitHub release](https://img.shields.io/github/v/release/denisidoro/navi?include_prereleases)
+# navi <img src="https://raw.githubusercontent.com/denisidoro/navi/master/assets/icon.png" alt="icon" height="28px"/> ![GitHub release](https://img.shields.io/github/v/release/denisidoro/navi?include_prereleases)
 
 An interactive cheatsheet tool for the command-line.
 
-[![Demo](https://asciinema.org/a/406461.svg)](https://asciinema.org/a/406461)
+> [!NOTE]
+> **Maintenance mode.** navi still gets bug fixes, but no new features are planned. For a more modern alternative, check out [ezlo](https://github.com/denisidoro/ezlo).
+
+[![Demo](docs/examples/demo.svg)](https://asciinema.org/a/406461)
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands. Suggested values for arguments are dynamically displayed in a list.
 
