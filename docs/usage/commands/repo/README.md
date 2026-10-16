@@ -12,7 +12,7 @@
 | Command | Description                                                       |
 |---------|-------------------------------------------------------------------|
 | add     | Lets you import a cheatsheet repository                           |
-| browser | Lets you browse through a curated list of cheatsheet repositories |
+| browse  | Lets you browse through a curated list of cheatsheet repositories |
 
 ## Browsing through cheatsheet repositories
 
@@ -43,6 +43,6 @@ This includes using an HTTPS URL or an SSH URI.
 
 > [!CAUTION]
 > Despite `$NAVI_PATH` being set, it will not be used when installing cheat sheets directly via navi's own commands.\
-> For example when running `navi add repo <repo>`, the default paths will still be used.
+> For example when running `navi repo add <repo>`, the default paths will still be used.
 > 
 > To avoid this, you may simply clone repos via a regular `git clone` command, directly into `$NAVI_PATH`.
