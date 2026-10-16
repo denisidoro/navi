@@ -21,6 +21,8 @@ Navi allows you to configure it with a YAML configuration.
       * [Overriding during values selection](#overriding-during-values-selection)
       * [Overriding for all cases](#overriding-for-all-cases)
   * [Defining your own delimiter](#defining-your-own-delimiter)
+  * [Changing shell](#changing-shell)
+    * [Use bash on Windows](#use-bash-on-windows)
 <!-- TOC -->
 
 ## Paths and Environment Variables
