@@ -3,6 +3,7 @@
 <!-- TOC -->
 * [Cheatsheet repositories](#cheatsheet-repositories)
   * [About](#about)
+  * [What a cheatsheet repository contains](#what-a-cheatsheet-repository-contains)
   * [Importing cheatsheet repositories](#importing-cheatsheet-repositories)
   * [Submitting cheatsheets](#submitting-cheatsheets)
   * [Auto-updating repositories](#auto-updating-repositories)
@@ -14,6 +15,38 @@ Navi lets you work with what we call `cheatsheet repositories`, they are git rep
 and mainly consists of `.cheat` files.
 
 This page is dedicated to the information you might need to work with `cheatsheet repositories`.
+
+## What a cheatsheet repository contains
+
+A cheatsheet repository is an ordinary git repository, so it can be laid out however its author likes. Navi does not read a manifest or an index file: it walks the whole tree and picks up every file whose name ends in `.cheat` or `.cheat.md`, skipping everything else.
+
+That means a README, a LICENSE and a `.gitignore` can sit next to your cheatsheets without interfering, and that subfolders are free. The only file-level rules are:
+
+- The extension must be `.cheat` or `.cheat.md`. Anything else is ignored.
+- Inside a file, the first element of each cheat snippet is a tag line starting with `%`. Those tags are what show up in navi's search results, so the naming of the *file* has no effect on how the cheat is found.
+- Anything else has to follow [the cheatsheet syntax](/docs/cheatsheet/syntax/README.md).
+
+### The repository name matters, not the folder names
+
+Tags are what make a cheat findable, and they come from the file contents rather than the path. Two different repositories can each ship a `git.cheat` without colliding, and a repository can reorganise its folders freely without breaking anything.
+
+### Featured repositories
+
+A repository is only shown by `navi repo browse` if it is listed in [`featured_repos.txt`](https://github.com/denisidoro/cheats/blob/master/featured_repos.txt) inside [denisidoro/cheats](https://github.com/denisidoro/cheats). Being a git repository with `.cheat` files is enough for `repo add` to import it; being on that list is what makes it discoverable.
+
+### How navi flattens what it imports
+
+`navi repo add <url>` does not keep the repository's directory structure. It clones into a temporary directory and then copies every selected file into `<cheats-path>/<user>__<repo>/`, replacing the path separator inside the repository with `__`. A repository `someuser/tools` containing `docker/container.cheat` therefore ends up as:
+
+```
+$(navi info default-cheats-path)/someuser__tools/docker__container.cheat
+```
+
+Because the flattening happens at import time, you should not rely on the folder layout of a repository for anything. This also means that renaming a folder inside a repository only changes the name of the imported file, never a cheat's tags.
+
+### Imported files are copies
+
+Each imported file is a copy, not a link back to the repository. Editing a cheat under `<cheats-path>` affects only your machine and is overwritten the next time that repository is imported. See [Submitting cheatsheets](#submitting-cheatsheets) for how to get a change back upstream.
 
 ## Importing cheatsheet repositories
 
