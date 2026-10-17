@@ -247,7 +247,7 @@ shell:
 For example, suppose you have the following cheat sheet.
 
 ```
-# ISO 8061
+# ISO 8601
 date -I<iso_unit>
 
 $ iso_unit: echo -e 'date\nhours\nminutes\nseconds\nns'
@@ -270,6 +270,6 @@ shell:
 
 If the path to the executable contains spaces, it must be quoted in the `shell.command`.
 Unlike `shell.command`, `shell.finder_command` does not require the path to be quoted even if it contains spaces.
-Additionaly, `shell.forward_slash_path` must be set to `true`.
+Additionally, `shell.forward_slash_path` must be set to `true`.
 `shell.forward_slash_path: true` can be used with bash environments that interpret paths with forward slashes (e.g., `C:/path/to/bash.exe`).
 Other than Windows, setting `shell.forward_slash_path` has no effect.
