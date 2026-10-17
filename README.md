@@ -9,6 +9,8 @@ An interactive cheatsheet tool for the command-line.
 
 **navi** allows you to browse through cheatsheets (that you may write yourself or download from maintainers) and execute commands. Suggested values for arguments are dynamically displayed in a list.
 
+[![Live demo by Demoshell](https://build.demoshell.com/v1/embed/badge.svg)](https://build.demoshell.com/launch?snapshot=demoshell%2Ftui%3Anavi&utm_source=badge)
+
 ## Pros
 
 - it will spare you from knowing CLIs by heart
