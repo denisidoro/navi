@@ -44,7 +44,7 @@ However, you can achieve this by using `git` and `crontab`.
 
   ```sh
   crontab -e
-  */0 11 * * * bash -c 'cd "$(/usr/local/bin/navi info cheats-path)/<user>__<repo>" && /usr/local/bin/git pull -q origin master'
+  0 11 * * * bash -c 'cd "$(/usr/local/bin/navi info cheats-path)/<user>__<repo>" && /usr/local/bin/git pull -q origin master'
   ```
 
 > [!NOTE]
