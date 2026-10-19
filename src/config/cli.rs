@@ -39,7 +39,7 @@ use clap::{crate_version, Parser, Subcommand};
     navi --tag-rules='git,!checkout'               # show non-checkout git snippets only")]
 #[clap(version = crate_version!())]
 pub(super) struct ClapConfig {
-    /// Colon-separated list of paths containing .cheat files
+    /// List of paths containing .cheat files, separated by ':' on Unix or ';' on Windows
     #[arg(short, long)]
     pub path: Option<String>,
 

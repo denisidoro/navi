@@ -4,12 +4,19 @@ Navi can be used in multiple ways
 
 #### Defining the cheatsheets path at runtime
 
-You can define the paths to use for cheatsheets at runtime using the `--path` parameter and a colon-separated paths list
+You can define the paths to use for cheatsheets at runtime using the `--path` parameter.
+Separate paths with `:` on Unix or `;` on Windows.
 
 For example, if we want to search for cheatsheets in `/some/dir` and in `/other/dir`:
 
 ```sh
 navi --path '/some/dir:/other/dir'
+```
+
+On Windows, using PowerShell:
+
+```powershell
+navi --path 'C:\cheats;D:\cheats'
 ```
 
 ## Logging
