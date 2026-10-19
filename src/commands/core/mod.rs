@@ -34,11 +34,8 @@ pub fn init(fetcher: Box<dyn Fetcher>) -> Result<()> {
         .context("Failed getting selection and variables from finder")?;
 
     debug!(raw_selection = ?raw_selection);
-    let extractions = deser::terminal::read(&raw_selection, config.best_match());
-
-    if extractions.is_err() {
-        return init(fetcher);
-    }
+    let extractions = deser::terminal::read(&raw_selection, config.best_match())
+        .context("Invalid selection from finder")?;
 
     actor::act(extractions, files, variables)?;
 
