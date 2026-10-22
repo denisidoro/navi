@@ -76,6 +76,11 @@ pub(super) fn parse_output_single(mut text: String, suggestion_type: SuggestionT
             .next()
             .context("No sufficient data for single selection")?
             .to_string(),
+        // With --print-query, fzf prints the query and then the selected item. The only item
+        // is an empty line, which a blank query such as a single space also matches.
+        SuggestionType::Disabled if !text.starts_with('\n') => {
+            text.split('\n').next().unwrap_or_default().to_string()
+        }
         SuggestionType::MultipleSelections | SuggestionType::Disabled | SuggestionType::SnippetSelection => {
             let len = text.len();
             if len > 1 {
@@ -150,6 +155,25 @@ mod tests {
         let text = "p\ntab\npalo".to_string();
         let output = parse_output_single(text, SuggestionType::SingleRecommendation).unwrap();
         assert_eq!(output, "p");
+    }
+
+    #[test]
+    fn test_parse_disabled_output_whitespace_query() {
+        // fzf --print-query with a blank query also prints the empty item it matched
+        let text = " \n\n".to_string();
+        let output = parse_output_single(text, SuggestionType::Disabled).unwrap();
+        assert_eq!(output, " ");
+    }
+
+    #[test]
+    fn test_parse_disabled_output() {
+        let text = "palo\n".to_string();
+        let output = parse_output_single(text, SuggestionType::Disabled).unwrap();
+        assert_eq!(output, "palo");
+
+        let text = "\n\n".to_string();
+        let output = parse_output_single(text, SuggestionType::Disabled).unwrap();
+        assert_eq!(output, "\n");
     }
 
     #[test]
