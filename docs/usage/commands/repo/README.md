@@ -12,7 +12,7 @@
 | Command | Description                                                       |
 |---------|-------------------------------------------------------------------|
 | add     | Lets you import a cheatsheet repository                           |
-| browser | Lets you browse through a curated list of cheatsheet repositories |
+| browse  | Lets you browse through a curated list of cheatsheet repositories |
 
 ## Browsing through cheatsheet repositories
 
