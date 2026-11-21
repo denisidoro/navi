@@ -47,7 +47,8 @@ pub fn main(uri: String) -> Result<()> {
 
     let opts = FinderOpts {
         suggestion_type: SuggestionType::MultipleSelections,
-        preview: Some(format!("cat '{tmp_path_str}/{{}}'")),
+        // The finder receives absolute paths and shell-quotes the placeholder.
+        preview: Some("cat -- {}".to_string()),
         header: Some("Select the cheatsheets you want to import with <TAB> then hit <Enter>\nUse Ctrl-R for (de)selecting all".to_string()),
         preview_window: Some("right:30%".to_string()),
         ..Default::default()
