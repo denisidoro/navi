@@ -4,11 +4,31 @@ set -euo pipefail
 ##? make install
 ##? make uninstall
 
+cmd="${1:-}"
+shift
+
 export NAVI_HOME="$(cd "$(dirname "$0")/.." && pwd)"
+
+# sourcing scripts/install runs its installer when arguments are left on the
+# command line, so the command is taken out of the positional parameters first
 source "${NAVI_HOME}/scripts/install"
 
+# cargo installs into $CARGO_HOME/bin. When BIN_DIR is set, install into that
+# directory instead, through a cargo root whose bin directory is BIN_DIR.
 install() {
-   cargo install --path .
+   if [[ -n "${BIN_DIR:-}" ]]; then
+      # cargo puts the binary in <root>/bin, so a throwaway root keeps the
+      # install away from $CARGO_HOME and leaves BIN_DIR as the only copy
+      local -r root="$(mktemp -d -t navi-install-XXXX)"
+      trap 'rm -rf "'"$root"'"' EXIT
+      cargo install --path . --root "$root"
+      mkdir -p "$BIN_DIR"
+      # cp keeps the mode cargo gave the binary; `install` would call this
+      # function again instead of /usr/bin/install
+      cp -f "${root}/bin/navi" "${BIN_DIR}/navi"
+   else
+      cargo install --path .
+   fi
 }
 
 uninstall() {
@@ -18,9 +38,6 @@ uninstall() {
 fix() {
    "${NAVI_HOME}/scripts/fix"
 }
-
-cmd="$1"
-shift
 
 export X_MODE=true
 set -x

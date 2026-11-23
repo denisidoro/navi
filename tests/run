@@ -82,6 +82,35 @@ _navi_cheatspath() {
       | grep -q "/cheats"
 }
 
+_make_install_bin_dir() {
+   local -r tmp="$(mktemp -d -t navi-make-install-XXXX)"
+   mkdir -p "$tmp/bin" "$tmp/dest"
+
+   # stand-in for cargo that installs a placeholder binary under --root
+   cat > "$tmp/bin/cargo" <<'EOF'
+#!/usr/bin/env bash
+while [[ $# -gt 0 ]]; do
+   if [[ "$1" == "--root" ]]; then
+      mkdir -p "$2/bin"
+      echo "installed" > "$2/bin/navi"
+      shift
+   fi
+   shift
+done
+EOF
+   chmod +x "$tmp/bin/cargo"
+
+   # scripts/make switches tracing on, so only the file checks are reported
+   ( PATH="$tmp/bin:$PATH" BIN_DIR="$tmp/dest" "${NAVI_HOME}/scripts/make" install ) &>/dev/null
+   local -r status="$?"
+
+   local -r ok="$([[ "$status" == 0 && "$(cat "$tmp/dest/navi" 2>/dev/null)" == "installed" ]] && echo yes)"
+
+   rm -rf "$tmp"
+
+   [[ "$ok" == "yes" ]]
+}
+
 _kill_tmux() {
    pkill -f tmux 2>/dev/null || true
 }
@@ -161,6 +190,9 @@ done
 
 test::set_suite "info"
 test::run "cheats_path" _navi_cheatspath
+
+test::set_suite "make"
+test::run "install BIN_DIR" _make_install_bin_dir
 
 test::set_suite "widget"
 test::run "bash" _navi_widget "bash"
